@@ -9,7 +9,13 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import type { Vente, Voiture, Parametres } from "@/types";
-import { formatFCFAPdf, formatDate, getResteAPayer } from "@/lib/utils";
+import { formatDate, getResteAPayer } from "@/lib/utils";
+
+function formatMontant(montant: number): string {
+  return montant
+    .toFixed(0)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, "\u0020") + " FCFA";
+}
 
 // ── Palette ────────────────────────────────────────────────────────────────
 const NAVY       = "#0f172a";
@@ -513,7 +519,7 @@ export function FacturePDF({ vente, voiture, parametres }: FacturePDFProps) {
               <View style={styles.tableRow}>
                 <Text style={styles.tableCellLabel}>Prix de vente</Text>
                 <Text style={styles.tableCellValue}>
-                  {formatFCFAPdf(vente.prix_vente_fcfa)}
+                  {formatMontant(vente.prix_vente_fcfa)}
                 </Text>
               </View>
 
@@ -521,7 +527,7 @@ export function FacturePDF({ vente, voiture, parametres }: FacturePDFProps) {
               <View style={[styles.tableRow, styles.tableRowAlt]}>
                 <Text style={styles.tableCellLabel}>Montant encaissé</Text>
                 <Text style={styles.tableCellValue}>
-                  {formatFCFAPdf(vente.montant_recu_fcfa)}
+                  {formatMontant(vente.montant_recu_fcfa)}
                 </Text>
               </View>
 
@@ -541,7 +547,7 @@ export function FacturePDF({ vente, voiture, parametres }: FacturePDFProps) {
                     soldee ? styles.tableCellValueGreen : styles.tableCellValueRed,
                   ]}
                 >
-                  {soldee ? "Intégralement payé" : formatFCFAPdf(resteAPayer)}
+                  {soldee ? "Intégralement payé" : formatMontant(resteAPayer)}
                 </Text>
               </View>
             </View>
