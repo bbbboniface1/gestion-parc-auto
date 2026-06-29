@@ -1,10 +1,15 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-function isDemoMode() {
+function isServerDemoMode() {
+  // Côté serveur (middleware), on ne peut pas lire localStorage
+  // On se base uniquement sur les variables d'environnement
   return (
     process.env.NEXT_PUBLIC_DEMO_MODE === "true" ||
-    process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder") === true
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder") ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.includes("placeholder")
   );
 }
 
@@ -13,7 +18,9 @@ export async function updateSession(request: NextRequest) {
     request: { headers: request.headers },
   });
 
-  if (isDemoMode()) {
+  // Si pas de Supabase configuré OU mode démo forcé via env,
+  // laisser passer toutes les requêtes (la démo gère l'auth côté client)
+  if (isServerDemoMode()) {
     return response;
   }
 

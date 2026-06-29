@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -16,10 +16,14 @@ export default function ModifierVoiturePage() {
   const router = useRouter();
   const [voiture, setVoiture] = useState<Voiture | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const supabase = createClient();
+  const loaded = useRef(false);
 
   useEffect(() => {
+    if (loaded.current) return;
+    loaded.current = true;
+
     async function loadVoiture() {
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("voitures")
         .select("*")
@@ -35,7 +39,7 @@ export default function ModifierVoiturePage() {
       setIsLoading(false);
     }
     loadVoiture();
-  }, [params.id, supabase, router]);
+  }, [params.id, router]);
 
   if (isLoading || !voiture) return <Spinner />;
 
@@ -43,22 +47,14 @@ export default function ModifierVoiturePage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/voitures/${voiture.id}`}>
-            <ArrowLeft size={18} />
-            Retour
-          </Link>
+          <Link href={`/voitures/${voiture.id}`}><ArrowLeft size={18} />Retour</Link>
         </Button>
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">✏️ Modifier la voiture</h1>
-          <p className="text-muted-foreground mt-1">
-            {voiture.marque} {voiture.modele} {voiture.annee}
-          </p>
+          <p className="text-muted-foreground mt-1">{voiture.marque} {voiture.modele} {voiture.annee}</p>
         </div>
       </div>
-      <VoitureForm
-        voiture={voiture}
-        onSuccess={(updated) => router.push(`/voitures/${updated.id}`)}
-      />
+      <VoitureForm voiture={voiture} onSuccess={(updated) => router.push(`/voitures/${updated.id}`)} />
     </div>
   );
 }

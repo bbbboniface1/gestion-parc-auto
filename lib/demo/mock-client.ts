@@ -15,9 +15,13 @@ class DemoQueryBuilder {
   private orderField?: string;
   private orderAsc = true;
   private limitCount?: number;
+  private rangeFrom?: number;
+  private rangeTo?: number;
   private selectFields = "*";
   private countOnly = false;
+  private returnCount = false;
   private likeFilter?: { field: string; pattern: string };
+  private orFilters?: string;
   private isSingle = false;
   private pendingInsert?: Row;
   private pendingUpdate?: Row;
@@ -29,9 +33,21 @@ class DemoQueryBuilder {
 
   select(fields = "*", options?: { count?: "exact"; head?: boolean }) {
     this.selectFields = fields;
-    if (options?.count === "exact" && options?.head) {
-      this.countOnly = true;
+    if (options?.count === "exact") {
+      this.returnCount = true;
+      if (options?.head) this.countOnly = true;
     }
+    return this;
+  }
+
+  range(from: number, to: number) {
+    this.rangeFrom = from;
+    this.rangeTo = to;
+    return this;
+  }
+
+  or(query: string) {
+    this.orFilters = query;
     return this;
   }
 
@@ -149,11 +165,25 @@ class DemoQueryBuilder {
 
     let rows = this.applyFilters(this.getTableRows(store));
 
+    // Filtres OR (recherche textuelle ilike)
+    if (this.orFilters) {
+      rows = this.applyOrFilters(rows, this.orFilters);
+    }
+
+    const totalCount = rows.length;
+
     if (this.countOnly) {
-      return { data: null, error: null, count: rows.length };
+      return { data: null, error: null, count: totalCount };
     }
 
     rows = this.projectSelect(rows, store);
+
+    // Pagination via range() — prioritaire sur limit()
+    if (this.rangeFrom !== undefined && this.rangeTo !== undefined) {
+      rows = rows.slice(this.rangeFrom, this.rangeTo + 1);
+    } else if (this.limitCount !== undefined) {
+      rows = rows.slice(0, this.limitCount);
+    }
 
     if (this.isSingle) {
       if (rows.length === 0) {
@@ -162,7 +192,7 @@ class DemoQueryBuilder {
       return { data: rows[0], error: null };
     }
 
-    return { data: rows, error: null };
+    return { data: rows, error: null, count: this.returnCount ? totalCount : undefined };
   }
 
   private getTableRows(store: ReturnType<typeof loadDemoStore>): Row[] {
@@ -199,11 +229,25 @@ class DemoQueryBuilder {
       });
     }
 
-    if (this.limitCount != null) {
-      result = result.slice(0, this.limitCount);
-    }
-
     return result;
+  }
+
+  private applyOrFilters(rows: Row[], orQuery: string): Row[] {
+    // Parse "field.ilike.%val%,field2.ilike.%val2%" format
+    const conditions = orQuery.split(",").map((c) => c.trim());
+    return rows.filter((row) =>
+      conditions.some((condition) => {
+        const parts = condition.split(".");
+        if (parts.length < 3) return false;
+        const field = parts[0];
+        const operator = parts[1];
+        const value = parts.slice(2).join(".").replace(/%/g, "");
+        const cellValue = String(row[field] ?? "").toLowerCase();
+        if (operator === "ilike") return cellValue.includes(value.toLowerCase());
+        if (operator === "eq") return cellValue === value.toLowerCase();
+        return false;
+      })
+    );
   }
 
   private attachVoitureJoin(ventes: Row[], store: ReturnType<typeof loadDemoStore>) {

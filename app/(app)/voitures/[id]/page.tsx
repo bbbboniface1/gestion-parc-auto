@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,24 +13,8 @@ import { VenteForm } from "@/components/ventes/VenteForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { STATUTS_VOITURE } from "@/lib/constants";
 import { formatFCFA, formatUSD, formatDate, getVoitureTitre } from "@/lib/utils";
 import { toast } from "sonner";
@@ -43,16 +27,15 @@ function VoitureDetailContent() {
   const [voiture, setVoiture] = useState<Voiture | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showVenteForm, setShowVenteForm] = useState(searchParams.get("vendre") === "true");
-  const supabase = createClient();
+  const loaded = useRef(false);
 
   useEffect(() => {
-    async function loadVoiture() {
-      const { data, error } = await supabase
-        .from("voitures")
-        .select("*")
-        .eq("id", params.id)
-        .single();
+    if (loaded.current) return;
+    loaded.current = true;
 
+    async function loadVoiture() {
+      const supabase = createClient();
+      const { data, error } = await supabase.from("voitures").select("*").eq("id", params.id).single();
       if (error || !data) {
         toast.error("Voiture introuvable");
         router.push("/voitures");
@@ -62,53 +45,35 @@ function VoitureDetailContent() {
       setIsLoading(false);
     }
     loadVoiture();
-  }, [params.id, supabase, router]);
+  }, [params.id, router]);
 
   const handleStatutChange = async (newStatut: StatutVoiture) => {
     if (!voiture) return;
-    const { error } = await supabase
-      .from("voitures")
-      .update({ statut: newStatut })
-      .eq("id", voiture.id);
-
-    if (error) {
-      toast.error("Erreur : " + error.message);
-      return;
-    }
+    const supabase = createClient();
+    const { error } = await supabase.from("voitures").update({ statut: newStatut }).eq("id", voiture.id);
+    if (error) { toast.error("Erreur : " + error.message); return; }
     setVoiture({ ...voiture, statut: newStatut });
     toast.success("Statut mis à jour !");
   };
 
   const handleMarquerPaye = async () => {
     if (!voiture) return;
-    const { error } = await supabase
-      .from("voitures")
-      .update({
-        paiement_fournisseur: "paye",
-        montant_paye_fournisseur: voiture.prix_achat_usd,
-        date_paiement_fournisseur: new Date().toISOString().split("T")[0],
-      })
-      .eq("id", voiture.id);
-
-    if (error) {
-      toast.error("Erreur : " + error.message);
-      return;
-    }
-    setVoiture({
-      ...voiture,
+    const supabase = createClient();
+    const { error } = await supabase.from("voitures").update({
       paiement_fournisseur: "paye",
       montant_paye_fournisseur: voiture.prix_achat_usd,
-    });
+      date_paiement_fournisseur: new Date().toISOString().split("T")[0],
+    }).eq("id", voiture.id);
+    if (error) { toast.error("Erreur : " + error.message); return; }
+    setVoiture({ ...voiture, paiement_fournisseur: "paye", montant_paye_fournisseur: voiture.prix_achat_usd });
     toast.success("Marqué comme payé !");
   };
 
   const handleDelete = async () => {
     if (!voiture) return;
+    const supabase = createClient();
     const { error } = await supabase.from("voitures").delete().eq("id", voiture.id);
-    if (error) {
-      toast.error("Erreur : " + error.message);
-      return;
-    }
+    if (error) { toast.error("Erreur : " + error.message); return; }
     toast.success("Voiture supprimée");
     router.push("/voitures");
   };
@@ -119,10 +84,7 @@ function VoitureDetailContent() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" asChild>
-          <Link href="/voitures">
-            <ArrowLeft size={18} />
-            Retour
-          </Link>
+          <Link href="/voitures"><ArrowLeft size={18} />Retour</Link>
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold">{getVoitureTitre(voiture)}</h1>
@@ -133,7 +95,6 @@ function VoitureDetailContent() {
         </div>
       </div>
 
-      {/* Photo */}
       <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden bg-gray-100">
         {voiture.photo_url ? (
           <Image src={voiture.photo_url} alt={getVoitureTitre(voiture)} fill className="object-cover" />
@@ -142,60 +103,34 @@ function VoitureDetailContent() {
         )}
       </div>
 
-      {/* Timeline */}
       <Card>
-        <CardHeader>
-          <CardTitle>📍 Progression</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <StatutTimeline currentStatut={voiture.statut} />
-        </CardContent>
+        <CardHeader><CardTitle>📍 Progression</CardTitle></CardHeader>
+        <CardContent><StatutTimeline currentStatut={voiture.statut} /></CardContent>
       </Card>
 
-      {/* Actions */}
       <div className="flex flex-wrap gap-3">
-        <div className="flex items-center gap-2">
-          <Select value={voiture.statut} onValueChange={(v) => handleStatutChange(v as StatutVoiture)}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Changer le statut" />
-            </SelectTrigger>
-            <SelectContent>
-              {STATUTS_VOITURE.map((s) => (
-                <SelectItem key={s.value} value={s.value}>
-                  {s.icon} {s.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <Select value={voiture.statut} onValueChange={(v) => handleStatutChange(v as StatutVoiture)}>
+          <SelectTrigger className="w-48"><SelectValue placeholder="Changer le statut" /></SelectTrigger>
+          <SelectContent>
+            {STATUTS_VOITURE.map((s) => <SelectItem key={s.value} value={s.value}>{s.icon} {s.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
 
         {voiture.paiement_fournisseur !== "paye" && (
-          <Button variant="outline" onClick={handleMarquerPaye}>
-            <CheckCircle size={18} />
-            Marquer comme payé
-          </Button>
+          <Button variant="outline" onClick={handleMarquerPaye}><CheckCircle size={18} />Marquer comme payé</Button>
         )}
 
         {voiture.statut === "en_stock" && (
-          <Button onClick={() => setShowVenteForm(true)}>
-            <ShoppingCart size={18} />
-            Vendre cette voiture
-          </Button>
+          <Button onClick={() => setShowVenteForm(true)}><ShoppingCart size={18} />Vendre cette voiture</Button>
         )}
 
         <Button variant="outline" asChild>
-          <Link href={`/voitures/${voiture.id}/modifier`}>
-            <Pencil size={18} />
-            Modifier
-          </Link>
+          <Link href={`/voitures/${voiture.id}/modifier`}><Pencil size={18} />Modifier</Link>
         </Button>
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive">
-              <Trash2 size={18} />
-              Supprimer
-            </Button>
+            <Button variant="destructive"><Trash2 size={18} />Supprimer</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -206,15 +141,12 @@ function VoitureDetailContent() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-                Supprimer
-              </AlertDialogAction>
+              <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">Supprimer</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </div>
 
-      {/* Informations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader><CardTitle>📋 Informations</CardTitle></CardHeader>
@@ -261,9 +193,5 @@ function VoitureDetailContent() {
 }
 
 export default function VoitureDetailPage() {
-  return (
-    <Suspense fallback={<Spinner />}>
-      <VoitureDetailContent />
-    </Suspense>
-  );
+  return <Suspense fallback={<Spinner />}><VoitureDetailContent /></Suspense>;
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { isDemoMode } from "@/lib/demo";
+import { isDemoMode, activateDemoMode } from "@/lib/demo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,18 +13,28 @@ import { toast } from "sonner";
 import { LogIn, Loader2, Play } from "lucide-react";
 
 export default function ConnexionPage() {
-  const demoMode = isDemoMode();
-  const [email, setEmail] = useState(demoMode ? "demo@automali.ml" : "");
-  const [password, setPassword] = useState(demoMode ? "demo123456" : "");
+  const [demoMode, setDemoMode] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
+  // Vérifier isDemoMode côté client uniquement (localStorage n'est pas dispo côté serveur)
   useEffect(() => {
-    if (demoMode) {
+    const demo = isDemoMode();
+    setDemoMode(demo);
+    if (demo) {
       router.replace("/dashboard");
     }
-  }, [demoMode, router]);
+  }, [router]);
+
+  const handleEnterDemo = () => {
+    activateDemoMode();
+    toast.success("Mode démo activé — données fictives dans votre navigateur");
+    // Recharger pour que isDemoMode() soit bien lu partout
+    window.location.href = "/dashboard";
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,20 +67,33 @@ export default function ConnexionPage() {
           )}
         </CardHeader>
         <CardContent>
-          {demoMode && (
+          {/* Bouton démo — visible même si NEXT_PUBLIC_DEMO_MODE n'est pas défini */}
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <p className="text-sm text-amber-800 mb-3 font-medium">
+              🧪 Vous voulez tester sans compte Supabase ?
+            </p>
             <Button
               type="button"
-              className="w-full mb-4"
-              variant="secondary"
-              onClick={() => {
-                toast.success("Mode démo activé !");
-                router.push("/dashboard");
-              }}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+              onClick={handleEnterDemo}
             >
-              <Play size={20} />
-              Entrer en mode démo (sans connexion)
+              <Play size={16} className="mr-2" />
+              Essayer en mode démo
             </Button>
-          )}
+            <p className="text-xs text-amber-700 mt-2 text-center">
+              Données fictives enregistrées localement — aucun compte requis
+            </p>
+          </div>
+
+          <div className="relative mb-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-gray-200" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-gray-400">ou se connecter</span>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Adresse email</Label>

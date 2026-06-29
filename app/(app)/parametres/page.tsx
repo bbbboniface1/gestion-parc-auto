@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parametresSchema, type ParametresSchemaType } from "@/lib/schemas";
@@ -20,8 +20,8 @@ export default function ParametresPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const supabase = createClient();
   const setStoreParametres = useAppStore((s) => s.setParametres);
+  const loaded = useRef(false);
 
   const {
     register,
@@ -35,7 +35,11 @@ export default function ParametresPage() {
   });
 
   useEffect(() => {
+    if (loaded.current) return;
+    loaded.current = true;
+
     async function loadParametres() {
+      const supabase = createClient();
       const { data } = await supabase.from("parametres").select("*").limit(1).single();
       if (data) {
         setParametres(data);
@@ -52,9 +56,10 @@ export default function ParametresPage() {
       setIsLoading(false);
     }
     loadParametres();
-  }, [supabase, reset, setStoreParametres]);
+  }, [reset, setStoreParametres]);
 
   const uploadLogo = async (file: File): Promise<string | null> => {
+    const supabase = createClient();
     const ext = file.name.split(".").pop();
     const fileName = `logo-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("voitures-photos").upload(fileName, file);
@@ -69,6 +74,7 @@ export default function ParametresPage() {
   const onSubmit = async (data: ParametresSchemaType) => {
     setIsSaving(true);
     try {
+      const supabase = createClient();
       let logoUrl = data.logo_url || null;
       if (logoFile) {
         const uploaded = await uploadLogo(logoFile);
@@ -164,7 +170,7 @@ export default function ParametresPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="taux_change_usd_fcfa">Taux de change USD → FCFA *</Label>
-              <Input id="taux_change_usd_fcfa" type="number" {...register("taux_change_usd_fcfa")} />
+              <Input id="taux_change_usd_fcfa" type="number" {...register("taux_change_usd_fcfa", { valueAsNumber: true })} />
               {errors.taux_change_usd_fcfa && <p className="text-red-600 text-sm">{errors.taux_change_usd_fcfa.message}</p>}
             </div>
           </CardContent>

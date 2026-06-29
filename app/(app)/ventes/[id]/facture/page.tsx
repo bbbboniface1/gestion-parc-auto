@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -20,9 +20,7 @@ const FactureActions = dynamic(
   { ssr: false, loading: () => <Spinner /> }
 );
 
-interface VenteWithVoiture extends Vente {
-  voiture: Voiture;
-}
+interface VenteWithVoiture extends Vente { voiture: Voiture; }
 
 export default function FacturePage() {
   const params = useParams();
@@ -30,12 +28,15 @@ export default function FacturePage() {
   const [parametres, setParametres] = useState<Parametres | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showAnnuler, setShowAnnuler] = useState(false);
-  const supabase = createClient();
   const storeParametres = useAppStore((s) => s.parametres);
-  const dataVersion = useAppStore((s) => s.dataVersion);
+  const loaded = useRef(false);
 
   useEffect(() => {
+    if (loaded.current) return;
+    loaded.current = true;
+
     async function loadData() {
+      const supabase = createClient();
       const venteRes = await supabase
         .from("ventes")
         .select("*, voiture:voitures(*)")
@@ -55,23 +56,20 @@ export default function FacturePage() {
         const paramRes = await supabase.from("parametres").select("*").limit(1).single();
         setParametres(
           paramRes.data ?? {
-            id: "",
-            created_at: "",
-            updated_at: "",
+            id: "", created_at: "", updated_at: "",
             nom_entreprise: "Auto Mali Import",
             adresse: "Bamako, Mali",
             telephone: "+223 XX XX XX XX",
-            email: null,
-            logo_url: null,
+            email: null, logo_url: null,
             taux_change_usd_fcfa: 600,
           }
         );
       }
-
       setIsLoading(false);
     }
     loadData();
-  }, [params.id, supabase, storeParametres, dataVersion]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id]);
 
   if (isLoading || !vente || !parametres || !vente.voiture) return <Spinner />;
 
@@ -81,10 +79,7 @@ export default function FacturePage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
         <Button variant="outline" asChild>
-          <Link href="/ventes">
-            <ArrowLeft size={18} />
-            Retour aux factures
-          </Link>
+          <Link href="/ventes"><ArrowLeft size={18} />Retour aux factures</Link>
         </Button>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -98,9 +93,8 @@ export default function FacturePage() {
       <FactureActions vente={vente} voiture={vente.voiture} parametres={parametres} />
 
       {active && (
-        <Button variant="destructive" onClick={() => setShowAnnuler(true)} title="Annuler cette vente">
-          <XCircle size={18} />
-          Annuler la vente
+        <Button variant="destructive" onClick={() => setShowAnnuler(true)}>
+          <XCircle size={18} />Annuler la vente
         </Button>
       )}
 

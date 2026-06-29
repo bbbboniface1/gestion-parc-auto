@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAppStore } from "@/lib/store";
 
 export function ParametresLoader() {
-  const parametres = useAppStore((s) => s.parametres);
   const setParametres = useAppStore((s) => s.setParametres);
+  const loaded = useRef(false);
 
   useEffect(() => {
-    if (parametres) return;
+    if (loaded.current) return;
+    loaded.current = true;
 
     const supabase = createClient();
     supabase
@@ -20,7 +21,7 @@ export function ParametresLoader() {
       .then(({ data }) => {
         if (data) setParametres(data);
       });
-  }, [parametres, setParametres]);
+  }, [setParametres]);
 
   return null;
 }
