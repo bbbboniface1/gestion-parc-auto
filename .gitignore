@@ -32,3 +32,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Replit platform files (never commit to GitHub)
+.replit
+.replitignore
+.local/
+.agents/
+.cache/
+.migration-backup/
+scripts/post-merge.sh
