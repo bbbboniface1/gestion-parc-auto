@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
   title: string;
   value: number | string;
-  icon: LucideIcon;
+  icon: React.ComponentType<{ className?: string }>;
   href?: string;
   bgColor: string;
   textColor: string;
@@ -17,15 +16,20 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon: Icon, href, bgColor, textColor, emoji }: StatCardProps) {
   const content = (
-    <Card className={cn("overflow-hidden transition-transform hover:scale-[1.02]", href && "cursor-pointer")}>
-      <CardContent className={cn("p-6", bgColor)}>
-        <div className="flex items-start justify-between">
+    <Card className={cn(
+      "overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5",
+      href && "cursor-pointer"
+    )}>
+      <CardContent className={cn("p-5", bgColor)}>
+        <div className="flex items-start justify-between gap-2">
           <div>
-            {emoji && <span className="text-2xl mb-2 block">{emoji}</span>}
-            <p className={cn("text-4xl font-bold", textColor)}>{value}</p>
-            <p className={cn("text-base font-medium mt-1", textColor)}>{title}</p>
+            {emoji && <span className="text-xl mb-2 block">{emoji}</span>}
+            <p className={cn("text-3xl font-bold tabular-nums", textColor)}>{value}</p>
+            <p className={cn("text-sm font-semibold mt-1 opacity-80", textColor)}>{title}</p>
           </div>
-          <Icon size={32} className={textColor} />
+          <div className={cn("p-2 rounded-xl bg-white/30 backdrop-blur-sm flex-shrink-0")}>
+            <Icon className={cn("w-6 h-6", textColor)} />
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -10,7 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogIn, Loader2, Play } from "lucide-react";
+import {
+  ArrowLeftOnRectangleIcon,
+  ArrowPathIcon,
+  PlayIcon,
+} from "@heroicons/react/24/solid";
 
 export default function ConnexionPage() {
   const [demoMode, setDemoMode] = useState(false);
@@ -20,7 +24,6 @@ export default function ConnexionPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  // Vérifier isDemoMode côté client uniquement (localStorage n'est pas dispo côté serveur)
   useEffect(() => {
     const demo = isDemoMode();
     setDemoMode(demo);
@@ -32,7 +35,6 @@ export default function ConnexionPage() {
   const handleEnterDemo = () => {
     activateDemoMode();
     toast.success("Mode démo activé — données fictives dans votre navigateur");
-    // Recharger pour que isDemoMode() soit bien lu partout
     window.location.href = "/dashboard";
   };
 
@@ -54,38 +56,39 @@ export default function ConnexionPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="text-4xl mb-2">🚗</div>
-          <CardTitle className="text-2xl">Auto Mali Import</CardTitle>
-          <p className="text-muted-foreground">Connectez-vous à votre compte</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-white to-blue-50 p-4">
+      <Card className="w-full max-w-md shadow-xl border-0">
+        <CardHeader className="text-center pb-4">
+          <div className="mx-auto mb-3 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl shadow-sm">
+            🚗
+          </div>
+          <CardTitle className="text-2xl font-bold">Auto Mali Import</CardTitle>
+          <p className="text-muted-foreground text-sm">Connectez-vous à votre compte</p>
           {demoMode && (
-            <p className="text-sm text-amber-700 bg-amber-50 rounded-lg p-2 mt-2">
+            <p className="text-sm text-amber-700 bg-amber-50 rounded-lg p-2 mt-2 border border-amber-200">
               Mode démo : utilisez n&apos;importe quel email/mot de passe
             </p>
           )}
         </CardHeader>
-        <CardContent>
-          {/* Bouton démo — visible même si NEXT_PUBLIC_DEMO_MODE n'est pas défini */}
-          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <p className="text-sm text-amber-800 mb-3 font-medium">
-              🧪 Vous voulez tester sans compte Supabase ?
+        <CardContent className="space-y-4">
+          <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+            <p className="text-sm text-amber-800 mb-3 font-medium flex items-center gap-2">
+              🧪 Tester sans compte Supabase ?
             </p>
             <Button
               type="button"
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white gap-2 transition-all hover:shadow-md"
               onClick={handleEnterDemo}
             >
-              <Play size={16} className="mr-2" />
+              <PlayIcon className="w-4 h-4" />
               Essayer en mode démo
             </Button>
             <p className="text-xs text-amber-700 mt-2 text-center">
-              Données fictives enregistrées localement — aucun compte requis
+              Données fictives locales — aucun compte requis
             </p>
           </div>
 
-          <div className="relative mb-4">
+          <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-gray-200" />
             </div>
@@ -117,12 +120,12 @@ export default function ConnexionPage() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full gap-2 transition-all hover:shadow-md" disabled={isLoading}>
               {isLoading ? (
-                <Loader2 className="animate-spin" size={20} />
+                <ArrowPathIcon className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  <LogIn size={20} />
+                  <ArrowLeftOnRectangleIcon className="w-5 h-5" />
                   Se connecter
                 </>
               )}

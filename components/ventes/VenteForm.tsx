@@ -27,7 +27,7 @@ import { createClient } from "@/lib/supabase/client";
 import { calculerStatutPaiement, getProchainNumeroFacture } from "@/lib/utils";
 import { useAppStore } from "@/lib/store";
 import { toast } from "sonner";
-import { Loader2, ShoppingCart } from "lucide-react";
+import { ArrowPathIcon, ShoppingCartIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 
 interface VenteFormProps {
@@ -127,7 +127,7 @@ export function VenteForm({ voiture, open, onOpenChange }: VenteFormProps) {
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <ShoppingCart size={24} />
+            <ShoppingCartIcon className="w-6 h-6" />
             Vendre : {voiture.marque} {voiture.modele} {voiture.annee}
           </DialogTitle>
         </DialogHeader>
@@ -188,12 +188,12 @@ export function VenteForm({ voiture, open, onOpenChange }: VenteFormProps) {
             <Textarea id="notes" {...register("notes")} />
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading || !isValid}>
+          <Button type="submit" className="w-full gap-2 transition-all hover:shadow-md" disabled={isLoading || !isValid}>
             {isLoading ? (
-              <Loader2 className="animate-spin" size={20} />
+              <ArrowPathIcon className="w-5 h-5 animate-spin" />
             ) : (
               <>
-                <ShoppingCart size={20} />
+                <ShoppingCartIcon className="w-5 h-5" />
                 Enregistrer la vente
               </>
             )}

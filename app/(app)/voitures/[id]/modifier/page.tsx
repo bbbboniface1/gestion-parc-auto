@@ -9,7 +9,7 @@ import { VoitureForm } from "@/components/voitures/VoitureForm";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 export default function ModifierVoiturePage() {
   const params = useParams();
@@ -46,8 +46,10 @@ export default function ModifierVoiturePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/voitures/${voiture.id}`}><ArrowLeft size={18} />Retour</Link>
+        <Button variant="outline" size="sm" asChild className="gap-1.5">
+          <Link href={`/voitures/${voiture.id}`}>
+            <ArrowLeftIcon className="w-4 h-4" />Retour
+          </Link>
         </Button>
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">✏️ Modifier la voiture</h1>

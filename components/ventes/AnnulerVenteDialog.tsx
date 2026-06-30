@@ -18,7 +18,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
 
 interface AnnulerVenteDialogProps {
   vente: Vente;
@@ -102,7 +102,11 @@ export function AnnulerVenteDialog({
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             disabled={isLoading}
           >
-            {isLoading ? <Loader2 className="animate-spin" size={18} /> : "Confirmer l'annulation"}
+            {isLoading ? (
+              <ArrowPathIcon className="w-4 h-4 animate-spin" />
+            ) : (
+              "Confirmer l'annulation"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

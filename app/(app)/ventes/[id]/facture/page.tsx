@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { VenteStatutBadge } from "@/components/ventes/VenteStatutBadge";
 import { AnnulerVenteDialog } from "@/components/ventes/AnnulerVenteDialog";
 import { toast } from "sonner";
-import { ArrowLeft, XCircle } from "lucide-react";
+import { ArrowLeftIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import { isVenteActive } from "@/lib/utils";
 
 const FactureActions = dynamic(
@@ -78,8 +78,8 @@ export default function FacturePage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-        <Button variant="outline" asChild>
-          <Link href="/ventes"><ArrowLeft size={18} />Retour aux factures</Link>
+        <Button variant="outline" asChild className="gap-1.5">
+          <Link href="/ventes"><ArrowLeftIcon className="w-4 h-4" />Retour aux factures</Link>
         </Button>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -93,8 +93,8 @@ export default function FacturePage() {
       <FactureActions vente={vente} voiture={vente.voiture} parametres={parametres} />
 
       {active && (
-        <Button variant="destructive" onClick={() => setShowAnnuler(true)}>
-          <XCircle size={18} />Annuler la vente
+        <Button variant="destructive" onClick={() => setShowAnnuler(true)} className="gap-1.5">
+          <XCircleIcon className="w-4 h-4" />Annuler la vente
         </Button>
       )}
 

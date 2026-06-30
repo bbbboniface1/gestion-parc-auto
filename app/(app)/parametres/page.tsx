@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
-import { Loader2, Save, Upload } from "lucide-react";
+import { ArrowPathIcon, ArrowDownOnSquareIcon, ArrowUpTrayIcon } from "@heroicons/react/24/solid";
 
 export default function ParametresPage() {
   const [parametres, setParametres] = useState<Parametres | null>(null);
@@ -162,7 +162,7 @@ export default function ParametresPage() {
                   accept="image/*"
                   onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)}
                 />
-                <Upload size={20} className="text-muted-foreground" />
+                <ArrowUpTrayIcon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
               </div>
               {watch("logo_url") && (
                 <p className="text-sm text-muted-foreground">Logo actuel enregistré</p>
@@ -176,12 +176,12 @@ export default function ParametresPage() {
           </CardContent>
         </Card>
 
-        <Button type="submit" size="lg" disabled={isSaving}>
+        <Button type="submit" size="lg" disabled={isSaving} className="gap-2 transition-all hover:shadow-md">
           {isSaving ? (
-            <Loader2 className="animate-spin" size={20} />
+            <ArrowPathIcon className="w-5 h-5 animate-spin" />
           ) : (
             <>
-              <Save size={20} />
+              <ArrowDownOnSquareIcon className="w-5 h-5" />
               Enregistrer les paramètres
             </>
           )}

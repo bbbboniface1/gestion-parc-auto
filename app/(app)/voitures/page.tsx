@@ -12,7 +12,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent } from "@/components/ui/card";
 import { STATUTS_VOITURE, PAIEMENT_FOURNISSEUR } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { PlusIcon, MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
 const PAGE_SIZE = 24;
 
@@ -29,13 +29,11 @@ function VoituresContent() {
   );
   const [paiementFilter, setPaiementFilter] = useState<PaiementFournisseur | "all">("all");
 
-  // Debounce recherche
   useEffect(() => {
     const timer = setTimeout(() => setSearch(searchInput), 400);
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  // Reset page quand filtres changent
   useEffect(() => { setPage(1); }, [search, statutFilter, paiementFilter]);
 
   const loadVoitures = useCallback(async () => {
@@ -51,7 +49,6 @@ function VoituresContent() {
     if (statutFilter !== "all") query = query.eq("statut", statutFilter);
     if (paiementFilter !== "all") query = query.eq("paiement_fournisseur", paiementFilter);
 
-    // Recherche côté serveur sur marque, modèle et châssis
     if (search.trim()) {
       query = query.or(
         `marque.ilike.%${search.trim()}%,` +
@@ -77,21 +74,24 @@ function VoituresContent() {
           <h1 className="text-2xl md:text-3xl font-bold">🚗 Voitures</h1>
           <p className="text-muted-foreground mt-1">{total} voiture(s)</p>
         </div>
-        <Button asChild size="lg">
-          <Link href="/voitures/ajouter"><Plus size={20} />Ajouter une voiture</Link>
+        <Button asChild size="lg" className="gap-2 transition-all hover:shadow-md">
+          <Link href="/voitures/ajouter">
+            <PlusIcon className="w-5 h-5" />
+            Ajouter une voiture
+          </Link>
         </Button>
       </div>
 
       <div className="flex flex-wrap gap-2">
         <button onClick={() => setStatutFilter("all")}
-          className={cn("px-4 py-2 rounded-full text-base font-medium min-h-10 transition-colors",
-            statutFilter === "all" ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200")}>
+          className={cn("px-4 py-2 rounded-full text-base font-medium min-h-10 transition-all duration-200",
+            statutFilter === "all" ? "bg-primary text-white shadow-md shadow-primary/25" : "bg-gray-100 text-gray-600 hover:bg-gray-200")}>
           Toutes
         </button>
         {STATUTS_VOITURE.map((s) => (
           <button key={s.value} onClick={() => setStatutFilter(s.value)}
-            className={cn("px-4 py-2 rounded-full text-base font-medium min-h-10 transition-colors",
-              statutFilter === s.value ? `${s.bg} ${s.text} ring-2 ring-offset-1` : "bg-gray-100 text-gray-600 hover:bg-gray-200")}>
+            className={cn("px-4 py-2 rounded-full text-base font-medium min-h-10 transition-all duration-200",
+              statutFilter === s.value ? `${s.bg} ${s.text} ring-2 ring-offset-1 shadow-sm` : "bg-gray-100 text-gray-600 hover:bg-gray-200")}>
             {s.icon} {s.label}
           </button>
         ))}
@@ -100,15 +100,15 @@ function VoituresContent() {
       <div className="flex flex-wrap gap-2">
         {PAIEMENT_FOURNISSEUR.map((p) => (
           <button key={p.value} onClick={() => setPaiementFilter(paiementFilter === p.value ? "all" : p.value)}
-            className={cn("px-4 py-2 rounded-full text-base font-medium min-h-10 transition-colors",
-              paiementFilter === p.value ? `${p.bg} ${p.text} ring-2 ring-offset-1` : "bg-gray-100 text-gray-600 hover:bg-gray-200")}>
+            className={cn("px-4 py-2 rounded-full text-base font-medium min-h-10 transition-all duration-200",
+              paiementFilter === p.value ? `${p.bg} ${p.text} ring-2 ring-offset-1 shadow-sm` : "bg-gray-100 text-gray-600 hover:bg-gray-200")}>
             {p.filterLabel}
           </button>
         ))}
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
         <Input
           placeholder="Rechercher par marque, modèle ou châssis..."
           value={searchInput}
@@ -123,7 +123,11 @@ function VoituresContent() {
             <p className="text-4xl mb-4">🚗</p>
             <p className="text-lg font-medium mb-2">Aucune voiture trouvée</p>
             <p className="text-muted-foreground mb-4">Commencez par ajouter votre première voiture importée</p>
-            <Button asChild><Link href="/voitures/ajouter"><Plus size={20} />Ajouter une voiture</Link></Button>
+            <Button asChild className="gap-2">
+              <Link href="/voitures/ajouter">
+                <PlusIcon className="w-5 h-5" />Ajouter une voiture
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       ) : (
@@ -134,12 +138,12 @@ function VoituresContent() {
 
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-4">
-              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
-                <ChevronLeft size={18} />Précédent
+              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="gap-1">
+                <ChevronLeftIcon className="w-4 h-4" />Précédent
               </Button>
               <span className="text-base">Page {page} / {totalPages}</span>
-              <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>
-                Suivant<ChevronRight size={18} />
+              <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="gap-1">
+                Suivant<ChevronRightIcon className="w-4 h-4" />
               </Button>
             </div>
           )}

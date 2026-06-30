@@ -11,12 +11,11 @@ import { formatFCFA, formatUSD, getVoitureTitre, isVenteActive } from "@/lib/uti
 import { getStatutPaiementConfig } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/lib/store";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { Button } from "@/components/ui/button";
 
 interface VenteWithVoiture extends Vente { voiture: Voiture; }
 
-// Totaux financiers calculés côté serveur via agrégats Supabase
 interface FinanceTotaux {
   totalAchatUSA: number;
   totalPayeUSA: number;
@@ -38,7 +37,6 @@ export default function FinancesPage() {
   const [activeTab, setActiveTab] = useState("usa");
   const dataVersion = useAppStore((s) => s.dataVersion);
 
-  // Charger les totaux une seule fois (requêtes légères)
   useEffect(() => {
     async function loadTotaux() {
       const supabase = createClient();
@@ -62,7 +60,6 @@ export default function FinancesPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataVersion]);
 
-  // Charger les voitures paginées seulement quand l'onglet USA est actif
   useEffect(() => {
     if (activeTab !== "usa") return;
     async function loadVoitures() {
@@ -79,7 +76,6 @@ export default function FinancesPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, pageVoitures, dataVersion]);
 
-  // Charger les ventes paginées seulement quand l'onglet Mali est actif
   useEffect(() => {
     if (activeTab !== "mali") return;
     async function loadVentes() {
@@ -118,7 +114,6 @@ export default function FinancesPage() {
         </TabsList>
 
         <TabsContent value="usa" className="space-y-4">
-          {/* Totaux en haut — toujours visibles */}
           <Card className="bg-gray-50">
             <CardContent className="p-4">
               <div className="grid grid-cols-3 gap-4 text-center font-bold text-lg">
@@ -134,7 +129,7 @@ export default function FinancesPage() {
               const paye = v.paiement_fournisseur === "paye" ? v.prix_achat_usd ?? 0 : v.montant_paye_fournisseur ?? 0;
               const reste = (v.prix_achat_usd ?? 0) - paye;
               return (
-                <Card key={v.id}>
+                <Card key={v.id} className="hover:shadow-sm transition-shadow">
                   <CardContent className="p-4">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div>
@@ -155,15 +150,18 @@ export default function FinancesPage() {
 
           {totalPagesVoitures > 1 && (
             <div className="flex items-center justify-center gap-4">
-              <Button variant="outline" size="sm" disabled={pageVoitures <= 1} onClick={() => setPageVoitures(p => p - 1)}><ChevronLeft size={18} />Précédent</Button>
+              <Button variant="outline" size="sm" disabled={pageVoitures <= 1} onClick={() => setPageVoitures(p => p - 1)} className="gap-1">
+                <ChevronLeftIcon className="w-4 h-4" />Précédent
+              </Button>
               <span className="text-sm">Page {pageVoitures} / {totalPagesVoitures}</span>
-              <Button variant="outline" size="sm" disabled={pageVoitures >= totalPagesVoitures} onClick={() => setPageVoitures(p => p + 1)}>Suivant<ChevronRight size={18} /></Button>
+              <Button variant="outline" size="sm" disabled={pageVoitures >= totalPagesVoitures} onClick={() => setPageVoitures(p => p + 1)} className="gap-1">
+                Suivant<ChevronRightIcon className="w-4 h-4" />
+              </Button>
             </div>
           )}
         </TabsContent>
 
         <TabsContent value="mali" className="space-y-4">
-          {/* Totaux en haut — toujours visibles */}
           <Card className="bg-gray-50">
             <CardContent className="p-4">
               <div className="grid grid-cols-3 gap-4 text-center font-bold text-lg">
@@ -183,7 +181,7 @@ export default function FinancesPage() {
                   const config = getStatutPaiementConfig(v.statut_paiement);
                   const reste = v.prix_vente_fcfa - v.montant_recu_fcfa;
                   return (
-                    <Card key={v.id}>
+                    <Card key={v.id} className="hover:shadow-sm transition-shadow">
                       <CardContent className="p-4">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                           <div>
@@ -205,9 +203,13 @@ export default function FinancesPage() {
 
               {totalPagesVentes > 1 && (
                 <div className="flex items-center justify-center gap-4">
-                  <Button variant="outline" size="sm" disabled={pageVentes <= 1} onClick={() => setPageVentes(p => p - 1)}><ChevronLeft size={18} />Précédent</Button>
+                  <Button variant="outline" size="sm" disabled={pageVentes <= 1} onClick={() => setPageVentes(p => p - 1)} className="gap-1">
+                    <ChevronLeftIcon className="w-4 h-4" />Précédent
+                  </Button>
                   <span className="text-sm">Page {pageVentes} / {totalPagesVentes}</span>
-                  <Button variant="outline" size="sm" disabled={pageVentes >= totalPagesVentes} onClick={() => setPageVentes(p => p + 1)}>Suivant<ChevronRight size={18} /></Button>
+                  <Button variant="outline" size="sm" disabled={pageVentes >= totalPagesVentes} onClick={() => setPageVentes(p => p + 1)} className="gap-1">
+                    Suivant<ChevronRightIcon className="w-4 h-4" />
+                  </Button>
                 </div>
               )}
             </>

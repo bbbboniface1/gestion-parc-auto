@@ -18,7 +18,13 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { STATUTS_VOITURE } from "@/lib/constants";
 import { formatFCFA, formatUSD, formatDate, getVoitureTitre } from "@/lib/utils";
 import { toast } from "sonner";
-import { ArrowLeft, Pencil, ShoppingCart, Trash2, CheckCircle } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  PencilSquareIcon,
+  ShoppingCartIcon,
+  TrashIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/24/solid";
 
 function VoitureDetailContent() {
   const params = useParams();
@@ -83,8 +89,8 @@ function VoitureDetailContent() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/voitures"><ArrowLeft size={18} />Retour</Link>
+        <Button variant="outline" size="sm" asChild className="gap-1.5">
+          <Link href="/voitures"><ArrowLeftIcon className="w-4 h-4" />Retour</Link>
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold">{getVoitureTitre(voiture)}</h1>
@@ -95,7 +101,7 @@ function VoitureDetailContent() {
         </div>
       </div>
 
-      <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden bg-gray-100">
+      <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden bg-gray-100 shadow-sm">
         {voiture.photo_url ? (
           <Image src={voiture.photo_url} alt={getVoitureTitre(voiture)} fill className="object-cover" />
         ) : (
@@ -117,20 +123,24 @@ function VoitureDetailContent() {
         </Select>
 
         {voiture.paiement_fournisseur !== "paye" && (
-          <Button variant="outline" onClick={handleMarquerPaye}><CheckCircle size={18} />Marquer comme payé</Button>
+          <Button variant="outline" onClick={handleMarquerPaye} className="gap-1.5">
+            <CheckCircleIcon className="w-4 h-4" />Marquer comme payé
+          </Button>
         )}
 
         {voiture.statut === "en_stock" && (
-          <Button onClick={() => setShowVenteForm(true)}><ShoppingCart size={18} />Vendre cette voiture</Button>
+          <Button onClick={() => setShowVenteForm(true)} className="gap-1.5">
+            <ShoppingCartIcon className="w-4 h-4" />Vendre cette voiture
+          </Button>
         )}
 
-        <Button variant="outline" asChild>
-          <Link href={`/voitures/${voiture.id}/modifier`}><Pencil size={18} />Modifier</Link>
+        <Button variant="outline" asChild className="gap-1.5">
+          <Link href={`/voitures/${voiture.id}/modifier`}><PencilSquareIcon className="w-4 h-4" />Modifier</Link>
         </Button>
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive"><Trash2 size={18} />Supprimer</Button>
+            <Button variant="destructive" className="gap-1.5"><TrashIcon className="w-4 h-4" />Supprimer</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>

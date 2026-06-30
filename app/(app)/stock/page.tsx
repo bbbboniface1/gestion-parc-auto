@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatFCFA } from "@/lib/utils";
 import { useAppStore } from "@/lib/store";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
 const PAGE_SIZE = 24;
 
@@ -26,7 +26,6 @@ export default function StockPage() {
     setIsLoading(true);
     const supabase = createClient();
 
-    // Charger la page courante
     const { data, count } = await supabase
       .from("voitures")
       .select("*", { count: "exact" })
@@ -37,7 +36,6 @@ export default function StockPage() {
     setVoitures(data ?? []);
     setTotal(count ?? 0);
 
-    // Valeur totale du stock — requête légère (une seule colonne, filtre statut)
     if (page === 1) {
       const { data: allStock } = await supabase
         .from("voitures")
@@ -81,12 +79,12 @@ export default function StockPage() {
 
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-4">
-              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
-                <ChevronLeft size={18} />Précédent
+              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="gap-1">
+                <ChevronLeftIcon className="w-4 h-4" />Précédent
               </Button>
               <span className="text-base">Page {page} / {totalPages}</span>
-              <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>
-                Suivant<ChevronRight size={18} />
+              <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="gap-1">
+                Suivant<ChevronRightIcon className="w-4 h-4" />
               </Button>
             </div>
           )}

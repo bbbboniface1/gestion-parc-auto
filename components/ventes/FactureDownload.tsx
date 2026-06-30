@@ -5,7 +5,7 @@ import { usePDF } from "@react-pdf/renderer";
 import type { Vente, Voiture, Parametres } from "@/types";
 import { FacturePDF } from "./FacturePDF";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/solid";
 
 interface FactureDownloadProps {
   vente: Vente;
@@ -31,8 +31,8 @@ export function FactureDownload({ vente, voiture, parametres }: FactureDownloadP
   };
 
   return (
-    <Button size="lg" disabled={instance.loading || !instance.url} onClick={handleDownload}>
-      <Download size={20} />
+    <Button size="lg" disabled={instance.loading || !instance.url} onClick={handleDownload} className="gap-2">
+      <ArrowDownTrayIcon className="w-5 h-5" />
       {instance.loading ? "Préparation..." : "Télécharger la facture PDF"}
     </Button>
   );

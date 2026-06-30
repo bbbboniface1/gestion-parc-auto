@@ -5,7 +5,7 @@ import { usePDF } from "@react-pdf/renderer";
 import type { Vente, Voiture, Parametres } from "@/types";
 import { FacturePDF } from "./FacturePDF";
 import { Button } from "@/components/ui/button";
-import { Download, Printer } from "lucide-react";
+import { ArrowDownTrayIcon, PrinterIcon } from "@heroicons/react/24/solid";
 
 interface FactureActionsProps {
   vente: Vente;
@@ -40,12 +40,12 @@ export function FactureActions({ vente, voiture, parametres }: FactureActionsPro
 
   return (
     <div className="flex flex-wrap gap-3">
-      <Button size="lg" disabled={disabled} onClick={handleDownload} title="Télécharger le PDF">
-        <Download size={20} />
+      <Button size="lg" disabled={disabled} onClick={handleDownload} title="Télécharger le PDF" className="gap-2 transition-all hover:shadow-md">
+        <ArrowDownTrayIcon className="w-5 h-5" />
         Télécharger PDF
       </Button>
-      <Button size="lg" variant="outline" disabled={disabled} onClick={handlePrint} title="Imprimer la facture">
-        <Printer size={20} />
+      <Button size="lg" variant="outline" disabled={disabled} onClick={handlePrint} title="Imprimer la facture" className="gap-2 transition-all hover:shadow-sm">
+        <PrinterIcon className="w-5 h-5" />
         Imprimer
       </Button>
     </div>

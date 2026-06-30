@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAppStore } from "@/lib/store";
@@ -15,7 +15,16 @@ import { cn } from "@/lib/utils";
 import { VenteStatutBadge } from "@/components/ventes/VenteStatutBadge";
 import { AnnulerVenteDialog } from "@/components/ventes/AnnulerVenteDialog";
 import { ModifierVenteDialog } from "@/components/ventes/ModifierVenteDialog";
-import { ChevronLeft, ChevronRight, Eye, FileSpreadsheet, FileText, Pencil, Search, XCircle } from "lucide-react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EyeIcon,
+  TableCellsIcon,
+  DocumentTextIcon,
+  PencilSquareIcon,
+  MagnifyingGlassIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/solid";
 
 interface VenteWithVoiture extends Omit<Vente, "voiture"> { voiture: Voiture | null; }
 type FiltreFacture = "all" | "paye" | "partiel" | "non_paye" | "annulee";
@@ -34,14 +43,13 @@ export default function FacturesPage() {
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState(""); // valeur brute du champ
+  const [searchInput, setSearchInput] = useState("");
   const [filtre, setFiltre] = useState<FiltreFacture>("all");
   const [page, setPage] = useState(1);
   const [annulerVente, setAnnulerVente] = useState<VenteWithVoiture | null>(null);
   const [modifierVente, setModifierVente] = useState<VenteWithVoiture | null>(null);
   const dataVersion = useAppStore((s) => s.dataVersion);
 
-  // Debounce la recherche — ne requête Supabase qu'après 400ms d'inactivité
   useEffect(() => {
     const timer = setTimeout(() => setSearch(searchInput), 400);
     return () => clearTimeout(timer);
@@ -51,14 +59,12 @@ export default function FacturesPage() {
     setIsLoading(true);
     const supabase = createClient();
 
-    // Construction de la requête avec filtres côté serveur
     let query = supabase
       .from("ventes")
       .select("*, voiture:voitures(*)", { count: "exact" })
       .order("date_vente", { ascending: false })
       .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
 
-    // Filtres statut côté serveur
     if (filtre === "annulee") {
       query = query.eq("status", "annulee");
     } else {
@@ -68,7 +74,6 @@ export default function FacturesPage() {
       if (filtre === "non_paye") query = query.eq("statut_paiement", "non_paye");
     }
 
-    // Recherche côté serveur (ilike = insensible à la casse)
     if (search.trim()) {
       query = query.or(
         `client_nom.ilike.%${search.trim()}%,` +
@@ -87,7 +92,6 @@ export default function FacturesPage() {
     loadVentes();
   }, [loadVentes, dataVersion]);
 
-  // Remettre à la page 1 quand filtre ou recherche change
   useEffect(() => { setPage(1); }, [search, filtre]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -99,23 +103,27 @@ export default function FacturesPage() {
           <h1 className="text-2xl md:text-3xl font-bold">📄 Factures & ventes</h1>
           <p className="text-muted-foreground mt-1">{total} facture(s) au total</p>
         </div>
-        <Button variant="outline" disabled title="Export Excel — architecture prévue">
-          <FileSpreadsheet size={18} />Export Excel
+        <Button variant="outline" disabled title="Export Excel — architecture prévue" className="gap-1.5">
+          <TableCellsIcon className="w-4 h-4" />Export Excel
         </Button>
       </div>
 
       <div className="flex flex-wrap gap-2">
         {FILTRES.map((f) => (
           <button key={f.value} type="button" onClick={() => setFiltre(f.value)}
-            className={cn("px-4 py-2 rounded-full text-base font-medium min-h-10 transition-colors",
-              filtre === f.value ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200")}>
+            className={cn(
+              "px-4 py-2 rounded-full text-base font-medium min-h-10 transition-all duration-200",
+              filtre === f.value
+                ? "bg-primary text-white shadow-md shadow-primary/25"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            )}>
             {f.label}
           </button>
         ))}
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
         <Input
           placeholder="Rechercher : client, facture, téléphone..."
           value={searchInput}
@@ -133,7 +141,7 @@ export default function FacturesPage() {
             const reste = getResteAPayer(v.prix_vente_fcfa, v.montant_recu_fcfa);
             const active = isVenteActive(v);
             return (
-              <Card key={v.id} className={cn(!active && "opacity-80 border-red-200")}>
+              <Card key={v.id} className={cn("hover:shadow-md transition-all duration-200", !active && "opacity-80 border-red-200")}>
                 <CardContent className="p-4 space-y-3">
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                     <div className="space-y-1 min-w-0">
@@ -162,12 +170,20 @@ export default function FacturesPage() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 pt-1">
-                    <Button variant="outline" asChild><Link href={`/ventes/${v.id}/facture`}><Eye size={18} />Voir</Link></Button>
-                    <Button variant="outline" asChild><Link href={`/ventes/${v.id}/facture`}><FileText size={18} />PDF</Link></Button>
+                    <Button variant="outline" asChild className="gap-1.5">
+                      <Link href={`/ventes/${v.id}/facture`}><EyeIcon className="w-4 h-4" />Voir</Link>
+                    </Button>
+                    <Button variant="outline" asChild className="gap-1.5">
+                      <Link href={`/ventes/${v.id}/facture`}><DocumentTextIcon className="w-4 h-4" />PDF</Link>
+                    </Button>
                     {active && (
                       <>
-                        <Button variant="outline" onClick={() => setModifierVente(v)}><Pencil size={18} />Modifier</Button>
-                        <Button variant="destructive" onClick={() => setAnnulerVente(v)}><XCircle size={18} />Annuler</Button>
+                        <Button variant="outline" onClick={() => setModifierVente(v)} className="gap-1.5">
+                          <PencilSquareIcon className="w-4 h-4" />Modifier
+                        </Button>
+                        <Button variant="destructive" onClick={() => setAnnulerVente(v)} className="gap-1.5">
+                          <XCircleIcon className="w-4 h-4" />Annuler
+                        </Button>
                       </>
                     )}
                   </div>
@@ -180,12 +196,12 @@ export default function FacturesPage() {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-4">
-          <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-            <ChevronLeft size={18} />Précédent
+          <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="gap-1">
+            <ChevronLeftIcon className="w-4 h-4" />Précédent
           </Button>
           <span className="text-base">Page {page} / {totalPages}</span>
-          <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
-            Suivant<ChevronRight size={18} />
+          <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)} className="gap-1">
+            Suivant<ChevronRightIcon className="w-4 h-4" />
           </Button>
         </div>
       )}

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { UserPlus, Loader2 } from "lucide-react";
+import { UserPlusIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
 
 export default function InscriptionPage() {
   const [email, setEmail] = useState("");
@@ -47,12 +47,14 @@ export default function InscriptionPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-white to-blue-50 p-4">
+      <Card className="w-full max-w-md shadow-xl border-0">
         <CardHeader className="text-center">
-          <div className="text-4xl mb-2">🚗</div>
-          <CardTitle className="text-2xl">Créer un compte</CardTitle>
-          <p className="text-muted-foreground">Inscrivez-vous pour gérer votre parc</p>
+          <div className="mx-auto mb-3 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl shadow-sm">
+            🚗
+          </div>
+          <CardTitle className="text-2xl font-bold">Créer un compte</CardTitle>
+          <p className="text-muted-foreground text-sm">Inscrivez-vous pour gérer votre parc</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -89,12 +91,12 @@ export default function InscriptionPage() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full gap-2 transition-all hover:shadow-md" disabled={isLoading}>
               {isLoading ? (
-                <Loader2 className="animate-spin" size={20} />
+                <ArrowPathIcon className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  <UserPlus size={20} />
+                  <UserPlusIcon className="w-5 h-5" />
                   Créer mon compte
                 </>
               )}

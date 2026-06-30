@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Wifi, WifiOff } from "lucide-react";
+import { SignalSlashIcon } from "@heroicons/react/24/solid";
 
 export function OnlineIndicator() {
   const [online, setOnline] = useState(true);
@@ -22,23 +22,17 @@ export function OnlineIndicator() {
   return (
     <div
       className={cn(
-        "fixed top-0 left-0 right-0 z-[100] h-1 transition-colors",
+        "fixed top-0 left-0 right-0 z-[100] h-1 transition-colors duration-500",
         online ? "bg-emerald-500" : "bg-red-500"
       )}
       title={online ? "En ligne" : "Hors ligne"}
       aria-label={online ? "Connexion active" : "Connexion perdue"}
     >
       {!online && (
-        <div className="flex items-center justify-center gap-2 bg-red-500 text-white text-sm py-2 px-4">
-          <WifiOff size={16} />
+        <div className="flex items-center justify-center gap-2 bg-red-500 text-white text-sm py-2 px-4 animate-in slide-in-from-top duration-300">
+          <SignalSlashIcon className="w-4 h-4 flex-shrink-0" />
           Mode hors ligne — certaines actions peuvent échouer
         </div>
-      )}
-      {online && (
-        <span className="sr-only">
-          <Wifi size={16} />
-          En ligne
-        </span>
       )}
     </div>
   );

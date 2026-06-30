@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { STATUTS_VOITURE, PAIEMENT_FOURNISSEUR, CARBURANTS, TRANSMISSIONS } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Save, Upload } from "lucide-react";
+import { ArrowPathIcon, ArrowDownOnSquareIcon, ArrowUpTrayIcon } from "@heroicons/react/24/solid";
 
 interface VoitureFormProps {
   voiture?: Voiture;
@@ -156,7 +156,6 @@ export function VoitureForm({ voiture, onSuccess }: VoitureFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Section 1 — Informations */}
       <Card>
         <CardHeader>
           <CardTitle>📋 Informations de la voiture</CardTitle>
@@ -226,13 +225,12 @@ export function VoitureForm({ voiture, onSuccess }: VoitureFormProps) {
                 accept="image/*"
                 onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
               />
-              <Upload size={20} className="text-muted-foreground" />
+              <ArrowUpTrayIcon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Section 2 — Prix */}
       <Card>
         <CardHeader>
           <CardTitle>💰 Prix</CardTitle>
@@ -255,7 +253,6 @@ export function VoitureForm({ voiture, onSuccess }: VoitureFormProps) {
         </CardContent>
       </Card>
 
-      {/* Section 3 — Paiement fournisseur */}
       <Card>
         <CardHeader>
           <CardTitle>🏦 Paiement fournisseur (USA)</CardTitle>
@@ -288,7 +285,6 @@ export function VoitureForm({ voiture, onSuccess }: VoitureFormProps) {
         </CardContent>
       </Card>
 
-      {/* Section 4 — Logistique */}
       <Card>
         <CardHeader>
           <CardTitle>🚢 Logistique</CardTitle>
@@ -335,12 +331,12 @@ export function VoitureForm({ voiture, onSuccess }: VoitureFormProps) {
         </CardContent>
       </Card>
 
-      <Button type="submit" size="lg" className="w-full md:w-auto" disabled={isLoading || !isValid}>
+      <Button type="submit" size="lg" className="w-full md:w-auto gap-2 transition-all hover:shadow-md" disabled={isLoading || !isValid}>
         {isLoading ? (
-          <Loader2 className="animate-spin" size={20} />
+          <ArrowPathIcon className="w-5 h-5 animate-spin" />
         ) : (
           <>
-            <Save size={20} />
+            <ArrowDownOnSquareIcon className="w-5 h-5" />
             {voiture ? "Enregistrer les modifications" : "Ajouter la voiture"}
           </>
         )}

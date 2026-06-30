@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, Pencil } from "lucide-react";
+import { ArrowPathIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 
 const modifierSchema = z
   .object({
@@ -90,7 +90,7 @@ export function ModifierVenteDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Pencil size={20} />
+            <PencilSquareIcon className="w-5 h-5" />
             Modifier {vente.numero_facture}
           </DialogTitle>
         </DialogHeader>
@@ -119,8 +119,12 @@ export function ModifierVenteDialog({
               <p className="text-red-600 text-sm">{errors.montant_recu_fcfa.message}</p>
             )}
           </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? <Loader2 className="animate-spin" size={20} /> : "Enregistrer"}
+          <Button type="submit" className="w-full gap-2" disabled={isLoading}>
+            {isLoading ? (
+              <ArrowPathIcon className="w-5 h-5 animate-spin" />
+            ) : (
+              "Enregistrer"
+            )}
           </Button>
         </form>
       </DialogContent>
