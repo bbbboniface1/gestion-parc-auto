@@ -1,0 +1,55 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useEcriture, useLecture } from "@/lib/api/requetes";
+import { useOrg } from "@/lib/session";
+import type { Vehicule } from "@/lib/api/types";
+import { finDeVin } from "@/lib/vin";
+import { EtiquetteEtape } from "@/components/ui/signature";
+import { Feuille } from "@/components/ui/feuille";
+import { Bouton } from "@/components/ui/bouton";
+
+export function FeuilleAffecter({ ouverte, onFermer, expeditionId, actuels }: {
+  ouverte: boolean; onFermer: () => void; expeditionId: string; actuels: string[];
+}) {
+  const org = useOrg();
+  const { data } = useLecture<Vehicule[]>("vehicules_lister", { p_org: org.id, p_filtres: {} }, { enabled: ouverte });
+  const [selection, setSelection] = useState<Set<string>>(new Set());
+
+  useEffect(() => { if (ouverte) setSelection(new Set(actuels)); }, [ouverte, actuels]);
+
+  const affecter = useEcriture("expedition_affecter", { onSuccess: () => { toast.success("Véhicules mis à jour"); onFermer(); }, onError: (e) => toast.error(e.message) });
+
+  const disponibles = (data ?? []).filter((v) => v.statut_commercial !== "vendu" && !v.archive && (v.expedition_id === null || v.expedition_id === expeditionId));
+
+  return (
+    <Feuille ouverte={ouverte} onFermer={onFermer} titre="Affecter des véhicules" description="Un véhicule déjà dans une autre expédition n'apparaît pas ici." pleinEcran
+      pied={<>
+        <Bouton variante="secondaire" onClick={onFermer}>Annuler</Bouton>
+        <Bouton variante="primaire" chargement={affecter.isPending} onClick={() => affecter.executer({ p_org: org.id, p_id: expeditionId, p_vehicule_ids: [...selection] })}>
+          Enregistrer ({selection.size})
+        </Bouton>
+      </>}>
+      <ul className="flex flex-col">
+        {disponibles.map((v) => {
+          const cochee = selection.has(v.id);
+          return (
+            <li key={v.id}>
+              <label className="flex items-center gap-3 border-b border-trait py-2.5 last:border-b-0">
+                <input type="checkbox" checked={cochee} className="size-5 accent-[var(--laterite)]"
+                  onChange={() => setSelection((s) => { const n = new Set(s); if (n.has(v.id)) n.delete(v.id); else n.add(v.id); return n; })} />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-medium">{v.libelle}</span>
+                  <span className="block truncate font-mono text-[12px] text-encre-3">{v.reference}{v.vin ? ` · ${finDeVin(v.vin)}` : ""}</span>
+                </span>
+                <EtiquetteEtape etape={v.etape} compacte />
+              </label>
+            </li>
+          );
+        })}
+        {disponibles.length === 0 && <li className="py-6 text-center text-encre-3">Aucun véhicule disponible.</li>}
+      </ul>
+    </Feuille>
+  );
+}

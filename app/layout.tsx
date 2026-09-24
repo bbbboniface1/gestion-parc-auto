@@ -35,7 +35,7 @@ export const viewport: Viewport = {
 };
 
 // Applique le thème choisi avant le premier rendu (pas de flash clair → sombre).
-const scriptTheme = `try{var t=localStorage.getItem("parc-auto:theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;var s=localStorage.getItem("parc-auto:texte");if(s)document.documentElement.style.fontSize=s}catch(e){}`;
+const scriptTheme = `try{var t=localStorage.getItem("parc-auto:theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;var s=localStorage.getItem("parc-auto:texte");if(s==="1.125"||s==="1.25")document.documentElement.style.zoom=s}catch(e){}`;
 
 export default function RacineLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -146,3 +146,32 @@ export function Interrupteur({
     </div>
   );
 }
+
+/** Nombre simple avec unité (%, jours, chiffres) : clavier numérique, bornes appliquées à la sortie du champ. */
+export function ChampNombre({ libelle, aide, erreur, valeur, onChange, unite, min, max, decimales = 0, className }: {
+  libelle: ReactNode; aide?: ReactNode; erreur?: string | null; valeur: number | null;
+  onChange: (v: number | null) => void; unite?: string; min?: number; max?: number; decimales?: number; className?: string;
+}) {
+  const borner = (v: number) => Math.min(max ?? Infinity, Math.max(min ?? -Infinity, v));
+  return (
+    <Enveloppe libelle={libelle} aide={aide} erreur={erreur} className={className}>
+      {(a11y) => (
+        <div className="relative">
+          <input
+            {...a11y}
+            type="text"
+            inputMode={decimales ? "decimal" : "numeric"}
+            value={valeur === null ? "" : String(valeur).replace(".", ",")}
+            onChange={(e) => {
+              const brut = e.target.value.replace(",", ".").replace(/[^\d.]/g, "");
+              onChange(brut === "" ? null : Number(decimales ? brut : brut.split(".")[0]));
+            }}
+            onBlur={() => { if (valeur !== null) onChange(borner(Number(valeur.toFixed(decimales)))); }}
+            className={cn(classesChamp(!!erreur), "chiffres h-11 px-3 text-[15px] lg:h-10 lg:text-sm", unite ? "pr-16" : undefined)}
+          />
+          {unite && <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[13px] text-encre-3">{unite}</span>}
+        </div>
+      )}
+    </Enveloppe>
+  );
+}
