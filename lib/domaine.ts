@@ -88,6 +88,20 @@ export function libelleCategorie(code: string): string {
   return CATEGORIES_FRAIS[code]?.libelle ?? code.charAt(0).toUpperCase() + code.slice(1).replace(/_/g, " ");
 }
 
+export const CARBURANTS: Record<string, string> = {
+  essence: "Essence",
+  diesel: "Diesel",
+  hybride: "Hybride",
+  electrique: "Électrique",
+  gpl: "GPL",
+  autre: "Autre",
+};
+
+export const TRANSMISSIONS: Record<string, string> = {
+  automatique: "Automatique",
+  manuelle: "Manuelle",
+};
+
 export const SOURCES: Record<string, string> = {
   copart: "Copart",
   iaai: "IAAI",

@@ -71,11 +71,12 @@ export interface DecodageVin {
   carrosserie: string | null;
 }
 
+// Codes de la base (voir lib/domaine.ts CARBURANTS pour les libellés)
 const CARBURANTS: Record<string, string> = {
-  Gasoline: "Essence",
-  Diesel: "Diesel",
-  Electric: "Électrique",
-  "Flexible Fuel Vehicle (FFV)": "Essence",
+  Gasoline: "essence",
+  Diesel: "diesel",
+  Electric: "electrique",
+  "Flexible Fuel Vehicle (FFV)": "essence",
 };
 
 function propre(v: unknown): string | null {
@@ -111,8 +112,8 @@ export async function decoderVin(vin: string, signal?: AbortSignal): Promise<Dec
     modele: propre(r.Model),
     finition: propre(r.Trim),
     annee: Number.isFinite(annee) && annee > 1980 ? annee : null,
-    carburant: hybride && /hybrid|HEV/i.test(hybride) ? "Hybride" : carburantBrut ? (CARBURANTS[carburantBrut] ?? carburantBrut) : null,
-    transmission: propre(r.TransmissionStyle)?.match(/manual/i) ? "Manuelle" : propre(r.TransmissionStyle) ? "Automatique" : null,
+    carburant: hybride && /hybrid|HEV/i.test(hybride) ? "hybride" : carburantBrut ? (CARBURANTS[carburantBrut] ?? "autre") : null,
+    transmission: propre(r.TransmissionStyle)?.match(/manual/i) ? "manuelle" : propre(r.TransmissionStyle) ? "automatique" : null,
     moteur: [cylindree ? `${Number(cylindree).toFixed(1)} L` : null, cylindres ? `${cylindres} cyl.` : null].filter(Boolean).join(" ") || null,
     carrosserie: propre(r.BodyClass),
   };
