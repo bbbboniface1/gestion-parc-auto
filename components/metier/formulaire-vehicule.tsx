@@ -69,6 +69,10 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
   const [unite, setUnite] = useState<"km" | "mi">("km");
   const [decodage, setDecodage] = useState<"inactif" | "en_cours" | "trouve" | "introuvable">("inactif");
   const dernierDecode = useRef<string>(vehicule?.vin ?? "");
+  // Les champs obligatoires ne se plaignent qu'après avoir été quittés, ou après une tentative d'envoi.
+  const [tentative, setTentative] = useState(false);
+  const [vus, setVus] = useState<ReadonlySet<string>>(new Set());
+  const vu = (k: string) => () => setVus((x) => (x.has(k) ? x : new Set(x).add(k)));
   const maj = <K extends keyof Brouillon>(k: K, v: Brouillon[K]) => setB((x) => ({ ...x, [k]: v }));
 
   useEffect(() => {
@@ -125,9 +129,10 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
     plancher: b.prix_plancher_xof && b.prix_affiche_xof && b.prix_plancher_xof > b.prix_affiche_xof ? "Le plancher dépasse le prix affiché." : null,
   };
   const valide = !Object.values(erreurs).some(Boolean);
+  const affichee = (k: "marque" | "modele") => (tentative || vus.has(k) ? erreurs[k] : null);
 
   function envoyer() {
-    if (!valide) { toast.error("Vérifiez les champs signalés."); return; }
+    if (!valide) { setTentative(true); toast.error("Vérifiez les champs signalés."); return; }
     const km = kilometrageSaisi === null ? null : Math.round(unite === "mi" ? kilometrageSaisi * 1.609344 : kilometrageSaisi);
     enregistrer.executer({
       p_org: org.id,
@@ -179,8 +184,8 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Champ libelle="Marque" value={b.marque} onChange={(e) => maj("marque", e.target.value)} erreur={erreurs.marque} placeholder="Toyota" />
-          <Champ libelle="Modèle" value={b.modele} onChange={(e) => maj("modele", e.target.value)} erreur={erreurs.modele} placeholder="RAV4" />
+          <Champ libelle="Marque" value={b.marque} onChange={(e) => maj("marque", e.target.value)} onBlur={vu("marque")} erreur={affichee("marque")} placeholder="Toyota" />
+          <Champ libelle="Modèle" value={b.modele} onChange={(e) => maj("modele", e.target.value)} onBlur={vu("modele")} erreur={affichee("modele")} placeholder="RAV4" />
           <Champ libelle="Finition" facultatif value={b.finition} onChange={(e) => maj("finition", e.target.value)} placeholder="XLE" />
           <Champ libelle="Année" inputMode="numeric" maxLength={4} value={b.annee} onChange={(e) => maj("annee", e.target.value.replace(/\D/g, ""))} erreur={erreurs.annee} placeholder="2018" />
           <Champ libelle="Couleur" facultatif value={b.couleur} onChange={(e) => maj("couleur", e.target.value)} placeholder="Gris magnétique" />

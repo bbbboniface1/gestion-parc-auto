@@ -104,8 +104,8 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
 /** Bloc de réglages : titre et explication à gauche sur ordinateur, champs à droite. */
 export function Groupe({ titre, description, children }: { titre: string; description?: ReactNode; children: ReactNode }) {
   return (
-    <section className="border-b border-trait py-6 first:pt-0 last:border-b-0 lg:grid lg:grid-cols-[240px_1fr] lg:gap-10">
-      <div className="mb-4 lg:mb-0">
+    <section className="border-b border-trait py-6 first:pt-0 last:border-b-0 xl:grid xl:grid-cols-[240px_1fr] xl:gap-10">
+      <div className="mb-4 xl:mb-0">
         <h2 className="text-[16px] font-semibold tracking-tight">{titre}</h2>
         {description && <p className="mt-1 text-[13px] leading-snug text-encre-3">{description}</p>}
       </div>

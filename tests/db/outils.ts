@@ -45,8 +45,10 @@ export interface Base {
   /** Revient au super-utilisateur (préparation, vérifications directes). */
   commeAdmin(): Promise<void>;
   /** Appelle public.<nom>(p_x => ...) avec les paramètres nommés et renvoie le jsonb. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- résultats jsonb : forme libre selon la fonction
   rpc<T = any>(nom: string, params?: Params): Promise<T>;
   /** Requête SQL brute sous le rôle courant. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- lignes SQL : forme libre selon la requête
   sql<T = any>(requete: string, params?: unknown[]): Promise<T[]>;
   /** Crée un utilisateur dans auth.users (en admin) et renvoie son id. */
   creerUtilisateur(email?: string): Promise<string>;
@@ -167,6 +169,7 @@ export async function nouvelleBase(options: { demo?: boolean; cache?: boolean } 
     async commeAdmin() {
       await db.exec("reset role");
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async rpc<T = any>(nom: string, params: Params = {}): Promise<T> {
       const s = await signature(nom);
       const cles = Object.keys(params);
@@ -182,6 +185,7 @@ export async function nouvelleBase(options: { demo?: boolean; cache?: boolean } 
       const r = await db.query<{ r: T }>(`select public.${nom}(${args.join(", ")}) as r`, valeurs);
       return r.rows[0]?.r as T;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async sql<T = any>(requete: string, params: unknown[] = []): Promise<T[]> {
       const r = await db.query<T>(requete, params);
       return r.rows;

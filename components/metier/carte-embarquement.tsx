@@ -24,6 +24,9 @@ export function CarteEmbarquement({ v, uniteCompteur = "km" }: { v: VehiculeDeta
   const km = v.kilometrage_km;
   const compteur = km === null ? null : uniteCompteur === "mi" ? `${formatNombre(Math.round(km / 1.609344))} mi` : `${formatNombre(km)} km`;
   const e = v.expedition;
+  // « Copart » + « Copart Houston » ou « MSC » + « MSC Aurora » : on ne répète pas le début.
+  const sansRepetition = (a: string | null | undefined, b: string | null | undefined) =>
+    [a && b && b.toLowerCase().startsWith(a.toLowerCase()) ? null : a, b].filter(Boolean).join(" ");
   return (
     <section aria-label="Identité du véhicule" className="relative overflow-hidden rounded-carte bg-nuit text-sur-nuit">
       <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:justify-between lg:p-6">
@@ -59,9 +62,9 @@ export function CarteEmbarquement({ v, uniteCompteur = "km" }: { v: VehiculeDeta
 
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 pt-1 pb-4 sm:grid-cols-3 lg:grid-cols-5 lg:px-6 lg:pb-6">
         <Case libelle="Lot">{v.lot_numero}</Case>
-        <Case libelle="Achat">{[SOURCES[v.source ?? ""] ?? null, v.lieu_achat].filter(Boolean).join(" ")}</Case>
+        <Case libelle="Achat">{sansRepetition(SOURCES[v.source ?? ""] ?? null, v.lieu_achat)}</Case>
         <Case libelle="Conteneur">{e?.numero_conteneur ?? (e?.mode === "roro" ? "RoRo" : null)}</Case>
-        <Case libelle="Navire">{[e?.compagnie, e?.navire].filter(Boolean).join(" ")}</Case>
+        <Case libelle="Navire">{sansRepetition(e?.compagnie, e?.navire)}</Case>
         <Case libelle="Ports">{e ? [e.port_depart, e.port_arrivee].filter(Boolean).join(" → ") : null}</Case>
       </dl>
     </section>

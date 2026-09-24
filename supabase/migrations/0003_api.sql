@@ -2294,6 +2294,7 @@ begin
              'numero_avoir', ve.numero_avoir, 'client_id', c.id, 'client_nom', c.nom, 'client_telephone', c.telephone,
              'vehicule_id', v.id, 'vehicule_reference', v.reference,
              'vehicule_libelle', concat_ws(' ', v.marque, v.modele, v.annee), 'vehicule_etape', v.etape,
+             'vehicule_photo', v.photo_principale_path,
              'montant_ttc', ve.montant_ttc, 'montant_ht', ve.montant_ht,
              'encaisse_xof', e.encaisse_xof, 'reste_xof', e.reste_xof, 'statut_paiement', e.statut_paiement,
              'retard_xof', e.retard_xof, 'prochaine_echeance', e.prochaine_echeance,
