@@ -263,53 +263,53 @@ begin
   -- ---------------------------------------------------------------------------
   for r in
     select * from (values
-      ( 1, 'Toyota', 'Corolla', 'LE', 2019, 'Blanc', 61200, 'copart', '43518276', 6400, -300, 'Copart Houston North, TX', 'clean', 'Avant léger', '2T1BURHE5KC027415', 9200000, 8600000,
+      ( 1, 'Toyota', 'Corolla', 'LE', 2019, 'Gris', 61200, 'copart', '43518276', 6400, -300, 'Copart Houston North, TX', 'clean', 'Avant léger', '2T1BURHE5KC027415', 9200000, 8600000,
         array['transport_usa','en_mer','au_port','convoi','douane','atelier','parc'], array[-297,-290,-258,-252,-248,-244,-238]),
       ( 2, 'Honda', 'CR-V', 'EX AWD', 2019, 'Gris', 54800, 'iaai', '35912478', 10900, -262, 'IAA Houston, TX', 'clean', 'Arrière', '2HKRW2H56KH506231', 13900000, 13000000,
         array['transport_usa','en_mer','au_port','convoi','douane','atelier','parc'], array[-259,-252,-220,-214,-210,-206,-200]),
-      ( 3, 'Toyota', 'Camry', 'SE', 2020, 'Noir', 48300, 'copart', '44102953', 9800, -235, 'Copart Savannah, GA', 'clean', 'Latéral droit', '4T1G11AK0LU318842', 13000000, 12300000,
+      ( 3, 'Toyota', 'Camry', 'SE', 2020, 'Rouge', 48300, 'copart', '44102953', 9800, -235, 'Copart Savannah, GA', 'clean', 'Latéral droit', '4T1G11AK0LU318842', 13000000, 12300000,
         array['transport_usa','en_mer','au_port','convoi','douane','atelier','parc'], array[-232,-225,-193,-188,-184,-179,-173]),
-      ( 4, 'Hyundai', 'Santa Fe', 'Sport 2.4', 2018, 'Bleu nuit', 72500, 'copart', '42877105', 7900, -215, 'Copart Houston South, TX', 'salvage', 'Avant', '5XYZU3LB8JG093517', 11500000, 10800000,
+      ( 4, 'Hyundai', 'Santa Fe', 'Sport 2.4', 2018, 'Argent', 72500, 'copart', '42877105', 7900, -215, 'Copart Houston South, TX', 'salvage', 'Avant', '5XYZU3LB8JG093517', 11500000, 10800000,
         array['transport_usa','en_mer','au_port','convoi','douane','atelier','parc'], array[-212,-205,-173,-167,-163,-159,-153]),
       ( 5, 'Lexus', 'RX 350', 'Premium', 2016, 'Argent', 88900, 'manheim', 'MH-2291047', 13800, -150, 'Manheim Dallas, TX', 'clean', null, '2T2BZMCAXGC104386', 16900000, 16000000,
         array['transport_usa','en_mer','au_port','convoi','douane','atelier','parc'], array[-147,-140,-110,-104,-100,-95,-88]),
-      ( 6, 'Mercedes-Benz', 'GLE 350', '4MATIC', 2016, 'Noir', 79400, 'copart', '43365820', 16500, -135, 'Copart Atlanta East, GA', 'clean', 'Pare-chocs avant', '4JGDA5HB6GA661209', 19900000, 18800000,
+      ( 6, 'Mercedes-Benz', 'GLE 350', '4MATIC', 2016, 'Gris', 79400, 'copart', '43365820', 16500, -135, 'Copart Atlanta East, GA', 'clean', 'Pare-chocs avant', '4JGDA5HB6GA661209', 19900000, 18800000,
         array['transport_usa'], array[-131]),
-      ( 7, 'Toyota', 'Highlander', 'XLE', 2017, 'Blanc', 70100, 'iaai', '36024517', 13200, -133, 'IAA Atlanta, GA', 'clean', 'Arrière', '5TDJZRFH5HS409731', 16200000, 15300000,
+      ( 7, 'Toyota', 'Highlander', 'XLE', 2017, 'Argent', 70100, 'iaai', '36024517', 13200, -133, 'IAA Atlanta, GA', 'clean', 'Arrière', '5TDJZRFH5HS409731', 16200000, 15300000,
         array['transport_usa'], array[-129]),
       ( 8, 'Toyota', 'RAV4', 'XLE', 2018, 'Rouge', 58600, 'copart', '43390162', 10200, -131, 'Copart Savannah, GA', 'clean', 'Latéral gauche', '2T3RFREV5JW781254', 12500000, 11800000,
         array['transport_usa'], array[-127]),
-      ( 9, 'Toyota', 'Corolla', 'SE', 2018, 'Gris', 66700, 'copart', '43412087', 5600, -128, 'Copart Savannah, GA', 'salvage', 'Avant', '5YFBURHE7JP112058', 7900000, 7400000,
+      ( 9, 'Toyota', 'Camry', 'SE', 2018, 'Gris', 66700, 'copart', '43412087', 5600, -128, 'Copart Savannah, GA', 'salvage', 'Avant', '5YFBURHE7JP112058', 7900000, 7400000,
         array['transport_usa'], array[-125]),
-      (10, 'Ford', 'Explorer', 'XLT', 2017, 'Bleu', 84200, 'copart', '44871320', 9400, -40, 'Copart Houston North, TX', 'clean', 'Avant léger', '1FM5K8D87HGA63190', 12900000, 12000000,
+      (10, 'Ford', 'Explorer', 'XLT', 2017, 'Argent', 84200, 'copart', '44871320', 9400, -40, 'Copart Houston North, TX', 'clean', 'Avant léger', '1FM5K8D87HGA63190', 12900000, 12000000,
         array['transport_usa'], array[-37]),
-      (11, 'Kia', 'Sorento', 'LX', 2019, 'Blanc', 51300, 'iaai', '36688214', 8900, -38, 'IAA Houston, TX', 'clean', 'Arrière', '5XYPG4A36KG541867', 11900000, 11200000,
+      (11, 'Kia', 'Sorento', 'LX', 2019, 'Gris', 51300, 'iaai', '36688214', 8900, -38, 'IAA Houston, TX', 'clean', 'Arrière', '5XYPG4A36KG541867', 11900000, 11200000,
         array['transport_usa'], array[-35]),
-      (12, 'Toyota', 'RAV4', 'LE', 2019, 'Gris', 44900, 'copart', '44930518', 11300, -36, 'Copart Houston South, TX', 'clean', 'Latéral droit', '2T3H1RFV5KW035476', 12800000, 12000000,
+      (12, 'Toyota', 'RAV4', 'LE', 2019, 'Blanc', 44900, 'copart', '44930518', 11300, -36, 'Copart Houston South, TX', 'clean', 'Latéral droit', '2T3H1RFV5KW035476', 12800000, 12000000,
         array['transport_usa'], array[-33]),
-      (13, 'Honda', 'Accord', 'Sport', 2018, 'Noir', 62400, 'copart', '44905233', 7200, -33, 'Copart Houston North, TX', 'clean', 'Avant', '1HGCV1F38JA087214', 9200000, 8700000,
+      (13, 'Honda', 'Accord', 'Sport', 2018, 'Bleu', 62400, 'copart', '44905233', 7200, -33, 'Copart Houston North, TX', 'clean', 'Avant', '1HGCV1F38JA087214', 9200000, 8700000,
         array['transport_usa'], array[-30]),
       (14, 'Toyota', 'Camry', 'XSE', 2018, 'Blanc', 57300, 'iaai', '36301144', 8600, -60, 'IAA Baltimore, MD', 'clean', 'Avant léger', '4T1B61HK7JU662019', 11000000, 10300000,
         array['transport_usa'], array[-56]),
-      (15, 'Hyundai', 'Tucson', 'SEL', 2019, 'Gris', 49800, 'copart', '44215907', 7800, -57, 'Copart Baltimore, MD', 'clean', 'Arrière', 'KM8J33A41KU963205', 10200000, 9600000,
+      (15, 'Hyundai', 'Tucson', 'SEL', 2019, 'Blanc', 49800, 'copart', '44215907', 7800, -57, 'Copart Baltimore, MD', 'clean', 'Arrière', 'KM8J33A41KU963205', 10200000, 9600000,
         array['transport_usa'], array[-54]),
-      (16, 'Lexus', 'ES 350', null, 2017, 'Blanc nacré', 69900, 'manheim', 'MH-2340518', 12900, -52, 'Manheim Baltimore-Washington, MD', 'clean', null, '58ABK1GGXHU047329', 16000000, 15200000,
+      (16, 'Lexus', 'RX 350', 'F Sport', 2017, 'Blanc nacré', 69900, 'manheim', 'MH-2340518', 12900, -52, 'Manheim Baltimore-Washington, MD', 'clean', null, '58ABK1GGXHU047329', 16000000, 15200000,
         array['transport_usa'], array[-49]),
-      (17, 'Toyota', '4Runner', 'SR5', 2017, 'Noir', 91800, 'copart', '43958211', 14200, -70, 'Copart Dallas, TX', 'clean', 'Latéral gauche', 'JTEBU5JR6H5215478', 18000000, 17000000,
+      (17, 'Toyota', 'RAV4', 'SE', 2017, 'Noir', 91800, 'copart', '43958211', 14200, -70, 'Copart Dallas, TX', 'clean', 'Latéral gauche', 'JTEBU5JR6H5215478', 18000000, 17000000,
         array['transport_usa','en_mer','au_port','convoi','douane'], array[-66,-58,-22,-14,-6]),
-      (18, 'Nissan', 'Pathfinder', 'SV', 2017, 'Argent', 95600, 'iaai', '35788309', 7100, -170, 'IAA Houston, TX', 'clean', 'Moteur', '5N1DR2MM8HC657120', 10500000, 9800000,
+      (18, 'Nissan', 'Pathfinder', 'SV', 2017, 'Noir', 95600, 'iaai', '35788309', 7100, -170, 'IAA Houston, TX', 'clean', 'Moteur', '5N1DR2MM8HC657120', 10500000, 9800000,
         array['transport_usa','en_mer','au_port','convoi','douane','atelier','parc'], array[-167,-160,-128,-122,-118,-112,-75]),
-      (19, 'Toyota', 'Corolla', 'LE', 2020, 'Blanc', 39700, 'copart', '44020671', 7300, -95, 'Copart Houston North, TX', 'clean', 'Avant léger', '5YFEPRAE7LP022913', 9500000, 9000000,
+      (19, 'Toyota', 'Camry', 'LE', 2019, 'Blanc', 39700, 'copart', '44020671', 7300, -95, 'Copart Houston North, TX', 'clean', 'Avant léger', '5YFEPRAE7LP022913', 9500000, 9000000,
         array['transport_usa','en_mer','au_port','convoi','douane','atelier','parc'], array[-92,-85,-53,-47,-43,-38,-20]),
-      (20, 'Honda', 'Pilot', 'EX-L', 2016, 'Gris', 102300, 'copart', '43877524', 8800, -110, 'Copart Savannah, GA', 'clean', 'Arrière', '5FNYF6H54GB038251', 12200000, 11500000,
+      (20, 'Honda', 'CR-V', 'LX', 2017, 'Gris', 102300, 'copart', '43877524', 8800, -110, 'Copart Savannah, GA', 'clean', 'Arrière', '5FNYF6H54GB038251', 12200000, 11500000,
         array['transport_usa','en_mer','au_port','convoi','douane','atelier','parc'], array[-107,-100,-68,-62,-58,-52,-35]),
-      (21, 'Kia', 'Optima', 'LX', 2018, 'Blanc', 77400, 'copart', '45120964', 5200, -8, 'Copart Houston South, TX', 'salvage', 'Avant', '5XXGT4L30JG214683', null, null,
+      (21, 'Kia', 'Sorento', 'LX', 2018, 'Gris bleu', 77400, 'copart', '45120964', 5200, -8, 'Copart Houston South, TX', 'salvage', 'Avant', '5XXGT4L30JG214683', null, null,
         array['transport_usa'], array[-4]),
-      (22, 'Toyota', 'Highlander', 'LE', 2019, 'Bleu', 46200, 'iaai', '37012835', 17400, -2, 'IAA Dallas, TX', 'clean', 'Latéral droit', '5TDZZRFH4KS512794', null, null,
+      (22, 'Toyota', 'Highlander', 'LE', 2019, 'Blanc', 46200, 'iaai', '37012835', 17400, -2, 'IAA Dallas, TX', 'clean', 'Latéral droit', '5TDZZRFH4KS512794', null, null,
         null::text[], null::integer[]),
-      (23, 'Hyundai', 'Elantra', 'SEL', 2019, 'Rouge', 53100, 'manheim', 'MH-2366812', 6100, -5, 'Manheim Houston, TX', 'clean', null, '5NPD84LFXKH801347', null, null,
+      (23, 'Hyundai', 'Santa Fe', 'SEL', 2019, 'Rouge', 53100, 'manheim', 'MH-2366812', 6100, -5, 'Manheim Houston, TX', 'clean', null, '5NPD84LFXKH801347', null, null,
         null::text[], null::integer[]),
-      (24, 'Mercedes-Benz', 'C 300', null, 2017, 'Gris', 68800, 'copart', '44466309', 11600, -85, 'Copart Houston North, TX', 'clean', 'Avant', '55SWF4JB9HU195236', 15800000, 15000000,
+      (24, 'Mercedes-Benz', 'GLE 350', '4MATIC', 2017, 'Blanc', 68800, 'copart', '44466309', 11600, -85, 'Copart Houston North, TX', 'clean', 'Avant', '55SWF4JB9HU195236', 15800000, 15000000,
         array['transport_usa','en_mer','au_port','convoi','douane','atelier'], array[-82,-75,-43,-37,-15,-9])
     ) as t(n, marque, modele, finition, annee, couleur, km, source, lot, usd, j_achat, lieu, titre, dommage, vin,
            affiche, plancher, etapes, jours)
@@ -326,6 +326,12 @@ begin
                                when r.n in (9, 24) then 'en_cours' else 'a_faire' end)) ->> 'id')::uuid;
     perform demo.parcours(o, v[r.n], r.etapes, r.jours);
   end loop;
+  -- Photos de démonstration : fichiers livrés avec l'application (public/demo/vehicules/), crédits dans
+  -- credits.json. Mise à jour directe : l'API refuse, à raison, tout chemin hors du dossier de l'entreprise.
+  update public.vehicules ve
+     set photo_principale_path = '/demo/vehicules/v' || lpad(t.n::text, 2, '0') || '.jpg'
+    from unnest(v) with ordinality as t(id, n)
+   where ve.id = t.id;
   update public.vehicules set created_at = coalesce(date_achat, d)::timestamptz + interval '10 hours'
    where org_id = o;
 
