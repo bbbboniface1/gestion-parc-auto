@@ -1,144 +1,101 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { isDemoMode, activateDemoMode } from "@/lib/demo";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import {
-  ArrowLeftOnRectangleIcon,
-  ArrowPathIcon,
-  PlayIcon,
-} from "@heroicons/react/24/solid";
+import { useRouter, useSearchParams } from "next/navigation";
+import { PlayCircle } from "lucide-react";
+import { supabaseConfigure } from "@/lib/config";
+import { useSession } from "@/lib/session";
+import { versErreurApi } from "@/lib/api/erreurs";
+import { CadreAccueil } from "@/components/coque/cadre-accueil";
+import { Bouton } from "@/components/ui/bouton";
+import { Champ } from "@/components/ui/champ";
 
-export default function ConnexionPage() {
-  const [demoMode, setDemoMode] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+function destinationSure(retour: string | null): string {
+  // Seulement un chemin interne : pas de redirection ouverte vers un autre site.
+  return retour && retour.startsWith("/") && !retour.startsWith("//") ? retour : "/accueil/";
+}
+
+function Connexion() {
+  const { etat, entrerDemo } = useSession();
   const router = useRouter();
-  const supabase = createClient();
+  const params = useSearchParams();
+  const retour = destinationSure(params.get("retour"));
+  const [email, setEmail] = useState("");
+  const [motDePasse, setMotDePasse] = useState("");
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [envoi, setEnvoi] = useState(false);
+  const [demo, setDemo] = useState(false);
+  const production = supabaseConfigure();
 
   useEffect(() => {
-    const demo = isDemoMode();
-    setDemoMode(demo);
-    if (demo) {
-      router.replace("/dashboard");
-    }
-  }, [router]);
+    if (etat.statut === "connecte") router.replace(etat.org ? retour : "/bienvenue/");
+  }, [etat, router, retour]);
 
-  const handleEnterDemo = () => {
-    activateDemoMode();
-    toast.success("Mode démo activé — données fictives dans votre navigateur");
-    window.location.href = "/dashboard";
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function seConnecter(e: React.FormEvent) {
     e.preventDefault();
-    setIsLoading(true);
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      toast.error("Erreur de connexion : " + error.message);
-      setIsLoading(false);
-      return;
+    setErreur(null);
+    setEnvoi(true);
+    try {
+      const { supabase } = await import("@/lib/api/supabase");
+      const { error } = await supabase().auth.signInWithPassword({ email: email.trim(), password: motDePasse });
+      if (error) {
+        setErreur(/invalid login/i.test(error.message) ? "Adresse ou mot de passe incorrect." : /confirm/i.test(error.message) ? "Confirmez d'abord votre adresse : le lien vous a été envoyé par e-mail." : versErreurApi(error).message);
+      }
+    } finally {
+      setEnvoi(false);
     }
-
-    toast.success("Connexion réussie !");
-    router.push("/dashboard");
-    router.refresh();
-  };
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-white to-blue-50 p-4">
-      <Card className="w-full max-w-md shadow-xl border-0">
-        <CardHeader className="text-center pb-4">
-          <div className="mx-auto mb-3 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl shadow-sm">
-            🚗
-          </div>
-          <CardTitle className="text-2xl font-bold">Auto Mali Import</CardTitle>
-          <p className="text-muted-foreground text-sm">Connectez-vous à votre compte</p>
-          {demoMode && (
-            <p className="text-sm text-amber-700 bg-amber-50 rounded-lg p-2 mt-2 border border-amber-200">
-              Mode démo : utilisez n&apos;importe quel email/mot de passe
-            </p>
-          )}
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
-            <p className="text-sm text-amber-800 mb-3 font-medium flex items-center gap-2">
-              🧪 Tester sans compte Supabase ?
-            </p>
-            <Button
-              type="button"
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white gap-2 transition-all hover:shadow-md"
-              onClick={handleEnterDemo}
-            >
-              <PlayIcon className="w-4 h-4" />
-              Essayer en mode démo
-            </Button>
-            <p className="text-xs text-amber-700 mt-2 text-center">
-              Données fictives locales — aucun compte requis
-            </p>
-          </div>
+    <CadreAccueil>
+      <h1 className="text-[26px] font-semibold tracking-tight">Connexion</h1>
+      <p className="mt-1 text-encre-2">{production ? "Accédez au parc de votre entreprise." : "Aucun serveur n'est configuré sur ce déploiement : seule la démonstration est disponible."}</p>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-gray-200" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-gray-400">ou se connecter</span>
-            </div>
+      {production && (
+        <form onSubmit={seConnecter} className="mt-6 flex flex-col gap-4" noValidate>
+          <Champ libelle="Adresse e-mail" type="email" autoComplete="email" inputMode="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Champ libelle="Mot de passe" type="password" autoComplete="current-password" required value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} />
+          {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte">{erreur}</p>}
+          <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email || !motDePasse}>
+            Se connecter
+          </Bouton>
+          <div className="flex justify-between text-[14px]">
+            <Link href="/mot-de-passe/" className="text-encre-2 underline-offset-4 hover:underline">Mot de passe oublié</Link>
+            <Link href="/inscription/" className="font-medium text-laterite underline-offset-4 hover:underline">Créer un compte</Link>
           </div>
+        </form>
+      )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Adresse email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="votre@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full gap-2 transition-all hover:shadow-md" disabled={isLoading}>
-              {isLoading ? (
-                <ArrowPathIcon className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <ArrowLeftOnRectangleIcon className="w-5 h-5" />
-                  Se connecter
-                </>
-              )}
-            </Button>
-          </form>
-          <p className="text-center mt-4 text-base">
-            Pas encore de compte ?{" "}
-            <Link href="/inscription" className="text-primary font-medium hover:underline">
-              Créer un compte
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+      <div className={production ? "mt-8 border-t border-trait pt-6" : "mt-6"}>
+        <p className="etiquette text-[12px] text-encre-3">Sans compte</p>
+        <p className="mt-1 text-[14px] text-encre-2">
+          Une entreprise fictive de Bamako, 24 véhicules, des ventes et des encaissements : tout fonctionne, directement dans votre navigateur.
+        </p>
+        <Bouton
+          className="mt-3"
+          variante={production ? "secondaire" : "primaire"}
+          taille="lg"
+          pleineLargeur
+          chargement={demo}
+          icone={<PlayCircle className="size-5" aria-hidden />}
+          onClick={async () => {
+            setDemo(true);
+            await entrerDemo();
+          }}
+        >
+          Essayer la démonstration
+        </Bouton>
+        {demo && <p className="mt-2 text-[13px] text-encre-3" role="status">Préparation de la base de démonstration (quelques secondes la première fois)…</p>}
+      </div>
+    </CadreAccueil>
+  );
+}
+
+export default function PageConnexion() {
+  return (
+    <Suspense>
+      <Connexion />
+    </Suspense>
   );
 }

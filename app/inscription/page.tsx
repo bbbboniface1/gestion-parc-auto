@@ -1,115 +1,77 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import { UserPlusIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
+import { MailCheck } from "lucide-react";
+import { versErreurApi } from "@/lib/api/erreurs";
+import { CadreAccueil } from "@/components/coque/cadre-accueil";
+import { Bouton } from "@/components/ui/bouton";
+import { Champ } from "@/components/ui/champ";
 
-export default function InscriptionPage() {
+export default function PageInscription() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-  const supabase = createClient();
+  const [motDePasse, setMotDePasse] = useState("");
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [envoi, setEnvoi] = useState(false);
+  const [envoye, setEnvoye] = useState(false);
+  const trop_court = motDePasse.length > 0 && motDePasse.length < 10;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function creer(e: React.FormEvent) {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      toast.error("Les mots de passe ne correspondent pas");
-      return;
+    setErreur(null);
+    setEnvoi(true);
+    try {
+      const { supabase } = await import("@/lib/api/supabase");
+      const { data, error } = await supabase().auth.signUp({
+        email: email.trim(),
+        password: motDePasse,
+        options: { emailRedirectTo: `${window.location.origin}/bienvenue/` },
+      });
+      if (error) setErreur(/already/i.test(error.message) ? "Un compte existe déjà avec cette adresse. Connectez-vous." : versErreurApi(error).message);
+      else if (!data.session) setEnvoye(true);
+    } finally {
+      setEnvoi(false);
     }
+  }
 
-    if (password.length < 6) {
-      toast.error("Le mot de passe doit contenir au moins 6 caractères");
-      return;
-    }
-
-    setIsLoading(true);
-
-    const { error } = await supabase.auth.signUp({ email, password });
-
-    if (error) {
-      toast.error("Erreur : " + error.message);
-      setIsLoading(false);
-      return;
-    }
-
-    toast.success("Compte créé ! Vous pouvez vous connecter.");
-    router.push("/connexion");
-  };
+  if (envoye) {
+    return (
+      <CadreAccueil>
+        <MailCheck className="size-10 text-gain" aria-hidden />
+        <h1 className="mt-4 text-[26px] font-semibold tracking-tight">Vérifiez votre boîte e-mail</h1>
+        <p className="mt-2 text-encre-2">
+          Un lien de confirmation a été envoyé à <strong className="text-encre">{email}</strong>. Ouvrez-le pour activer votre compte,
+          puis créez votre entreprise.
+        </p>
+        <Link href="/connexion/" className="mt-6 inline-block font-medium text-laterite underline-offset-4 hover:underline">Retour à la connexion</Link>
+      </CadreAccueil>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-white to-blue-50 p-4">
-      <Card className="w-full max-w-md shadow-xl border-0">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-3 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl shadow-sm">
-            🚗
-          </div>
-          <CardTitle className="text-2xl font-bold">Créer un compte</CardTitle>
-          <p className="text-muted-foreground text-sm">Inscrivez-vous pour gérer votre parc</p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Adresse email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="votre@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Minimum 6 caractères"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Retapez le mot de passe"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full gap-2 transition-all hover:shadow-md" disabled={isLoading}>
-              {isLoading ? (
-                <ArrowPathIcon className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <UserPlusIcon className="w-5 h-5" />
-                  Créer mon compte
-                </>
-              )}
-            </Button>
-          </form>
-          <p className="text-center mt-4 text-base">
-            Déjà un compte ?{" "}
-            <Link href="/connexion" className="text-primary font-medium hover:underline">
-              Se connecter
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+    <CadreAccueil>
+      <h1 className="text-[26px] font-semibold tracking-tight">Créer un compte</h1>
+      <p className="mt-1 text-encre-2">Vous créerez ensuite votre entreprise, ou rejoindrez celle qui vous invite.</p>
+      <form onSubmit={creer} className="mt-6 flex flex-col gap-4" noValidate>
+        <Champ libelle="Adresse e-mail" type="email" autoComplete="email" inputMode="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Champ
+          libelle="Mot de passe"
+          type="password"
+          autoComplete="new-password"
+          required
+          value={motDePasse}
+          onChange={(e) => setMotDePasse(e.target.value)}
+          aide="10 caractères au moins."
+          erreur={trop_court ? "10 caractères au moins." : null}
+        />
+        {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte">{erreur}</p>}
+        <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email || motDePasse.length < 10}>
+          Créer mon compte
+        </Bouton>
+        <p className="text-[14px] text-encre-2">
+          Déjà inscrit ? <Link href="/connexion/" className="font-medium text-laterite underline-offset-4 hover:underline">Se connecter</Link>
+        </p>
+      </form>
+    </CadreAccueil>
   );
 }

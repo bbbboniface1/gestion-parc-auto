@@ -1,36 +1,230 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: 0 0% 98%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 142 76% 36%;
-    --radius: 0.75rem;
+/* Thème sombre : suit le téléphone, sauf choix explicite dans Préférences (data-theme). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ─── Jetons « Connaissement » (docs/DIRECTION_ARTISTIQUE.md) ─────────────────────── */
+:root {
+  --papier: #f5f3ee;
+  --surface: #ffffff;
+  --surface-2: #efece5;
+  --trait: #e3ded3;
+  --trait-fort: #cfc8ba;
+  --encre: #17171a;
+  --encre-2: #5b5a57;
+  --encre-3: #6b6861;
+  --laterite: #b5461e;
+  --laterite-fonce: #9c3a17;
+  --laterite-voile: #f6e6de;
+  --sur-laterite: #ffffff;
+  --nuit: #1b1d22;
+  --nuit-2: #262931;
+  --sur-nuit: #edeae3;
+  --sur-nuit-2: #a6a29a;
+  --gain: #1b7148;
+  --gain-voile: #e1f0e7;
+  --perte: #b3261e;
+  --perte-voile: #f8e1de;
+  --ocre: #8e5f08;
+  --ocre-voile: #f6ebd6;
+  --acier: #2f5a7a;
+  --acier-voile: #e1eaf1;
+  --reserve: #7a3e5d;
+
+  --etape-achete: #5e6b7a;
+  --etape-transport-usa: #3f6784;
+  --etape-en-mer: #1f6f7a;
+  --etape-au-port: #76673d;
+  --etape-convoi: #8a5f23;
+  --etape-douane: #a34f26;
+  --etape-atelier: #8a4b2e;
+  --etape-parc: #b5461e;
+
+  --ombre-flottante: 0 8px 24px rgb(23 23 26 / 0.12), 0 1px 2px rgb(23 23 26 / 0.06);
+  --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--laterite);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papier: #121316;
+    --surface: #1a1c20;
+    --surface-2: #22252a;
+    --trait: #2a2d33;
+    --trait-fort: #3a3e45;
+    --encre: #edeae3;
+    --encre-2: #a6a29a;
+    --encre-3: #96928a;
+    --laterite: #e0724a;
+    --laterite-fonce: #ea8a66;
+    --laterite-voile: #3a231a;
+    --sur-laterite: #17171a;
+    --nuit: #0d0e10;
+    --nuit-2: #1a1c20;
+    --gain: #4fb383;
+    --gain-voile: #16291f;
+    --perte: #ef6b61;
+    --perte-voile: #331715;
+    --ocre: #d9a040;
+    --ocre-voile: #2e2414;
+    --acier: #7aa6c8;
+    --acier-voile: #17232d;
+    --reserve: #c27ea0;
+    --etape-achete: #93a0ae;
+    --etape-transport-usa: #7ea5c3;
+    --etape-en-mer: #5fb0ba;
+    --etape-au-port: #c2ae7c;
+    --etape-convoi: #d39e55;
+    --etape-douane: #e08a5d;
+    --etape-atelier: #c9876a;
+    --etape-parc: #e0724a;
+    color-scheme: dark;
   }
 }
 
+:root[data-theme="dark"] {
+  --papier: #121316;
+  --surface: #1a1c20;
+  --surface-2: #22252a;
+  --trait: #2a2d33;
+  --trait-fort: #3a3e45;
+  --encre: #edeae3;
+  --encre-2: #a6a29a;
+  --encre-3: #96928a;
+  --laterite: #e0724a;
+  --laterite-fonce: #ea8a66;
+  --laterite-voile: #3a231a;
+  --sur-laterite: #17171a;
+  --nuit: #0d0e10;
+  --nuit-2: #1a1c20;
+  --gain: #4fb383;
+  --gain-voile: #16291f;
+  --perte: #ef6b61;
+  --perte-voile: #331715;
+  --ocre: #d9a040;
+  --ocre-voile: #2e2414;
+  --acier: #7aa6c8;
+  --acier-voile: #17232d;
+  --reserve: #c27ea0;
+  --etape-achete: #93a0ae;
+  --etape-transport-usa: #7ea5c3;
+  --etape-en-mer: #5fb0ba;
+  --etape-au-port: #c2ae7c;
+  --etape-convoi: #d39e55;
+  --etape-douane: #e08a5d;
+  --etape-atelier: #c9876a;
+  --etape-parc: #e0724a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-papier: var(--papier);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-trait: var(--trait);
+  --color-trait-fort: var(--trait-fort);
+  --color-encre: var(--encre);
+  --color-encre-2: var(--encre-2);
+  --color-encre-3: var(--encre-3);
+  --color-laterite: var(--laterite);
+  --color-laterite-fonce: var(--laterite-fonce);
+  --color-laterite-voile: var(--laterite-voile);
+  --color-sur-laterite: var(--sur-laterite);
+  --color-nuit: var(--nuit);
+  --color-nuit-2: var(--nuit-2);
+  --color-sur-nuit: var(--sur-nuit);
+  --color-sur-nuit-2: var(--sur-nuit-2);
+  --color-gain: var(--gain);
+  --color-gain-voile: var(--gain-voile);
+  --color-perte: var(--perte);
+  --color-perte-voile: var(--perte-voile);
+  --color-ocre: var(--ocre);
+  --color-ocre-voile: var(--ocre-voile);
+  --color-acier: var(--acier);
+  --color-acier-voile: var(--acier-voile);
+  --color-reserve: var(--reserve);
+
+  --font-sans: var(--police-texte), ui-sans-serif, system-ui, sans-serif;
+  --font-etiquette: var(--police-etiquette), "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-mono: var(--police-code), ui-monospace, "SFMono-Regular", monospace;
+
+  --radius-controle: 6px;
+  --radius-carte: 10px;
+  --radius-feuille: 16px;
+
+  --shadow-flottante: var(--ombre-flottante);
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────────────── */
 @layer base {
-  * {
-    @apply border-border;
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
-    @apply bg-background text-foreground text-base;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--papier);
+    color: var(--encre);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.45;
+    font-feature-settings: "kern", "liga";
+    -webkit-font-smoothing: antialiased;
   }
+  @media (min-width: 1024px) {
+    body { font-size: 14px; }
+  }
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--focus);
+    border-radius: var(--radius-controle);
+  }
+  ::selection {
+    background: var(--laterite-voile);
+    color: var(--encre);
+  }
+  input, textarea, select, button {
+    font: inherit;
+    color: inherit;
+  }
+  button:not(:disabled), [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
+@utility etiquette {
+  font-family: var(--font-etiquette);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+@utility zone-sure-bas {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@utility zone-sure-haut {
+  padding-top: env(safe-area-inset-top);
+}
+@utility sans-barre {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+@utility chiffres {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  body { background: #fff; }
+  .ne-pas-imprimer { display: none !important; }
 }
