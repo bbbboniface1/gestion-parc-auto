@@ -40,23 +40,23 @@ export default function PageParametres() {
       <EnTetePage titre="Paramètres" sousTitre={data?.organisation.nom} />
 
       {configurer && (
-        <section aria-labelledby="titre-preparation" className="mb-6 border-t-2 border-encre pt-3">
+        <section aria-labelledby="titre-preparation" className="mb-6 rounded-carte border border-trait bg-surface p-4 lg:p-5">
           {!p ? (
             <Squelette className="h-24" />
           ) : (
             <>
               <div className="flex items-baseline justify-between gap-3">
-                <h2 id="titre-preparation" className="text-titre font-semibold">Vos factures sont complètes à</h2>
-                <span className="chiffres text-titre font-semibold">{Math.round((faits / controles.length) * 100)} %</span>
+                <h2 id="titre-preparation" className="text-[17px] font-semibold tracking-tight">Vos factures sont prêtes à</h2>
+                <span className="chiffres text-[28px] font-semibold">{Math.round((faits / controles.length) * 100)} %</span>
               </div>
               <div className="mt-3 flex h-2 gap-1" aria-hidden>
-                {controles.map((c, i) => <span key={i} className={cn("flex-1 rounded-controle", c.ok ? "bg-gain" : "bg-surface-2")} />)}
+                {controles.map((c, i) => <span key={i} className={cn("flex-1 rounded-sm", c.ok ? "bg-gain" : "bg-surface-2")} />)}
               </div>
               {faits < controles.length ? (
                 <ul className="mt-4 grid gap-x-6 sm:grid-cols-2">
                   {controles.map((c) => (
                     <li key={c.libelle}>
-                      <Link href={`/parametres/${c.section}/`} className="flex items-center gap-2.5 border-b border-trait py-2 text-corps hover:bg-surface-2">
+                      <Link href={`/parametres/${c.section}/`} className="flex items-center gap-2.5 border-b border-trait py-2 text-[14px] hover:bg-surface-2/50">
                         {c.ok ? <CheckCircle2 className="size-4 shrink-0 text-gain" aria-hidden /> : <Circle className="size-4 shrink-0 text-encre-3" aria-hidden />}
                         <span className={cn("flex-1", c.ok ? "text-encre-3" : "text-encre")}>{c.libelle}</span>
                         <span className="sr-only">{c.ok ? "fait" : "à compléter"}</span>
@@ -65,21 +65,21 @@ export default function PageParametres() {
                   ))}
                 </ul>
               ) : (
-                <p className="mt-3 text-corps text-encre-2">Identité légale, cachet, signature et mentions : tout y est.</p>
+                <p className="mt-3 text-[14px] text-encre-2">Identité légale, cachet, signature et mentions : tout y est.</p>
               )}
             </>
           )}
         </section>
       )}
 
-      <ul className="border-t-2 border-encre lg:hidden">
+      <ul className="overflow-hidden rounded-carte border border-trait bg-surface lg:hidden">
         {sections.map((s) => (
           <li key={s.cle} className="border-b border-trait last:border-b-0">
-            <Link href={`/parametres/${s.cle}/`} className="flex items-center gap-3 py-3.5 active:bg-surface-2">
+            <Link href={`/parametres/${s.cle}/`} className="flex items-center gap-3 px-4 py-3.5 active:bg-surface-2">
               <s.icone className="size-5 shrink-0 text-encre-3" aria-hidden />
               <span className="min-w-0 flex-1">
-                <span className="block text-corps font-medium">{s.libelle}</span>
-                <span className="block truncate text-petit text-encre-3">{s.description}</span>
+                <span className="block text-[16px] font-medium">{s.libelle}</span>
+                <span className="block truncate text-[13px] text-encre-3">{s.description}</span>
               </span>
               <ChevronRight className="size-4 shrink-0 text-encre-3" aria-hidden />
             </Link>
@@ -89,11 +89,11 @@ export default function PageParametres() {
 
       <div className="hidden gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3">
         {sections.map((s) => (
-          <Link key={s.cle} href={`/parametres/${s.cle}/`} className="flex gap-3 border-t-2 border-encre pt-3 hover:bg-surface-2">
-            <s.icone className="mt-0.5 size-5 shrink-0 text-lien" aria-hidden />
+          <Link key={s.cle} href={`/parametres/${s.cle}/`} className="flex gap-3 rounded-carte border border-trait bg-surface p-4 hover:border-trait-fort">
+            <s.icone className="mt-0.5 size-5 shrink-0 text-laterite" aria-hidden />
             <span>
               <span className="block font-semibold">{s.libelle}</span>
-              <span className="mt-0.5 block text-petit text-encre-3">{s.description}</span>
+              <span className="mt-0.5 block text-[13px] text-encre-3">{s.description}</span>
             </span>
           </Link>
         ))}

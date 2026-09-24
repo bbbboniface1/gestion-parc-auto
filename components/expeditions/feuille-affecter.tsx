@@ -37,11 +37,11 @@ export function FeuilleAffecter({ ouverte, onFermer, expeditionId, actuels }: {
           return (
             <li key={v.id}>
               <label className="flex items-center gap-3 border-b border-trait py-2.5 last:border-b-0">
-                <input type="checkbox" checked={cochee} className="size-5 accent-[var(--encre)]"
+                <input type="checkbox" checked={cochee} className="size-5 accent-[var(--laterite)]"
                   onChange={() => setSelection((s) => { const n = new Set(s); if (n.has(v.id)) n.delete(v.id); else n.add(v.id); return n; })} />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-medium">{v.libelle}</span>
-                  <span className="block truncate font-mono text-petit text-encre-3">{v.reference}{v.vin ? ` · ${finDeVin(v.vin)}` : ""}</span>
+                  <span className="block truncate font-mono text-[12px] text-encre-3">{v.reference}{v.vin ? ` · ${finDeVin(v.vin)}` : ""}</span>
                 </span>
                 <EtiquetteEtape etape={v.etape} compacte />
               </label>

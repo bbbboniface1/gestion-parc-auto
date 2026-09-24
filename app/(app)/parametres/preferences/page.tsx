@@ -40,7 +40,7 @@ export default function PagePreferences() {
   return (
     <>
       <EnTetePage titre="Préférences" sousTitre="Ces réglages ne concernent que cet appareil." />
-      <div className="border-t-2 border-encre pt-4">
+      <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
         <Groupe titre="Apparence" description="Le thème sombre repose les yeux le soir et économise la batterie des écrans OLED.">
           <Choix libelle="Thème" colonnes={3} valeur={theme} onChange={(v) => v && appliquerTheme(v)}
             options={[{ valeur: "systeme", libelle: "Automatique" }, { valeur: "light", libelle: "Clair" }, { valeur: "dark", libelle: "Sombre" }]} />

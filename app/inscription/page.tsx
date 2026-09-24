@@ -38,19 +38,19 @@ export default function PageInscription() {
     return (
       <CadreAccueil>
         <MailCheck className="size-10 text-gain" aria-hidden />
-        <h1 className="mt-4 text-titre font-semibold tracking-tight">Vérifiez votre boîte e-mail</h1>
+        <h1 className="mt-4 text-[26px] font-semibold tracking-tight">Vérifiez votre boîte e-mail</h1>
         <p className="mt-2 text-encre-2">
           Un lien de confirmation a été envoyé à <strong className="text-encre">{email}</strong>. Ouvrez-le pour activer votre compte,
           puis créez votre entreprise.
         </p>
-        <Link href="/connexion/" className="mt-6 inline-block font-medium text-lien underline-offset-4 hover:underline">Retour à la connexion</Link>
+        <Link href="/connexion/" className="mt-6 inline-block font-medium text-laterite underline-offset-4 hover:underline">Retour à la connexion</Link>
       </CadreAccueil>
     );
   }
 
   return (
     <CadreAccueil>
-      <h1 className="text-titre font-semibold tracking-tight">Créer un compte</h1>
+      <h1 className="text-[26px] font-semibold tracking-tight">Créer un compte</h1>
       <p className="mt-1 text-encre-2">Vous créerez ensuite votre entreprise, ou rejoindrez celle qui vous invite.</p>
       <form onSubmit={creer} className="mt-6 flex flex-col gap-4" noValidate>
         <Champ libelle="Adresse e-mail" type="email" autoComplete="email" inputMode="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -64,12 +64,12 @@ export default function PageInscription() {
           aide="10 caractères au moins."
           erreur={trop_court ? "10 caractères au moins." : null}
         />
-        {erreur && <p role="alert" className="border-l-[3px] border-perte bg-perte-voile px-3 py-2 text-corps text-perte">{erreur}</p>}
+        {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte">{erreur}</p>}
         <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email || motDePasse.length < 10}>
           Créer mon compte
         </Bouton>
-        <p className="text-corps text-encre-2">
-          Déjà inscrit ? <Link href="/connexion/" className="font-medium text-lien underline-offset-4 hover:underline">Se connecter</Link>
+        <p className="text-[14px] text-encre-2">
+          Déjà inscrit ? <Link href="/connexion/" className="font-medium text-laterite underline-offset-4 hover:underline">Se connecter</Link>
         </p>
       </form>
     </CadreAccueil>

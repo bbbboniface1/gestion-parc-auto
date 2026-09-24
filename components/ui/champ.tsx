@@ -3,9 +3,9 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 const BASE =
-  "w-full rounded-t-controle border-0 border-b-2 bg-surface-2 text-encre placeholder:text-encre-3 transition-colors " +
-  "focus:border-encre focus:bg-surface focus:outline-none focus:shadow-none " +
-  "disabled:bg-surface-2 disabled:text-encre-3 disabled:opacity-70";
+  "w-full rounded-controle border bg-surface text-encre placeholder:text-encre-3 transition-colors " +
+  "focus:outline-none focus:border-laterite focus:shadow-[0_0_0_3px_var(--laterite-voile)] " +
+  "disabled:bg-surface-2 disabled:text-encre-3";
 
 export function classesChamp(erreur?: boolean) {
   return cn(BASE, erreur ? "border-perte" : "border-trait-fort");
@@ -27,14 +27,14 @@ export function Enveloppe({ libelle, aide, erreur, facultatif, className, childr
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       {libelle && (
-        <label htmlFor={id} className="text-petit font-medium text-encre-2">
+        <label htmlFor={id} className="text-[13px] font-medium text-encre-2">
           {libelle}
           {facultatif && <span className="ml-1 font-normal text-encre-3">facultatif</span>}
         </label>
       )}
       {children({ id, "aria-invalid": erreur ? true : undefined, "aria-describedby": aide || erreur ? idAide : undefined })}
       {(erreur || aide) && (
-        <p id={idAide} className={cn("text-petit", erreur ? "text-perte" : "text-encre-3")} role={erreur ? "alert" : undefined}>
+        <p id={idAide} className={cn("text-[13px]", erreur ? "text-perte" : "text-encre-3")} role={erreur ? "alert" : undefined}>
           {erreur || aide}
         </p>
       )}
@@ -64,7 +64,7 @@ export const Champ = forwardRef<HTMLInputElement, ProprietesChamp>(function Cham
             ref={ref}
             {...a11y}
             {...reste}
-            className={cn(classesChamp(!!erreur), "h-11 px-3 text-corps lg:h-10 lg:text-corps", mono && "font-mono tracking-wide", suffixe ? "pr-16" : undefined, className)}
+            className={cn(classesChamp(!!erreur), "h-11 px-3 text-[15px] lg:h-10 lg:text-sm", mono && "font-mono tracking-wide", suffixe ? "pr-16" : undefined, className)}
           />
           {suffixe && <div className="absolute inset-y-0 right-0 flex items-center pr-1">{suffixe}</div>}
         </div>
@@ -82,7 +82,7 @@ export const ZoneTexte = forwardRef<HTMLTextAreaElement, ProprietesZone>(functio
   return (
     <Enveloppe libelle={libelle} aide={aide} erreur={erreur} facultatif={facultatif}>
       {(a11y) => (
-        <textarea ref={ref} rows={rows} {...a11y} {...reste} className={cn(classesChamp(!!erreur), "px-3 py-2.5 text-corps", className)} />
+        <textarea ref={ref} rows={rows} {...a11y} {...reste} className={cn(classesChamp(!!erreur), "px-3 py-2.5 text-[15px] lg:text-sm", className)} />
       )}
     </Enveloppe>
   );
@@ -106,7 +106,7 @@ export const Selection = forwardRef<HTMLSelectElement, ProprietesSelection>(func
     <Enveloppe libelle={libelle} aide={aide} erreur={erreur} facultatif={facultatif}>
       {(a11y) => (
         <div className="relative">
-          <select ref={ref} {...a11y} {...reste} className={cn(classesChamp(!!erreur), "h-11 appearance-none pr-10 pl-3 text-corps lg:h-10 lg:text-corps", className)}>
+          <select ref={ref} {...a11y} {...reste} className={cn(classesChamp(!!erreur), "h-11 appearance-none pr-10 pl-3 text-[15px] lg:h-10 lg:text-sm", className)}>
             {vide !== undefined && <option value="">{vide}</option>}
             {options.map((o) => (
               <option key={o.valeur} value={o.valeur}>{o.libelle}</option>
@@ -126,8 +126,8 @@ export function Interrupteur({
   return (
     <div className="flex items-start justify-between gap-4 py-1">
       <div className="min-w-0">
-        <label htmlFor={id} className="block text-corps font-medium text-encre lg:text-corps">{libelle}</label>
-        {description && <p className="mt-0.5 text-petit text-encre-3">{description}</p>}
+        <label htmlFor={id} className="block text-[15px] font-medium text-encre lg:text-sm">{libelle}</label>
+        {description && <p className="mt-0.5 text-[13px] text-encre-3">{description}</p>}
       </div>
       <button
         id={id}
@@ -137,11 +137,11 @@ export function Interrupteur({
         disabled={disabled}
         onClick={() => onChange(!actif)}
         className={cn(
-          "relative mt-0.5 h-7 w-12 shrink-0 rounded-full transition-colors disabled:opacity-50",
-          actif ? "bg-encre" : "bg-trait-fort",
+          "relative mt-0.5 h-7 w-12 shrink-0 rounded-full border transition-colors disabled:opacity-50",
+          actif ? "border-laterite bg-laterite" : "border-trait-fort bg-surface-2",
         )}
       >
-        <span className={cn("absolute top-[3px] size-[22px] rounded-full bg-surface transition-transform", actif ? "translate-x-[23px]" : "translate-x-[3px]")} />
+        <span className={cn("absolute top-0.5 size-[22px] rounded-full bg-surface shadow-sm transition-transform", actif ? "translate-x-[22px]" : "translate-x-0.5")} />
       </button>
     </div>
   );
@@ -167,9 +167,9 @@ export function ChampNombre({ libelle, aide, erreur, valeur, onChange, unite, mi
               onChange(brut === "" ? null : Number(decimales ? brut : brut.split(".")[0]));
             }}
             onBlur={() => { if (valeur !== null) onChange(borner(Number(valeur.toFixed(decimales)))); }}
-            className={cn(classesChamp(!!erreur), "chiffres h-11 px-3 text-corps lg:h-10 lg:text-corps", unite ? "pr-16" : undefined)}
+            className={cn(classesChamp(!!erreur), "chiffres h-11 px-3 text-[15px] lg:h-10 lg:text-sm", unite ? "pr-16" : undefined)}
           />
-          {unite && <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-petit text-encre-3">{unite}</span>}
+          {unite && <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[13px] text-encre-3">{unite}</span>}
         </div>
       )}
     </Enveloppe>

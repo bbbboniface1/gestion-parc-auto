@@ -53,11 +53,11 @@ export function NouvelleProforma({ ouverte, onFermer }: { ouverte: boolean; onFe
       </>}>
       <div className="flex flex-col gap-5">
         <div>
-          <p className="mb-1.5 text-petit font-medium text-encre-2">Véhicule</p>
+          <p className="mb-1.5 text-[13px] font-medium text-encre-2">Véhicule</p>
           <ChoixVehicule valeur={vehicule} onChoix={setVehicule} />
         </div>
         <div>
-          <p className="mb-1.5 text-petit font-medium text-encre-2">Client</p>
+          <p className="mb-1.5 text-[13px] font-medium text-encre-2">Client</p>
           <ChoixClient valeur={client} onChoix={setClient} />
         </div>
         <ChampMontant libelle="Prix proposé" valeur={prix} onChange={setPrix} devise="XOF" />

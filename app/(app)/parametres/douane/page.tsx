@@ -45,8 +45,8 @@ export default function PageDouane() {
     <>
       <EnTetePage titre="Frais et douane"
         sousTitre="Ces valeurs servent uniquement aux estimations : le coût réel est toujours le frais que vous saisissez."
-        actions={<Link href="/outils/simulateur/" className="inline-flex h-10 items-center gap-2 rounded-controle bg-surface-2 px-4 font-medium hover:bg-trait"><Calculator className="size-4" aria-hidden /> Ouvrir le simulateur</Link>} />
-      <div className="border-t-2 border-encre pt-4">
+        actions={<Link href="/outils/simulateur/" className="inline-flex h-10 items-center gap-2 rounded-controle border border-trait-fort bg-surface px-4 text-sm font-medium hover:bg-surface-2"><Calculator className="size-4" aria-hidden /> Ouvrir le simulateur</Link>} />
+      <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
         <Groupe titre="Barème de dédouanement" description="Les taux publiés pour le Mali sont tous indiqués comme approximatifs : faites valider ces valeurs par votre transitaire.">
           <div className="grid grid-cols-2 gap-3">
             <ChampNombre libelle="Droit de douane" valeur={b.droit_douane_pct ?? 0} onChange={(v) => majB("droit_douane_pct", v)} decimales={2} unite="% CAF" />
@@ -57,8 +57,8 @@ export default function PageDouane() {
           <ChampNombre libelle="Frais fixes (timbres, fiches, visite)" valeur={b.frais_fixes_xof ?? 0} onChange={(v) => majB("frais_fixes_xof", v)} unite="FCFA" />
           <Champ libelle="Mention affichée avec les estimations" value={b.mention ?? ""} onChange={(e) => majB("mention", e.target.value)} />
           <div className="rounded-controle bg-surface-2 px-4 py-3">
-            <p className="etiquette text-petit text-encre-3">Exemple pour une valeur CAF de {formatNombre(EXEMPLE_CAF)} FCFA</p>
-            <Registre className="mt-1 text-corps" lignes={[
+            <p className="etiquette text-[12px] text-encre-3">Exemple pour une valeur CAF de {formatNombre(EXEMPLE_CAF)} FCFA</p>
+            <Registre className="mt-1 text-[14px]" lignes={[
               { libelle: "Droits et prélèvements", valeur: formatNombre(Math.round(droits)) },
               { libelle: "TVA sur CAF + droits", valeur: formatNombre(Math.round(tva)) },
               { libelle: "Frais fixes", valeur: formatNombre(b.frais_fixes_xof ?? 0) },

@@ -42,18 +42,18 @@ export default function PageEquipe() {
 
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending || !data ? <SqueletteListe lignes={3} /> : (
         <>
-          <ul className="border-t-2 border-encre">
+          <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
             {data.membres.map((m) => (
-              <li key={m.user_id} className={cn("flex flex-col gap-3 border-b border-trait py-3 last:border-b-0 sm:flex-row sm:items-center", !m.actif && "opacity-60")}>
+              <li key={m.user_id} className={cn("flex flex-col gap-3 border-b border-trait px-4 py-3 last:border-b-0 sm:flex-row sm:items-center", !m.actif && "opacity-60")}>
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold">{m.nom_affiche || m.email}{m.moi && <span className="ml-2 text-petit font-normal text-encre-3">vous</span>}</p>
-                  <p className="truncate text-petit text-encre-3">{[m.email, m.telephone].filter(Boolean).join(" · ")}{!m.actif ? " · désactivé" : ""}</p>
+                  <p className="font-semibold">{m.nom_affiche || m.email}{m.moi && <span className="ml-2 text-[13px] font-normal text-encre-3">vous</span>}</p>
+                  <p className="truncate text-[13px] text-encre-3">{[m.email, m.telephone].filter(Boolean).join(" · ")}{!m.actif ? " · désactivé" : ""}</p>
                 </div>
                 {proprietaire && !m.moi && m.role !== "proprietaire" ? (
                   <div className="flex items-center gap-2">
                     <label className="sr-only" htmlFor={`role-${m.user_id}`}>Rôle de {m.nom_affiche || m.email}</label>
                     <select id={`role-${m.user_id}`} value={m.role} onChange={(e) => modifier.executer({ p_org: org.id, p_user: m.user_id, p_role: e.target.value })}
-                      className="h-10 rounded-t-controle border-0 border-b-2 border-trait-fort bg-surface-2 px-2 text-corps">
+                      className="h-10 rounded-controle border border-trait-fort bg-surface px-2 text-sm">
                       {ROLES_INVITABLES.map((r) => <option key={r} value={r}>{ROLES[r].libelle}</option>)}
                     </select>
                     <Bouton taille="sm" variante={m.actif ? "danger" : "secondaire"} onClick={() => modifier.executer({ p_org: org.id, p_user: m.user_id, p_actif: !m.actif })}>
@@ -61,7 +61,7 @@ export default function PageEquipe() {
                     </Bouton>
                   </div>
                 ) : (
-                  <span className="etiquette text-petit text-encre-2">{ROLES[m.role].libelle}</span>
+                  <span className="etiquette text-[12px] text-encre-2">{ROLES[m.role].libelle}</span>
                 )}
               </li>
             ))}
@@ -69,12 +69,12 @@ export default function PageEquipe() {
 
           {proprietaire && data.invitations.length > 0 && (
             <section className="mt-6">
-              <h2 className="etiquette mb-2 text-petit text-encre-3">Invitations en attente</h2>
-              <ul className="border-t-2 border-encre">
+              <h2 className="etiquette mb-2 text-[12px] text-encre-3">Invitations en attente</h2>
+              <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
                 {data.invitations.map((i) => (
-                  <li key={i.id} className="flex items-center gap-3 border-b border-trait py-3 last:border-b-0">
-                    <Code className="text-corps">{i.code}</Code>
-                    <span className="flex-1 text-corps text-encre-2">{ROLES[i.role].libelle} · expire le {formatDate(i.expire_le)}</span>
+                  <li key={i.id} className="flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0">
+                    <Code className="text-[15px]">{i.code}</Code>
+                    <span className="flex-1 text-[14px] text-encre-2">{ROLES[i.role].libelle} · expire le {formatDate(i.expire_le)}</span>
                     <a href={lienWhatsApp(null, message(i))} target="_blank" rel="noopener" aria-label="Envoyer par WhatsApp" className="inline-flex size-10 items-center justify-center rounded-controle text-encre-2 hover:bg-surface-2"><MessageCircle className="size-4" /></a>
                     <button type="button" aria-label={`Annuler l'invitation ${i.code}`} onClick={() => annulerInvitation.executer({ p_org: org.id, p_id: i.id })}
                       className="inline-flex size-10 items-center justify-center rounded-controle text-encre-3 hover:bg-surface-2 hover:text-perte"><X className="size-4" /></button>
@@ -84,11 +84,11 @@ export default function PageEquipe() {
             </section>
           )}
 
-          <section className="mt-6 border-t-2 border-encre pt-3">
-            <h2 className="etiquette mb-3 text-petit text-encre-3">Ce que chaque rôle peut faire</h2>
+          <section className="mt-6 rounded-carte border border-trait bg-surface p-4 lg:p-5">
+            <h2 className="etiquette mb-3 text-[12px] text-encre-3">Ce que chaque rôle peut faire</h2>
             <dl className="grid gap-3 sm:grid-cols-2">
               {(Object.keys(ROLES) as Role[]).map((r) => (
-                <div key={r}><dt className="font-semibold">{ROLES[r].libelle}</dt><dd className="text-corps text-encre-2">{ROLES[r].description}</dd></div>
+                <div key={r}><dt className="font-semibold">{ROLES[r].libelle}</dt><dd className="text-[14px] text-encre-2">{ROLES[r].description}</dd></div>
               ))}
             </dl>
           </section>
@@ -100,7 +100,7 @@ export default function PageEquipe() {
         pied={nouvelle ? (
           <>
             <Bouton icone={<Copy className="size-4" />} onClick={() => { void navigator.clipboard?.writeText(message(nouvelle)); toast.success("Message copié"); }}>Copier</Bouton>
-            <a href={lienWhatsApp(null, message(nouvelle))} target="_blank" rel="noopener" className="inline-flex h-11 items-center justify-center gap-2 rounded-controle bg-signal px-4 text-corps font-medium text-sur-signal lg:h-10 lg:text-corps">
+            <a href={lienWhatsApp(null, message(nouvelle))} target="_blank" rel="noopener" className="inline-flex h-11 items-center justify-center gap-2 rounded-controle bg-laterite px-4 text-[15px] font-medium text-sur-laterite lg:h-10 lg:text-sm">
               <MessageCircle className="size-4" aria-hidden /> WhatsApp
             </a>
           </>
@@ -112,14 +112,14 @@ export default function PageEquipe() {
         )}>
         {nouvelle ? (
           <div className="flex flex-col items-center gap-2 py-4">
-            <Code className="text-chiffre tracking-[0.25em]">{nouvelle.code}</Code>
-            <p className="text-corps text-encre-2">Rôle : {ROLES[nouvelle.role].libelle}</p>
+            <Code className="text-[34px] tracking-[0.25em]">{nouvelle.code}</Code>
+            <p className="text-[14px] text-encre-2">Rôle : {ROLES[nouvelle.role].libelle}</p>
           </div>
         ) : (
           <>
             <Selection libelle="Rôle" value={role} onChange={(e) => setRole(e.target.value as Role)}
               options={ROLES_INVITABLES.map((r) => ({ valeur: r, libelle: ROLES[r].libelle }))} />
-            <p className="mt-2 text-corps text-encre-2">{ROLES[role].description}</p>
+            <p className="mt-2 text-[14px] text-encre-2">{ROLES[role].description}</p>
           </>
         )}
       </Feuille>

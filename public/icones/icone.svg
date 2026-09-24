@@ -1,11 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#0F1113"/>
-  <rect x="76.80000000000001" y="245.248" width="38.528" height="21.503999999999998" fill="#ECEEF0"/>
-  <rect x="122.49600000000001" y="245.248" width="38.528" height="21.503999999999998" fill="#ECEEF0"/>
-  <rect x="168.192" y="245.248" width="38.528" height="21.503999999999998" fill="#ECEEF0"/>
-  <rect x="213.888" y="216.576" width="38.528" height="78.848" fill="#F2C200" stroke="#ECEEF0" stroke-width="5.0176"/>
-  <rect x="259.584" y="245.248" width="38.528" height="21.503999999999998" fill="#3A3F46"/>
-  <rect x="305.28" y="245.248" width="38.528" height="21.503999999999998" fill="#3A3F46"/>
-  <rect x="350.976" y="245.248" width="38.528" height="21.503999999999998" fill="#3A3F46"/>
-  <rect x="396.67199999999997" y="245.248" width="38.528" height="21.503999999999998" fill="#3A3F46"/>
+  <rect width="512" height="512" rx="96" fill="#B5461E"/>
+  <mask id="m">
+    <rect width="512" height="512" fill="white"/>
+    <circle cx="313.344" cy="144.89600000000002" r="26.88" fill="black"/>
+    <circle cx="313.344" cy="367.10400000000004" r="26.88" fill="black"/>
+  </mask>
+  <rect x="76.80000000000001" y="144.89600000000002" width="358.4" height="222.208" rx="21.503999999999998" fill="#F5F3EE" mask="url(#m)"/>
+  <rect x="309.0432" y="171.776" width="8.6016" height="18.716444444444445" fill="#B5461E"/>
+  <rect x="309.0432" y="209.2088888888889" width="8.6016" height="18.716444444444445" fill="#B5461E"/>
+  <rect x="309.0432" y="246.6417777777778" width="8.6016" height="18.716444444444445" fill="#B5461E"/>
+  <rect x="309.0432" y="284.07466666666664" width="8.6016" height="18.716444444444445" fill="#B5461E"/>
+  <rect x="309.0432" y="321.50755555555554" width="8.6016" height="18.716444444444445" fill="#B5461E"/>
+  <line x1="126.97600000000001" y1="256" x2="263.168" y2="256" stroke="#1B1D22" stroke-width="7.884799999999999" stroke-linecap="round"/>
+  <circle cx="126.97600000000001" cy="256" r="12.544" fill="#1B1D22"/>
+  <circle cx="195.072" cy="256" r="12.544" fill="#F5F3EE" stroke="#1B1D22" stroke-width="7.884799999999999"/>
+  <circle cx="263.168" cy="256" r="15.68" fill="#B5461E"/>
+  <rect x="338.432" y="211.5584" width="71.67999999999999" height="22.2208" rx="6.666239999999999" fill="#1B1D22" opacity="0.85"/>
+  <rect x="338.432" y="256" width="50.176" height="22.2208" rx="6.666239999999999" fill="#1B1D22" opacity="0.35"/>
 </svg>

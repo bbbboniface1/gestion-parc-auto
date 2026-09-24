@@ -12,7 +12,7 @@ export default function PageNouveauVehicule() {
   const org = useOrg();
   return (
     <>
-      <Link href="/parc/" className="mb-2 inline-flex h-10 items-center gap-1.5 text-corps text-encre-2 hover:text-encre">
+      <Link href="/parc/" className="mb-2 inline-flex h-10 items-center gap-1.5 text-[14px] text-encre-2 hover:text-encre">
         <ArrowLeft className="size-4" aria-hidden /> Parc
       </Link>
       <EnTetePage titre="Nouveau véhicule" />

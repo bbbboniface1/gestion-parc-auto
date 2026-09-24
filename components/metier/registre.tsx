@@ -17,7 +17,7 @@ export function Registre({ lignes, className }: {
           <span aria-hidden className="mb-1 flex-1 border-b border-dotted border-trait-fort" />
           <dd className="shrink-0 text-right">
             <span className={cn("chiffres", l.fort ? "font-semibold" : "font-medium")}>{l.valeur}</span>
-            {l.complement && <span className="ml-1.5 text-petit text-encre-3">{l.complement}</span>}
+            {l.complement && <span className="ml-1.5 text-[13px] text-encre-3">{l.complement}</span>}
           </dd>
         </div>
       ))}

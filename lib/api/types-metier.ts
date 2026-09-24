@@ -21,7 +21,6 @@ export interface VenteListe {
   vehicule_id: string;
   vehicule_reference: string;
   vehicule_libelle: string;
-  vehicule_photo: string | null;
   vehicule_etape: string;
   montant_ttc: number;
   montant_ht: number;

@@ -45,10 +45,10 @@ function depuisVehicule(v?: Vehicule): Brouillon {
 
 function Section({ titre, description, children }: { titre: string; description?: string; children: React.ReactNode }) {
   return (
-    <section className="border-t-2 border-encre pt-3 lg:grid lg:grid-cols-[220px_1fr] lg:gap-8 lg:p-6">
+    <section className="rounded-carte border border-trait bg-surface p-4 lg:grid lg:grid-cols-[220px_1fr] lg:gap-8 lg:p-6">
       <div className="mb-4 lg:mb-0">
-        <h2 className="text-titre font-semibold tracking-tight">{titre}</h2>
-        {description && <p className="mt-1 text-petit text-encre-3">{description}</p>}
+        <h2 className="text-[17px] font-semibold tracking-tight">{titre}</h2>
+        {description && <p className="mt-1 text-[13px] text-encre-3">{description}</p>}
       </div>
       <div className="flex flex-col gap-4">{children}</div>
     </section>
@@ -69,10 +69,6 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
   const [unite, setUnite] = useState<"km" | "mi">("km");
   const [decodage, setDecodage] = useState<"inactif" | "en_cours" | "trouve" | "introuvable">("inactif");
   const dernierDecode = useRef<string>(vehicule?.vin ?? "");
-  // Les champs obligatoires ne se plaignent qu'après avoir été quittés, ou après une tentative d'envoi.
-  const [tentative, setTentative] = useState(false);
-  const [vus, setVus] = useState<ReadonlySet<string>>(new Set());
-  const vu = (k: string) => () => setVus((x) => (x.has(k) ? x : new Set(x).add(k)));
   const maj = <K extends keyof Brouillon>(k: K, v: Brouillon[K]) => setB((x) => ({ ...x, [k]: v }));
 
   useEffect(() => {
@@ -129,10 +125,9 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
     plancher: b.prix_plancher_xof && b.prix_affiche_xof && b.prix_plancher_xof > b.prix_affiche_xof ? "Le plancher dépasse le prix affiché." : null,
   };
   const valide = !Object.values(erreurs).some(Boolean);
-  const affichee = (k: "marque" | "modele") => (tentative || vus.has(k) ? erreurs[k] : null);
 
   function envoyer() {
-    if (!valide) { setTentative(true); toast.error("Vérifiez les champs signalés."); return; }
+    if (!valide) { toast.error("Vérifiez les champs signalés."); return; }
     const km = kilometrageSaisi === null ? null : Math.round(unite === "mi" ? kilometrageSaisi * 1.609344 : kilometrageSaisi);
     enregistrer.executer({
       p_org: org.id,
@@ -171,10 +166,10 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
             value={b.vin}
             onChange={(e) => maj("vin", e.target.value.toUpperCase())}
             erreur={erreurs.vin}
-            className="text-corps tracking-[0.12em] uppercase"
-            suffixe={<span className={cn("chiffres pr-2 font-mono text-petit", vin.length === 17 ? "text-encre-2" : "text-encre-3")}>{vin.length}/17</span>}
+            className="text-[16px] tracking-[0.12em] uppercase"
+            suffixe={<span className={cn("chiffres pr-2 font-mono text-[12px]", vin.length === 17 ? "text-encre-2" : "text-encre-3")}>{vin.length}/17</span>}
           />
-          <div className="mt-1.5 min-h-5 text-petit" aria-live="polite">
+          <div className="mt-1.5 min-h-5 text-[13px]" aria-live="polite">
             {verif.etat === "cle_incorrecte" && (
               <p className="flex items-center gap-1.5 text-ocre"><TriangleAlert className="size-4" aria-hidden /> Clé de contrôle incorrecte (attendu « {verif.attendue} » en 9e position) : vérifiez la saisie. Les VIN hors Amérique du Nord peuvent ne pas en avoir.</p>
             )}
@@ -184,8 +179,8 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Champ libelle="Marque" value={b.marque} onChange={(e) => maj("marque", e.target.value)} onBlur={vu("marque")} erreur={affichee("marque")} placeholder="Toyota" />
-          <Champ libelle="Modèle" value={b.modele} onChange={(e) => maj("modele", e.target.value)} onBlur={vu("modele")} erreur={affichee("modele")} placeholder="RAV4" />
+          <Champ libelle="Marque" value={b.marque} onChange={(e) => maj("marque", e.target.value)} erreur={erreurs.marque} placeholder="Toyota" />
+          <Champ libelle="Modèle" value={b.modele} onChange={(e) => maj("modele", e.target.value)} erreur={erreurs.modele} placeholder="RAV4" />
           <Champ libelle="Finition" facultatif value={b.finition} onChange={(e) => maj("finition", e.target.value)} placeholder="XLE" />
           <Champ libelle="Année" inputMode="numeric" maxLength={4} value={b.annee} onChange={(e) => maj("annee", e.target.value.replace(/\D/g, ""))} erreur={erreurs.annee} placeholder="2018" />
           <Champ libelle="Couleur" facultatif value={b.couleur} onChange={(e) => maj("couleur", e.target.value)} placeholder="Gris magnétique" />
@@ -203,10 +198,10 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
           onChange={(e) => maj("kilometrage", e.target.value.replace(/[^\d\s]/g, ""))}
           aide={unite === "mi" && kilometrageSaisi ? `Soit ${formatNombre(Math.round(kilometrageSaisi * 1.609344))} km.` : "Les compteurs américains sont en miles : choisissez l'unité lue sur le tableau de bord."}
           suffixe={
-            <div className="flex rounded-controle bg-surface-2 p-0.5" role="group" aria-label="Unité du compteur">
+            <div className="flex rounded-[4px] border border-trait p-0.5" role="group" aria-label="Unité du compteur">
               {(["km", "mi"] as const).map((u) => (
                 <button key={u} type="button" aria-pressed={unite === u} onClick={() => setUnite(u)}
-                  className={cn("h-8 rounded-controle px-2 font-mono text-petit", unite === u ? "bg-encre text-surface" : "text-encre-3")}>{u}</button>
+                  className={cn("h-8 rounded-[3px] px-2 font-mono text-[12px]", unite === u ? "bg-encre text-surface" : "text-encre-3")}>{u}</button>
               ))}
             </div>
           }
@@ -253,7 +248,7 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
           <ChampMontant libelle="Prix plancher" facultatif valeur={b.prix_plancher_xof} onChange={(v) => maj("prix_plancher_xof", v)} erreur={erreurs.plancher} />
         </div>
         {b.prix_achat && b.prix_affiche_xof && b.taux_achat ? (
-          <p className="text-petit text-encre-3">
+          <p className="text-[13px] text-encre-3">
             Achat seul : {formatFCFA(b.prix_achat * (b.devise_achat === "XOF" ? 1 : b.taux_achat))}. Le coût de revient complet se calcule avec les frais, sur la fiche.
           </p>
         ) : null}

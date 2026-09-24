@@ -40,15 +40,15 @@ export default function PageJournal() {
     <>
       <EnTetePage titre="Journal" sousTitre="Qui a fait quoi, et quand. Les 150 dernières opérations." />
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending ? <SqueletteListe /> : !data?.length ? <EtatVide titre="Rien à afficher" /> : (
-        <ul className="border-t-2 border-encre">
+        <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
           {data.map((l) => (
-            <li key={l.id} className="flex items-start gap-3 border-b border-trait py-3 last:border-b-0">
-              <span className="chiffres w-24 shrink-0 pt-0.5 text-petit text-encre-3">{formatDate(l.created_at)}</span>
+            <li key={l.id} className="flex items-start gap-3 border-b border-trait px-4 py-3 last:border-b-0">
+              <span className="chiffres w-24 shrink-0 pt-0.5 text-[13px] text-encre-3">{formatDate(l.created_at)}</span>
               <div className="min-w-0 flex-1">
                 <p className="font-medium">{ACTIONS[l.action] ?? l.action.replace(/_/g, " ")}</p>
-                <p className="truncate text-petit text-encre-3"><Code className="text-petit">{resume(l.details)}</Code></p>
+                <p className="truncate text-[13px] text-encre-3"><Code className="text-[12px]">{resume(l.details)}</Code></p>
               </div>
-              <span className="shrink-0 text-petit text-encre-2">{l.user_nom ?? "—"}</span>
+              <span className="shrink-0 text-[13px] text-encre-2">{l.user_nom ?? "—"}</span>
             </li>
           ))}
         </ul>

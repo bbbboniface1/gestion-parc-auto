@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Columns3, List, Plus, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import type { Vehicule } from "@/lib/api/types";
@@ -12,25 +12,15 @@ import { useOrdinateur } from "@/lib/ecran";
 import { cn } from "@/lib/cn";
 import { ETAPES, etape as defEtape, etapeSuivante, peut, type Etape } from "@/lib/domaine";
 import { aujourdhui, formatCourt } from "@/lib/format";
-import { finDeVin } from "@/lib/vin";
 import { EnTetePage } from "@/components/coque/coque";
-import { CarteColonne, LigneVehicule, StatutCommercial } from "@/components/metier/carte-vehicule";
-import { FiltreRoute } from "@/components/metier/filtre-route";
-import { PhotoVehicule } from "@/components/metier/photo-vehicule";
+import { CarteKanban, LigneVehicule } from "@/components/metier/carte-vehicule";
+import { Onglets } from "@/components/ui/onglets";
 import { Bouton } from "@/components/ui/bouton";
-import { ChampRecherche, FiltresTexte } from "@/components/ui/recherche";
 import { EtatErreur, EtatVide, SqueletteListe } from "@/components/ui/etats";
-import { Montant, Piste } from "@/components/ui/signature";
+import { EtiquetteEtape, Montant } from "@/components/ui/signature";
 
 type FiltreStatut = "tous" | "disponible" | "reserve" | "vendu";
-type Vue = "tableau" | "colonnes";
-
-const STATUTS: { valeur: FiltreStatut; libelle: string }[] = [
-  { valeur: "tous", libelle: "Tous" },
-  { valeur: "disponible", libelle: "Disponibles" },
-  { valeur: "reserve", libelle: "Réservés" },
-  { valeur: "vendu", libelle: "Vendus" },
-];
+type Vue = "kanban" | "liste";
 
 function Parc() {
   const org = useOrg();
@@ -42,7 +32,7 @@ function Parc() {
   const etapeParam = params.get("etape") as Etape | null;
   const [etapeActive, setEtapeActive] = useState<Etape | "toutes">(etapeParam && ETAPES.some((e) => e.code === etapeParam) ? etapeParam : "toutes");
   const [statut, setStatut] = useState<FiltreStatut>(params.get("vue") === "en_vente" ? "disponible" : "tous");
-  const [vue, setVue] = useState<Vue>(() => (typeof window !== "undefined" && localStorage.getItem("parc-auto:vue-parc") === "colonnes" ? "colonnes" : "tableau"));
+  const [vue, setVue] = useState<Vue>(() => (typeof window !== "undefined" && localStorage.getItem("parc-auto:vue-parc") === "liste" ? "liste" : "kanban"));
   const [q, setQ] = useState("");
   const [selection, setSelection] = useState<Set<string>>(new Set());
 
@@ -95,28 +85,33 @@ function Parc() {
     changerLot.executer({ p_org: org.id, p_ids: ids, p_etape: vers, p_date: aujourdhui() });
   }
 
-  const nbDisponibles = (data ?? []).filter((v) => v.statut_commercial === "disponible").length;
+  const statuts: { valeur: FiltreStatut; libelle: string }[] = [
+    { valeur: "tous", libelle: "Tous" },
+    { valeur: "disponible", libelle: "Disponibles" },
+    { valeur: "reserve", libelle: "Réservés" },
+    { valeur: "vendu", libelle: "Vendus" },
+  ];
 
   return (
     <>
       <EnTetePage
         titre="Parc"
-        sousTitre={data ? `${data.length} véhicule${data.length > 1 ? "s" : ""} · ${nbDisponibles} à vendre` : undefined}
+        sousTitre={data ? `${filtres.length} véhicule${filtres.length > 1 ? "s" : ""}${statut !== "tous" ? ` · ${statuts.find((s) => s.valeur === statut)?.libelle.toLowerCase()}` : ""}` : undefined}
         actions={
           <>
-            {ordinateur && data && data.length > 0 && (
-              <div className="flex items-center gap-4 pr-2" role="group" aria-label="Affichage">
-                {([["tableau", "Tableau"], ["colonnes", "Colonnes"]] as const).map(([valeur, libelle]) => (
+            {ordinateur && (
+              <div className="flex rounded-controle border border-trait-fort bg-surface p-0.5" role="group" aria-label="Affichage">
+                {([["kanban", "Tableau", Columns3], ["liste", "Liste", List]] as const).map(([valeur, libelle, Icone]) => (
                   <button key={valeur} type="button" aria-pressed={vue === valeur}
                     onClick={() => { setVue(valeur); localStorage.setItem("parc-auto:vue-parc", valeur); }}
-                    className={cn("h-10 border-b-2 text-corps", vue === valeur ? "border-encre font-semibold text-encre" : "border-transparent text-encre-3 hover:text-encre")}>
-                    {libelle}
+                    className={cn("inline-flex h-9 items-center gap-1.5 rounded-[5px] px-3 text-sm", vue === valeur ? "bg-surface-2 font-medium text-encre" : "text-encre-3 hover:text-encre")}>
+                    <Icone className="size-4" aria-hidden /> {libelle}
                   </button>
                 ))}
               </div>
             )}
-            {peutModifier && ordinateur && (
-              <Link href="/parc/nouveau/" className="inline-flex h-10 items-center gap-2 rounded-controle bg-signal px-4 text-corps font-semibold text-sur-signal hover:bg-signal-fonce">
+            {peutModifier && (
+              <Link href="/parc/nouveau/" className="inline-flex h-11 items-center gap-2 rounded-controle bg-laterite px-4 text-[15px] font-medium text-sur-laterite hover:bg-laterite-fonce lg:h-10 lg:text-sm">
                 <Plus className="size-4" aria-hidden /> Ajouter un véhicule
               </Link>
             )}
@@ -124,9 +119,26 @@ function Parc() {
         }
       />
 
-      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:gap-8">
-        <ChampRecherche valeur={q} onChange={setQ} libelle="Rechercher dans le parc" placeholder="Modèle, VIN, lot, conteneur, client" />
-        <FiltresTexte valeur={statut} onChange={setStatut} libelle="Statut commercial" options={STATUTS.map((x) => [x.valeur, x.libelle] as const)} />
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center">
+        <label className="relative flex-1 lg:max-w-sm">
+          <span className="sr-only">Rechercher dans le parc</span>
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Modèle, VIN, lot, conteneur, client…"
+            className="h-11 w-full rounded-controle border border-trait-fort bg-surface pr-9 pl-9 text-[15px] placeholder:text-encre-3 focus:border-laterite focus:outline-none lg:h-10 lg:text-sm" />
+          {q && (
+            <button type="button" onClick={() => setQ("")} aria-label="Effacer la recherche" className="absolute top-1/2 right-1 inline-flex size-9 -translate-y-1/2 items-center justify-center text-encre-3">
+              <X className="size-4" />
+            </button>
+          )}
+        </label>
+        <div className="sans-barre -mx-4 flex gap-1.5 overflow-x-auto px-4 lg:mx-0 lg:px-0" role="group" aria-label="Statut commercial">
+          {statuts.map((s) => (
+            <button key={s.valeur} type="button" aria-pressed={statut === s.valeur} onClick={() => setStatut(s.valeur)}
+              className={cn("h-9 shrink-0 rounded-controle border px-3 text-[14px]", statut === s.valeur ? "border-encre bg-encre text-surface" : "border-trait-fort bg-surface text-encre-2 hover:text-encre")}>
+              {s.libelle}
+            </button>
+          ))}
+        </div>
       </div>
 
       {error && !data ? (
@@ -139,59 +151,69 @@ function Parc() {
           texte="Ajoutez votre premier véhicule : saisissez son VIN, la marque, le modèle et l'année se remplissent seuls."
           action={peutModifier ? <Link href="/parc/nouveau/"><Bouton variante="primaire" icone={<Plus className="size-4" />}>Ajouter un véhicule</Bouton></Link> : undefined}
         />
+      ) : ordinateur && vue === "kanban" ? (
+        <div className="-mx-8 overflow-x-auto px-8 pb-4">
+          <div className="grid min-w-[1400px] grid-cols-8 gap-3">
+            {ETAPES.map((e) => {
+              const liste = parEtape.get(e.code) ?? [];
+              const capital = liste.reduce((s, v) => s + (v.prix_revient_xof ?? 0), 0);
+              const suivante = etapeSuivante(e.code);
+              return (
+                <section key={e.code} aria-label={`${e.libelle} : ${liste.length}`} className="flex min-h-[60vh] flex-col rounded-carte bg-surface-2/70 p-2">
+                  <header className="mb-2 px-1 pt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="etiquette text-[13px]" style={{ color: e.couleur }}>{e.etiquette}</span>
+                      <span className="chiffres text-[13px] font-semibold text-encre-2">{liste.length}</span>
+                    </div>
+                    <div className="mt-1 h-[3px] rounded-full" style={{ background: e.couleur }} />
+                    {liste.some((v) => v.prix_revient_xof !== null) && <p className="mt-1 text-[12px] text-encre-3">{formatCourt(capital)} FCFA</p>}
+                  </header>
+                  <div className="flex flex-col gap-2">
+                    {liste.map((v) => (
+                      <CarteKanban key={v.id} v={v} cochee={selection.has(v.id)} basculer={() => basculer(v.id)}
+                        avancer={peutModifier && suivante ? () => deplacer([v.id], suivante) : undefined} />
+                    ))}
+                    {liste.length === 0 && <p className="px-1 py-6 text-center text-[12px] text-encre-3">Aucun véhicule</p>}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </div>
+      ) : ordinateur ? (
+        <TableauVehicules vehicules={filtres} selection={selection} basculer={basculer} />
       ) : (
         <>
-          <FiltreRoute valeur={etapeActive} onChange={choisirEtape} compte={(e) => parEtape.get(e)?.length ?? 0} total={filtres.length} />
-
+          <Onglets
+            libelle="Étapes"
+            valeur={etapeActive}
+            onChange={choisirEtape}
+            className="mb-3"
+            onglets={[
+              { valeur: "toutes" as const, libelle: "Tous", compteur: filtres.length },
+              ...ETAPES.map((e) => ({ valeur: e.code, libelle: e.libelle, compteur: parEtape.get(e.code)?.length ?? 0, couleur: e.couleur })),
+            ]}
+          />
           {visibles.length === 0 ? (
-            <EtatVide titre={etapeActive === "toutes" ? "Aucun véhicule ne correspond" : `Aucun véhicule : ${defEtape(etapeActive).libelle.toLowerCase()}`} texte={q ? "Essayez une autre recherche." : undefined} />
-          ) : ordinateur && vue === "colonnes" ? (
-            <div className="-mx-8 overflow-x-auto px-8 pt-4 pb-4">
-              <div className="grid min-w-[1400px] grid-cols-8 gap-x-5">
-                {ETAPES.filter((e) => etapeActive === "toutes" || e.code === etapeActive).map((e) => {
-                  const liste = parEtape.get(e.code) ?? [];
-                  const capital = liste.reduce((s, v) => s + (v.prix_revient_xof ?? 0), 0);
-                  const suivante = etapeSuivante(e.code);
-                  return (
-                    <section key={e.code} aria-label={`${e.libelle} : ${liste.length}`} className="min-h-[50vh]">
-                      <header className="mb-3 border-b-[3px] pb-2" style={{ borderColor: e.couleur }}>
-                        <div className="flex items-baseline justify-between">
-                          <span className="etiquette text-petit text-encre">{e.etiquette}</span>
-                          <span className="figure text-titre">{liste.length}</span>
-                        </div>
-                        {liste.some((v) => v.prix_revient_xof !== null) && <p className="chiffres text-petit text-encre-3">{formatCourt(capital)} FCFA</p>}
-                      </header>
-                      <div className="flex flex-col">
-                        {liste.map((v) => (
-                          <CarteColonne key={v.id} v={v} cochee={selection.has(v.id)} basculer={() => basculer(v.id)}
-                            avancer={peutModifier && suivante ? () => deplacer([v.id], suivante) : undefined} />
-                        ))}
-                      </div>
-                    </section>
-                  );
-                })}
-              </div>
-            </div>
-          ) : ordinateur ? (
-            <TableauVehicules vehicules={visibles} selection={selection} basculer={basculer} />
+            <EtatVide titre={etapeActive === "toutes" ? "Aucun véhicule ne correspond" : `Aucun véhicule ${defEtape(etapeActive).libelle.toLowerCase()}`} texte={q ? "Essayez une autre recherche." : undefined} />
           ) : (
-            <ul>
+            <div className="overflow-hidden rounded-carte border border-trait">
               {visibles.map((v) => (
                 <LigneVehicule key={v.id} v={v} selection={peutModifier && selection.size > 0 ? { cochee: selection.has(v.id), basculer: () => basculer(v.id) } : undefined} />
               ))}
-            </ul>
+            </div>
           )}
         </>
       )}
 
       {selection.size > 0 && peutModifier && (
-        <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-40 bg-nuit px-4 py-3 text-sur-nuit lg:bottom-0 lg:left-60">
+        <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-40 border-t border-trait bg-nuit px-4 py-3 text-sur-nuit lg:bottom-0 lg:left-60">
           <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-3">
-            <span className="font-semibold">{selection.size} sélectionné{selection.size > 1 ? "s" : ""}</span>
-            <label className="flex items-center gap-2">
+            <span className="text-[14px] font-medium">{selection.size} sélectionné{selection.size > 1 ? "s" : ""}</span>
+            <label className="flex items-center gap-2 text-[14px]">
               <span className="text-sur-nuit-2">Passer à</span>
               <select defaultValue="" onChange={(e) => e.target.value && deplacer([...selection], e.target.value as Etape)}
-                className="h-9 rounded-controle bg-nuit-2 px-2 text-sur-nuit">
+                className="h-9 rounded-controle border border-white/15 bg-nuit-2 px-2 text-[14px] text-sur-nuit">
                 <option value="" disabled>Choisir une étape</option>
                 {ETAPES.map((e) => <option key={e.code} value={e.code}>{e.libelle}</option>)}
               </select>
@@ -204,50 +226,37 @@ function Parc() {
   );
 }
 
-/** Tableau dense (ordinateur) : la photo ouvre chaque ligne, la piste dit où en est le véhicule. */
 function TableauVehicules({ vehicules, selection, basculer }: { vehicules: Vehicule[]; selection: Set<string>; basculer: (id: string) => void }) {
   const voitCouts = vehicules.some((v) => v.prix_revient_xof !== null);
-  const colonnes = ["Véhicule", "Où il en est", "Jours", ...(voitCouts ? ["Prix de revient", "Marge"] : []), "Prix affiché", "Client"];
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px]">
+    <div className="overflow-x-auto rounded-carte border border-trait bg-surface">
+      <table className="w-full min-w-[960px] text-sm">
         <thead>
-          <tr className="border-b border-trait-fort text-left">
-            <th className="w-8 py-2"><span className="sr-only">Sélection</span></th>
-            {colonnes.map((t, i) => (
-              <th key={t} scope="col" className={cn("etiquette py-2 pr-4 text-petit font-semibold text-encre-3", i >= 2 && i < colonnes.length - 1 && "text-right", t === "Client" && "hidden xl:table-cell")}>{t}</th>
+          <tr className="border-b border-trait bg-surface-2/60 text-left">
+            <th className="w-10 px-3 py-2"><span className="sr-only">Sélection</span></th>
+            {["Véhicule", "Étape", "Jours", ...(voitCouts ? ["Prix de revient", "Marge"] : []), "Prix affiché", "Client"].map((t, i) => (
+              <th key={t} scope="col" className={cn("etiquette px-3 py-2 text-[12px] font-semibold text-encre-3", i >= 2 && "text-right", t === "Client" && "text-left")}>{t}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {vehicules.map((v) => (
-            <tr key={v.id} className="border-b border-trait hover:bg-surface-2">
-              <td className="py-2 pr-2"><input type="checkbox" checked={selection.has(v.id)} onChange={() => basculer(v.id)} aria-label={`Sélectionner ${v.libelle}`} className="size-4 accent-[var(--encre)]" /></td>
-              <td className="py-2 pr-4">
-                <Link href={`/parc/vehicule/?id=${v.id}`} className="flex items-center gap-3">
-                  <PhotoVehicule path={v.photo_principale_path} alt="" className="aspect-[4/3] w-[72px] shrink-0" />
-                  <span className="min-w-0">
-                    <span className="block truncate font-semibold hover:underline">{v.libelle}</span>
-                    <span className="block truncate font-mono text-petit text-encre-3">{v.reference}{v.vin ? ` · ${finDeVin(v.vin)}` : ""}</span>
-                  </span>
-                </Link>
+            <tr key={v.id} className="border-b border-trait last:border-b-0 hover:bg-surface-2/50">
+              <td className="px-3 py-2"><input type="checkbox" checked={selection.has(v.id)} onChange={() => basculer(v.id)} aria-label={`Sélectionner ${v.libelle}`} className="size-4 accent-[var(--laterite)]" /></td>
+              <td className="px-3 py-2">
+                <Link href={`/parc/vehicule/?id=${v.id}`} className="font-semibold hover:underline">{v.libelle}</Link>
+                <p className="font-mono text-[12px] text-encre-3">{v.reference}{v.vin ? ` · ${v.vin}` : ""}</p>
               </td>
-              <td className="w-56 py-2 pr-4">
-                <Piste etape={v.etape} />
-                <span className="etiquette mt-1 flex items-baseline gap-2 text-petit text-encre-2">
-                  {defEtape(v.etape).libelle}
-                  <StatutCommercial v={v} />
-                </span>
-              </td>
-              <td className={cn("chiffres py-2 pr-4 text-right", v.jours_etape > 30 && "font-semibold text-ocre")}>{v.jours_etape}</td>
-              {voitCouts && <td className="py-2 pr-4 text-right"><Montant valeur={v.prix_revient_xof} devise={null} /></td>}
+              <td className="px-3 py-2 text-right"><EtiquetteEtape etape={v.etape} compacte /></td>
+              <td className={cn("chiffres px-3 py-2 text-right", v.jours_etape > 30 && "font-medium text-ocre")}>{v.jours_etape}</td>
+              {voitCouts && <td className="px-3 py-2 text-right"><Montant valeur={v.prix_revient_xof} devise={null} /></td>}
               {voitCouts && (
-                <td className={cn("py-2 pr-4 text-right", (v.marge_xof ?? 0) < 0 && "text-perte")}>
+                <td className={cn("px-3 py-2 text-right", (v.marge_xof ?? 0) < 0 && "text-perte")}>
                   <Montant valeur={v.marge_xof} devise={null} className={v.marge_type === "previsionnelle" ? "font-normal text-encre-2" : undefined} />
                 </td>
               )}
-              <td className="py-2 pr-4 text-right"><Montant valeur={v.prix_affiche_xof} devise={null} /></td>
-              <td className="hidden py-2 text-encre-2 xl:table-cell">{v.vente?.client_nom ?? v.reserve_client_nom ?? "—"}</td>
+              <td className="px-3 py-2 text-right"><Montant valeur={v.prix_affiche_xof} devise={null} /></td>
+              <td className="px-3 py-2 text-encre-2">{v.vente?.client_nom ?? v.reserve_client_nom ?? "—"}</td>
             </tr>
           ))}
         </tbody>

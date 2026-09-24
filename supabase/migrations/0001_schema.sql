@@ -94,7 +94,7 @@ create table public.parametres (
   validite_proforma_jours  smallint not null default 15 check (validite_proforma_jours between 1 and 365),
   montant_en_lettres       boolean not null default true,
   qr_verification          boolean not null default true,
-  couleur_documents        text not null default '#0F1113' check (couleur_documents ~ '^#[0-9A-Fa-f]{6}$'),
+  couleur_documents        text not null default '#B5461E' check (couleur_documents ~ '^#[0-9A-Fa-f]{6}$'),
   garantie_texte           text,
   modele_message_whatsapp  text,
   -- devises

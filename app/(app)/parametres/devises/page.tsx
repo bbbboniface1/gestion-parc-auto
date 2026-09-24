@@ -30,7 +30,7 @@ export default function PageDevises() {
   return (
     <>
       <EnTetePage titre="Devises et taux" sousTitre="Chaque achat et chaque frais garde le taux du jour où il a été saisi." />
-      <div className="border-t-2 border-encre pt-4">
+      <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
         <Groupe titre="Dollar américain" description="Proposé par défaut pour les enchères, le remorquage et le fret. Modifier ce taux ne change pas les frais déjà saisis.">
           <ChampNombre libelle="1 $ US =" valeur={Number(p.taux_usd)} onChange={(v) => maj("taux_usd", v ?? 0)} min={1} max={10000} decimales={2} unite="FCFA"
             aide={age !== null ? `Mis à jour le ${formatDate(donnees?.parametres.taux_maj_le)}${age > 30 ? " — il y a plus d'un mois" : ""}.` : undefined} />
@@ -40,13 +40,13 @@ export default function PageDevises() {
               try { setMarche(await tauxDuMarche()); } catch { toast.error("Impossible de joindre le service de taux. Réessayez plus tard."); } finally { setChargement(false); }
             }}>Consulter le taux du marché</Bouton>
             {marche && (
-              <p className="text-corps text-encre-2">
+              <p className="text-[14px] text-encre-2">
                 Marché : <strong className="chiffres text-encre">{formatNombre(marche.usd, 2)}</strong> FCFA
                 <Bouton variante="fantome" taille="sm" className="ml-1" onClick={() => maj("taux_usd", marche.usd)}>Utiliser</Bouton>
               </p>
             )}
           </div>
-          {marche && <p className="text-petit text-encre-3">Taux de référence du {new Date(marche.date).toLocaleDateString("fr-FR")}, fournis par ExchangeRate-API. Le taux réel de votre banque ou de votre changeur peut différer.</p>}
+          {marche && <p className="text-[12px] text-encre-3">Taux de référence du {new Date(marche.date).toLocaleDateString("fr-FR")}, fournis par ExchangeRate-API. Le taux réel de votre banque ou de votre changeur peut différer.</p>}
         </Groupe>
         <Groupe titre="Euro" description="Le franc CFA est arrimé à l'euro par une parité fixe : ce taux ne varie pas.">
           <ChampNombre libelle="1 € =" valeur={Number(p.taux_eur)} onChange={(v) => maj("taux_eur", v ?? 655.957)} decimales={3} unite="FCFA"

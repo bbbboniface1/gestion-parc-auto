@@ -42,7 +42,7 @@ function Rejoindre() {
 
   return (
     <CadreAccueil>
-      <h1 className="text-titre font-semibold tracking-tight">Rejoindre une entreprise</h1>
+      <h1 className="text-[26px] font-semibold tracking-tight">Rejoindre une entreprise</h1>
       <p className="mt-1 text-encre-2">Saisissez le code à 8 caractères que vous a transmis le propriétaire.</p>
       <form onSubmit={accepter} className="mt-6 flex flex-col gap-4">
         <Champ
@@ -53,13 +53,13 @@ function Rejoindre() {
           maxLength={12}
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          className="text-center text-titre tracking-[0.3em]"
+          className="text-center text-[20px] tracking-[0.3em]"
         />
-        {erreur && <p role="alert" className="border-l-[3px] border-perte bg-perte-voile px-3 py-2 text-corps text-perte">{erreur}</p>}
+        {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte">{erreur}</p>}
         <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={code.trim().length < 6}>
           Rejoindre
         </Bouton>
-        <Link href="/bienvenue/" className="text-corps text-encre-2 underline-offset-4 hover:underline">Créer plutôt ma propre entreprise</Link>
+        <Link href="/bienvenue/" className="text-[14px] text-encre-2 underline-offset-4 hover:underline">Créer plutôt ma propre entreprise</Link>
       </form>
     </CadreAccueil>
   );

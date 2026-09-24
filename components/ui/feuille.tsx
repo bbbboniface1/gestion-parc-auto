@@ -79,9 +79,9 @@ function EnTete({ titre, description, onFermer, Titre, Description }: {
   return (
     <div className="flex items-start justify-between gap-3 px-4 pt-3 pb-2 lg:px-6 lg:pt-5">
       <div className="min-w-0">
-        <Titre className="text-titre font-semibold tracking-tight text-encre lg:text-titre">{titre}</Titre>
+        <Titre className="text-[19px] font-semibold tracking-tight text-encre lg:text-lg">{titre}</Titre>
         {description ? (
-          <Description className="mt-0.5 text-petit text-encre-3">{description}</Description>
+          <Description className="mt-0.5 text-[13px] text-encre-3">{description}</Description>
         ) : (
           <Description className="sr-only">{typeof titre === "string" ? titre : "Fenêtre"}</Description>
         )}

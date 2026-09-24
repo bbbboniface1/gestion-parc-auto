@@ -59,8 +59,8 @@ export default function PageSimulateur() {
     <>
       <EnTetePage titre="Simulateur d'enchère" sousTitre="Jusqu'où enchérir aux USA pour atteindre la marge visée, une fois toutes les charges payées." />
       <div className="grid gap-5 lg:grid-cols-12">
-        <section className="border-t-2 border-encre pt-3 lg:col-span-5">
-          <h2 className="mb-3 text-corps font-semibold">Ce que vous visez</h2>
+        <section className="rounded-carte border border-trait bg-surface p-4 lg:col-span-5 lg:p-5">
+          <h2 className="mb-3 text-[16px] font-semibold">Ce que vous visez</h2>
           <div className="flex flex-col gap-4">
             <ChampMontant libelle="Prix de vente à Bamako" valeur={prixVente} onChange={setPrixVente} devise="XOF" />
             <Choix libelle="Marge exprimée en" colonnes={2} valeur={typeMarge} onChange={(v) => v && setTypeMarge(v)}
@@ -71,14 +71,14 @@ export default function PageSimulateur() {
               <ChampMontant libelle="Marge voulue" valeur={margeValeur} onChange={setMargeValeur} devise="XOF" />
             )}
           </div>
-          <p className="mt-4 text-petit text-encre-3">
+          <p className="mt-4 text-[12px] text-encre-3">
             Hypothèses de frais et barème de douane : réglables dans Paramètres › Frais et douane.
             {reglages?.parametres.bareme_douane?.mention ? ` ${reglages.parametres.bareme_douane.mention}.` : ""}
           </p>
         </section>
 
-        <section className="border-t-2 border-encre pt-3 lg:col-span-7">
-          <h2 className="mb-3 text-corps font-semibold">Enchère maximale</h2>
+        <section className="rounded-carte border border-trait bg-surface p-4 lg:col-span-7 lg:p-5">
+          <h2 className="mb-3 text-[16px] font-semibold">Enchère maximale</h2>
           {!resultat ? (
             <p className="text-encre-3">Renseignez le prix de vente et la marge voulue.</p>
           ) : resultat.impossible ? (
@@ -86,13 +86,13 @@ export default function PageSimulateur() {
           ) : (
             <>
               <div className="flex items-baseline gap-3">
-                <Calculator className="size-6 text-lien" aria-hidden />
-                <p className="chiffres text-chiffre font-semibold tracking-tight">{formatNombre(resultat.enchereMaxUsd)}<span className="ml-1 text-corps font-normal text-encre-3">$</span></p>
+                <Calculator className="size-6 text-laterite" aria-hidden />
+                <p className="chiffres text-[36px] font-semibold tracking-tight">{formatNombre(resultat.enchereMaxUsd)}<span className="ml-1 text-[16px] font-normal text-encre-3">$</span></p>
               </div>
-              <p className="mt-1 text-petit text-encre-3">Marge obtenue : <Montant valeur={resultat.margeObtenueXof} devise={null} className={cn(resultat.margeObtenueXof < 0 && "text-perte")} /> ({formatFCFA(resultat.detail.totalXof)} de coût total)</p>
+              <p className="mt-1 text-[13px] text-encre-3">Marge obtenue : <Montant valeur={resultat.margeObtenueXof} devise={null} className={cn(resultat.margeObtenueXof < 0 && "text-perte")} /> ({formatFCFA(resultat.detail.totalXof)} de coût total)</p>
               <ul className="mt-4 flex flex-col">
                 {resultat.detail.lignes.map((l) => (
-                  <li key={l.code} className="flex items-center justify-between gap-3 border-b border-trait py-2 text-corps last:border-b-0">
+                  <li key={l.code} className="flex items-center justify-between gap-3 border-b border-trait py-2 text-[14px] last:border-b-0">
                     <span>{libelleCategorie(l.code)}{l.montantUsd !== undefined ? ` (${formatNombre(l.montantUsd)} $)` : ""}</span>
                     <span className="chiffres">{formatFCFA(l.montantXof)}</span>
                   </li>

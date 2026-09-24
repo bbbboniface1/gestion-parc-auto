@@ -1,6 +1,6 @@
 "use client";
 
-import { FiltresTexte } from "@/components/ui/recherche";
+import { cn } from "@/lib/cn";
 
 export interface Periode { du: string; au: string; }
 export type CodePeriode = "mois" | "mois_precedent" | "trimestre" | "annee";
@@ -27,5 +27,14 @@ const OPTIONS: { valeur: CodePeriode; libelle: string }[] = [
 ];
 
 export function SelecteurPeriode({ valeur, onChange }: { valeur: CodePeriode; onChange: (c: CodePeriode) => void }) {
-  return <FiltresTexte valeur={valeur} onChange={onChange} libelle="Période" options={OPTIONS.map((o) => [o.valeur, o.libelle] as const)} />;
+  return (
+    <div className="flex gap-1.5 overflow-x-auto">
+      {OPTIONS.map((o) => (
+        <button key={o.valeur} type="button" aria-pressed={valeur === o.valeur} onClick={() => onChange(o.valeur)}
+          className={cn("h-9 shrink-0 rounded-controle border px-3 text-[14px]", valeur === o.valeur ? "border-encre bg-encre text-surface" : "border-trait-fort bg-surface text-encre-2")}>
+          {o.libelle}
+        </button>
+      ))}
+    </div>
+  );
 }

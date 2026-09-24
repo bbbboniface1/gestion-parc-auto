@@ -65,8 +65,7 @@ function lireCorps(corps: string): number | null {
     else decimal = sep;
   }
 
-  const [premier = "", fraction] = decimal ? corps.split(decimal) : [corps];
-  let entier = premier;
+  let [entier = "", fraction] = decimal ? corps.split(decimal) : [corps];
   if (milliers) {
     const groupes = entier.split(milliers);
     const valides = groupes.every((g, i) => (i === 0 ? /^\d{1,3}$/.test(g) : /^\d{3}$/.test(g)));

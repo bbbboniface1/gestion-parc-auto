@@ -59,25 +59,25 @@ export default function PageMotDePasse() {
     <CadreAccueil>
       {recuperation ? (
         <form onSubmit={changer} className="flex flex-col gap-4">
-          <h1 className="text-titre font-semibold tracking-tight">Nouveau mot de passe</h1>
+          <h1 className="text-[26px] font-semibold tracking-tight">Nouveau mot de passe</h1>
           <Champ libelle="Mot de passe" type="password" autoComplete="new-password" value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} aide="10 caractères au moins." />
-          {erreur && <p role="alert" className="text-corps text-perte">{erreur}</p>}
+          {erreur && <p role="alert" className="text-[14px] text-perte">{erreur}</p>}
           <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={motDePasse.length < 10}>Enregistrer</Bouton>
         </form>
       ) : envoye ? (
         <div>
-          <h1 className="text-titre font-semibold tracking-tight">Lien envoyé</h1>
+          <h1 className="text-[26px] font-semibold tracking-tight">Lien envoyé</h1>
           <p className="mt-2 text-encre-2">Si un compte existe pour <strong className="text-encre">{email}</strong>, un lien de réinitialisation vient d&apos;être envoyé.</p>
-          <Link href="/connexion/" className="mt-6 inline-block font-medium text-lien underline-offset-4 hover:underline">Retour à la connexion</Link>
+          <Link href="/connexion/" className="mt-6 inline-block font-medium text-laterite underline-offset-4 hover:underline">Retour à la connexion</Link>
         </div>
       ) : (
         <form onSubmit={demander} className="flex flex-col gap-4">
-          <h1 className="text-titre font-semibold tracking-tight">Mot de passe oublié</h1>
+          <h1 className="text-[26px] font-semibold tracking-tight">Mot de passe oublié</h1>
           <p className="-mt-2 text-encre-2">Indiquez votre adresse : vous recevrez un lien pour en choisir un nouveau.</p>
           <Champ libelle="Adresse e-mail" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          {erreur && <p role="alert" className="text-corps text-perte">{erreur}</p>}
+          {erreur && <p role="alert" className="text-[14px] text-perte">{erreur}</p>}
           <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email}>Envoyer le lien</Bouton>
-          <Link href="/connexion/" className="text-corps text-encre-2 underline-offset-4 hover:underline">Retour à la connexion</Link>
+          <Link href="/connexion/" className="text-[14px] text-encre-2 underline-offset-4 hover:underline">Retour à la connexion</Link>
         </form>
       )}
     </CadreAccueil>

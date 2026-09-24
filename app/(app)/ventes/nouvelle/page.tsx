@@ -112,19 +112,19 @@ function NouvelleVente() {
       <EnTetePage titre="Nouvelle vente" />
       <div className="grid gap-5 pb-28 lg:grid-cols-12 lg:pb-8">
         <div className="flex flex-col gap-4 lg:col-span-7">
-          <section className="border-t-2 border-encre pt-3">
-            <h2 className="mb-3 text-corps font-semibold">Véhicule</h2>
+          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+            <h2 className="mb-3 text-[16px] font-semibold">Véhicule</h2>
             <ChoixVehicule valeur={vehicule} onChoix={setVehicule} />
-            {livraisonAlarriveee && vehicule && <p className="mt-2 text-petit text-ocre">Ce véhicule n&apos;est pas encore au parc : la facture indiquera une livraison à l&apos;arrivée.</p>}
+            {livraisonAlarriveee && vehicule && <p className="mt-2 text-[13px] text-ocre">Ce véhicule n&apos;est pas encore au parc : la facture indiquera une livraison à l&apos;arrivée.</p>}
           </section>
 
-          <section className="border-t-2 border-encre pt-3">
-            <h2 className="mb-3 text-corps font-semibold">Client</h2>
+          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+            <h2 className="mb-3 text-[16px] font-semibold">Client</h2>
             <ChoixClient valeur={client} onChoix={setClient} />
           </section>
 
-          <section className="border-t-2 border-encre pt-3">
-            <h2 className="mb-3 text-corps font-semibold">Prix et modalités</h2>
+          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+            <h2 className="mb-3 text-[16px] font-semibold">Prix et modalités</h2>
             <div className="grid grid-cols-2 gap-3">
               <ChampMontant libelle="Prix de vente" valeur={prix} onChange={setPrix} devise="XOF" />
               <ChampMontant libelle="Remise" facultatif valeur={remise} onChange={setRemise} devise="XOF" />
@@ -142,18 +142,18 @@ function NouvelleVente() {
                     onChange={(e) => setNbEcheances(Math.max(1, Math.min(24, Number(e.target.value) || 1)))} />
                   <Champ libelle="Première échéance" type="date" value={premiereEcheance} onChange={(e) => setPremiereEcheance(e.target.value)} />
                 </div>
-                <div className="rounded-controle bg-surface-2">
+                <div className="rounded-controle border border-trait">
                   {echeancesFinales.map((e, i) => (
-                    <div key={i} className="flex items-center gap-2 border-b border-trait px-3 py-2 text-corps last:border-b-0">
+                    <div key={i} className="flex items-center gap-2 border-b border-trait px-3 py-2 text-[14px] last:border-b-0">
                       <span className="w-6 shrink-0 text-encre-3">{i + 1}.</span>
                       <input type="date" value={e.date} onChange={(ev) => setEcheancesModifiees(echeancesFinales.map((x, j) => j === i ? { ...x, date: ev.target.value } : x))}
-                        className="h-9 rounded-t-controle border-0 border-b-2 border-trait-fort bg-surface-2 px-2 text-petit" />
+                        className="h-9 rounded-controle border border-trait-fort bg-surface px-2 text-[13px]" />
                       <input type="number" value={e.montant} onChange={(ev) => setEcheancesModifiees(echeancesFinales.map((x, j) => j === i ? { ...x, montant: Number(ev.target.value) || 0 } : x))}
-                        className="chiffres h-9 flex-1 rounded-t-controle border-0 border-b-2 border-trait-fort bg-surface-2 px-2 text-right text-petit" />
+                        className="chiffres h-9 flex-1 rounded-controle border border-trait-fort bg-surface px-2 text-right text-[13px]" />
                     </div>
                   ))}
                 </div>
-                <p className={cn("text-petit", sommeEcheances === ttc ? "text-encre-3" : "text-perte")}>
+                <p className={cn("text-[13px]", sommeEcheances === ttc ? "text-encre-3" : "text-perte")}>
                   Acompte + échéances : {formatFCFA(sommeEcheances)} {sommeEcheances !== ttc && `(devrait faire ${formatFCFA(ttc)})`}
                 </p>
               </div>
@@ -166,11 +166,11 @@ function NouvelleVente() {
             {((mode === "echelonne" && acompte) || (mode === "comptant" && encaisserMaintenant)) ? (
               <div className="mt-4 flex flex-col gap-3 border-t border-trait pt-4">
                 <fieldset className="flex flex-col gap-1.5">
-                  <legend className="mb-1 text-petit font-medium text-encre-2">Mode de paiement</legend>
+                  <legend className="mb-1 text-[13px] font-medium text-encre-2">Mode de paiement</legend>
                   <div className="flex flex-wrap gap-1.5">
                     {modesAutorises.map((m) => (
                       <button key={m} type="button" aria-pressed={modePaiement === m} onClick={() => setModePaiement(m)}
-                        className={cn("h-10 rounded-controle px-3 font-medium", modePaiement === m ? "bg-encre text-surface" : "bg-surface-2 text-encre-2 hover:bg-trait")}>
+                        className={cn("h-10 rounded-controle border px-3 text-[14px] font-medium", modePaiement === m ? "border-laterite bg-laterite-voile" : "border-trait-fort text-encre-2")}>
                         {MODES_PAIEMENT[m].libelle}
                       </button>
                     ))}
@@ -185,15 +185,15 @@ function NouvelleVente() {
         </div>
 
         <aside className="flex flex-col gap-4 lg:col-span-5">
-          <section className="border-t-2 border-encre pt-3 lg:sticky lg:top-8">
-            <h2 className="mb-3 text-corps font-semibold">Récapitulatif</h2>
+          <section className="rounded-carte border border-trait bg-surface p-4 lg:sticky lg:top-8 lg:p-5">
+            <h2 className="mb-3 text-[16px] font-semibold">Récapitulatif</h2>
             <Registre lignes={[
               ...(remise ? [{ libelle: "Prix", valeur: formatNombre(prix ?? 0) }, { libelle: "Remise", valeur: `− ${formatNombre(remise)}` }] : []),
               ...(tvaTaux > 0 ? [{ libelle: "Hors taxes", valeur: formatNombre(ht) }, { libelle: `TVA ${tvaTaux}%`, valeur: formatNombre(tva) }] : []),
               { libelle: "Total", valeur: formatFCFA(ttc), fort: true },
             ]} />
             {vehicule && client && (
-              <p className="mt-3 text-petit text-encre-3">{client.nom} · {vehicule.libelle}</p>
+              <p className="mt-3 text-[13px] text-encre-3">{client.nom} · {vehicule.libelle}</p>
             )}
           </section>
           <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex gap-2 border-t border-trait bg-surface/95 px-4 py-3 backdrop-blur lg:static lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
