@@ -11,6 +11,7 @@ const sortie = path.join(racine, "out");
 
 const EXCLUS = [
   /^pglite\//, // moteur de démo (~17 Mo) : mis en cache à la première utilisation seulement
+  /\.(wasm|data)$/, // idem pour les copies que le bundler place dans _next/static/media
   /\.map$/,
   /^sw\.js$/,
   /^serve\.json$/,
@@ -73,7 +74,7 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return; // Supabase, décodage VIN… : toujours le réseau
 
   // Moteur de la démo : mis en cache à la première utilisation, puis servi depuis le cache.
-  if (url.pathname.startsWith("/pglite/")) {
+  if (url.pathname.startsWith("/pglite/") || /\.(wasm|data)$/.test(url.pathname)) {
     event.respondWith(caches.open(CACHE_DEMO).then(async (cache) => {
       const trouve = await cache.match(requete);
       if (trouve) return trouve;
