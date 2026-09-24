@@ -135,7 +135,7 @@ export function FeuilleFrais({ ouverte, onFermer, vehiculeId, expeditionId, port
             options={[{ valeur: "egale", libelle: "Parts égales" }, { valeur: "valeur", libelle: "Au prorata du prix d'achat" }]} />
         )}
         {montant !== null && devise !== "XOF" && taux ? (
-          <p className="rounded-controle bg-surface-2 px-3 py-2 text-[14px] text-encre-2">
+          <p className="rounded-controle bg-surface-2 px-3 py-2 text-corps text-encre-2">
             Compté dans le coût de revient pour <strong className="chiffres text-encre">{formatFCFA(montant * taux)}</strong>.
           </p>
         ) : null}

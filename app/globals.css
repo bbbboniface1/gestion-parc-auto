@@ -3,118 +3,129 @@
 /* Thème sombre : suit le téléphone, sauf choix explicite dans Préférences (data-theme). */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* ─── Jetons « Connaissement » (docs/DIRECTION_ARTISTIQUE.md) ─────────────────────── */
+/*
+ * Design v2 — « fiche de lot » (docs/DIRECTION_ARTISTIQUE.md, docs/GARDE_ANTI_GENERIQUE.md)
+ *  - des filets, pas des boîtes ; arêtes de 2 px ; aucune ombre sur le contenu ;
+ *  - une seule couleur vive, le jaune signal, qui marque toujours « où en est le véhicule » ;
+ *  - les étapes se lisent en gris, du clair (acheté) au noir (au parc) : plus c'est foncé, plus c'est proche de la vente ;
+ *  - quatre tailles de texte seulement : 13 / 15 / 24 / 44.
+ * Contrastes vérifiés (WCAG) : encre-3 5,4:1 sur blanc, lien 7,6:1, gain 5,4:1, perte 6,0:1, ocre 5,0:1.
+ */
 :root {
-  --papier: #f5f3ee;
+  --papier: #ffffff;
   --surface: #ffffff;
-  --surface-2: #efece5;
-  --trait: #e3ded3;
-  --trait-fort: #cfc8ba;
-  --encre: #17171a;
-  --encre-2: #5b5a57;
-  --encre-3: #6b6861;
-  --laterite: #b5461e;
-  --laterite-fonce: #9c3a17;
-  --laterite-voile: #f6e6de;
-  --sur-laterite: #ffffff;
-  --nuit: #1b1d22;
-  --nuit-2: #262931;
-  --sur-nuit: #edeae3;
-  --sur-nuit-2: #a6a29a;
-  --gain: #1b7148;
-  --gain-voile: #e1f0e7;
-  --perte: #b3261e;
-  --perte-voile: #f8e1de;
-  --ocre: #8e5f08;
-  --ocre-voile: #f6ebd6;
-  --acier: #2f5a7a;
-  --acier-voile: #e1eaf1;
-  --reserve: #7a3e5d;
+  --surface-2: #f3f4f5;
+  --trait: #dcdee2;
+  --trait-fort: #8f959d;
+  --encre: #0f1113;
+  --encre-2: #454a52;
+  --encre-3: #646a73;
+  --signal: #f2c200;
+  --signal-fonce: #d9ad00;
+  --signal-voile: #fff5c7;
+  --sur-signal: #0f1113;
+  --lien: #6a5000;
+  --nuit: #0f1113;
+  --nuit-2: #1b1e22;
+  --sur-nuit: #eceef0;
+  --sur-nuit-2: #9aa0a8;
+  --gain: #0e7a47;
+  --gain-voile: #e2f3ea;
+  --perte: #c1201b;
+  --perte-voile: #fbe6e5;
+  --ocre: #b45309;
+  --ocre-voile: #fdecd8;
+  --acier: #1f5fbf;
+  --acier-voile: #e4ecfa;
+  --reserve: #7a3e9d;
 
-  --etape-achete: #5e6b7a;
-  --etape-transport-usa: #3f6784;
-  --etape-en-mer: #1f6f7a;
-  --etape-au-port: #76673d;
-  --etape-convoi: #8a5f23;
-  --etape-douane: #a34f26;
-  --etape-atelier: #8a4b2e;
-  --etape-parc: #b5461e;
+  /* Rampe des étapes : du clair (acheté) au noir (au parc) */
+  --etape-achete: #8e97a3;
+  --etape-transport-usa: #78828f;
+  --etape-en-mer: #626d7b;
+  --etape-au-port: #4e5967;
+  --etape-convoi: #3d4754;
+  --etape-douane: #2e3742;
+  --etape-atelier: #1f2730;
+  --etape-parc: #0f1113;
 
-  --ombre-flottante: 0 8px 24px rgb(23 23 26 / 0.12), 0 1px 2px rgb(23 23 26 / 0.06);
-  --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--laterite);
+  --ombre-flottante: 0 8px 24px rgb(15 17 19 / 0.14), 0 0 0 1px rgb(15 17 19 / 0.06);
+  --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--encre);
 
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --papier: #121316;
-    --surface: #1a1c20;
-    --surface-2: #22252a;
-    --trait: #2a2d33;
-    --trait-fort: #3a3e45;
-    --encre: #edeae3;
-    --encre-2: #a6a29a;
-    --encre-3: #96928a;
-    --laterite: #e0724a;
-    --laterite-fonce: #ea8a66;
-    --laterite-voile: #3a231a;
-    --sur-laterite: #17171a;
-    --nuit: #0d0e10;
-    --nuit-2: #1a1c20;
-    --gain: #4fb383;
-    --gain-voile: #16291f;
-    --perte: #ef6b61;
-    --perte-voile: #331715;
-    --ocre: #d9a040;
-    --ocre-voile: #2e2414;
-    --acier: #7aa6c8;
-    --acier-voile: #17232d;
-    --reserve: #c27ea0;
-    --etape-achete: #93a0ae;
-    --etape-transport-usa: #7ea5c3;
-    --etape-en-mer: #5fb0ba;
-    --etape-au-port: #c2ae7c;
-    --etape-convoi: #d39e55;
-    --etape-douane: #e08a5d;
-    --etape-atelier: #c9876a;
-    --etape-parc: #e0724a;
+    --papier: #0d0e10;
+    --surface: #15171a;
+    --surface-2: #1c1f23;
+    --trait: #2a2e34;
+    --trait-fort: #5b626b;
+    --encre: #eceef0;
+    --encre-2: #b3b8bf;
+    --encre-3: #8f959e;
+    --signal: #f2c200;
+    --signal-fonce: #ffd42e;
+    --signal-voile: #2b2500;
+    --sur-signal: #0f1113;
+    --lien: #f2c200;
+    --nuit: #08090a;
+    --nuit-2: #15171a;
+    --gain: #4cc38a;
+    --gain-voile: #10241a;
+    --perte: #f26b62;
+    --perte-voile: #2e1514;
+    --ocre: #f0a04b;
+    --ocre-voile: #2d2011;
+    --acier: #7aa7f0;
+    --acier-voile: #14203a;
+    --reserve: #c79bde;
+    --etape-achete: #5f6874;
+    --etape-transport-usa: #717b88;
+    --etape-en-mer: #848e9b;
+    --etape-au-port: #98a1ad;
+    --etape-convoi: #adb5bf;
+    --etape-douane: #c2c9d1;
+    --etape-atelier: #d7dce2;
+    --etape-parc: #eceef0;
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --papier: #121316;
-  --surface: #1a1c20;
-  --surface-2: #22252a;
-  --trait: #2a2d33;
-  --trait-fort: #3a3e45;
-  --encre: #edeae3;
-  --encre-2: #a6a29a;
-  --encre-3: #96928a;
-  --laterite: #e0724a;
-  --laterite-fonce: #ea8a66;
-  --laterite-voile: #3a231a;
-  --sur-laterite: #17171a;
-  --nuit: #0d0e10;
-  --nuit-2: #1a1c20;
-  --gain: #4fb383;
-  --gain-voile: #16291f;
-  --perte: #ef6b61;
-  --perte-voile: #331715;
-  --ocre: #d9a040;
-  --ocre-voile: #2e2414;
-  --acier: #7aa6c8;
-  --acier-voile: #17232d;
-  --reserve: #c27ea0;
-  --etape-achete: #93a0ae;
-  --etape-transport-usa: #7ea5c3;
-  --etape-en-mer: #5fb0ba;
-  --etape-au-port: #c2ae7c;
-  --etape-convoi: #d39e55;
-  --etape-douane: #e08a5d;
-  --etape-atelier: #c9876a;
-  --etape-parc: #e0724a;
+  --papier: #0d0e10;
+  --surface: #15171a;
+  --surface-2: #1c1f23;
+  --trait: #2a2e34;
+  --trait-fort: #5b626b;
+  --encre: #eceef0;
+  --encre-2: #b3b8bf;
+  --encre-3: #8f959e;
+  --signal: #f2c200;
+  --signal-fonce: #ffd42e;
+  --signal-voile: #2b2500;
+  --sur-signal: #0f1113;
+  --lien: #f2c200;
+  --nuit: #08090a;
+  --nuit-2: #15171a;
+  --gain: #4cc38a;
+  --gain-voile: #10241a;
+  --perte: #f26b62;
+  --perte-voile: #2e1514;
+  --ocre: #f0a04b;
+  --ocre-voile: #2d2011;
+  --acier: #7aa7f0;
+  --acier-voile: #14203a;
+  --reserve: #c79bde;
+  --etape-achete: #5f6874;
+  --etape-transport-usa: #717b88;
+  --etape-en-mer: #848e9b;
+  --etape-au-port: #98a1ad;
+  --etape-convoi: #adb5bf;
+  --etape-douane: #c2c9d1;
+  --etape-atelier: #d7dce2;
+  --etape-parc: #eceef0;
   color-scheme: dark;
 }
 
@@ -127,10 +138,11 @@
   --color-encre: var(--encre);
   --color-encre-2: var(--encre-2);
   --color-encre-3: var(--encre-3);
-  --color-laterite: var(--laterite);
-  --color-laterite-fonce: var(--laterite-fonce);
-  --color-laterite-voile: var(--laterite-voile);
-  --color-sur-laterite: var(--sur-laterite);
+  --color-signal: var(--signal);
+  --color-signal-fonce: var(--signal-fonce);
+  --color-signal-voile: var(--signal-voile);
+  --color-sur-signal: var(--sur-signal);
+  --color-lien: var(--lien);
   --color-nuit: var(--nuit);
   --color-nuit-2: var(--nuit-2);
   --color-sur-nuit: var(--sur-nuit);
@@ -149,11 +161,26 @@
   --font-etiquette: var(--police-etiquette), "Arial Narrow", ui-sans-serif, sans-serif;
   --font-mono: var(--police-code), ui-monospace, "SFMono-Regular", monospace;
 
-  --radius-controle: 6px;
-  --radius-carte: 10px;
-  --radius-feuille: 16px;
+  --radius-controle: 2px;
+  --radius-carte: 2px;
+  --radius-feuille: 12px;
 
   --shadow-flottante: var(--ombre-flottante);
+}
+
+/* Échelle typographique : quatre tailles, saut ≥ ×1,6 entre le corps et le titre. */
+@theme {
+  --text-*: initial;
+  --text-petit: 13px;
+  --text-petit--line-height: 1.35;
+  --text-corps: 15px;
+  --text-corps--line-height: 1.45;
+  --text-titre: 24px;
+  --text-titre--line-height: 1.15;
+  --text-titre--letter-spacing: -0.015em;
+  --text-chiffre: 44px;
+  --text-chiffre--line-height: 1;
+  --text-chiffre--letter-spacing: -0.01em;
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────────────────── */
@@ -167,13 +194,10 @@
     background: var(--papier);
     color: var(--encre);
     font-family: var(--font-sans);
-    font-size: 15px;
+    font-size: var(--text-corps);
     line-height: 1.45;
     font-feature-settings: "kern", "liga";
     -webkit-font-smoothing: antialiased;
-  }
-  @media (min-width: 1024px) {
-    body { font-size: 14px; }
   }
   :focus-visible {
     outline: none;
@@ -181,8 +205,8 @@
     border-radius: var(--radius-controle);
   }
   ::selection {
-    background: var(--laterite-voile);
-    color: var(--encre);
+    background: var(--signal);
+    color: var(--sur-signal);
   }
   input, textarea, select, button {
     font: inherit;
@@ -193,11 +217,18 @@
   }
 }
 
+/* Libellé de section ou de colonne : capitales condensées. */
 @utility etiquette {
   font-family: var(--font-etiquette);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+}
+/* Grandes valeurs : chiffres condensés, comme un numéro de lot. */
+@utility figure {
+  font-family: var(--font-etiquette);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 @utility zone-sure-bas {
   padding-bottom: env(safe-area-inset-bottom);

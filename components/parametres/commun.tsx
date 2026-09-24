@@ -93,7 +93,7 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
     <div role="region" aria-label="Modifications non enregistrées"
       className="zone-sure-bas fixed inset-x-0 bottom-16 z-40 border-t border-trait bg-nuit px-4 py-3 text-sur-nuit lg:bottom-0 lg:left-60">
       <div className="mx-auto flex max-w-[1280px] items-center gap-3">
-        <span className="flex-1 text-[14px]">Modifications non enregistrées</span>
+        <span className="flex-1 text-corps">Modifications non enregistrées</span>
         <Bouton variante="sur-nuit" taille="sm" onClick={onAnnuler}>Annuler</Bouton>
         <Bouton variante="primaire" taille="sm" chargement={enregistrement} onClick={onEnregistrer}>Enregistrer</Bouton>
       </div>
@@ -104,10 +104,10 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
 /** Bloc de réglages : titre et explication à gauche sur ordinateur, champs à droite. */
 export function Groupe({ titre, description, children }: { titre: string; description?: ReactNode; children: ReactNode }) {
   return (
-    <section className="border-b border-trait py-6 first:pt-0 last:border-b-0 lg:grid lg:grid-cols-[240px_1fr] lg:gap-10">
-      <div className="mb-4 lg:mb-0">
-        <h2 className="text-[16px] font-semibold tracking-tight">{titre}</h2>
-        {description && <p className="mt-1 text-[13px] leading-snug text-encre-3">{description}</p>}
+    <section className="border-b border-trait py-6 first:pt-0 last:border-b-0 xl:grid xl:grid-cols-[240px_1fr] xl:gap-10">
+      <div className="mb-4 xl:mb-0">
+        <h2 className="text-corps font-semibold tracking-tight">{titre}</h2>
+        {description && <p className="mt-1 text-petit leading-snug text-encre-3">{description}</p>}
       </div>
       <div className="flex max-w-xl flex-col gap-4">{children}</div>
     </section>

@@ -24,7 +24,7 @@ export function MenuActions({ declencheur, entrees, aligne = "end" }: { declench
           className="z-50 min-w-56 rounded-carte border border-trait bg-surface p-1 shadow-flottante">
           {visibles.map((e) => (
             <Menu.Item key={e.libelle} onSelect={e.onSelect}
-              className={cn("flex h-11 cursor-pointer items-center gap-2.5 rounded-controle px-3 text-[15px] outline-none select-none data-[highlighted]:bg-surface-2 lg:h-9 lg:text-sm",
+              className={cn("flex h-11 cursor-pointer items-center gap-2.5 rounded-controle px-3 text-corps outline-none select-none data-[highlighted]:bg-surface-2 lg:h-9 lg:text-corps",
                 e.danger ? "text-perte" : "text-encre")}>
               {e.icone}
               {e.libelle}

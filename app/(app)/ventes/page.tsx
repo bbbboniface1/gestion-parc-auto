@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Banknote, Plus, Search } from "lucide-react";
+import { Banknote, Plus } from "lucide-react";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { PaiementVente, ProformaListe, VenteListe } from "@/lib/api/types-metier";
@@ -12,7 +12,9 @@ import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import { EnTetePage } from "@/components/coque/coque";
 import { Onglets } from "@/components/ui/onglets";
-import { Montant, Tampon } from "@/components/ui/signature";
+import { Montant, StatutTexte } from "@/components/ui/signature";
+import { PhotoVehicule } from "@/components/metier/photo-vehicule";
+import { ChampRecherche, FiltresTexte } from "@/components/ui/recherche";
 import { EtatErreur, EtatVide, SqueletteListe } from "@/components/ui/etats";
 import { Bouton } from "@/components/ui/bouton";
 import { Feuille } from "@/components/ui/feuille";
@@ -60,7 +62,7 @@ function Ventes() {
         actions={
           <>
             {peutEncaisser && <Bouton icone={<Banknote className="size-4" />} onClick={() => setChoisirPourEncaisser(true)}>Encaisser</Bouton>}
-            {peutVendre && <Link href="/ventes/nouvelle/" className="inline-flex h-11 items-center gap-2 rounded-controle bg-laterite px-4 text-[15px] font-medium text-sur-laterite hover:bg-laterite-fonce lg:h-10 lg:text-sm"><Plus className="size-4" aria-hidden /> Nouvelle vente</Link>}
+            {peutVendre && <Link href="/ventes/nouvelle/" className="inline-flex h-11 items-center gap-2 rounded-controle bg-signal px-4 font-semibold text-sur-signal hover:bg-signal-fonce lg:h-10"><Plus className="size-4" aria-hidden /> Nouvelle vente</Link>}
           </>
         } />
 
@@ -69,41 +71,35 @@ function Ventes() {
 
       {onglet === "ventes" && (
         <>
-          <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center">
-            <label className="relative flex-1 lg:max-w-sm">
-              <span className="sr-only">Rechercher une vente</span>
-              <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Client, facture, véhicule…"
-                className="h-11 w-full rounded-controle border border-trait-fort bg-surface pr-3 pl-9 text-[15px] focus:border-laterite focus:outline-none lg:h-10 lg:text-sm" />
-            </label>
-            <div className="flex gap-1.5 overflow-x-auto">
-              {([["toutes", "Toutes"], ["a_encaisser", "À encaisser"], ["soldees", "Soldées"], ["annulees", "Annulées"]] as const).map(([v, l]) => (
-                <button key={v} type="button" aria-pressed={filtre === v} onClick={() => setFiltre(v)}
-                  className={cn("h-9 shrink-0 rounded-controle border px-3 text-[14px]", filtre === v ? "border-encre bg-encre text-surface" : "border-trait-fort bg-surface text-encre-2")}>{l}</button>
-              ))}
-            </div>
+          <div className="mb-2 flex flex-col gap-3 lg:flex-row lg:items-end lg:gap-8">
+            <ChampRecherche valeur={q} onChange={setQ} libelle="Rechercher une vente" placeholder="Client, facture, véhicule" />
+            <FiltresTexte valeur={filtre} onChange={setFiltre} libelle="Filtrer les ventes"
+              options={[["toutes", "Toutes"], ["a_encaisser", "À encaisser"], ["soldees", "Soldées"], ["annulees", "Annulées"]] as const} />
           </div>
           {ventes.error && !ventes.data ? <EtatErreur erreur={ventes.error} onReessayer={() => void ventes.refetch()} /> : ventes.isPending ? <SqueletteListe /> : (() => {
             const liste = filtre === "a_encaisser" ? (ventes.data ?? []).filter((v) => v.reste_xof > 0) : ventes.data ?? [];
             return liste.length === 0 ? <EtatVide titre="Aucune vente" texte={peutVendre ? "Vendez votre premier véhicule depuis sa fiche, ou ici." : undefined} /> : (
-              <ul className="flex flex-col gap-2">
+              <ul className="border-t-2 border-encre">
                 {liste.map((v) => (
-                  <li key={v.id} className="rounded-carte border border-trait bg-surface">
-                    <Link href={`/ventes/fiche/?id=${v.id}`} className="flex flex-col gap-2 p-4 hover:bg-surface-2/40 lg:flex-row lg:items-center lg:justify-between">
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-mono text-[14px] font-semibold">{v.numero}</span>
-                          {v.statut === "annulee" && <Tampon type="annule" />}
-                          {v.statut === "active" && v.statut_paiement === "paye" && <Tampon type="solde" />}
-                          {v.statut === "active" && v.reste_xof > 0 && v.retard_xof > 0 && <span className="etiquette rounded-[4px] bg-perte-voile px-1.5 py-0.5 text-[11px] text-perte">En retard</span>}
-                          {v.statut === "active" && !v.livree && <Tampon type="a_livrer" />}
+                  <li key={v.id} className="border-b border-trait">
+                    <Link href={`/ventes/fiche/?id=${v.id}`} className="flex gap-3 py-3 hover:bg-surface-2">
+                      <PhotoVehicule path={v.vehicule_photo} alt="" className="aspect-[4/3] w-[104px] shrink-0 self-start" />
+                      <div className="flex min-w-0 flex-1 flex-col gap-1 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                            <span className="font-mono font-semibold">{v.numero}</span>
+                            {v.statut === "annulee" && <StatutTexte type="annule" />}
+                            {v.statut === "active" && v.statut_paiement === "paye" && <StatutTexte type="solde" />}
+                            {v.statut === "active" && v.reste_xof > 0 && v.retard_xof > 0 && <span className="etiquette text-petit text-perte">En retard</span>}
+                            {v.statut === "active" && !v.livree && <StatutTexte type="a_livrer" />}
+                          </div>
+                          <p className="truncate">{v.client_nom}</p>
+                          <p className="truncate text-petit text-encre-3">{v.vehicule_libelle} · {formatDate(v.date_vente)}</p>
                         </div>
-                        <p className="mt-0.5 truncate">{v.client_nom} <span className="text-encre-3">· {v.vehicule_libelle}</span></p>
-                        <p className="text-[13px] text-encre-3">{formatDate(v.date_vente)}</p>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-4 text-right">
-                        <div><p className="text-[12px] text-encre-3">Total</p><Montant valeur={v.montant_ttc} devise={null} /></div>
-                        <div><p className="text-[12px] text-encre-3">Reste</p><Montant valeur={v.reste_xof} devise={null} className={v.reste_xof > 0 ? "text-ocre" : "text-gain"} /></div>
+                        <div className="flex shrink-0 gap-6 lg:text-right">
+                          <div><p className="etiquette text-petit text-encre-3">Total</p><Montant valeur={v.montant_ttc} devise={null} court /></div>
+                          <div><p className="etiquette text-petit text-encre-3">Reste</p><Montant valeur={v.reste_xof} devise={null} court className={v.reste_xof > 0 ? "text-ocre" : "text-gain"} /></div>
+                        </div>
                       </div>
                     </Link>
                   </li>
@@ -122,7 +118,7 @@ function Ventes() {
           {proformas.error && !proformas.data ? <EtatErreur erreur={proformas.error} onReessayer={() => void proformas.refetch()} /> : proformas.isPending ? <SqueletteListe /> : !proformas.data?.length ? (
             <EtatVide titre="Aucune proforma" texte="Une proforma engage un prix sans facturer : idéale pour un client qui hésite encore." />
           ) : (
-            <ul className="flex flex-col gap-2">
+            <ul className="border-t-2 border-encre">
               {proformas.data.map((p) => (
                 <LigneProforma key={p.id} p={p} peutAgir={peutVendre} />
               ))}
@@ -135,12 +131,12 @@ function Ventes() {
         encaissements.error && !encaissements.data ? <EtatErreur erreur={encaissements.error} onReessayer={() => void encaissements.refetch()} /> : encaissements.isPending ? <SqueletteListe /> : !encaissements.data?.length ? (
           <EtatVide titre="Aucun encaissement" />
         ) : (
-          <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
+          <ul className="border-t-2 border-encre">
             {encaissements.data.map((p) => (
-              <li key={p.id} className="flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0">
+              <li key={p.id} className="flex items-center gap-3 border-b border-trait py-3 last:border-b-0">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium">{p.client_nom} <span className="font-mono text-[12px] text-encre-3">· {p.vente_numero}</span></p>
-                  <p className="text-[13px] text-encre-3">{formatDate(p.date)} · {MODES_PAIEMENT[p.mode]?.libelle}{p.reference ? ` · ${p.reference}` : ""}{p.annule ? " · annulé" : ""}</p>
+                  <p className="font-medium">{p.client_nom} <span className="font-mono text-petit text-encre-3">· {p.vente_numero}</span></p>
+                  <p className="text-petit text-encre-3">{formatDate(p.date)} · {MODES_PAIEMENT[p.mode]?.libelle}{p.reference ? ` · ${p.reference}` : ""}{p.annule ? " · annulé" : ""}</p>
                 </div>
                 <Montant valeur={p.montant_xof} devise={null} className={cn(p.annule && "text-encre-3 line-through", p.montant_xof < 0 && !p.annule && "text-perte")} />
               </li>
@@ -154,7 +150,7 @@ function Ventes() {
           {ventesAEncaisser.map((v) => (
             <li key={v.id}>
               <button type="button" onClick={() => setVenteAEncaisser(v)} className="flex w-full items-center justify-between gap-3 border-b border-trait py-2.5 text-left hover:bg-surface-2">
-                <span className="min-w-0"><span className="block truncate font-medium">{v.client_nom}</span><span className="block truncate font-mono text-[12px] text-encre-3">{v.numero} · {v.vehicule_libelle}</span></span>
+                <span className="min-w-0"><span className="block truncate font-medium">{v.client_nom}</span><span className="block truncate font-mono text-petit text-encre-3">{v.numero} · {v.vehicule_libelle}</span></span>
                 <Montant valeur={v.reste_xof} devise={null} className="shrink-0 text-ocre" />
               </button>
             </li>
@@ -181,14 +177,14 @@ function LigneProforma({ p, peutAgir }: { p: ProformaListe; peutAgir: boolean })
   });
   const LIBELLES: Record<string, string> = { emise: "Émise", acceptee: "Acceptée", expiree: "Expirée", convertie: "Convertie", annulee: "Annulée" };
   return (
-    <li className="flex flex-col gap-2 rounded-carte border border-trait bg-surface p-4 lg:flex-row lg:items-center lg:justify-between">
+    <li className="flex flex-col gap-2 border-b border-trait py-3 lg:flex-row lg:items-center lg:justify-between">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[14px] font-semibold">{p.numero}</span>
-          <span className="etiquette rounded-[4px] bg-surface-2 px-1.5 py-0.5 text-[11px] text-encre-2">{LIBELLES[p.statut_effectif]}</span>
+          <span className="font-mono text-corps font-semibold">{p.numero}</span>
+          <span className="etiquette text-petit text-encre-2">{LIBELLES[p.statut_effectif]}</span>
         </div>
         <p className="mt-0.5">{p.client_nom}</p>
-        <p className="text-[13px] text-encre-3">Valable jusqu&apos;au {formatDate(p.valide_jusqu_au)}</p>
+        <p className="text-petit text-encre-3">Valable jusqu&apos;au {formatDate(p.valide_jusqu_au)}</p>
       </div>
       <div className="flex shrink-0 items-center gap-3">
         <Montant valeur={p.montant_ttc} devise={null} />
@@ -199,7 +195,7 @@ function LigneProforma({ p, peutAgir }: { p: ProformaListe; peutAgir: boolean })
         {peutAgir && p.statut_effectif !== "convertie" && p.statut_effectif !== "annulee" && (
           <Bouton taille="sm" variante="danger" onClick={() => changerStatut.executer({ p_org: org.id, p_id: p.id, p_statut: "annulee" })}>Annuler</Bouton>
         )}
-        {p.vente_id && <Link href={`/ventes/fiche/?id=${p.vente_id}`} className="text-[13px] font-medium text-laterite hover:underline">Voir la vente</Link>}
+        {p.vente_id && <Link href={`/ventes/fiche/?id=${p.vente_id}`} className="text-petit font-medium text-lien hover:underline">Voir la vente</Link>}
       </div>
     </li>
   );

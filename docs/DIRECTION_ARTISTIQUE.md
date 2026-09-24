@@ -1,5 +1,8 @@
 # Direction artistique — « Connaissement »
 
+> **Remplacé le 24/09/2026 par [DESIGN_V2.md](DESIGN_V2.md)** (palette encre + jaune signal, filets, photo en héros).
+> Ce document décrit l'ancienne direction « Connaissement » et n'est conservé que pour l'historique.
+
 Le métier de nos utilisateurs est un voyage : une voiture quitte un parc d'enchères à Houston,
 traverse l'Atlantique dans un conteneur, débarque à Cotonou ou Dakar, remonte en convoi
 jusqu'à Bamako, passe la douane, l'atelier, puis le parc de vente.

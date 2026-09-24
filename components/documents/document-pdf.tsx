@@ -126,7 +126,7 @@ function TableauEcheances({ echeances }: { echeances: EcheanceDocument[] }) {
 }
 
 export function DocumentPDF({ d }: { d: DonneesDocument }) {
-  const accent = d.options?.couleur || "#B5461E";
+  const accent = d.options?.couleur || "#0F1113";
   const e = d.entreprise;
   const encaisse = (d.paiements ?? []).reduce((t, p) => t + p.montant, 0);
   const reste = Math.max(0, d.totaux.ttc - encaisse);

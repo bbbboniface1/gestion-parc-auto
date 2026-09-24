@@ -49,27 +49,27 @@ function Connexion() {
 
   return (
     <CadreAccueil>
-      <h1 className="text-[26px] font-semibold tracking-tight">Connexion</h1>
+      <h1 className="text-titre font-semibold tracking-tight">Connexion</h1>
       <p className="mt-1 text-encre-2">{production ? "Accédez au parc de votre entreprise." : "Aucun serveur n'est configuré sur ce déploiement : seule la démonstration est disponible."}</p>
 
       {production && (
         <form onSubmit={seConnecter} className="mt-6 flex flex-col gap-4" noValidate>
           <Champ libelle="Adresse e-mail" type="email" autoComplete="email" inputMode="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
           <Champ libelle="Mot de passe" type="password" autoComplete="current-password" required value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} />
-          {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte">{erreur}</p>}
+          {erreur && <p role="alert" className="border-l-[3px] border-perte bg-perte-voile px-3 py-2 text-corps text-perte">{erreur}</p>}
           <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email || !motDePasse}>
             Se connecter
           </Bouton>
-          <div className="flex justify-between text-[14px]">
+          <div className="flex justify-between text-corps">
             <Link href="/mot-de-passe/" className="text-encre-2 underline-offset-4 hover:underline">Mot de passe oublié</Link>
-            <Link href="/inscription/" className="font-medium text-laterite underline-offset-4 hover:underline">Créer un compte</Link>
+            <Link href="/inscription/" className="font-medium text-lien underline-offset-4 hover:underline">Créer un compte</Link>
           </div>
         </form>
       )}
 
       <div className={production ? "mt-8 border-t border-trait pt-6" : "mt-6"}>
-        <p className="etiquette text-[12px] text-encre-3">Sans compte</p>
-        <p className="mt-1 text-[14px] text-encre-2">
+        <p className="etiquette text-petit text-encre-3">Sans compte</p>
+        <p className="mt-1 text-corps text-encre-2">
           Une entreprise fictive de Bamako, 24 véhicules, des ventes et des encaissements : tout fonctionne, directement dans votre navigateur.
         </p>
         <Bouton
@@ -86,7 +86,7 @@ function Connexion() {
         >
           Essayer la démonstration
         </Bouton>
-        {demo && <p className="mt-2 text-[13px] text-encre-3" role="status">Préparation de la base de démonstration (quelques secondes la première fois)…</p>}
+        {demo && <p className="mt-2 text-petit text-encre-3" role="status">Préparation de la base de démonstration (quelques secondes la première fois)…</p>}
       </div>
     </CadreAccueil>
   );

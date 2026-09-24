@@ -17,6 +17,7 @@ import { cn } from "@/lib/cn";
 import { EnTetePage } from "@/components/coque/coque";
 import { Onglets } from "@/components/ui/onglets";
 import { Montant } from "@/components/ui/signature";
+import { Section } from "@/components/ui/section";
 import { Bouton, BoutonIcone } from "@/components/ui/bouton";
 import { EtatErreur, EtatVide, SqueletteListe } from "@/components/ui/etats";
 import { FeuilleFrais } from "@/components/metier/feuille-frais";
@@ -65,29 +66,28 @@ function Finances() {
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {tresorerie.data.comptes.map((c) => (
-                <div key={c.id} className="rounded-carte border border-trait bg-surface p-4">
-                  <p className="etiquette text-[11px] text-encre-3">{c.nom}</p>
+                <div key={c.id} className="border-t-2 border-encre pt-3">
+                  <p className="etiquette text-petit text-encre-3">{c.nom}</p>
                   <Montant valeur={c.solde_xof} taille="lg" className="mt-1 block" />
-                  <p className="mt-1 text-[12px] text-encre-3">+{formatCourt(c.entrees_periode)} · −{formatCourt(c.sorties_periode)}</p>
+                  <p className="mt-1 text-petit text-encre-3">+{formatCourt(c.entrees_periode)} · −{formatCourt(c.sorties_periode)}</p>
                 </div>
               ))}
             </div>
-            <section className="rounded-carte border border-trait bg-surface">
-              <h2 className="etiquette border-b border-trait px-4 py-2.5 text-[12px] text-encre-3 lg:px-5">Mouvements</h2>
-              {tresorerie.data.mouvements.length === 0 ? <p className="px-4 py-4 text-encre-3 lg:px-5">Aucun mouvement sur cette période.</p> : (
+            <Section titre="Mouvements">
+              {tresorerie.data.mouvements.length === 0 ? <p className="py-4 text-encre-3">Aucun mouvement sur cette période.</p> : (
                 <ul>
                   {tresorerie.data.mouvements.slice(0, 50).map((m, i) => (
-                    <li key={i} className="flex items-center gap-3 border-b border-trait px-4 py-2.5 last:border-b-0 lg:px-5">
+                    <li key={i} className="flex items-center gap-3 border-b border-trait py-2.5 last:border-b-0">
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[14px]">{m.libelle}</p>
-                        <p className="text-[12px] text-encre-3">{formatDate(m.date)}{m.compte_nom ? ` · ${m.compte_nom}` : ""}</p>
+                        <p className="truncate text-corps">{m.libelle}</p>
+                        <p className="text-petit text-encre-3">{formatDate(m.date)}{m.compte_nom ? ` · ${m.compte_nom}` : ""}</p>
                       </div>
                       <Montant valeur={m.montant_xof} devise={null} className={m.montant_xof < 0 ? "text-perte" : "text-gain"} />
                     </li>
                   ))}
                 </ul>
               )}
-            </section>
+            </Section>
           </div>
         )
       )}
@@ -97,8 +97,8 @@ function Finances() {
           <EtatVide titre="Aucune dépense sur cette période" />
         ) : (
           <>
-            <p className="mb-3 text-[14px] text-encre-2">Total : <Montant valeur={depenses.data.reduce((s, f) => s + f.montant_xof, 0)} devise={null} /></p>
-            <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
+            <p className="mb-3 text-corps text-encre-2">Total : <Montant valeur={depenses.data.reduce((s, f) => s + f.montant_xof, 0)} devise={null} /></p>
+            <ul className="border-t-2 border-encre">
               {depenses.data.map((f) => <LigneDepense key={f.id} f={f} enEvidence={f.id === params.get("frais")} peutModifier={peutModifier} />)}
             </ul>
           </>
@@ -110,21 +110,21 @@ function Finances() {
           <EtatVide titre="Aucune créance" texte="Tous les clients sont à jour." />
         ) : (
           <>
-            <p className="mb-3 text-[14px] text-encre-2">Total dû : <Montant valeur={tresorerie.data.creances.reduce((s, c) => s + c.reste_xof, 0)} devise={null} className="text-ocre" /></p>
-            <ul className="flex flex-col gap-2">
+            <p className="mb-3 text-corps text-encre-2">Total dû : <Montant valeur={tresorerie.data.creances.reduce((s, c) => s + c.reste_xof, 0)} devise={null} className="text-ocre" /></p>
+            <ul className="border-t-2 border-encre">
               {tresorerie.data.creances.map((c) => (
-                <li key={c.vente_id} className="rounded-carte border border-trait bg-surface p-4">
+                <li key={c.vente_id} className="border-b border-trait py-3">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="min-w-0">
                       <Link href={`/ventes/fiche/?id=${c.vente_id}`} className="font-semibold hover:underline">{c.client_nom}</Link>
-                      <p className="truncate text-[13px] text-encre-3">{c.numero} · {c.vehicule_libelle}</p>
-                      {c.jours_retard !== null && <p className="mt-0.5 text-[13px] font-medium text-perte">{pluriel(c.jours_retard, "jour")} de retard</p>}
+                      <p className="truncate text-petit text-encre-3">{c.numero} · {c.vehicule_libelle}</p>
+                      {c.jours_retard !== null && <p className="mt-0.5 text-petit font-medium text-perte">{pluriel(c.jours_retard, "jour")} de retard</p>}
                     </div>
                     <div className="flex items-center gap-3">
                       <Montant valeur={c.reste_xof} devise={null} className="text-ocre" />
                       {c.client_telephone && (
                         <a href={lienWhatsApp(c.client_telephone, `Bonjour ${c.client_nom}, un rappel amical concernant votre facture ${c.numero} : il reste ${c.reste_xof.toLocaleString("fr-FR")} FCFA à régler. Merci.`)}
-                          target="_blank" rel="noopener" className="inline-flex h-9 items-center gap-1.5 rounded-controle border border-trait-fort px-3 text-[13px]">
+                          target="_blank" rel="noopener" className="inline-flex h-11 items-center gap-1.5 rounded-controle bg-surface-2 px-3 hover:bg-trait lg:h-9">
                           <MessageCircle className="size-3.5" aria-hidden /> Relancer
                         </a>
                       )}
@@ -147,7 +147,7 @@ function Finances() {
                 ["Marge", formatCourt(marges.data.totaux.marge)],
                 ["Taux de marge", marges.data.totaux.marge_pct !== null ? formatPourcent(marges.data.totaux.marge_pct, 1) : "—"],
               ].map(([l, v]) => (
-                <div key={l} className="rounded-carte border border-trait bg-surface p-4"><p className="etiquette text-[11px] text-encre-3">{l}</p><p className="chiffres mt-1 text-[22px] font-semibold">{v}</p></div>
+                <div key={l} className="border-t-2 border-encre pt-3"><p className="etiquette text-petit text-encre-3">{l}</p><p className="chiffres mt-1 text-titre font-semibold">{v}</p></div>
               ))}
             </div>
             <div className="flex justify-end">
@@ -169,23 +169,23 @@ function Finances() {
                 telechargerCSV(`rentabilite-${p.du}-${p.au}`, csv);
               }}>Exporter en CSV</Bouton>
             </div>
-            <section className="overflow-x-auto rounded-carte border border-trait bg-surface">
-              <table className="w-full min-w-[720px] text-sm">
-                <thead><tr className="border-b border-trait bg-surface-2/60 text-left"><th className="px-3 py-2">Véhicule</th><th className="px-3 py-2">Client</th><th className="px-3 py-2 text-right">Prix HT</th><th className="px-3 py-2 text-right">Revient</th><th className="px-3 py-2 text-right">Marge</th><th className="px-3 py-2 text-right">Jours</th></tr></thead>
+            <section className="overflow-x-auto border-t-2 border-encre">
+              <table className="w-full min-w-[720px] text-corps">
+                <thead><tr className="etiquette border-b border-trait-fort text-left text-petit text-encre-3"><th className="py-2 pr-3">Véhicule</th><th className="px-3 py-2">Client</th><th className="px-3 py-2 text-right">Prix HT</th><th className="px-3 py-2 text-right">Revient</th><th className="px-3 py-2 text-right">Marge</th><th className="py-2 pl-3 text-right">Jours</th></tr></thead>
                 <tbody>
                   {marges.data.ventes.map((l) => (
                     <tr key={l.vente_id} className="border-b border-trait last:border-b-0">
-                      <td className="px-3 py-2"><Link href={`/ventes/fiche/?id=${l.vente_id}`} className="hover:underline">{l.vehicule_libelle}</Link></td>
+                      <td className="py-2 pr-3"><Link href={`/ventes/fiche/?id=${l.vente_id}`} className="hover:underline">{l.vehicule_libelle}</Link></td>
                       <td className="px-3 py-2 text-encre-2">{l.client_nom}</td>
                       <td className="chiffres px-3 py-2 text-right">{l.montant_ht.toLocaleString("fr-FR")}</td>
                       <td className="chiffres px-3 py-2 text-right">{l.prix_revient_xof.toLocaleString("fr-FR")}</td>
                       <td className={cn("chiffres px-3 py-2 text-right font-medium", l.marge_xof < 0 && "text-perte")}>{l.marge_xof.toLocaleString("fr-FR")}</td>
-                      <td className="chiffres px-3 py-2 text-right text-encre-3">{l.jours_stock}</td>
+                      <td className="chiffres py-2 pl-3 text-right text-encre-3">{l.jours_stock}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              {marges.data.ventes.length === 0 && <p className="px-4 py-6 text-center text-encre-3">Aucune vente sur cette période.</p>}
+              {marges.data.ventes.length === 0 && <p className="py-6 text-center text-encre-3">Aucune vente sur cette période.</p>}
             </section>
           </div>
         )
@@ -202,10 +202,10 @@ function LigneDepense({ f, enEvidence, peutModifier }: { f: Frais; enEvidence: b
   const marquerPaye = useEcriture("frais_enregistrer", { onSuccess: () => toast.success("Marqué payé"), onError: (e) => toast.error(e.message) });
   const supprimer = useEcriture("frais_supprimer", { onSuccess: () => toast.success("Dépense supprimée"), onError: (e) => toast.error(e.message) });
   return (
-    <li className={cn("flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0 lg:px-5", enEvidence && "bg-laterite-voile")}>
+    <li className={cn("flex items-center gap-3 border-b border-trait py-3 last:border-b-0", enEvidence && "bg-signal-voile")}>
       <div className="min-w-0 flex-1">
-        <p className="font-medium">{libelleCategorie(f.categorie)}{f.statut === "a_payer" && <span className="etiquette ml-2 text-[11px] text-ocre">à payer</span>}</p>
-        <p className="truncate text-[13px] text-encre-3">{formatDate(f.date)}{f.libelle ? ` · ${f.libelle}` : ""}{f.fournisseur ? ` · ${f.fournisseur}` : ""}{f.vehicule_libelle ? ` · ${f.vehicule_libelle}` : ""}{f.expedition_reference ? ` · ${f.expedition_reference}` : ""}</p>
+        <p className="font-medium">{libelleCategorie(f.categorie)}{f.statut === "a_payer" && <span className="etiquette ml-2 text-petit text-ocre">à payer</span>}</p>
+        <p className="truncate text-petit text-encre-3">{formatDate(f.date)}{f.libelle ? ` · ${f.libelle}` : ""}{f.fournisseur ? ` · ${f.fournisseur}` : ""}{f.vehicule_libelle ? ` · ${f.vehicule_libelle}` : ""}{f.expedition_reference ? ` · ${f.expedition_reference}` : ""}</p>
       </div>
       <Montant valeur={f.montant_xof} devise={null} />
       {peutModifier && (

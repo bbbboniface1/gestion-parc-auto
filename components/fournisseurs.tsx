@@ -26,7 +26,7 @@ export function Fournisseurs({ children }: { children: ReactNode }) {
           classNames: {
             toast: "!rounded-carte !border !border-trait !bg-surface !text-encre !shadow-flottante !font-sans",
             description: "!text-encre-2",
-            actionButton: "!bg-laterite !text-sur-laterite",
+            actionButton: "!bg-signal !text-sur-signal",
           },
         }}
       />

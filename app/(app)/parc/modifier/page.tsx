@@ -17,7 +17,7 @@ function Modifier() {
   const { data, error, refetch } = useLecture<VehiculeDetail>("vehicule_obtenir", { p_org: org.id, p_id: id }, { enabled: !!id });
   return (
     <>
-      <Link href={`/parc/vehicule/?id=${id}`} className="mb-2 inline-flex h-10 items-center gap-1.5 text-[14px] text-encre-2 hover:text-encre">
+      <Link href={`/parc/vehicule/?id=${id}`} className="mb-2 inline-flex h-10 items-center gap-1.5 text-corps text-encre-2 hover:text-encre">
         <ArrowLeft className="size-4" aria-hidden /> Retour à la fiche
       </Link>
       <EnTetePage titre={data ? `Modifier ${data.libelle}` : "Modifier le véhicule"} surtitre={data?.reference} />

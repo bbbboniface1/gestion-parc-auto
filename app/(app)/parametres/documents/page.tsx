@@ -17,7 +17,7 @@ import { Champ, ChampNombre, Interrupteur, ZoneTexte } from "@/components/ui/cha
 import { EtatErreur, SqueletteListe } from "@/components/ui/etats";
 import { Code } from "@/components/ui/signature";
 
-const COULEURS = ["#B5461E", "#1B1D22", "#1F6F7A", "#1B7148", "#2F5A7A", "#7A3E5D"];
+const COULEURS = ["#0F1113", "#B5461E", "#1F6F7A", "#1B7148", "#2F5A7A", "#7A3E5D"];
 const VARIABLES_WHATSAPP = [
   ["client", "Moussa Traoré"], ["numero", "FAC-2026-0047"], ["montant", "14 500 000 FCFA"],
   ["reste", "7 500 000 FCFA"], ["vehicule", "Toyota RAV4 2018"], ["entreprise", "Sahel Auto Import"],
@@ -94,13 +94,13 @@ export default function PageDocuments() {
         sousTitre="Factures, proformas, reçus et avoirs."
         actions={<Bouton icone={<Eye className="size-4" />} chargement={apercu} onClick={() => void ouvrirApercu()}>Aperçu d&apos;une facture</Bouton>}
       />
-      <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
+      <div className="border-t-2 border-encre pt-4">
         <Groupe titre="Numérotation" description="Numéros attribués par le serveur, sans trou ni doublon. Une vente annulée garde son numéro et reçoit un avoir.">
           <Champ libelle="Format" mono value={p.format_numero} onChange={(e) => maj("format_numero", e.target.value)} erreur={erreurFormat} />
           <div className="flex flex-wrap gap-1.5" aria-label="Jetons disponibles">
             {JETONS_NUMERO.map((j) => (
               <button key={j} type="button" onClick={() => maj("format_numero", p.format_numero + j)}
-                className="h-8 rounded-[4px] border border-trait px-2 font-mono text-[12px] text-encre-2 hover:bg-surface-2">{j}</button>
+                className="h-8 rounded-controle bg-surface-2 px-2 font-mono text-petit text-encre-2 hover:bg-surface-2">{j}</button>
             ))}
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -115,7 +115,7 @@ export default function PageDocuments() {
             <ChampNombre libelle="Chiffres du numéro" valeur={p.padding} onChange={(v) => maj("padding", v ?? 4)} min={1} max={8} unite="chiffres" />
             <div className="flex items-end pb-1"><Interrupteur libelle="Repartir à 1 chaque année" actif={p.remise_annuelle} onChange={(v) => maj("remise_annuelle", v)} /></div>
           </div>
-          <p className="rounded-controle bg-surface-2 px-3 py-2 text-[14px] text-encre-2">
+          <p className="rounded-controle bg-surface-2 px-3 py-2 text-corps text-encre-2">
             Exemples : <Code className="text-encre">{exemple(p.prefixe_facture)}</Code> · <Code className="text-encre">{exemple(p.prefixe_recu)}</Code> · <Code className="text-encre">{exemple(p.prefixe_avoir)}</Code>
           </p>
         </Groupe>
@@ -143,17 +143,17 @@ export default function PageDocuments() {
           <Interrupteur libelle="Montant en toutes lettres" description="« Arrêtée la présente facture à la somme de : quatorze millions… »" actif={p.montant_en_lettres} onChange={(v) => maj("montant_en_lettres", v)} />
           <Interrupteur libelle="QR code de vérification" description="Le client scanne et vérifie que la facture existe vraiment et n'a pas été annulée." actif={p.qr_verification} onChange={(v) => maj("qr_verification", v)} />
           <fieldset>
-            <legend className="mb-2 text-[13px] font-medium text-encre-2">Couleur d&apos;accent</legend>
+            <legend className="mb-2 text-petit font-medium text-encre-2">Couleur d&apos;accent</legend>
             <div className="flex flex-wrap items-center gap-2">
               {COULEURS.map((c) => (
                 <button key={c} type="button" aria-label={`Couleur ${c}`} aria-pressed={p.couleur_documents.toUpperCase() === c}
                   onClick={() => maj("couleur_documents", c)}
-                  className={cn("size-9 rounded-controle border-2", p.couleur_documents.toUpperCase() === c ? "border-encre" : "border-transparent")}
+                  className={cn("size-9 rounded-controle", p.couleur_documents.toUpperCase() === c && "outline-2 outline-offset-2 outline-encre")}
                   style={{ background: c }} />
               ))}
-              <label className="ml-1 flex items-center gap-2 text-[13px] text-encre-2">
+              <label className="ml-1 flex items-center gap-2 text-petit text-encre-2">
                 Autre
-                <input type="color" value={p.couleur_documents} onChange={(e) => maj("couleur_documents", e.target.value.toUpperCase())} className="h-9 w-12 cursor-pointer rounded-controle border border-trait" />
+                <input type="color" value={p.couleur_documents} onChange={(e) => maj("couleur_documents", e.target.value.toUpperCase())} className="h-9 w-12 cursor-pointer rounded-controle bg-surface-2" />
               </label>
             </div>
           </fieldset>
@@ -164,17 +164,17 @@ export default function PageDocuments() {
             onChange={(e) => maj("modele_message_whatsapp", e.target.value || null)} />
           <div className="flex flex-wrap gap-1.5">
             {VARIABLES_WHATSAPP.map(([v]) => (
-              <button key={v} type="button" onClick={() => insererVariable(v)} className="h-8 rounded-[4px] border border-trait bg-surface-2/50 px-2 font-mono text-[12px] text-encre-2 hover:bg-surface-2">{`{${v}}`}</button>
+              <button key={v} type="button" onClick={() => insererVariable(v)} className="h-8 rounded-controle bg-surface-2 px-2 font-mono text-petit text-encre-2 hover:bg-surface-2">{`{${v}}`}</button>
             ))}
           </div>
-          <div className="rounded-carte bg-[#e7f7e1] p-3 text-[14px] text-[#17171a] dark:bg-[#1f3a24] dark:text-sur-nuit">
-            <p className="etiquette mb-1 text-[11px] opacity-70">Aperçu</p>
+          <div className="rounded-carte bg-[#e7f7e1] p-3 text-corps text-[#17171a] dark:bg-[#1f3a24] dark:text-sur-nuit">
+            <p className="etiquette mb-1 text-petit opacity-70">Aperçu</p>
             <p className="whitespace-pre-line">{remplirModele(modele || MODELE_PAR_DEFAUT, Object.fromEntries(VARIABLES_WHATSAPP))}</p>
           </div>
           {!modele && <Bouton variante="fantome" taille="sm" className="self-start" onClick={() => maj("modele_message_whatsapp", MODELE_PAR_DEFAUT)}>Utiliser le modèle proposé</Bouton>}
         </Groupe>
       </div>
-      <p className="mt-3 text-[13px] text-encre-3">
+      <p className="mt-3 text-petit text-encre-3">
         Les factures déjà émises ne changent pas : elles gardent les informations du jour de leur émission. Montant de l&apos;exemple : {formatNombre(14_500_000)} FCFA.
       </p>
       <BarreEnregistrement sale={sale} enregistrement={enregistrement} onEnregistrer={enregistrer} onAnnuler={annuler} />

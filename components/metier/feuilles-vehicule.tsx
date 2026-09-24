@@ -36,13 +36,13 @@ export function FeuilleEtape({ ouverte, onFermer, vehiculeId, actuelle, proposee
         </Bouton>
       </>}>
       <fieldset className="flex flex-col gap-1.5">
-        <legend className="mb-2 text-[13px] font-medium text-encre-2">Nouvelle étape</legend>
+        <legend className="mb-2 text-petit font-medium text-encre-2">Nouvelle étape</legend>
         {ETAPES.map((e) => (
-          <label key={e.code} className={cn("flex h-12 cursor-pointer items-center gap-3 rounded-controle border px-3", etape === e.code ? "border-laterite bg-laterite-voile" : "border-trait")}>
-            <input type="radio" name="etape" value={e.code} checked={etape === e.code} onChange={() => setEtape(e.code)} className="accent-[var(--laterite)]" />
-            <span aria-hidden className="h-5 w-[3px] rounded-sm" style={{ background: e.couleur }} />
+          <label key={e.code} className={cn("flex h-12 cursor-pointer items-center gap-3 rounded-controle px-3", etape === e.code ? "border-l-[3px] border-encre bg-signal-voile" : "bg-surface-2")}>
+            <input type="radio" name="etape" value={e.code} checked={etape === e.code} onChange={() => setEtape(e.code)} className="accent-[var(--encre)]" />
+            <span aria-hidden className="h-5 w-[3px] rounded-controle" style={{ background: e.couleur }} />
             <span className="flex-1 font-medium">{e.libelle}</span>
-            {e.code === actuelle && <span className="text-[12px] text-encre-3">actuelle</span>}
+            {e.code === actuelle && <span className="text-petit text-encre-3">actuelle</span>}
           </label>
         ))}
       </fieldset>
@@ -72,10 +72,10 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
 
   if (valeur) {
     return (
-      <div className="flex items-center justify-between rounded-controle border border-laterite bg-laterite-voile px-3 py-2.5">
+      <div className="flex items-center justify-between border-l-[3px] border-encre bg-signal-voile px-3 py-2.5">
         <div>
           <p className="font-semibold">{valeur.nom}</p>
-          <p className="text-[13px] text-encre-2">{[valeur.telephone, valeur.ville].filter(Boolean).join(" · ")}</p>
+          <p className="text-petit text-encre-2">{[valeur.telephone, valeur.ville].filter(Boolean).join(" · ")}</p>
         </div>
         <Bouton variante="fantome" taille="sm" onClick={() => onChoix(null)}>Changer</Bouton>
       </div>
@@ -83,7 +83,7 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
   }
   if (creation) {
     return (
-      <div className="flex flex-col gap-3 rounded-controle border border-trait p-3">
+      <div className="flex flex-col gap-3 rounded-controle bg-surface-2 p-3">
         <Champ libelle="Nom complet" value={nom} onChange={(e) => setNom(e.target.value)} autoFocus />
         <Champ libelle="Téléphone" type="tel" inputMode="tel" placeholder="70 12 34 56" value={telephone} onChange={(e) => setTelephone(e.target.value)} />
         <div className="flex gap-2">
@@ -102,14 +102,14 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
         <span className="sr-only">Rechercher un client</span>
         <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nom ou téléphone"
-          className="h-11 w-full rounded-controle border border-trait-fort bg-surface pl-9 text-[15px] focus:border-laterite focus:outline-none" />
+          className="h-11 w-full rounded-t-controle border-0 border-b-2 border-trait-fort bg-surface-2 pl-9 text-corps focus:border-encre focus:outline-none" />
       </label>
       <ul className="flex flex-col">
         {liste.map((c) => (
           <li key={c.id}>
             <button type="button" onClick={() => onChoix(c)} className="flex w-full items-center justify-between border-b border-trait px-1 py-2.5 text-left hover:bg-surface-2">
               <span className="font-medium">{c.nom}</span>
-              <span className="text-[13px] text-encre-3">{c.telephone}</span>
+              <span className="text-petit text-encre-3">{c.telephone}</span>
             </button>
           </li>
         ))}

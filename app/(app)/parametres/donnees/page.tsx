@@ -57,7 +57,7 @@ export default function PageDonnees() {
   return (
     <>
       <EnTetePage titre="Données" sousTitre="Vos informations vous appartiennent : exportez-les à tout moment." />
-      <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
+      <div className="border-t-2 border-encre pt-4">
         <Groupe titre="Exports Excel" description="Fichiers CSV qui s'ouvrent directement dans Excel, accents et virgules décimales compris.">
           {([["vehicules", "Tous les véhicules"], ["ventes", "Toutes les ventes"], ["clients", "Tous les clients"]] as const).map(([cle, libelle]) => (
             <Bouton key={cle} className="self-start" icone={<Download className="size-4" />} chargement={en === cle} onClick={() => void exporter(cle)}>{libelle}</Bouton>
@@ -74,7 +74,7 @@ export default function PageDonnees() {
           </Groupe>
         ) : (
           <Groupe titre="Sauvegarde" description="Vos données sont sauvegardées automatiquement par votre hébergeur de base de données (Supabase). Les exports ci-dessus sont une copie de plus, à vous.">
-            <p className="text-[14px] text-encre-2">Conservez un export mensuel des ventes et des clients dans un dossier à part.</p>
+            <p className="text-corps text-encre-2">Conservez un export mensuel des ventes et des clients dans un dossier à part.</p>
           </Groupe>
         )}
       </div>

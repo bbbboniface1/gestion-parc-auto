@@ -6,17 +6,17 @@ type Variante = "primaire" | "secondaire" | "fantome" | "danger" | "sur-nuit";
 type Taille = "sm" | "md" | "lg";
 
 const VARIANTES: Record<Variante, string> = {
-  primaire: "bg-laterite text-sur-laterite hover:bg-laterite-fonce active:bg-laterite-fonce",
-  secondaire: "bg-surface text-encre border border-trait-fort hover:bg-surface-2",
+  primaire: "bg-signal text-sur-signal font-semibold hover:bg-signal-fonce active:bg-signal-fonce",
+  secondaire: "bg-surface-2 text-encre hover:bg-trait",
   fantome: "text-encre-2 hover:bg-surface-2 hover:text-encre",
-  danger: "bg-surface text-perte border border-trait-fort hover:bg-perte-voile",
-  "sur-nuit": "bg-nuit-2 text-sur-nuit hover:bg-white/10",
+  danger: "bg-perte-voile text-perte hover:bg-perte-voile/70",
+  "sur-nuit": "bg-white/10 text-sur-nuit hover:bg-white/15",
 };
 
 const TAILLES: Record<Taille, string> = {
-  sm: "h-9 px-3 text-[13px] gap-1.5",
-  md: "h-11 lg:h-10 px-4 text-[15px] lg:text-sm gap-2",
-  lg: "h-12 px-5 text-base gap-2",
+  sm: "h-9 px-3 text-petit gap-1.5",
+  md: "h-11 lg:h-10 px-4 text-corps gap-2",
+  lg: "h-12 px-5 text-corps gap-2",
 };
 
 export interface ProprietesBouton extends ButtonHTMLAttributes<HTMLButtonElement> {

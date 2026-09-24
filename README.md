@@ -53,4 +53,4 @@ npm run build       # export statique + service worker
 - `components/ui/` — système de design « Connaissement » ; `components/metier/` — composants du métier
 - `lib/` — formats, montants, VIN (clé de contrôle + décodage NHTSA), simulateur, documents PDF
 - `supabase/` — schéma, API, données de démonstration ; `tests/` — tests unitaires et Postgres
-- `docs/` — cahier des charges, direction artistique, recherche, conventions
+- `docs/` — cahier des charges, `DESIGN_V2.md` (direction artistique), garde-fou anti-générique, recherche, conventions

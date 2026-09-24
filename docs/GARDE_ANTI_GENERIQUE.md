@@ -11,6 +11,9 @@ Chaque écran redessiné est mesuré avant d'être conservé. **Un seul critère
 | 2 | Photographie | tout écran qui montre un véhicule montre une vraie photo, jamais une silhouette | inspection : aucun visuel de remplacement dans les données de démonstration |
 | 3 | Échelle typographique | au plus 4 tailles de texte utilisées, saut d'au moins ×1,5 entre le corps et le titre principal | calcul des `font-size` calculés |
 
+Définition mesurée d'une « boîte » : bordure sur les quatre côtés et rayon > 0 (aplats gris et traits simples exclus).
+Résultats : `DESIGN_V2.md`.
+
 ## Tests de jugement (avec capture, écran par écran)
 
 4. **Point focal unique.** En plissant les yeux, un seul élément domine (photo, chiffre clé), pas une grille de blocs égaux.

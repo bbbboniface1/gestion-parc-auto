@@ -31,18 +31,18 @@ export default function PageExpeditions() {
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending ? <SqueletteListe /> : !data?.length ? (
         <EtatVide titre="Aucune expédition" texte="Groupez vos véhicules par conteneur pour partager les frais de fret et suivre l'arrivée." />
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="border-t-2 border-encre">
           {data.map((e) => (
-            <li key={e.id} className="rounded-carte border border-trait bg-surface">
-              <Link href={`/expeditions/fiche/?id=${e.id}`} className="flex flex-col gap-2 p-4 hover:bg-surface-2/40 lg:flex-row lg:items-center lg:justify-between">
+            <li key={e.id} className="border-b border-trait">
+              <Link href={`/expeditions/fiche/?id=${e.id}`} className="flex flex-col gap-2 py-3 hover:bg-surface-2 lg:flex-row lg:items-center lg:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-[14px] font-semibold">{e.reference}</span>
-                    <span className="etiquette rounded-[4px] px-1.5 py-0.5 text-[11px]" style={{ color: COULEURS[e.statut], background: "var(--surface-2)" }}>{LIBELLES[e.statut]}</span>
-                    {e.numero_conteneur && <span className="font-mono text-[12px] text-encre-3">{e.numero_conteneur}</span>}
+                    <span className="font-mono text-corps font-semibold">{e.reference}</span>
+                    <span className="etiquette inline-flex items-center gap-1.5 text-petit text-encre"><span aria-hidden className="size-2" style={{ background: COULEURS[e.statut] }} />{LIBELLES[e.statut]}</span>
+                    {e.numero_conteneur && <span className="font-mono text-petit text-encre-3">{e.numero_conteneur}</span>}
                   </div>
                   <p className="mt-0.5">{[e.compagnie, e.navire].filter(Boolean).join(" · ")}</p>
-                  <p className="text-[13px] text-encre-3">
+                  <p className="text-petit text-encre-3">
                     {[e.port_depart, e.port_arrivee].filter(Boolean).join(" → ")}
                     {e.date_arrivee_prevue && ` · arrivée ${formatDate(e.date_arrivee_prevue)}`}
                     {e.jours_avant_arrivee !== null && e.jours_avant_arrivee !== undefined && (
@@ -51,8 +51,8 @@ export default function PageExpeditions() {
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-4 text-right">
-                  <div><p className="text-[12px] text-encre-3">Véhicules</p><p className="chiffres font-semibold">{e.nb_vehicules}</p></div>
-                  {e.frais_xof !== null && <div><p className="text-[12px] text-encre-3">Frais</p><p className="chiffres font-semibold">{formatCourt(e.frais_xof)}</p></div>}
+                  <div><p className="etiquette text-petit text-encre-3">Véhicules</p><p className="chiffres font-semibold">{e.nb_vehicules}</p></div>
+                  {e.frais_xof !== null && <div><p className="etiquette text-petit text-encre-3">Frais</p><p className="chiffres font-semibold">{formatCourt(e.frais_xof)}</p></div>}
                 </div>
               </Link>
             </li>
