@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, CheckCircle, ClockCountdown, FileText, HandCoins, Invoice, Plus, Warning, XCircle } from "@phosphor-icons/react";
+import { ArrowRight, CarProfile, CheckCircle, ClockCountdown, FileText, HandCoins, Invoice, Plus, Warning, XCircle } from "@phosphor-icons/react";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { PaiementVente, ProformaListe, VenteListe } from "@/lib/api/types-metier";
@@ -260,6 +260,10 @@ function LigneProforma({ p, peutAgir, index }: { p: ProformaListe; peutAgir: boo
             </span>
           </div>
           <p className="mt-1 truncate text-[16px] font-bold">{p.client_nom}</p>
+          <Link href={`/parc/vehicule/?id=${p.vehicule_id}`} className="group mt-0.5 flex items-center gap-1.5 text-[14px] font-semibold text-encre-2 hover:text-primaire">
+            <CarProfile size={16} weight="duotone" className="shrink-0" aria-hidden />
+            <span className="truncate">{p.vehicule_libelle ?? "Véhicule"}{p.vehicule_reference ? <span className="ml-1.5 font-mono text-[12px] font-normal text-encre-3">{p.vehicule_reference}</span> : null}</span>
+          </Link>
           <p className="text-[13px] text-encre-3">Valable jusqu&apos;au {formatDate(p.valide_jusqu_au)}</p>
         </div>
         <Montant valeur={p.montant_ttc} devise={null} taille="lg" className="shrink-0" />

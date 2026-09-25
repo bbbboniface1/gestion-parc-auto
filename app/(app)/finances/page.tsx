@@ -4,10 +4,11 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  ArrowDownLeft, ArrowUpRight, ArrowsLeftRight, Bank, CaretRight, ChartLineUp, CheckCircle, Clock, CurrencyCircleDollar, DeviceMobile, DownloadSimple,
+  ArrowDownLeft, ArrowUpRight, ArrowsLeftRight, Bank, CaretRight, ChartLineUp, CheckCircle, Clock, CurrencyCircleDollar, DeviceMobile, DownloadSimple, Gear,
   Money, Percent, Plus, Timer, WhatsappLogo, type Icon,
 } from "@phosphor-icons/react";
-import { useLecture } from "@/lib/api/requetes";
+import { toast } from "sonner";
+import { useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { Compte, LigneMarge, RapportMarges, Tresorerie } from "@/lib/api/types-metier";
 import type { Frais } from "@/lib/api/types";
@@ -27,6 +28,7 @@ import { EtatErreur, EtatVide, SqueletteListe } from "@/components/ui/etats";
 import { FeuilleFrais } from "@/components/metier/feuille-frais";
 import { ListeDepenses } from "@/components/finances/liste-depenses";
 import { FeuilleTransfert } from "@/components/finances/feuille-transfert";
+import { FeuilleComptes } from "@/components/finances/feuille-comptes";
 import { periodePour, type CodePeriode } from "@/components/finances/periode";
 
 type Onglet = "tresorerie" | "depenses" | "creances" | "rentabilite";
@@ -79,12 +81,14 @@ function Finances() {
   const [periode, setPeriode] = useState<CodePeriode>(params.get("frais") ? "annee" : "mois");
   const [nouvelleDepense, setNouvelleDepense] = useState(params.get("depense") === "1");
   const [transfert, setTransfert] = useState(false);
+  const [gererComptes, setGererComptes] = useState(false);
   const p = periodePour(periode);
 
   const tresorerie = useLecture<Tresorerie>("tresorerie", { p_org: org.id, p_du: p.du, p_au: p.au }, { enabled: peutVoir && (onglet === "tresorerie" || onglet === "creances") });
   const depenses = useLecture<Frais[]>("frais_lister", { p_org: org.id, p_filtres: { du: p.du, au: p.au } }, { enabled: peutVoir && onglet === "depenses" });
   const marges = useLecture<RapportMarges>("rapport_marges", { p_org: org.id, p_du: p.du, p_au: p.au }, { enabled: peutVoir && onglet === "rentabilite" });
-  const comptes = useLecture<Compte[]>("comptes_lister", { p_org: org.id }, { enabled: peutVoir && transfert });
+  const comptes = useLecture<Compte[]>("comptes_lister", { p_org: org.id }, { enabled: peutVoir && (transfert || gererComptes) });
+  const annulerTransfert = useEcriture("transfert_supprimer", { onSuccess: () => toast.success("Transfert annulé"), onError: (e) => toast.error(e.message) });
 
   if (!peutVoir) return <EtatVide titre="Accès réservé" texte="Seuls le propriétaire, le gérant et le comptable consultent les finances." />;
 
@@ -130,8 +134,12 @@ function Finances() {
       {onglet === "tresorerie" && (
         tresorerie.error && !tresorerie.data ? <EtatErreur erreur={tresorerie.error} onReessayer={() => void tresorerie.refetch()} /> : tresorerie.isPending || !tresorerie.data ? <SqueletteListe /> : (
           <div className="flex flex-col gap-5">
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {tresorerie.data.comptes.map((c, i) => <CarteCompte key={c.id} c={c} index={i} />)}
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-[17px] font-bold">Vos comptes</h2>
+              {peutModifier && <Bouton variante="fantome" taille="sm" icone={<Gear size={16} weight="duotone" />} onClick={() => setGererComptes(true)}>Gérer les comptes</Bouton>}
+            </div>
+            <div className="-mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {tresorerie.data.comptes.filter((c) => c.actif || (c.solde_xof ?? 0) !== 0).map((c, i) => <CarteCompte key={c.id} c={c} index={i} />)}
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Indicateur index={0} libelle="Total disponible" valeur={tresorerie.data.totaux.solde_total} format={formatCourt} precision="FCFA, tous comptes" icone={CurrencyCircleDollar} couleur="var(--primaire)" />
@@ -157,6 +165,7 @@ function Finances() {
                         {(m.entite === "vente" || m.entite === "frais") && <CaretRight size={14} weight="bold" className="shrink-0 text-encre-3 transition-transform group-hover:translate-x-0.5 group-hover:text-primaire" aria-hidden />}
                       </>
                     );
+                    const idTransfert = m.entite === "transfert" ? m.entite_id : null;
                     const cls = "group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-surface-2";
                     return (
                       <li key={i}>
@@ -165,7 +174,13 @@ function Finances() {
                         ) : m.entite === "frais" && m.entite_id ? (
                           <button type="button" className={cls} onClick={() => { setFraisEnEvidence(m.entite_id); setPeriode("annee"); setOnglet("depenses"); router.replace("/finances/?onglet=depenses", { scroll: false }); }}>{corps}</button>
                         ) : (
-                          <div className="flex items-center gap-3 rounded-xl px-2 py-2.5">{corps}</div>
+                          <div className="flex items-center gap-3 rounded-xl px-2 py-2.5">
+                            {corps}
+                            {idTransfert && peutModifier && (
+                              <button type="button" title="Annuler ce transfert" onClick={() => { if (window.confirm("Annuler ce transfert ? Les deux comptes retrouvent leur solde d'avant.")) annulerTransfert.executer({ p_org: org.id, p_id: idTransfert }); }}
+                                className="onde inline-flex h-8 shrink-0 items-center rounded-full px-3 text-[12px] font-semibold text-encre-3 hover:bg-perte-voile hover:text-perte-texte">Annuler</button>
+                            )}
+                          </div>
                         )}
                       </li>
                     );
@@ -279,6 +294,7 @@ function Finances() {
 
       <FeuilleFrais ouverte={nouvelleDepense} onFermer={() => setNouvelleDepense(false)} portee="generale" titre="Ajouter une dépense" />
       <FeuilleTransfert ouverte={transfert} onFermer={() => setTransfert(false)} comptes={comptes.data ?? []} />
+      <FeuilleComptes ouverte={gererComptes} onFermer={() => setGererComptes(false)} comptes={comptes.data ?? []} />
     </>
   );
 }

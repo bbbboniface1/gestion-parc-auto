@@ -114,6 +114,7 @@ export interface ProformaListe {
   client_nom: string;
   vehicule_id: string;
   vehicule_reference?: string;
+  vehicule_libelle?: string | null;
   montant_ttc: number;
   vente_id: string | null;
 }

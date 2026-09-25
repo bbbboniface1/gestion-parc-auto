@@ -332,6 +332,9 @@ begin
      set photo_principale_path = '/demo/vehicules/v' || lpad(t.n::text, 2, '0') || '.jpg'
     from unnest(v) with ordinality as t(id, n)
    where ve.id = t.id;
+  insert into public.vehicule_photos (org_id, vehicule_id, path, ordre)
+  select o, t.id, '/demo/vehicules/v' || lpad(t.n::text, 2, '0') || '.jpg', 0
+    from unnest(v) with ordinality as t(id, n);
   update public.vehicules set created_at = coalesce(date_achat, d)::timestamptz + interval '10 hours'
    where org_id = o;
 

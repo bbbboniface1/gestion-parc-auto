@@ -2,11 +2,12 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import {
-  BookmarkSimple, CalendarBlank, CurrencyCircleDollar, Handshake, IdentificationCard, Invoice, MagnifyingGlassPlus, MapPin, PencilSimple, Phone, Plus, UsersThree, WhatsappLogo,
+  BookmarkSimple, CalendarBlank, CurrencyCircleDollar, Handshake, IdentificationCard, Invoice, MagnifyingGlassPlus, MapPin, PencilSimple, Phone, Plus, Trash, UsersThree, WhatsappLogo,
 } from "@phosphor-icons/react";
-import { useLecture } from "@/lib/api/requetes";
+import { useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { ClientDetail, Correspondance } from "@/lib/api/types-metier";
 import { peut } from "@/lib/domaine";
@@ -35,11 +36,17 @@ const DEMANDES: Record<string, { libelle: string; couleur: string }> = {
 function Fiche() {
   const id = useSearchParams().get("id") ?? "";
   const org = useOrg();
+  const router = useRouter();
   const peutModifier = peut(org.role, "vendre");
+  const peutSupprimer = peut(org.role, "annulerVente");
   const compteurs = useCompteursNavigation();
   const { data: c, error, isPending, refetch } = useLecture<ClientDetail>("client_obtenir", { p_org: org.id, p_id: id }, { enabled: !!id });
   const { data: correspondances } = useLecture<Correspondance[]>("demandes_correspondances", { p_org: org.id }, { enabled: !!c && c.demandes.some((d) => d.statut === "ouverte") });
   const [feuille, setFeuille] = useState<null | "modifier" | "demande">(null);
+  const supprimer = useEcriture("client_supprimer", {
+    onSuccess: () => { toast.success("Client supprimé"); router.push("/clients/"); },
+    onError: (e) => toast.error(e.message),
+  });
 
   if (!id) return <EtatErreur erreur={new Error("Aucun client indiqué.")} />;
   if (error && !c) return <EtatErreur erreur={error} onReessayer={() => void refetch()} />;
@@ -132,6 +139,32 @@ function Fiche() {
             )}
           </section>
 
+          {c.proformas.length > 0 && (
+            <section className="carte apparition p-4 lg:p-5" aria-labelledby="titre-proformas">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 id="titre-proformas" className="text-[17px] font-bold">Ses proformas</h2>
+                <Link href="/ventes/?onglet=proformas" className="text-[13px] font-semibold text-primaire hover:underline">Toutes les proformas</Link>
+              </div>
+              <ul className="flex flex-col gap-2">
+                {c.proformas.map((p) => (
+                  <li key={p.id}>
+                    <Link href={p.vente_id ? `/ventes/fiche/?id=${p.vente_id}` : `/parc/vehicule/?id=${p.vehicule_id}`} className="group flex items-center gap-3 rounded-2xl p-3 transition-colors hover:bg-surface-2">
+                      <Picto icone={Invoice} couleur="var(--acier)" taille="sm" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-bold group-hover:text-primaire">{p.vehicule_libelle ?? p.vehicule_reference ?? "Véhicule"}</p>
+                        <p className="truncate font-mono text-[12px] text-encre-3">{p.numero} · valable jusqu&apos;au {formatDate(p.valide_jusqu_au)}</p>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <Montant valeur={p.montant_ttc} devise={null} court />
+                        <p className="text-[11px] font-semibold text-encre-3">{{ emise: "Émise", acceptee: "Acceptée", expiree: "Expirée", convertie: "Convertie", annulee: "Annulée" }[p.statut_effectif] ?? p.statut_effectif}</p>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           <section className="carte apparition p-4 lg:p-5" aria-labelledby="titre-demandes">
             <div className="mb-3 flex items-center justify-between gap-2">
               <h2 id="titre-demandes" className="text-[17px] font-bold">Ce que {prenom} cherche</h2>
@@ -205,6 +238,18 @@ function Fiche() {
             </section>
           )}
           <p className={cn("text-[12px] text-encre-3")}>{pluriel(c.paiements.length, "versement")} enregistré{c.paiements.length > 1 ? "s" : ""} pour ce client.</p>
+          {peutSupprimer && (
+            <div className="border-t border-trait pt-4">
+              {c.ventes.length > 0 || c.proformas.length > 0 ? (
+                <p className="text-[13px] text-encre-3">Un client qui a des ventes ou des proformas ne peut pas être supprimé : son historique doit rester complet.</p>
+              ) : (
+                <Bouton variante="danger" taille="sm" icone={<Trash size={16} weight="duotone" />} chargement={supprimer.isPending}
+                  onClick={() => { if (window.confirm(`Supprimer ${c.nom} ? Cette action est définitive.`)) supprimer.executer({ p_org: org.id, p_id: c.id }); }}>
+                  Supprimer ce client
+                </Bouton>
+              )}
+            </div>
+          )}
         </aside>
       </div>
 

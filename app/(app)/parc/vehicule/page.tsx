@@ -4,7 +4,7 @@ import { Suspense, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Anchor, Archive, ArrowFatLineRight, ArrowRight, BookmarkSimple, Boat, Camera, Car, CurrencyCircleDollar, FileText, FolderSimplePlus, Invoice, Path, PencilSimple, Plus, XCircle } from "@phosphor-icons/react";
+import { Anchor, Archive, ArrowFatLineRight, ArrowRight, BookmarkSimple, Boat, Camera, Car, CurrencyCircleDollar, FileText, FolderSimplePlus, Invoice, Path, PencilSimple, Plus, Trash, XCircle } from "@phosphor-icons/react";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useParametres } from "@/lib/api/parametres";
 import type { VehiculeDetail } from "@/lib/api/types";
@@ -23,6 +23,7 @@ import { PhotoVehicule } from "@/components/metier/photo-vehicule";
 import { FeuilleFrais } from "@/components/metier/feuille-frais";
 import { FeuilleEtape, FeuilleReservation } from "@/components/metier/feuilles-vehicule";
 import { FeuilleConteneur } from "@/components/metier/feuille-conteneur";
+import { VisionneusePhotos } from "@/components/metier/visionneuse-photos";
 import { couleurCategorie, LigneDepense } from "@/components/finances/ligne-depense";
 import { BandeauCoherence } from "@/components/metier/bandeau-coherence";
 import { RouteMaritime, STATUTS_EXPEDITION } from "@/components/expeditions/route-maritime";
@@ -67,12 +68,14 @@ function Fiche() {
   const [feuille, setFeuille] = useState<null | "frais" | "etape" | "reserver" | "document" | "conteneur">(null);
   const [etapeProposee, setEtapeProposee] = useState<Etape | null>(null);
   const [envoiPhotos, setEnvoiPhotos] = useState(0);
+  const [photoOuverte, setPhotoOuverte] = useState<number | null>(null);
   const [typeDocument, setTypeDocument] = useState("bl");
   const champPhoto = useRef<HTMLInputElement>(null);
   const champDocument = useRef<HTMLInputElement>(null);
 
   const ajouterPhoto = useEcriture("vehicule_photo_ajouter");
   const ajouterDocument = useEcriture("document_ajouter", { onSuccess: () => { toast.success("Document ajouté"); setFeuille(null); } });
+  const supprimerDocument = useEcriture("document_supprimer", { onSuccess: () => toast.success("Document supprimé"), onError: (e) => toast.error(e.message) });
   const liberer = useEcriture("vehicule_liberer", { onSuccess: () => toast.success("Réservation levée"), onError: (e) => toast.error(e.message) });
   // Le conteneur pilote la traversée : un seul geste met à jour le conteneur ET tous ses véhicules.
   const changerStatut = useEcriture<{ vehicules_mis_a_jour: number }>("expedition_changer_statut", {
@@ -310,15 +313,20 @@ function Fiche() {
             {v.documents.length > 0 ? (
               <ul className="-my-1">
                 {v.documents.map((d) => (
-                  <li key={d.id}>
+                  <li key={d.id} className="flex items-center gap-1 border-b border-trait last:border-b-0">
                     <button type="button" onClick={async () => { const u = await urlFichier(d.path); if (u) window.open(u, "_blank", "noopener"); }}
-                      className="flex w-full items-center gap-3 border-b border-trait py-2.5 text-left last:border-b-0 hover:bg-surface-2/50">
+                      className="flex min-w-0 flex-1 items-center gap-3 rounded-xl py-2.5 text-left hover:bg-surface-2/50">
                       <FileText className="size-5 shrink-0 text-encre-3" aria-hidden />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[15px] font-medium lg:text-sm">{d.nom}</span>
                         <span className="block text-[13px] text-encre-3">{TYPES_DOCUMENT.find((t) => t.valeur === d.type)?.libelle ?? d.type} · {formatDate(d.created_at)}</span>
                       </span>
                     </button>
+                    {modifier && (
+                      <button type="button" aria-label={`Supprimer ${d.nom}`} title="Supprimer"
+                        onClick={() => { if (window.confirm(`Supprimer « ${d.nom} » ?`)) supprimerDocument.executer({ p_org: org.id, p_id: d.id }); }}
+                        className="onde inline-grid size-9 shrink-0 place-items-center rounded-full text-encre-3 hover:bg-perte-voile hover:text-perte-texte"><Trash size={16} weight="duotone" aria-hidden /></button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -336,8 +344,12 @@ function Fiche() {
             action={modifier ? <Bouton variante="fantome" taille="sm" icone={<Camera className="size-4" />} chargement={envoiPhotos > 0} onClick={() => champPhoto.current?.click()}>Ajouter</Bouton> : undefined}>
             {v.photos.length > 0 ? (
               <div className="sans-barre -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1">
-                {v.photos.map((ph) => (
-                  <PhotoVehicule key={ph.id} path={ph.path} alt={v.libelle} className="aspect-[4/3] w-44 shrink-0 snap-start" />
+                {v.photos.map((ph, k) => (
+                  <button key={ph.id} type="button" onClick={() => setPhotoOuverte(k)} aria-label={`Agrandir la photo ${k + 1} sur ${v.photos.length}`}
+                    className="group relative shrink-0 snap-start overflow-hidden rounded-controle transition-transform hover:-translate-y-0.5">
+                    <PhotoVehicule path={ph.path} alt={v.libelle} className="aspect-[4/3] w-44 transition-transform duration-300 group-hover:scale-[1.04]" />
+                    {k === 0 && <span className="absolute top-1.5 left-1.5 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">Vitrine</span>}
+                  </button>
                 ))}
               </div>
             ) : (
@@ -413,6 +425,8 @@ function Fiche() {
 
       <FeuilleFrais ouverte={feuille === "frais"} onFermer={() => setFeuille(null)} vehiculeId={v.id} />
       <FeuilleEtape ouverte={feuille === "etape"} onFermer={() => setFeuille(null)} vehiculeId={v.id} actuelle={v.etape} proposee={etapeProposee} />
+      <VisionneusePhotos ouverte={photoOuverte !== null} onFermer={() => setPhotoOuverte(null)} photos={v.photos} index={photoOuverte ?? 0} onIndex={setPhotoOuverte}
+        vehiculeId={v.id} libelle={v.libelle} peutModifier={modifier} />
       <FeuilleConteneur ouverte={feuille === "conteneur"} onFermer={() => setFeuille(null)} vehiculeId={v.id} vehiculeLibelle={v.libelle} actuel={v.expedition?.id ?? null} />
       <FeuilleReservation ouverte={feuille === "reserver"} onFermer={() => setFeuille(null)} vehiculeId={v.id} />
       <Feuille ouverte={feuille === "document"} onFermer={() => setFeuille(null)} titre="Ajouter un document"
