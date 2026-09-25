@@ -7,6 +7,7 @@ import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import { ETAPES, type Etape } from "@/lib/domaine";
 import { aujourdhui } from "@/lib/format";
+import { Avatar } from "@/components/ui/avatar";
 import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ, ZoneTexte } from "@/components/ui/champ";
@@ -75,12 +76,13 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
 
   if (valeur) {
     return (
-      <div className="flex items-center justify-between rounded-controle border border-primaire bg-primaire-voile px-3 py-2.5">
-        <div>
-          <p className="font-semibold">{valeur.nom}</p>
-          <p className="text-[13px] text-encre-2">{[valeur.telephone, valeur.ville].filter(Boolean).join(" · ")}</p>
+      <div className="apparition flex items-center gap-3 rounded-2xl bg-primaire-voile px-4 py-3 ring-2 ring-primaire/40">
+        <Avatar nom={valeur.nom} taille={48} />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[17px] font-extrabold">{valeur.nom}</p>
+          <p className="truncate text-[13px] text-encre-2">{[valeur.telephone, valeur.ville].filter(Boolean).join(" · ")}</p>
         </div>
-        <Bouton variante="fantome" taille="sm" onClick={() => onChoix(null)}>Changer</Bouton>
+        <button type="button" onClick={() => onChoix(null)} className="onde inline-flex h-9 shrink-0 items-center rounded-full bg-surface px-3 text-[13px] font-semibold text-primaire shadow-carte hover:bg-primaire hover:text-white">Changer</button>
       </div>
     );
   }
@@ -103,16 +105,19 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
     <div className="flex flex-col gap-2">
       <label className="relative">
         <span className="sr-only">Rechercher un client</span>
-        <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
+        <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nom ou téléphone"
-          className="h-11 w-full rounded-controle border border-trait-fort bg-surface pl-9 text-[15px] focus:border-primaire focus:outline-none" />
+          className="h-12 w-full rounded-full border border-trait bg-surface pr-4 pl-11 text-[15px] shadow-carte transition-all placeholder:text-encre-3/70 focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] focus:outline-none" />
       </label>
-      <ul className="flex flex-col">
-        {liste.map((c) => (
-          <li key={c.id}>
-            <button type="button" onClick={() => onChoix(c)} className="flex w-full items-center justify-between border-b border-trait px-1 py-2.5 text-left hover:bg-surface-2">
-              <span className="font-medium">{c.nom}</span>
-              <span className="text-[13px] text-encre-3">{c.telephone}</span>
+      <ul className="grid gap-1 sm:grid-cols-2">
+        {liste.map((c, i) => (
+          <li key={c.id} className="apparition" style={{ animationDelay: `${i * 30}ms` }}>
+            <button type="button" onClick={() => onChoix(c)} className="onde group flex w-full items-center gap-3 rounded-2xl p-2 text-left transition-colors hover:bg-surface-2">
+              <Avatar nom={c.nom} taille={40} />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-bold group-hover:text-primaire">{c.nom}</span>
+                <span className="block truncate text-[13px] text-encre-3">{c.telephone ?? c.ville ?? "—"}</span>
+              </span>
             </button>
           </li>
         ))}

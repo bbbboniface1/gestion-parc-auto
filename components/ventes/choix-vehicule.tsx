@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { ArrowsClockwise, MagnifyingGlass } from "@phosphor-icons/react";
 import { useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { Vehicule } from "@/lib/api/types";
 import { finDeVin } from "@/lib/vin";
-import { Montant } from "@/components/ui/signature";
+import { cn } from "@/lib/cn";
+import { EtiquetteEtape, Montant } from "@/components/ui/signature";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
 
 /** Recherche parmi les véhicules non vendus (en vente, réservés y compris) pour démarrer une vente ou une proforma. */
@@ -18,39 +19,46 @@ export function ChoixVehicule({ valeur, onChoix }: { valeur: Vehicule | null; on
 
   if (valeur) {
     return (
-      <div className="flex items-center gap-3 rounded-controle border border-primaire bg-primaire-voile px-3 py-2.5">
-        <PhotoVehicule path={valeur.photo_principale_path} alt="" className="size-12 shrink-0" />
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold">{valeur.libelle}</p>
-          <p className="truncate font-mono text-[12px] text-encre-3">{valeur.reference}{valeur.vin ? ` · ${finDeVin(valeur.vin)}` : ""}</p>
+      <div className="apparition overflow-hidden rounded-2xl bg-primaire-voile ring-2 ring-primaire/40">
+        <PhotoVehicule path={valeur.photo_principale_path} alt="" arrondi={false} className="aspect-[16/8] w-full" />
+        <div className="flex items-center gap-3 px-4 py-3">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[17px] font-extrabold">{valeur.libelle}</p>
+            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-encre-3">
+              <span className="font-mono">{valeur.reference}{valeur.vin ? ` · ${finDeVin(valeur.vin)}` : ""}</span>
+              <EtiquetteEtape etape={valeur.etape} compacte />
+            </p>
+          </div>
+          {valeur.prix_affiche_xof !== null && <Montant valeur={valeur.prix_affiche_xof} devise={null} className="text-[16px]" />}
+          <button type="button" onClick={() => onChoix(null)} className="onde inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-surface px-3 text-[13px] font-semibold text-primaire shadow-carte hover:bg-primaire hover:text-white">
+            <ArrowsClockwise size={15} weight="bold" aria-hidden />Changer
+          </button>
         </div>
-        {valeur.prix_affiche_xof !== null && <Montant valeur={valeur.prix_affiche_xof} devise={null} />}
-        <button type="button" onClick={() => onChoix(null)} className="ml-1 text-[13px] font-medium text-primaire hover:underline">Changer</button>
       </div>
     );
   }
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       <label className="relative">
         <span className="sr-only">Rechercher un véhicule</span>
-        <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
+        <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Modèle, VIN, référence…"
-          className="h-11 w-full rounded-controle border border-trait-fort bg-surface pl-9 text-[15px] focus:border-primaire focus:outline-none" />
+          className="h-12 w-full rounded-full border border-trait bg-surface pr-4 pl-11 text-[15px] shadow-carte transition-all placeholder:text-encre-3/70 focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] focus:outline-none" />
       </label>
-      <ul className="flex max-h-72 flex-col overflow-y-auto">
-        {liste.map((v) => (
-          <li key={v.id}>
-            <button type="button" onClick={() => onChoix(v)} className="flex w-full items-center gap-3 border-b border-trait py-2 text-left hover:bg-surface-2">
-              <PhotoVehicule path={v.photo_principale_path} alt="" className="size-11 shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-medium">{v.libelle}</p>
-                <p className="truncate font-mono text-[12px] text-encre-3">{v.reference}{v.statut_commercial === "reserve" ? " · réservé" : ""}</p>
-              </div>
-              {v.prix_affiche_xof !== null && <Montant valeur={v.prix_affiche_xof} devise={null} />}
+      <ul className="grid gap-2 sm:grid-cols-2">
+        {liste.map((v, i) => (
+          <li key={v.id} className="apparition" style={{ animationDelay: `${i * 35}ms` }}>
+            <button type="button" onClick={() => onChoix(v)} className="onde carte carte-lien group flex w-full items-center gap-3 p-2 text-left">
+              <PhotoVehicule path={v.photo_principale_path} alt="" className="h-14 w-[76px] shrink-0 rounded-xl" />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-bold group-hover:text-primaire">{v.libelle}</span>
+                <span className={cn("block truncate font-mono text-[12px]", v.statut_commercial === "reserve" ? "text-reserve-texte" : "text-encre-3")}>{v.reference}{v.statut_commercial === "reserve" ? " · réservé" : ""}</span>
+                {v.prix_affiche_xof !== null && <Montant valeur={v.prix_affiche_xof} court devise={null} className="text-[14px]" />}
+              </span>
             </button>
           </li>
         ))}
-        {liste.length === 0 && <li className="py-4 text-center text-[14px] text-encre-3">Aucun véhicule disponible.</li>}
+        {liste.length === 0 && <li className="col-span-full py-4 text-center text-[14px] text-encre-3">Aucun véhicule disponible.</li>}
       </ul>
     </div>
   );
