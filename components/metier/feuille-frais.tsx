@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { tauxPour, useParametres } from "@/lib/api/parametres";
@@ -11,6 +11,7 @@ import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ, Selection } from "@/components/ui/champ";
 import { ChampMontant } from "@/components/ui/champ-montant";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 interface Compte { id: string; nom: string; type: string; actif: boolean }
 
@@ -44,17 +45,17 @@ export function FeuilleFrais({ ouverte, onFermer, vehiculeId, expeditionId, port
   const [repartition, setRepartition] = useState<"egale" | "valeur">("egale");
   const [id, setId] = useState(nouvelId);
 
-  useEffect(() => {
+  useAuChangement([devise, reglages], () => {
     setTaux(tauxPour(devise, reglages?.parametres));
-  }, [devise, reglages]);
+  });
 
-  useEffect(() => {
+  useAuChangement([ouverte], () => {
     if (!ouverte) return;
     setId(nouvelId());
     setMontant(null);
     setLibelle("");
     setFournisseur("");
-  }, [ouverte]);
+  });
 
   const enregistrer = useEcriture("frais_enregistrer", {
     onSuccess: () => {

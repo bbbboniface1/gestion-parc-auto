@@ -74,9 +74,9 @@ export function VisionneusePhotos({ ouverte, onFermer, photos, index, onIndex, v
         {total > 1 && (
           <>
             <button type="button" onClick={() => onIndex((i - 1 + total) % total)} aria-label="Photo précédente"
-              className="onde absolute top-1/2 left-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-encre shadow-lg backdrop-blur transition-transform hover:scale-105"><CaretLeft size={20} weight="bold" aria-hidden /></button>
+              className="onde absolute top-1/2 left-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-[#0b1633] shadow-lg backdrop-blur transition-transform hover:scale-105"><CaretLeft size={20} weight="bold" aria-hidden /></button>
             <button type="button" onClick={() => onIndex((i + 1) % total)} aria-label="Photo suivante"
-              className="onde absolute top-1/2 right-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-encre shadow-lg backdrop-blur transition-transform hover:scale-105"><CaretRight size={20} weight="bold" aria-hidden /></button>
+              className="onde absolute top-1/2 right-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-[#0b1633] shadow-lg backdrop-blur transition-transform hover:scale-105"><CaretRight size={20} weight="bold" aria-hidden /></button>
           </>
         )}
       </div>

@@ -30,7 +30,7 @@ export function CarteGalerie({ v, cochee, basculer, index = 0 }: { v: Vehicule; 
         <div className="relative aspect-[4/3] overflow-hidden">
           <PhotoVehicule path={v.photo_principale_path} alt="" arrondi={false} className="size-full transition-transform duration-500 ease-out group-hover:scale-[1.06]" />
           <span aria-hidden className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#0b1633]/80 via-[#0b1633]/25 to-transparent" />
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/92 px-2.5 py-1 text-[12px] font-bold text-encre shadow-sm backdrop-blur">
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/92 px-2.5 py-1 text-[12px] font-bold text-[#0b1633] shadow-sm backdrop-blur">
             <span className="size-2 rounded-full" style={{ background: def.couleur }} />
             {def.libelle}
           </span>

@@ -84,11 +84,11 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
             {vehicule ? (f.vehicule_libelle ?? "Véhicule") : conteneur ? (f.expedition_reference ?? "Conteneur") : libelleCategorie(f.categorie)}
           </span>
           {vehicule && f.vehicule_reference && <span className="font-mono text-[12px] text-encre-3">{f.vehicule_reference}</span>}
-          {conteneur && st && <span className="text-[12px] font-bold" style={{ color: `color-mix(in srgb, ${st.couleur} 62%, black)` }}>{st.libelle}</span>}
+          {conteneur && st && <span className="text-[12px] font-bold" style={{ color: `color-mix(in srgb, ${st.couleur} 62%, var(--pole-texte))` }}>{st.libelle}</span>}
         </span>
         <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-encre-2">
           {(vehicule || conteneur) && (
-            <span className="inline-flex h-5 items-center gap-1 rounded-full px-2 text-[11px] font-bold" style={{ background: `color-mix(in srgb, ${couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 65%, black)` }}>
+            <span className="inline-flex h-5 items-center gap-1 rounded-full px-2 text-[11px] font-bold" style={{ background: `color-mix(in srgb, ${couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 65%, var(--pole-texte))` }}>
               {libelleCategorie(f.categorie)}
             </span>
           )}

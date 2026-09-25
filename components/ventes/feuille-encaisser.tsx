@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useParametres } from "@/lib/api/parametres";
@@ -13,6 +13,7 @@ import { Bouton } from "@/components/ui/bouton";
 import { Champ, Selection } from "@/components/ui/champ";
 import { ChampMontant } from "@/components/ui/champ-montant";
 import { celebrer } from "@/lib/celebration";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 interface Compte { id: string; nom: string; actif: boolean }
 
@@ -36,14 +37,13 @@ export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineE
   const [compte, setCompte] = useState("");
   const [date, setDate] = useState(aujourdhui());
 
-  useEffect(() => {
+  useAuChangement([ouverte, venteId], () => {
     if (!ouverte) return;
     setMontant(venteAnnulee ? null : (prochaineEcheance || reste) ?? null);
     setMode(modesAutorises[0] ?? "especes");
     setReference("");
     setDate(aujourdhui());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ouverte, venteId]);
+  });
 
   const ajouter = useEcriture("paiement_ajouter", {
     onSuccess: () => {

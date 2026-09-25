@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text -- <Image> vient de @react-pdf/renderer : ce n'est pas une balise HTML, un PDF n'a pas d'attribut alt. */
 // Modèle PDF unique pour facture, proforma, reçu et avoir.
 // Sobre et imprimable en noir et blanc : la couleur du document (latérite par défaut)
 // n'apparaît qu'en filet d'accent et dans les tampons.

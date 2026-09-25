@@ -225,7 +225,7 @@ function Fiche() {
                       <CalendarCheck size={24} weight="duotone" style={{ color: c }} aria-hidden />
                       <span className="min-w-0 flex-1">
                         <span className="block font-bold">{formatDate(e.date_echeance)}</span>
-                        <span className="block text-[12px] font-semibold" style={{ color: `color-mix(in srgb, ${c} 70%, black)` }}>{LIBELLES_ECHEANCE[e.statut]}</span>
+                        <span className="block text-[12px] font-semibold" style={{ color: `color-mix(in srgb, ${c} 70%, var(--pole-texte))` }}>{LIBELLES_ECHEANCE[e.statut]}</span>
                       </span>
                       <Montant valeur={e.montant_xof} devise={null} />
                     </li>

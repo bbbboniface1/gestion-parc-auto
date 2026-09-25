@@ -255,7 +255,7 @@ function LigneProforma({ p, peutAgir, index }: { p: ProformaListe; peutAgir: boo
           <div className="flex items-center gap-2">
             <span className="font-mono text-[13px] font-bold text-encre-2">{p.numero}</span>
             <span className="inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-bold"
-              style={{ background: `color-mix(in srgb, ${st.couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${st.couleur} 70%, black)` }}>
+              style={{ background: `color-mix(in srgb, ${st.couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${st.couleur} 70%, var(--pole-texte))` }}>
               <span className="size-1.5 rounded-full" style={{ background: st.couleur }} />{st.libelle}
             </span>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { EnTetePage } from "@/components/coque/coque";
 import { Groupe } from "@/components/parametres/commun";
 import { Choix } from "@/components/ui/choix";
@@ -8,33 +8,43 @@ import { Choix } from "@/components/ui/choix";
 type Theme = "systeme" | "light" | "dark";
 type Texte = "1" | "1.125" | "1.25";
 
+const EVENEMENT = "parc-auto:preferences";
+/** Si le stockage est indisponible (navigation privée), le réglage vaut pour la session en cours. */
+const enMemoire = new Map<string, string>();
+
 function lire<T extends string>(cle: string, defaut: T): T {
-  try { return (localStorage.getItem(cle) as T) ?? defaut; } catch { return defaut; }
+  try { return (localStorage.getItem(cle) as T | null) ?? defaut; } catch { return (enMemoire.get(cle) as T | undefined) ?? defaut; }
+}
+
+function ecrire(cle: string, valeur: string | null) {
+  try {
+    if (valeur === null) localStorage.removeItem(cle); else localStorage.setItem(cle, valeur);
+  } catch {
+    if (valeur === null) enMemoire.delete(cle); else enMemoire.set(cle, valeur);
+  }
+  window.dispatchEvent(new Event(EVENEMENT));
+}
+
+function abonner(rappel: () => void) {
+  window.addEventListener("storage", rappel);
+  window.addEventListener(EVENEMENT, rappel);
+  return () => { window.removeEventListener("storage", rappel); window.removeEventListener(EVENEMENT, rappel); };
 }
 
 /** Réglages propres à cet appareil (pas partagés avec l'équipe). */
 export default function PagePreferences() {
-  const [theme, setTheme] = useState<Theme>("systeme");
-  const [texte, setTexte] = useState<Texte>("1");
-
-  useEffect(() => {
-    setTheme(lire<Theme>("parc-auto:theme", "systeme"));
-    setTexte(lire<Texte>("parc-auto:texte", "1"));
-  }, []);
+  const theme = useSyncExternalStore(abonner, () => lire<Theme>("parc-auto:theme", "systeme"), () => "systeme" as Theme);
+  const texte = useSyncExternalStore(abonner, () => lire<Texte>("parc-auto:texte", "1"), () => "1" as Texte);
 
   function appliquerTheme(t: Theme) {
-    setTheme(t);
-    try {
-      if (t === "systeme") { localStorage.removeItem("parc-auto:theme"); delete document.documentElement.dataset.theme; }
-      else { localStorage.setItem("parc-auto:theme", t); document.documentElement.dataset.theme = t; }
-    } catch { /* stockage indisponible : le réglage vaut pour cette session */ }
+    if (t === "systeme") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
+    ecrire("parc-auto:theme", t === "systeme" ? null : t);
   }
 
   function appliquerTexte(t: Texte) {
-    setTexte(t);
     // zoom agrandit toute l'interface (textes en px compris) et remet en page, comme le zoom du téléphone.
     document.documentElement.style.zoom = t === "1" ? "" : t;
-    try { if (t === "1") localStorage.removeItem("parc-auto:texte"); else localStorage.setItem("parc-auto:texte", t); } catch { /* idem */ }
+    ecrire("parc-auto:texte", t === "1" ? null : t);
   }
 
   return (

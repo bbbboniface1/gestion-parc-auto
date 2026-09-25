@@ -56,7 +56,7 @@ export function ListeActions({ actions, limite, className }: { actions: ActionAF
                 <type.icone className="size-5" aria-hidden />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-[11px] font-bold tracking-wide uppercase" style={{ color: `color-mix(in srgb, ${couleur} 70%, black)` }}>
+                <span className="block text-[11px] font-bold tracking-wide uppercase" style={{ color: `color-mix(in srgb, ${couleur} 70%, var(--pole-texte))` }}>
                   {type.libelle}
                   <span className="sr-only"> — gravité {a.gravite}</span>
                 </span>

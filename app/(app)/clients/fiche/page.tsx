@@ -181,7 +181,7 @@ function Fiche() {
                         {(d.annee_min || d.annee_max) ? `${d.annee_min ?? ""}${d.annee_min && d.annee_max ? "–" : ""}${d.annee_max ?? ""}` : "Toute année"}
                         {d.budget_max_xof ? ` · jusqu'à ${formatCourt(d.budget_max_xof)} FCFA` : ""}
                       </p>
-                      <p className="mt-1 text-[12px] font-bold" style={{ color: `color-mix(in srgb, ${st.couleur} 70%, black)` }}>{st.libelle}</p>
+                      <p className="mt-1 text-[12px] font-bold" style={{ color: `color-mix(in srgb, ${st.couleur} 70%, var(--pole-texte))` }}>{st.libelle}</p>
                     </li>
                   );
                 })}

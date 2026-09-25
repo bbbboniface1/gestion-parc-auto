@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { formatFCFA, formatNombre, SYMBOLE_DEVISE, type Devise } from "@/lib/format";
 import { formaterPendantSaisie, lireMontant } from "@/lib/montant";
 import { classesChamp, Enveloppe } from "./champ";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 interface ProprietesChampMontant {
   libelle?: ReactNode;
@@ -38,10 +39,10 @@ export function ChampMontant({
   const [focus, setFocus] = useState(false);
 
   // Valeur modifiée de l'extérieur (réinitialisation, préremplissage) : on resynchronise.
-  useEffect(() => {
+  useAuChangement([valeur, focus], () => {
     if (focus) return;
     setTexte(valeur === null ? "" : formatNombre(valeur, Number.isInteger(valeur) ? 0 : 2));
-  }, [valeur, focus]);
+  });
 
   const conversion =
     devise !== "XOF" && taux && valeur ? `≈ ${formatFCFA(valeur * taux)} au taux de ${formatNombre(taux, taux % 1 ? 3 : 0)}` : null;

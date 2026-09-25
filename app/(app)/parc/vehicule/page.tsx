@@ -259,7 +259,7 @@ function Fiche() {
                         <span className="etiquette block text-[11px] text-encre-3">Voyage dans le conteneur</span>
                         <span className="flex flex-wrap items-center gap-x-2">
                           <span className="text-[17px] font-extrabold group-hover:text-primaire">{v.expedition.reference}</span>
-                          <span className="text-[13px] font-bold" style={{ color: `color-mix(in srgb, ${STATUTS_EXPEDITION[v.expedition.statut].couleur} 62%, black)` }}>{STATUTS_EXPEDITION[v.expedition.statut].libelle}</span>
+                          <span className="text-[13px] font-bold" style={{ color: `color-mix(in srgb, ${STATUTS_EXPEDITION[v.expedition.statut].couleur} 62%, var(--pole-texte))` }}>{STATUTS_EXPEDITION[v.expedition.statut].libelle}</span>
                         </span>
                         <span className="block truncate text-[13px] text-encre-3">{[v.expedition.compagnie, v.expedition.navire, v.expedition.numero_conteneur].filter(Boolean).join(" · ") || "Compagnie à préciser"}</span>
                       </span>
@@ -278,7 +278,7 @@ function Fiche() {
                     <p className="text-[15px] font-bold">Pas encore de conteneur</p>
                     <p className="text-[13px] text-encre-3">Dès qu&apos;il est dans un conteneur, ses dates de mer et son arrivée se suivent toutes seules.</p>
                   </div>
-                  {modifier && <Bouton variante="secondaire" taille="sm" icone={<Boat size={16} weight="duotone" />} onClick={() => setFeuille("conteneur")}>Choisir</Bouton>}
+                  {modifier && !souci && suivante?.genre !== "choisir_conteneur" && <Bouton variante="secondaire" taille="sm" icone={<Boat size={16} weight="duotone" />} onClick={() => setFeuille("conteneur")}>Choisir</Bouton>}
                 </div>
               )}
             </section>

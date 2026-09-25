@@ -29,7 +29,7 @@ export function Picto({ icone: Icone, couleur, taille = "md", plein, className }
       className={cn("grid shrink-0 place-items-center transition-transform", t.boite, className)}
       style={plein
         ? { background: `linear-gradient(145deg, color-mix(in srgb, ${couleur} 80%, white), ${couleur})`, color: "white", boxShadow: `0 6px 14px -6px ${couleur}` }
-        : { background: `color-mix(in srgb, ${couleur} 14%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 85%, black)` }}
+        : { background: `color-mix(in srgb, ${couleur} 14%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 85%, var(--pole-texte))` }}
     >
       <Icone size={t.icone} weight={plein ? "fill" : "duotone"} />
     </span>

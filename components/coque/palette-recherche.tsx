@@ -8,6 +8,7 @@ import { useLecture } from "@/lib/api/requetes";
 import { useSession } from "@/lib/session";
 import { grouperVin } from "@/lib/vin";
 import { EtiquetteEtape } from "@/components/ui/signature";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 interface ResultatsRecherche {
   vehicules?: { id: string; titre?: string; marque?: string; modele?: string; annee?: number; vin?: string | null; reference?: string; etape?: string }[];
@@ -32,9 +33,9 @@ export function PaletteRecherche({ ouverte, onFermer, onAller }: { ouverte: bool
   const org = etat.statut === "connecte" ? etat.org?.id : undefined;
   const { data, isFetching } = useLecture<ResultatsRecherche>("recherche", { p_org: org, p_q: q }, { enabled: !!org && q.length >= 2 });
 
-  useEffect(() => {
+  useAuChangement([ouverte], () => {
     if (!ouverte) setSaisie("");
-  }, [ouverte]);
+  });
 
   const vide = q.length >= 2 && !isFetching && !data?.vehicules?.length && !data?.clients?.length && !data?.documents?.length;
 

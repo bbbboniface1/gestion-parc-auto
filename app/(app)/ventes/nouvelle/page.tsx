@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
@@ -19,6 +19,7 @@ import { ChampMontant } from "@/components/ui/champ-montant";
 import { Choix } from "@/components/ui/choix";
 import { Registre } from "@/components/metier/registre";
 import { celebrer } from "@/lib/celebration";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 interface ClientLigne { id: string; nom: string; telephone: string | null; ville: string | null }
 interface Echeance { date: string; montant: number }
@@ -61,13 +62,12 @@ function NouvelleVente() {
   const [notes, setNotes] = useState("");
   const [id] = useState(nouvelId);
 
-  useEffect(() => {
+  useAuChangement([preselection.data, vehicule], () => {
     if (preselection.data && !vehicule) setVehicule(preselection.data);
-  }, [preselection.data, vehicule]);
-  useEffect(() => {
+  });
+  useAuChangement([vehicule], () => {
     if (vehicule && prix === null) setPrix(vehicule.prix_affiche_xof);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vehicule]);
+  });
 
   const p = reglages?.parametres;
   const modesAutorises = p?.modes_paiement ?? (Object.keys(MODES_PAIEMENT) as ModePaiement[]);

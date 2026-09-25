@@ -117,7 +117,7 @@ export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
                   <span className={cn("mt-2 text-[12px] leading-tight", etat === "courante" ? "font-extrabold text-encre" : etat === "passee" ? "font-semibold text-encre-2" : "text-encre-3")}>
                     {e.libelle}
                   </span>
-                  <span className={cn("chiffres mt-0.5 h-4 text-[11px]", etat === "courante" ? "font-bold" : "text-encre-3")} style={etat === "courante" ? { color: `color-mix(in srgb, ${e.couleur} 65%, black)` } : undefined}>
+                  <span className={cn("chiffres mt-0.5 h-4 text-[11px]", etat === "courante" ? "font-bold" : "text-encre-3")} style={etat === "courante" ? { color: `color-mix(in srgb, ${e.couleur} 65%, var(--pole-texte))` } : undefined}>
                     {j !== undefined ? `${j} j` : ""}
                   </span>
                   <span className="sr-only">{etat === "passee" ? "étape passée" : etat === "courante" ? "étape en cours" : "à venir"}</span>

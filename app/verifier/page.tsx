@@ -24,17 +24,16 @@ interface Verification {
 function Verifier() {
   const params = useSearchParams();
   const jeton = params.get("t") ?? "";
-  const [etat, setEtat] = useState<"chargement" | "introuvable" | "erreur" | Verification>("chargement");
+  const jetonValide = /^[A-Za-z0-9_-]{16,128}$/.test(jeton);
+  const [reponse, setReponse] = useState<null | "introuvable" | "erreur" | Verification>(null);
+  const etat: "chargement" | "introuvable" | "erreur" | Verification = !jetonValide ? "introuvable" : (reponse ?? "chargement");
 
   useEffect(() => {
-    if (!/^[A-Za-z0-9_-]{16,128}$/.test(jeton)) {
-      setEtat("introuvable");
-      return;
-    }
+    if (!jetonValide) return;
     rpc<Verification | null>("verifier_document", { p_token: jeton })
-      .then((r) => setEtat(r && r.numero ? r : "introuvable"))
-      .catch(() => setEtat("erreur"));
-  }, [jeton]);
+      .then((r) => setReponse(r && r.numero ? r : "introuvable"))
+      .catch(() => setReponse("erreur"));
+  }, [jeton, jetonValide]);
 
   return (
     <div className="min-h-dvh bg-papier px-4 py-10">

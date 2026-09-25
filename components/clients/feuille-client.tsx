@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { nouvelId, useEcriture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ, Selection, ZoneTexte } from "@/components/ui/champ";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 const PIECES = [{ valeur: "NINA", libelle: "NINA" }, { valeur: "CNI", libelle: "CNI" }, { valeur: "passeport", libelle: "Passeport" }, { valeur: "autre", libelle: "Autre" }];
 
@@ -29,12 +30,12 @@ export function FeuilleClient({ ouverte, onFermer, client, onCree }: {
   const [notes, setNotes] = useState("");
   const [id, setId] = useState(nouvelId);
 
-  useEffect(() => {
+  useAuChangement([ouverte, client?.id], () => {
     if (!ouverte) return;
     setNom(client?.nom ?? ""); setTelephone(client?.telephone ?? ""); setWhatsapp(client?.whatsapp ?? "");
     setVille(client?.ville ?? ""); setAdresse(client?.adresse ?? ""); setTypePiece(client?.type_piece ?? "");
     setNumeroPiece(client?.numero_piece ?? ""); setNotes(client?.notes ?? ""); setId(client?.id ?? nouvelId());
-  }, [ouverte, client]);
+  });
 
   const enregistrer = useEcriture<{ id: string }>("client_enregistrer", {
     onSuccess: (c) => { toast.success(client ? "Client modifié" : "Client ajouté"); onFermer(); onCree?.(c?.id ?? id); },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { nouvelId, useEcriture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
@@ -8,6 +8,7 @@ import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ } from "@/components/ui/champ";
 import { ChampMontant } from "@/components/ui/champ-montant";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 export function FeuilleDemande({ ouverte, onFermer, clientId }: { ouverte: boolean; onFermer: () => void; clientId: string }) {
   const org = useOrg();
@@ -17,7 +18,7 @@ export function FeuilleDemande({ ouverte, onFermer, clientId }: { ouverte: boole
   const [anneeMax, setAnneeMax] = useState("");
   const [budget, setBudget] = useState<number | null>(null);
 
-  useEffect(() => { if (ouverte) { setMarque(""); setModele(""); setAnneeMin(""); setAnneeMax(""); setBudget(null); } }, [ouverte]);
+  useAuChangement([ouverte], () => { if (ouverte) { setMarque(""); setModele(""); setAnneeMin(""); setAnneeMax(""); setBudget(null); } });
 
   const creer = useEcriture("demande_enregistrer", { onSuccess: () => { toast.success("Demande enregistrée"); onFermer(); }, onError: (e) => toast.error(e.message) });
 

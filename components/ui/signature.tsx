@@ -8,7 +8,7 @@ import { formatCourt, formatNombre } from "@/lib/format";
 /** Texte foncé et fond teinté tirés de la couleur vive de l'étape (contraste ≥ 4,5:1 vérifié). */
 export function teintesEtape(couleur: string) {
   return {
-    texte: `color-mix(in srgb, ${couleur} 62%, black)`,
+    texte: `color-mix(in srgb, ${couleur} 62%, var(--pole-texte))`,
     fond: `color-mix(in srgb, ${couleur} 12%, var(--surface))`,
   };
 }

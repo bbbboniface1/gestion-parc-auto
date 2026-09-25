@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
@@ -9,6 +9,7 @@ import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ, Selection, ZoneTexte } from "@/components/ui/champ";
 import { Choix } from "@/components/ui/choix";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 interface Referentiel { id: string; type: string; libelle: string; actif: boolean }
 
@@ -33,7 +34,7 @@ export function FeuilleExpedition({ ouverte, onFermer, expedition, onCree }: {
   const [notes, setNotes] = useState("");
   const [id, setId] = useState(nouvelId);
 
-  useEffect(() => {
+  useAuChangement([ouverte, expedition?.id], () => {
     if (!ouverte) return;
     setReference(expedition?.reference ?? ""); setMode(expedition?.mode ?? "conteneur");
     setNumeroConteneur(expedition?.numero_conteneur ?? ""); setNumeroBl(expedition?.numero_bl ?? "");
@@ -41,7 +42,7 @@ export function FeuilleExpedition({ ouverte, onFermer, expedition, onCree }: {
     setPortDepart(expedition?.port_depart ?? ""); setPortArrivee(expedition?.port_arrivee ?? "");
     setDateDepart(expedition?.date_depart ?? ""); setDateArriveePrevue(expedition?.date_arrivee_prevue ?? "");
     setNotes(expedition?.notes ?? ""); setId(expedition?.id ?? nouvelId());
-  }, [ouverte, expedition]);
+  });
 
   const enregistrer = useEcriture<{ id: string }>("expedition_enregistrer", {
     onSuccess: (e) => { toast.success(expedition ? "Expédition modifiée" : "Expédition créée"); onFermer(); onCree?.(e?.id ?? id); },

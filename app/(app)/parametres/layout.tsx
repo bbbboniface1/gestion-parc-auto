@@ -32,7 +32,7 @@ export default function ParametresLayout({ children }: { children: React.ReactNo
               <li key={s.cle}>
                 <Link href={`/parametres/${s.cle}/`} aria-current={actif ? "page" : undefined}
                   className={cn("onde flex h-10 items-center gap-2.5 rounded-xl px-2 text-sm font-medium transition-colors", actif ? "bg-primaire-voile font-bold text-primaire" : "text-encre-2 hover:bg-surface-2")}>
-                  <span className="grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: `color-mix(in srgb, ${s.couleur} 14%, var(--surface))`, color: `color-mix(in srgb, ${s.couleur} 85%, black)` }}>
+                  <span className="grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: `color-mix(in srgb, ${s.couleur} 14%, var(--surface))`, color: `color-mix(in srgb, ${s.couleur} 85%, var(--pole-texte))` }}>
                     <s.icone size={16} weight={actif ? "fill" : "duotone"} aria-hidden />
                   </span>
                   {s.libelle}

@@ -252,7 +252,7 @@ export function VitrineParc({ vehicules }: { vehicules: Vehicule[] }) {
               {v.prix_affiche_xof !== null && (
                 <span className="chiffres absolute bottom-2.5 left-3 text-[18px] font-extrabold text-white drop-shadow">{formatCourt(v.prix_affiche_xof)} <span className="text-[12px] font-semibold text-white/80">FCFA</span></span>
               )}
-              <span className="absolute top-2.5 right-2.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-bold text-encre shadow backdrop-blur">{v.jours_etape} j au parc</span>
+              <span className="absolute top-2.5 right-2.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-bold text-[#0b1633] shadow backdrop-blur">{v.jours_etape} j au parc</span>
             </div>
             <div className="p-3">
               <p className="truncate font-bold">{v.libelle}</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { nouvelId, useEcriture } from "@/lib/api/requetes";
@@ -13,6 +13,7 @@ import { ChoixVehicule } from "./choix-vehicule";
 import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { ChampMontant } from "@/components/ui/champ-montant";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 interface ClientLigne { id: string; nom: string; telephone: string | null; ville: string | null }
 
@@ -25,13 +26,12 @@ export function NouvelleProforma({ ouverte, onFermer }: { ouverte: boolean; onFe
   const [prix, setPrix] = useState<number | null>(null);
   const [id, setId] = useState(nouvelId);
 
-  useEffect(() => {
+  useAuChangement([ouverte], () => {
     if (ouverte) { setVehicule(null); setClient(null); setPrix(null); setId(nouvelId()); }
-  }, [ouverte]);
-  useEffect(() => {
+  });
+  useAuChangement([vehicule], () => {
     if (vehicule && prix === null) setPrix(vehicule.prix_affiche_xof);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vehicule]);
+  });
 
   const creer = useEcriture<{ id: string }>("proforma_creer", {
     onSuccess: (p) => { toast.success("Proforma créée"); onFermer(); router.push(`/ventes/fiche/?id=${p?.id ?? ""}`); },

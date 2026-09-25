@@ -16,7 +16,8 @@ export default function PageHorsLigne() {
         </p>
         <div className="mt-6 flex gap-2">
           <Bouton variante="primaire" onClick={() => window.location.reload()}>Réessayer</Bouton>
-          <Bouton variante="secondaire" onClick={() => (window.location.href = "/accueil/")}>Aujourd&apos;hui</Bouton>
+          {/* Rechargement complet voulu : c'est la page de secours du service worker, hors du routeur. */}
+          <a href="/accueil/" className="inline-flex h-11 items-center rounded-controle border border-trait-fort bg-surface px-4 text-[15px] font-medium hover:bg-surface-2 lg:h-10 lg:text-sm">Tableau de bord</a>
         </div>
       </div>
     </div>

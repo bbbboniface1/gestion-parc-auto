@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { MagnifyingGlass, UserPlus } from "@phosphor-icons/react";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
@@ -13,6 +13,7 @@ import { Champ, ZoneTexte } from "@/components/ui/champ";
 import { cn } from "@/lib/cn";
 import { celebrer } from "@/lib/celebration";
 import { etape as defEtapeCelebration } from "@/lib/domaine";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 export function FeuilleEtape({ ouverte, onFermer, vehiculeId, actuelle, proposee }: {
   ouverte: boolean; onFermer: () => void; vehiculeId: string; actuelle: Etape; proposee?: Etape | null;
@@ -21,9 +22,9 @@ export function FeuilleEtape({ ouverte, onFermer, vehiculeId, actuelle, proposee
   const [etape, setEtape] = useState<Etape>(proposee ?? actuelle);
   const [date, setDate] = useState(aujourdhui());
   const [note, setNote] = useState("");
-  useEffect(() => {
+  useAuChangement([ouverte, proposee, actuelle], () => {
     if (ouverte) { setEtape(proposee ?? actuelle); setDate(aujourdhui()); setNote(""); }
-  }, [ouverte, proposee, actuelle]);
+  });
   const changer = useEcriture("vehicule_changer_etape", {
     onSuccess: () => { const d = defEtapeCelebration(etape); celebrer({ type: "etape", titre: `${d.libelle} : c'est noté`, detail: date === aujourdhui() ? "Le véhicule avance sur son trajet." : `Étape datée du ${date.split("-").reverse().join("/")}.`, couleur: d.couleur }); onFermer(); },
     onError: (e) => toast.error(e.message),

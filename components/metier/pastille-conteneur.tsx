@@ -22,7 +22,7 @@ export function PastillesConteneur({ v, className }: { v: Source; className?: st
     <span className={cn("flex flex-wrap items-center gap-1.5", className)}>
       {c && st && (
         <span title={`${c.reference} · ${st.libelle}`} className="inline-flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-bold"
-          style={{ background: `color-mix(in srgb, ${st.couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${st.couleur} 62%, black)` }}>
+          style={{ background: `color-mix(in srgb, ${st.couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${st.couleur} 62%, var(--pole-texte))` }}>
           <Boat size={13} weight="fill" aria-hidden />{c.reference}
         </span>
       )}

@@ -94,6 +94,8 @@ export function FournisseurSession({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // Synchronisation avec des sources externes (stockage local, session Supabase) : le premier état vient d'elles.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void charger();
     if (modeActuel() !== "supabase") return;
     let desabonner: (() => void) | undefined;

@@ -59,7 +59,7 @@ export function FeuilleConteneur({ ouverte, onFermer, vehiculeId, vehiculeLibell
                     <span className="flex items-center justify-between gap-3">
                       <span className="flex min-w-0 items-center gap-2">
                         <span className="text-[16px] font-extrabold group-hover:text-primaire">{e.reference}</span>
-                        <span className="inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-bold" style={{ background: `color-mix(in srgb, ${st.couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${st.couleur} 62%, black)` }}>
+                        <span className="inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-bold" style={{ background: `color-mix(in srgb, ${st.couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${st.couleur} 62%, var(--pole-texte))` }}>
                           <span className="size-1.5 rounded-full" style={{ background: st.couleur }} />{st.libelle}
                         </span>
                       </span>

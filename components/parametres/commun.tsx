@@ -10,6 +10,7 @@ import { useParametres, type Parametres } from "@/lib/api/parametres";
 import { useOrg } from "@/lib/session";
 import type { Role } from "@/lib/domaine";
 import { Bouton } from "@/components/ui/bouton";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 export interface SectionParametres {
   cle: string;
@@ -46,19 +47,20 @@ export function useBrouillon() {
   const { data, isPending, error, refetch } = useParametres();
   const [brouillon, setBrouillon] = useState<Parametres | null>(null);
 
-  useEffect(() => {
-    if (data?.parametres) setBrouillon(data.parametres);
-  }, [data?.parametres]);
+  const enregistres = data?.parametres;
+  useAuChangement([enregistres], () => {
+    if (enregistres) setBrouillon(enregistres);
+  });
 
   const modifies = useMemo(() => {
-    if (!brouillon || !data?.parametres) return {} as Partial<Parametres>;
+    if (!brouillon || !enregistres) return {} as Partial<Parametres>;
     const patch: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(brouillon)) {
-      const avant = (data.parametres as unknown as Record<string, unknown>)[k];
+      const avant = (enregistres as unknown as Record<string, unknown>)[k];
       if (JSON.stringify(v) !== JSON.stringify(avant)) patch[k] = v;
     }
     return patch as Partial<Parametres>;
-  }, [brouillon, data?.parametres]);
+  }, [brouillon, enregistres]);
 
   const ecriture = useEcriture("parametres_enregistrer", {
     onSuccess: () => toast.success("Paramètres enregistrés"),

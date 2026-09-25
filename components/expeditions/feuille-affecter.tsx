@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
@@ -12,6 +12,7 @@ import { finDeVin } from "@/lib/vin";
 import { EtiquetteEtape } from "@/components/ui/signature";
 import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 export function FeuilleAffecter({ ouverte, onFermer, expeditionId, reference, statut, actuels }: {
   ouverte: boolean; onFermer: () => void; expeditionId: string; reference?: string; statut?: StatutExpedition; actuels: string[];
@@ -20,7 +21,7 @@ export function FeuilleAffecter({ ouverte, onFermer, expeditionId, reference, st
   const { data } = useLecture<Vehicule[]>("vehicules_lister", { p_org: org.id, p_filtres: {} }, { enabled: ouverte });
   const [selection, setSelection] = useState<Set<string>>(new Set());
 
-  useEffect(() => { if (ouverte) setSelection(new Set(actuels)); }, [ouverte, actuels]);
+  useAuChangement([ouverte, actuels.join(",")], () => { if (ouverte) setSelection(new Set(actuels)); });
 
   const affecter = useEcriture<{ vehicules_mis_a_jour?: number }>("expedition_affecter", {
     onSuccess: (r) => {

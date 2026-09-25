@@ -62,6 +62,7 @@
   --ombre-bouton: 0 1px 2px rgb(36 87 229 / 0.25), 0 6px 16px -4px rgb(36 87 229 / 0.45);
   --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--primaire);
 
+  --pole-texte: #000;
   color-scheme: light;
 }
 
@@ -94,11 +95,13 @@
     --acier-voile: #16254a;
     --ombre-carte: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.5);
     --ombre-survol: 0 2px 4px rgb(0 0 0 / 0.3), 0 20px 40px -12px rgb(0 0 0 / 0.6);
+    --pole-texte: #fff;
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
+  --pole-texte: #fff;
   --papier: #0a1022;
   --surface: #121a31;
   --surface-2: #18223d;

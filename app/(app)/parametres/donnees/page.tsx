@@ -69,6 +69,8 @@ export default function PageDonnees() {
               if (!window.confirm("Effacer la démonstration et repartir de données neuves ?")) return;
               const { reinitialiserDemo } = await import("@/lib/demo/moteur");
               await reinitialiserDemo();
+              // Rechargement complet voulu : la base de démonstration vient d'être supprimée, tout l'état en mémoire est périmé.
+              // eslint-disable-next-line @next/next/no-location-assign-relative-destination
               window.location.href = "/accueil/";
             }}>Réinitialiser la démonstration</Bouton>
           </Groupe>

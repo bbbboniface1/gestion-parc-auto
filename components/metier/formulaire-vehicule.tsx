@@ -18,6 +18,7 @@ import { Champ, Selection, ZoneTexte } from "@/components/ui/champ";
 import { ChampMontant } from "@/components/ui/champ-montant";
 import { Choix } from "@/components/ui/choix";
 import { celebrer } from "@/lib/celebration";
+import { useAuChangement } from "@/lib/reinitialiser";
 
 type Brouillon = {
   vin: string; marque: string; modele: string; finition: string; annee: string; couleur: string;
@@ -76,12 +77,12 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
   const vu = (k: string) => () => setVus((x) => (x.has(k) ? x : new Set(x).add(k)));
   const maj = <K extends keyof Brouillon>(k: K, v: Brouillon[K]) => setB((x) => ({ ...x, [k]: v }));
 
-  useEffect(() => {
+  useAuChangement([p?.unite_compteur], () => {
     if (p?.unite_compteur) setUnite(p.unite_compteur);
-  }, [p?.unite_compteur]);
-  useEffect(() => {
+  });
+  useAuChangement([p, b.taux_achat], () => {
     if (b.taux_achat === null && p) setB((x) => ({ ...x, taux_achat: tauxPour(x.devise_achat, p) }));
-  }, [p, b.taux_achat]);
+  });
 
   const verif = verifierVin(b.vin);
   const vin = normaliserVin(b.vin);

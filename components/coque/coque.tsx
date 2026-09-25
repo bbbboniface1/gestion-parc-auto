@@ -132,7 +132,7 @@ function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () 
       <Link href={e.href} aria-current={actif ? "page" : undefined}
         className={cn("onde relative flex flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition-colors", actif ? "text-encre" : "text-encre-3")}>
         <span className={cn("relative grid h-8 w-12 place-items-center rounded-full transition-all", actif && "scale-105")}
-          style={actif ? { background: `color-mix(in srgb, ${e.couleur} 16%, var(--surface))`, color: `color-mix(in srgb, ${e.couleur} 85%, black)` } : undefined}>
+          style={actif ? { background: `color-mix(in srgb, ${e.couleur} 16%, var(--surface))`, color: `color-mix(in srgb, ${e.couleur} 85%, var(--pole-texte))` } : undefined}>
           <e.icone size={22} weight={actif ? "fill" : "duotone"} aria-hidden />
           {c && (
             <span aria-label={c.sens} className={cn("chiffres absolute -top-1 right-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold ring-2 ring-surface", c.alerte ? "bg-perte text-white" : "bg-nuit text-white")}>{c.valeur}</span>
