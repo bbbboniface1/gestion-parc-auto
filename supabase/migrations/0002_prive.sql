@@ -915,7 +915,11 @@ as $$
     || jsonb_build_object(
          'vehicule_reference', (select v.reference from public.vehicules v where v.id = p_frais.vehicule_id),
          'vehicule_libelle', (select concat_ws(' ', v.marque, v.modele, v.annee) from public.vehicules v where v.id = p_frais.vehicule_id),
+         'vehicule_photo', (select v.photo_principale_path from public.vehicules v where v.id = p_frais.vehicule_id),
          'expedition_reference', (select e.reference from public.expeditions e where e.id = p_frais.expedition_id),
+         'expedition_statut', (select e.statut from public.expeditions e where e.id = p_frais.expedition_id),
+         'expedition_nb_vehicules', (select count(*)::int from public.vehicules v
+                                      where v.expedition_id = p_frais.expedition_id and not v.archive),
          'compte_nom', (select c.nom from public.comptes c where c.id = p_frais.compte_id))
 $$;
 

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { Calculator, CurrencyCircleDollar, HandCoins, Plus, Receipt, TrendUp } from "@phosphor-icons/react";
 import { useLecture } from "@/lib/api/requetes";
-import type { TableauDeBord, Vehicule } from "@/lib/api/types";
+import type { ActionAFaire, TableauDeBord, Vehicule } from "@/lib/api/types";
+import { aVerifier } from "@/lib/workflow";
 import { useOrg } from "@/lib/session";
 import { formatCourt, formatJour, formatPourcent, pluriel } from "@/lib/format";
 import { EnTetePage } from "@/components/coque/coque";
@@ -56,7 +57,14 @@ function evolution(serie: number[]): number | null {
   return ((cur - prec) / Math.abs(prec)) * 100;
 }
 
-function Contenu({ d, vehicules }: { d: TableauDeBord; vehicules: Vehicule[] }) {
+const RANG_GRAVITE = { haute: 0, moyenne: 1, info: 2 } as const;
+
+function Contenu({ d: brut, vehicules }: { d: TableauDeBord; vehicules: Vehicule[] }) {
+  // Les véhicules dont l'étape contredit leur conteneur rejoignent la liste « À faire », avec leur correction en une ligne.
+  const incoherences: ActionAFaire[] = aVerifier(vehicules).map(({ vehicule, souci }) => ({
+    type: "incoherence_conteneur", gravite: "moyenne", titre: vehicule.libelle, detail: souci.titre, entite: "vehicule", entite_id: vehicule.id, date: null,
+  }));
+  const d: TableauDeBord = { ...brut, actions: [...brut.actions, ...incoherences].sort((a, b) => RANG_GRAVITE[a.gravite] - RANG_GRAVITE[b.gravite]) };
   const i = d.indicateurs;
   const series = d.series.slice(-6);
   const ca = series.map((s) => s.ca);

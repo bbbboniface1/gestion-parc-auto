@@ -4,14 +4,16 @@ import { Suspense, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Archive, ArrowFatLineRight, ArrowRight, BookmarkSimple, Camera, Car, CurrencyCircleDollar, FileText, FolderSimplePlus, Invoice, Path, PencilSimple, Plus, XCircle } from "@phosphor-icons/react";
+import { Anchor, Archive, ArrowFatLineRight, ArrowRight, BookmarkSimple, Boat, Camera, Car, CurrencyCircleDollar, FileText, FolderSimplePlus, Invoice, Path, PencilSimple, Plus, XCircle } from "@phosphor-icons/react";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useParametres } from "@/lib/api/parametres";
 import type { VehiculeDetail } from "@/lib/api/types";
 import { useOrg } from "@/lib/session";
-import { etape as defEtape, etapeSuivante, libelleCategorie, peut, TITRES } from "@/lib/domaine";
+import { etape as defEtape, type Etape, peut, TITRES } from "@/lib/domaine";
+import { incoherence, prochaineAction } from "@/lib/workflow";
+import { celebrer } from "@/lib/celebration";
 import { coutsAvecEstimation } from "@/lib/estimation";
-import { formatDate, formatDevise, formatNombre, pluriel } from "@/lib/format";
+import { aujourdhui, formatDate, formatNombre, pluriel } from "@/lib/format";
 import { televerser, urlFichier } from "@/lib/stockage";
 import { cn } from "@/lib/cn";
 import { CarteEmbarquement } from "@/components/metier/carte-embarquement";
@@ -20,6 +22,10 @@ import { CoutRevient } from "@/components/metier/cout-revient";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
 import { FeuilleFrais } from "@/components/metier/feuille-frais";
 import { FeuilleEtape, FeuilleReservation } from "@/components/metier/feuilles-vehicule";
+import { FeuilleConteneur } from "@/components/metier/feuille-conteneur";
+import { couleurCategorie, LigneDepense } from "@/components/finances/ligne-depense";
+import { BandeauCoherence } from "@/components/metier/bandeau-coherence";
+import { RouteMaritime, STATUTS_EXPEDITION } from "@/components/expeditions/route-maritime";
 import { Bouton } from "@/components/ui/bouton";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
 import { EtiquetteEtape, Montant, Surtitre } from "@/components/ui/signature";
@@ -58,8 +64,8 @@ function Fiche() {
   const { data: v, error, isPending, refetch } = useLecture<VehiculeDetail>("vehicule_obtenir", { p_org: org.id, p_id: id }, { enabled: !!id });
   const compteurs = useCompteursNavigation();
 
-  const [feuille, setFeuille] = useState<null | "frais" | "etape" | "reserver" | "document">(null);
-  const [etapeProposee, setEtapeProposee] = useState<ReturnType<typeof etapeSuivante>>(null);
+  const [feuille, setFeuille] = useState<null | "frais" | "etape" | "reserver" | "document" | "conteneur">(null);
+  const [etapeProposee, setEtapeProposee] = useState<Etape | null>(null);
   const [envoiPhotos, setEnvoiPhotos] = useState(0);
   const [typeDocument, setTypeDocument] = useState("bl");
   const champPhoto = useRef<HTMLInputElement>(null);
@@ -68,8 +74,28 @@ function Fiche() {
   const ajouterPhoto = useEcriture("vehicule_photo_ajouter");
   const ajouterDocument = useEcriture("document_ajouter", { onSuccess: () => { toast.success("Document ajouté"); setFeuille(null); } });
   const liberer = useEcriture("vehicule_liberer", { onSuccess: () => toast.success("Réservation levée"), onError: (e) => toast.error(e.message) });
+  // Le conteneur pilote la traversée : un seul geste met à jour le conteneur ET tous ses véhicules.
+  const changerStatut = useEcriture<{ vehicules_mis_a_jour: number }>("expedition_changer_statut", {
+    onSuccess: (r, p) => {
+      const statut = (p as { p_statut?: string }).p_statut;
+      const n = r?.vehicules_mis_a_jour ?? 0;
+      const autres = n > 1 ? ` ${pluriel(n - 1, "autre véhicule passe", "autres véhicules passent")} avec lui.` : "";
+      if (statut === "en_mer") celebrer({ type: "etape", titre: "Le conteneur a embarqué", detail: `Ce véhicule passe « En mer ».${autres}`, couleur: "var(--etape-en-mer)" });
+      else celebrer({ type: "etape", titre: "Arrivé au port !", detail: `Ce véhicule passe « Au port ».${autres}`, couleur: "var(--etape-au-port)" });
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const aligner = useEcriture("vehicule_changer_etape", {
+    onSuccess: (_r, p) => { const d = defEtape((p as { p_etape: Etape }).p_etape); celebrer({ type: "etape", titre: `${d.libelle} : c'est aligné`, detail: "Le véhicule et son conteneur concordent.", couleur: d.couleur }); },
+    onError: (e) => toast.error(e.message),
+  });
+  const sortirDuConteneur = useEcriture("vehicule_expedition_affecter", { onSuccess: () => toast.success("Sorti du conteneur"), onError: (e) => toast.error(e.message) });
   const archiver = useEcriture("vehicule_archiver", {
-    onSuccess: () => { toast.success("Véhicule archivé"); router.push("/parc/"); },
+    onSuccess: (_r, p) => {
+      if ((p as { p_archive?: boolean }).p_archive === false) { celebrer({ type: "etape", titre: "Remis au parc", detail: "Le véhicule réapparaît dans le parc.", couleur: "var(--etape-parc)" }); return; }
+      toast.success("Véhicule archivé : retrouvez-le dans Parc › Archivés");
+      router.push("/parc/");
+    },
     onError: (e) => toast.error(e.message),
   });
 
@@ -89,7 +115,10 @@ function Fiche() {
   const modifier = peut(org.role, "modifierVehicule");
   const saisirFrais = peut(org.role, "saisirFrais");
   const vendre = peut(org.role, "vendre") && v.statut_commercial !== "vendu" && !v.archive;
-  const suivante = etapeSuivante(v.etape);
+  const workflow = { etape: v.etape, archive: v.archive, statut_commercial: v.statut_commercial, expedition: v.expedition };
+  const suivante = prochaineAction(workflow);
+  const souci = incoherence(workflow);
+  const conteneurUtile = !v.archive && v.statut_commercial !== "vendu" && (!!v.expedition || ["achete", "transport_usa", "en_mer", "au_port"].includes(v.etape));
   const voitCouts = v.couts_par_categorie !== null;
   const lignesCout = voitCouts ? coutsAvecEstimation(v.etape, v.couts_par_categorie ?? [], p?.bareme_douane) : [];
 
@@ -121,9 +150,26 @@ function Fiche() {
     }
   }
 
+  const jouerProchaine = () => {
+    if (!suivante) return;
+    if (suivante.genre === "etape") { setEtapeProposee(suivante.vers); setFeuille("etape"); }
+    else if (suivante.genre === "choisir_conteneur") setFeuille("conteneur");
+    else changerStatut.executer({ p_org: org.id, p_id: suivante.expeditionId, p_statut: suivante.statut, p_date: aujourdhui() });
+  };
+  const corriger = () => {
+    if (!souci) return;
+    const c = souci.correction;
+    if (c.genre === "aligner") aligner.executer({ p_org: org.id, p_id: v.id, p_etape: c.vers, p_date: aujourdhui(), p_note: "Aligné sur l'état de son conteneur" });
+    else if (c.genre === "choisir_conteneur") setFeuille("conteneur");
+    else if (c.genre === "quitter_conteneur") sortirDuConteneur.executer({ p_org: org.id, p_vehicule_id: v.id, p_expedition_id: null });
+    else if (v.expedition) changerStatut.executer({ p_org: org.id, p_id: v.expedition.id, p_statut: "en_mer", p_date: aujourdhui() });
+  };
+  const couleurProchaine = !suivante ? "var(--primaire)" : suivante.genre === "etape" ? defEtape(suivante.vers).couleur : suivante.genre === "choisir_conteneur" ? "var(--etape-en-mer)" : suivante.statut === "en_mer" ? "var(--etape-en-mer)" : "var(--etape-au-port)";
+  const iconeProchaine = !suivante || suivante.genre === "etape" ? ArrowFatLineRight : suivante.genre === "choisir_conteneur" ? Boat : Anchor;
+
   const actions: ActionVisible[] = [
     { cle: "vendre", titre: "Vendre ce véhicule", detail: v.prix_affiche_xof ? `Facture au prix affiché ${formatNombre(v.prix_affiche_xof)} FCFA` : "Facture, acompte ou paiement échelonné", icone: Invoice, couleur: "var(--gain)", principale: true, href: `/ventes/nouvelle/?vehicule=${v.id}`, masque: !vendre },
-    { cle: "suivante", titre: suivante ? `Passer à « ${defEtape(suivante).libelle} »` : "Étape suivante", detail: suivante ? `Étape ${["achete", "transport_usa", "en_mer", "au_port", "convoi", "douane", "atelier", "parc"].indexOf(suivante) + 1} sur 8 · daté d'aujourd'hui` : undefined, icone: ArrowFatLineRight, couleur: suivante ? defEtape(suivante).couleur : "var(--primaire)", onClick: () => { setEtapeProposee(suivante); setFeuille("etape"); }, masque: !modifier || !suivante },
+    { cle: "suivante", titre: suivante?.titre ?? "Étape suivante", detail: suivante ? `${suivante.detail}` : undefined, icone: iconeProchaine, couleur: couleurProchaine, onClick: jouerProchaine, masque: !modifier || !suivante },
     { cle: "frais", titre: "Ajouter un frais", detail: "Fret, douane, atelier : compté dans le coût", icone: CurrencyCircleDollar, couleur: "var(--accent)", onClick: () => setFeuille("frais"), masque: !saisirFrais },
     { cle: "photos", titre: "Ajouter des photos", detail: `${pluriel(v.photos.length, "photo")} · appareil ou galerie`, icone: Camera, couleur: "var(--etape-en-mer)", onClick: () => champPhoto.current?.click(), masque: !modifier },
     { cle: "document", titre: "Ajouter un document", detail: `${pluriel(v.documents.length, "document")} · BL, titre, douane`, icone: FolderSimplePlus, couleur: "var(--etape-achete)", onClick: () => setFeuille("document"), masque: !modifier },
@@ -172,6 +218,23 @@ function Fiche() {
 
       <CarteEmbarquement v={v} uniteCompteur={p?.unite_compteur} photo={v.photo_principale_path} />
 
+      {v.archive && (
+        <div role="status" className="apparition mt-4 flex flex-wrap items-center gap-3 rounded-2xl bg-surface-2 p-3 ring-1 ring-trait">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-nuit text-white"><Archive size={22} weight="duotone" aria-hidden /></span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[14px] font-bold">Ce véhicule est archivé</p>
+            <p className="text-[13px] leading-snug text-encre-2">Il n&apos;apparaît plus dans le parc, mais rien n&apos;est effacé : ses frais et son historique restent comptés.</p>
+          </div>
+          {modifier && <Bouton taille="sm" variante="primaire" chargement={archiver.isPending} onClick={() => archiver.executer({ p_org: org.id, p_id: v.id, p_archive: false })}>Remettre au parc</Bouton>}
+        </div>
+      )}
+
+      {souci && (
+        <div className="mt-4">
+          <BandeauCoherence souci={souci} onCorriger={modifier ? corriger : undefined} chargement={aligner.isPending || changerStatut.isPending || sortirDuConteneur.isPending} />
+        </div>
+      )}
+
       <div className="mt-4 grid gap-4 lg:mt-5 lg:grid-cols-12 lg:gap-5">
         <div className="flex min-w-0 flex-col gap-4 lg:col-span-8 lg:gap-5">
           <Trajet
@@ -182,6 +245,41 @@ function Fiche() {
             arrivee="Bamako"
             eta={v.expedition?.date_arrivee_reelle ? null : v.expedition?.date_arrivee_prevue}
           />
+          {conteneurUtile && (
+            <section className="carte p-4 lg:p-5" aria-label="Conteneur">
+              {v.expedition ? (
+                <>
+                  <Link href={`/expeditions/fiche/?id=${v.expedition.id}`} className="onde group -m-1 flex items-center justify-between gap-3 rounded-2xl p-1">
+                    <span className="flex min-w-0 items-center gap-3">
+                      <span className="grid size-11 shrink-0 place-items-center rounded-xl text-white" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${STATUTS_EXPEDITION[v.expedition.statut].couleur} 70%, white), ${STATUTS_EXPEDITION[v.expedition.statut].couleur})` }}><Boat size={24} weight="fill" aria-hidden /></span>
+                      <span className="min-w-0">
+                        <span className="etiquette block text-[11px] text-encre-3">Voyage dans le conteneur</span>
+                        <span className="flex flex-wrap items-center gap-x-2">
+                          <span className="text-[17px] font-extrabold group-hover:text-primaire">{v.expedition.reference}</span>
+                          <span className="text-[13px] font-bold" style={{ color: `color-mix(in srgb, ${STATUTS_EXPEDITION[v.expedition.statut].couleur} 62%, black)` }}>{STATUTS_EXPEDITION[v.expedition.statut].libelle}</span>
+                        </span>
+                        <span className="block truncate text-[13px] text-encre-3">{[v.expedition.compagnie, v.expedition.navire, v.expedition.numero_conteneur].filter(Boolean).join(" · ") || "Compagnie à préciser"}</span>
+                      </span>
+                    </span>
+                    <ArrowRight size={18} weight="bold" className="shrink-0 text-encre-3 transition-transform group-hover:translate-x-0.5 group-hover:text-primaire" aria-hidden />
+                  </Link>
+                  <div className="mt-4"><RouteMaritime v={v.expedition} /></div>
+                  {modifier && v.expedition.statut !== "cloturee" && (
+                    <Bouton className="mt-3" variante="fantome" taille="sm" onClick={() => setFeuille("conteneur")}>Changer de conteneur</Bouton>
+                  )}
+                </>
+              ) : (
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-surface-2 text-encre-3"><Boat size={24} weight="duotone" aria-hidden /></span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[15px] font-bold">Pas encore de conteneur</p>
+                    <p className="text-[13px] text-encre-3">Dès qu&apos;il est dans un conteneur, ses dates de mer et son arrivée se suivent toutes seules.</p>
+                  </div>
+                  {modifier && <Bouton variante="secondaire" taille="sm" icone={<Boat size={16} weight="duotone" />} onClick={() => setFeuille("conteneur")}>Choisir</Bouton>}
+                </div>
+              )}
+            </section>
+          )}
           <div className="lg:hidden">{blocPrix}</div>
           <PanneauActions titre="Que voulez-vous faire ?" actions={actions} className="lg:hidden" />
           {voitCouts && (
@@ -198,27 +296,8 @@ function Fiche() {
             <Bloc titre={`Frais · ${v.frais?.length ?? 0}`}
               action={saisirFrais ? <Bouton variante="fantome" taille="sm" icone={<Plus className="size-4" />} onClick={() => setFeuille("frais")}>Ajouter</Bouton> : undefined}>
               {v.frais && v.frais.length > 0 ? (
-                <ul className="-my-1">
-                  {v.frais.map((f) => (
-                    <li key={`${f.id}-${f.part_xof}`} className="flex items-start gap-3 border-b border-trait py-2.5 last:border-b-0">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[15px] font-medium lg:text-sm">
-                          {libelleCategorie(f.categorie)}
-                          {f.statut === "a_payer" && <span className="etiquette ml-2 text-[11px] text-ocre-texte">à payer</span>}
-                          {f.portee === "expedition" && <span className="etiquette ml-2 text-[11px] text-acier">part {f.expedition_reference}</span>}
-                        </p>
-                        <p className="truncate text-[13px] text-encre-3">
-                          {formatDate(f.date)}{f.libelle ? ` · ${f.libelle}` : ""}{f.fournisseur ? ` · ${f.fournisseur}` : ""}
-                        </p>
-                      </div>
-                      <div className="shrink-0 text-right">
-                        <Montant valeur={f.part_xof ?? f.montant_xof} devise={null} />
-                        {f.devise !== "XOF" && (
-                          <p className="text-[12px] text-encre-3">{formatDevise(f.montant, f.devise)} × {formatNombre(f.taux, f.taux % 1 ? 3 : 0)}</p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
+                <ul className="-mx-2 -my-1 divide-y divide-trait/70">
+                  {v.frais.map((f) => <LigneDepense key={`${f.id}-${f.part_xof}`} f={f} contexte="vehicule" couleur={couleurCategorie(f.categorie)} peutModifier={saisirFrais} />)}
                 </ul>
               ) : (
                 <p className="py-2 text-encre-3">Aucun frais saisi. Enchère, remorquage, fret, douane : chaque dépense compte dans le prix de revient.</p>
@@ -316,8 +395,8 @@ function Fiche() {
       {(vendre || (modifier && suivante) || v.vente) && (
         <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex gap-2 border-t border-trait/70 bg-surface/90 px-4 py-3 shadow-[0_-8px_24px_-12px_rgb(15_23_42/0.18)] backdrop-blur-xl lg:hidden">
           {modifier && suivante && (
-            <Bouton className="flex-1" icone={<ArrowFatLineRight size={18} weight="duotone" />} onClick={() => { setEtapeProposee(suivante); setFeuille("etape"); }}>
-              Passer à « {defEtape(suivante).libelle} »
+            <Bouton className="flex-1" icone={<ArrowFatLineRight size={18} weight="duotone" />} chargement={changerStatut.isPending} onClick={jouerProchaine}>
+              {suivante.genre === "etape" ? `Passer à « ${defEtape(suivante.vers).libelle} »` : suivante.titre}
             </Bouton>
           )}
           {vendre ? (
@@ -334,6 +413,7 @@ function Fiche() {
 
       <FeuilleFrais ouverte={feuille === "frais"} onFermer={() => setFeuille(null)} vehiculeId={v.id} />
       <FeuilleEtape ouverte={feuille === "etape"} onFermer={() => setFeuille(null)} vehiculeId={v.id} actuelle={v.etape} proposee={etapeProposee} />
+      <FeuilleConteneur ouverte={feuille === "conteneur"} onFermer={() => setFeuille(null)} vehiculeId={v.id} vehiculeLibelle={v.libelle} actuel={v.expedition?.id ?? null} />
       <FeuilleReservation ouverte={feuille === "reserver"} onFermer={() => setFeuille(null)} vehiculeId={v.id} />
       <Feuille ouverte={feuille === "document"} onFermer={() => setFeuille(null)} titre="Ajouter un document"
         pied={<>

@@ -8,7 +8,7 @@ export type Gravite = "haute" | "moyenne" | "info";
 export interface ActionAFaire {
   type:
     | "echeance_retard" | "magasinage_port" | "stock_dormant" | "arrivee_proche" | "frais_a_payer"
-    | "reservation_echue" | "livraison_en_attente" | "demande_correspondante";
+    | "reservation_echue" | "livraison_en_attente" | "demande_correspondante" | "incoherence_conteneur";
   gravite: Gravite;
   titre: string;
   detail: string | null;
@@ -126,6 +126,9 @@ export interface Frais {
   vehicule_reference?: string | null;
   vehicule_libelle?: string | null;
   expedition_reference?: string | null;
+  vehicule_photo?: string | null;
+  expedition_statut?: "preparation" | "en_mer" | "arrivee" | "cloturee" | null;
+  expedition_nb_vehicules?: number | null;
   created_at: string;
 }
 

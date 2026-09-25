@@ -1784,6 +1784,9 @@ declare
   v_ids   uuid[] := coalesce(p_vehicule_ids, '{}');
   v_ajout integer;
   v_ret   integer;
+  v_etape text;
+  v_veh   record;
+  v_nb    integer := 0;
 begin
   perform prive.exiger_role(p_org, array['proprietaire', 'gerant']);
   select * into v_exp from public.expeditions e where e.id = p_id and e.org_id = p_org for update;
@@ -1811,7 +1814,73 @@ begin
       jsonb_build_object('reference', v_exp.reference, 'vehicule_ids', to_jsonb(v_ids), 'ajoutes', v_ajout, 'retires', v_ret));
   end if;
 
-  return public.expedition_obtenir(p_org, p_id);
+  -- Un véhicule qui rejoint un conteneur déjà parti ou arrivé prend l'étape du conteneur.
+  if v_exp.statut in ('en_mer', 'arrivee') and cardinality(v_ids) > 0 then
+    v_etape := case v_exp.statut when 'en_mer' then 'en_mer' else 'au_port' end;
+    for v_veh in
+      select v.id from public.vehicules v
+       where v.org_id = p_org and v.expedition_id = p_id and v.id = any (v_ids) and not v.archive
+         and prive.rang_etape(v.etape) < prive.rang_etape(v_etape)
+       order by v.reference
+    loop
+      perform prive.changer_etape(p_org, v_veh.id, v_etape,
+        least(coalesce(case v_exp.statut when 'en_mer' then v_exp.date_depart else v_exp.date_arrivee_reelle end, current_date), current_date),
+        format('Expédition %s : le véhicule rejoint le conteneur', v_exp.reference), false);
+      v_nb := v_nb + 1;
+    end loop;
+  end if;
+
+  return public.expedition_obtenir(p_org, p_id) || jsonb_build_object('vehicules_mis_a_jour', v_nb);
+end
+$$;
+
+-- Place UN véhicule dans une expédition (ou l'en retire quand p_expedition_id est nul). Le véhicule
+-- prend l'étape du conteneur s'il est en retard sur lui : le parc et l'expédition ne se contredisent jamais.
+create or replace function public.vehicule_expedition_affecter(p_org uuid, p_vehicule_id uuid, p_expedition_id uuid)
+returns jsonb
+language plpgsql
+volatile
+security definer
+set search_path = ''
+as $$
+declare
+  v_veh   public.vehicules%rowtype;
+  v_exp   public.expeditions%rowtype;
+  v_etape text;
+begin
+  perform prive.exiger_role(p_org, array['proprietaire', 'gerant']);
+  select * into v_veh from public.vehicules v where v.id = p_vehicule_id and v.org_id = p_org for update;
+  if v_veh.id is null then
+    perform prive.introuvable('Véhicule');
+  end if;
+  if v_veh.archive then
+    perform prive.erreur('Ce véhicule est archivé : remettez-le au parc d''abord.');
+  end if;
+
+  if p_expedition_id is null then
+    update public.vehicules v set expedition_id = null, updated_at = now() where v.id = p_vehicule_id;
+    perform prive.journaliser(p_org, 'expedition_affecter', 'vehicule', p_vehicule_id,
+      jsonb_build_object('reference', v_veh.reference, 'expedition_id', null));
+  else
+    select * into v_exp from public.expeditions e where e.id = p_expedition_id and e.org_id = p_org for update;
+    if v_exp.id is null then
+      perform prive.introuvable('Expédition');
+    end if;
+    if v_exp.statut = 'cloturee' then
+      perform prive.erreur('Cette expédition est clôturée : rouvrez-la pour y ajouter un véhicule.');
+    end if;
+    update public.vehicules v set expedition_id = p_expedition_id, updated_at = now() where v.id = p_vehicule_id;
+    v_etape := case v_exp.statut when 'en_mer' then 'en_mer' when 'arrivee' then 'au_port' end;
+    if v_etape is not null and prive.rang_etape(v_veh.etape) < prive.rang_etape(v_etape) then
+      perform prive.changer_etape(p_org, p_vehicule_id, v_etape,
+        least(coalesce(case v_exp.statut when 'en_mer' then v_exp.date_depart else v_exp.date_arrivee_reelle end, current_date), current_date),
+        format('Expédition %s : le véhicule rejoint le conteneur', v_exp.reference), false);
+    end if;
+    perform prive.journaliser(p_org, 'expedition_affecter', 'vehicule', p_vehicule_id,
+      jsonb_build_object('reference', v_veh.reference, 'expedition_id', p_expedition_id, 'expedition', v_exp.reference));
+  end if;
+
+  return public.vehicule_obtenir(p_org, p_vehicule_id);
 end
 $$;
 

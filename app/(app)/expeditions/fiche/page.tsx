@@ -4,11 +4,12 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Anchor, ArrowSquareOut, Boat, CarProfile, CheckCircle, CurrencyCircleDollar, PencilSimple, Plus, SealCheck } from "@phosphor-icons/react";
+import { Anchor, ArrowSquareOut, Boat, CarProfile, CheckCircle, CurrencyCircleDollar, PencilSimple, Plus, SealCheck, Warning } from "@phosphor-icons/react";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { ExpeditionDetail } from "@/lib/api/types-metier";
-import { libelleCategorie, peut } from "@/lib/domaine";
+import { etape as defEtape, libelleCategorie, peut, type Etape } from "@/lib/domaine";
+import { etapeMinimale, incoherence, type Incoherence } from "@/lib/workflow";
 import { aujourdhui, formatCourt, formatDate, pluriel } from "@/lib/format";
 import { urlSuiviConteneur } from "@/lib/suivi-conteneur";
 import { decalage } from "@/lib/animation";
@@ -16,6 +17,7 @@ import { celebrer } from "@/lib/celebration";
 import { useCompteursNavigation } from "@/lib/compteurs";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
 import { FeuilleFrais } from "@/components/metier/feuille-frais";
+import { BandeauCoherence } from "@/components/metier/bandeau-coherence";
 import { FeuilleExpedition } from "@/components/expeditions/feuille-expedition";
 import { FeuilleAffecter } from "@/components/expeditions/feuille-affecter";
 import { RouteMaritime, STATUTS_EXPEDITION } from "@/components/expeditions/route-maritime";
@@ -44,6 +46,13 @@ function Fiche() {
     onError: (err) => toast.error(err.message),
   });
 
+  // Cohérence : chaque véhicule à bord doit raconter la même histoire que son conteneur.
+  const alignerLot = useEcriture("vehicules_changer_etape_lot", {
+    onSuccess: (_r, p) => { const d = defEtape((p as { p_etape: Etape }).p_etape); celebrer({ type: "etape", titre: `${d.libelle} : c'est aligné`, detail: "Les véhicules suivent de nouveau leur conteneur.", couleur: d.couleur }); },
+    onError: (err) => toast.error(err.message),
+  });
+  const reaffecter = useEcriture("expedition_affecter", { onSuccess: () => toast.success("Véhicules sortis du conteneur"), onError: (err) => toast.error(err.message) });
+
   if (!id) return <EtatErreur erreur={new Error("Aucune expédition indiquée.")} />;
   if (error && !e) return <EtatErreur erreur={error} onReessayer={() => void refetch()} />;
   if (isPending || !e) return <div className="flex flex-col gap-4"><Squelette className="h-56 rounded-[22px]" /><Squelette className="h-64 rounded-[22px]" /></div>;
@@ -51,6 +60,19 @@ function Fiche() {
   const lienSuivi = urlSuiviConteneur(e.compagnie, e.numero_conteneur);
   const voitCouts = e.frais !== null;
   const st = STATUTS_EXPEDITION[e.statut];
+
+  const conteneur = { id: e.id, reference: e.reference, statut: e.statut, port_arrivee: e.port_arrivee };
+  const soucis = new Map<string, Incoherence>();
+  for (const v of e.vehicules) {
+    const s = incoherence({ etape: v.etape as Etape, statut_commercial: v.statut_commercial, expedition: conteneur });
+    if (s) soucis.set(v.id, s);
+  }
+  const idsDont = (code: Incoherence["code"]) => e.vehicules.filter((v) => soucis.get(v.id)?.code === code).map((v) => v.id);
+  const enRetard = idsDont("en_retard_sur_conteneur");
+  const enAvance = idsDont("en_avance_sur_conteneur");
+  const pasParti = idsDont("conteneur_pas_parti");
+  const cibleAlignement = etapeMinimale(e.statut);
+  const dateAlignement = (e.statut === "en_mer" ? e.date_depart : e.date_arrivee_reelle) ?? aujourdhui();
 
   const actions: ActionVisible[] = [
     { cle: "embarque", titre: "Marquer comme embarqué", detail: `Les ${pluriel(e.nb_vehicules, "véhicule")} passent « En mer »`, icone: Boat, couleur: "var(--etape-en-mer)", principale: true, onClick: () => changerStatut.executerAsync({ p_org: org.id, p_id: e.id, p_statut: "en_mer", p_date: aujourdhui() }), masque: !peutGerer || e.statut !== "preparation" },
@@ -95,6 +117,21 @@ function Fiche() {
 
       <div className="mt-5 grid gap-5 lg:grid-cols-12 lg:gap-6">
         <div className="flex min-w-0 flex-col gap-5 lg:col-span-7 xl:col-span-8">
+          {peutGerer && enRetard.length > 0 && cibleAlignement && (
+            <BandeauCoherence chargement={alignerLot.isPending}
+              souci={{ code: "en_retard_sur_conteneur", titre: `${pluriel(enRetard.length, "véhicule est resté", "véhicules sont restés")} en arrière de ${e.reference}`, detail: `Le conteneur est « ${st.libelle} » : ces véhicules devraient être « ${defEtape(cibleAlignement).libelle} ».`, correction: { genre: "aligner", vers: cibleAlignement }, libelleCorrection: `Les passer à « ${defEtape(cibleAlignement).libelle} »` }}
+              onCorriger={() => alignerLot.executer({ p_org: org.id, p_ids: enRetard, p_etape: cibleAlignement, p_date: dateAlignement })} />
+          )}
+          {peutGerer && enAvance.length > 0 && (
+            <BandeauCoherence chargement={reaffecter.isPending}
+              souci={{ code: "en_avance_sur_conteneur", titre: `${pluriel(enAvance.length, "véhicule a déjà dépassé", "véhicules ont déjà dépassé")} ${e.reference}`, detail: "Ils sont plus loin sur leur trajet que le conteneur : ils n'en font sans doute plus partie.", correction: { genre: "quitter_conteneur" }, libelleCorrection: "Les sortir du conteneur" }}
+              onCorriger={() => reaffecter.executer({ p_org: org.id, p_id: e.id, p_vehicule_ids: e.vehicules.filter((v) => !enAvance.includes(v.id)).map((v) => v.id) })} />
+          )}
+          {peutGerer && pasParti.length > 0 && (
+            <BandeauCoherence chargement={changerStatut.isPending}
+              souci={{ code: "conteneur_pas_parti", titre: `${pluriel(pasParti.length, "véhicule est")} en mer, mais ${e.reference} n'a pas encore embarqué`, detail: "Le conteneur est toujours en préparation.", correction: { genre: "conteneur_parti" }, libelleCorrection: `${e.reference} a embarqué` }}
+              onCorriger={() => changerStatut.executer({ p_org: org.id, p_id: e.id, p_statut: "en_mer", p_date: aujourdhui() })} />
+          )}
           <PanneauActions titre="Que voulez-vous faire ?" actions={actions} />
 
           <section className="carte apparition p-4 lg:p-5" aria-labelledby="titre-bord">
@@ -112,7 +149,10 @@ function Fiche() {
                         <p className="truncate font-bold group-hover:text-primaire">{v.libelle}</p>
                         <p className="truncate font-mono text-[12px] text-encre-3">{v.reference}{v.vin ? ` · …${v.vin.slice(-6)}` : ""}</p>
                         <div className="mt-1.5 flex items-center justify-between gap-2">
-                          <EtiquetteEtape etape={v.etape} compacte />
+                          <span className="flex min-w-0 flex-wrap items-center gap-1.5">
+                            <EtiquetteEtape etape={v.etape as Etape} compacte />
+                            {soucis.has(v.id) && <span title={soucis.get(v.id)?.titre} className="inline-flex h-6 items-center gap-1 rounded-full bg-ocre-voile px-2 text-[11px] font-bold text-ocre-texte"><Warning size={13} weight="fill" aria-hidden />À vérifier</span>}
+                          </span>
                           {voitCouts && v.part_frais_xof != null && <span className="chiffres text-[12px] font-bold text-encre-2" title="Part des frais communs">+{formatCourt(v.part_frais_xof)}</span>}
                         </div>
                       </div>
@@ -152,7 +192,7 @@ function Fiche() {
       </div>
 
       <FeuilleExpedition ouverte={feuille === "modifier"} onFermer={() => setFeuille(null)} expedition={e} />
-      <FeuilleAffecter ouverte={feuille === "affecter"} onFermer={() => setFeuille(null)} expeditionId={e.id} actuels={e.vehicules.map((v) => v.id)} />
+      <FeuilleAffecter ouverte={feuille === "affecter"} onFermer={() => setFeuille(null)} expeditionId={e.id} reference={e.reference} statut={e.statut} actuels={e.vehicules.map((v) => v.id)} />
       <FeuilleFrais ouverte={feuille === "frais"} onFermer={() => setFeuille(null)} expeditionId={e.id} />
     </div>
   );

@@ -314,6 +314,38 @@ describe("expéditions et demandes", () => {
     await echoue(base.rpc("expedition_affecter", { p_org: e.org, p_id: exp.id, p_vehicule_ids: [a] }), "clôturée");
   });
 
+  it("un véhicule qui rejoint un conteneur déjà parti ou arrivé prend l'étape du conteneur (parc et expédition concordent)", async () => {
+    const e = await entrepriseAvecEquipe(base, "Cohérence conteneur");
+    const v = async (etape: string) => (await base.rpc("vehicule_enregistrer", { p_org: e.org, p_data: { marque: "Honda", modele: "CR-V", etape, date_achat: jour(-30), etape_depuis: jour(-25) } })).id as string;
+    const [a, b, c] = [await v("achete"), await v("transport_usa"), await v("douane")];
+    const exp = await base.rpc("expedition_enregistrer", { p_org: e.org, p_data: { mode: "conteneur", port_depart: "Houston", port_arrivee: "Cotonou" } });
+    await base.rpc("expedition_affecter", { p_org: e.org, p_id: exp.id, p_vehicule_ids: [a] });
+    await base.rpc("expedition_changer_statut", { p_org: e.org, p_id: exp.id, p_statut: "en_mer", p_date: jour(-10) });
+
+    // Affectation groupée : b rejoint un conteneur en mer -> « en_mer » ; c (déjà à la douane) ne recule pas.
+    const groupe = await base.rpc("expedition_affecter", { p_org: e.org, p_id: exp.id, p_vehicule_ids: [a, b, c] });
+    expect(groupe.vehicules_mis_a_jour).toBe(1);
+    expect(groupe.vehicules.map((x: { etape: string }) => x.etape)).toEqual(["en_mer", "en_mer", "douane"]);
+    const vb = await base.rpc("vehicule_obtenir", { p_org: e.org, p_id: b });
+    expect(vb.etape_depuis).toBe(jour(-10));
+
+    // Un seul véhicule, depuis sa fiche.
+    const d = await v("achete");
+    const vd = await base.rpc("vehicule_expedition_affecter", { p_org: e.org, p_vehicule_id: d, p_expedition_id: exp.id });
+    expect(vd.etape).toBe("en_mer");
+    expect(vd.expedition.reference).toBe(exp.reference);
+    const retire = await base.rpc("vehicule_expedition_affecter", { p_org: e.org, p_vehicule_id: d, p_expedition_id: null });
+    expect(retire.expedition).toBeNull();
+    expect(retire.etape).toBe("en_mer");
+
+    // Arrivé au port : un nouveau venu passe « au_port » ; une expédition clôturée refuse.
+    await base.rpc("expedition_changer_statut", { p_org: e.org, p_id: exp.id, p_statut: "arrivee" });
+    const f = await v("transport_usa");
+    expect((await base.rpc("vehicule_expedition_affecter", { p_org: e.org, p_vehicule_id: f, p_expedition_id: exp.id })).etape).toBe("au_port");
+    await base.rpc("expedition_changer_statut", { p_org: e.org, p_id: exp.id, p_statut: "cloturee" });
+    await echoue(base.rpc("vehicule_expedition_affecter", { p_org: e.org, p_vehicule_id: d, p_expedition_id: exp.id }), "clôturée");
+  });
+
   it("demandes_correspondances : demande ouverte × véhicule non vendu qui correspond", async () => {
     const e = await preparer("Demandes", 0);
     const rav = await base.rpc("vehicule_enregistrer", { p_org: e.org, p_data: { marque: "Toyota", modele: "RAV4 XLE", annee: 2019, prix_affiche_xof: 12800000, etape: "en_mer" } });

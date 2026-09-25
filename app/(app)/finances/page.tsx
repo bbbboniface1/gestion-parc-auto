@@ -3,16 +3,15 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
 import {
-  ArrowDownLeft, ArrowUpRight, ArrowsLeftRight, Bank, ChartLineUp, CheckCircle, Clock, CurrencyCircleDollar, DeviceMobile, DownloadSimple,
-  Money, Percent, Plus, Timer, Trash, WhatsappLogo, type Icon,
+  ArrowDownLeft, ArrowUpRight, ArrowsLeftRight, Bank, CaretRight, ChartLineUp, CheckCircle, Clock, CurrencyCircleDollar, DeviceMobile, DownloadSimple,
+  Money, Percent, Plus, Timer, WhatsappLogo, type Icon,
 } from "@phosphor-icons/react";
-import { useEcriture, useLecture } from "@/lib/api/requetes";
+import { useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { Compte, LigneMarge, RapportMarges, Tresorerie } from "@/lib/api/types-metier";
 import type { Frais } from "@/lib/api/types";
-import { libelleCategorie, peut } from "@/lib/domaine";
+import { peut } from "@/lib/domaine";
 import { formatCourt, formatDate, formatPourcent, pluriel } from "@/lib/format";
 import { lienWhatsApp } from "@/lib/whatsapp";
 import { genererCSV, telechargerCSV } from "@/lib/csv";
@@ -26,6 +25,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Indicateur, Puces } from "@/components/ui/recherche";
 import { EtatErreur, EtatVide, SqueletteListe } from "@/components/ui/etats";
 import { FeuilleFrais } from "@/components/metier/feuille-frais";
+import { ListeDepenses } from "@/components/finances/liste-depenses";
 import { FeuilleTransfert } from "@/components/finances/feuille-transfert";
 import { periodePour, type CodePeriode } from "@/components/finances/periode";
 
@@ -75,7 +75,8 @@ function Finances() {
   const peutModifier = peut(org.role, "saisirFrais");
 
   const [onglet, setOnglet] = useState<Onglet>((params.get("onglet") as Onglet) ?? "tresorerie");
-  const [periode, setPeriode] = useState<CodePeriode>("mois");
+  const [fraisEnEvidence, setFraisEnEvidence] = useState<string | null>(params.get("frais"));
+  const [periode, setPeriode] = useState<CodePeriode>(params.get("frais") ? "annee" : "mois");
   const [nouvelleDepense, setNouvelleDepense] = useState(params.get("depense") === "1");
   const [transfert, setTransfert] = useState(false);
   const p = periodePour(periode);
@@ -143,16 +144,29 @@ function Finances() {
                 <ul className="flex flex-col">
                   {tresorerie.data.mouvements.slice(0, 50).map((m, i) => {
                     const entree = m.montant_xof >= 0;
-                    return (
-                      <li key={i} className="flex items-center gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-surface-2">
+                    const corps = (
+                      <>
                         <span className={cn("grid size-10 shrink-0 place-items-center rounded-full", entree ? "bg-gain-voile text-gain" : "bg-perte-voile text-perte")}>
                           {entree ? <ArrowDownLeft size={18} weight="bold" aria-label="Entrée" /> : <ArrowUpRight size={18} weight="bold" aria-label="Sortie" />}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-semibold">{m.libelle}</p>
+                          <p className="truncate font-semibold group-hover:text-primaire">{m.libelle}</p>
                           <p className="text-[12px] text-encre-3">{formatDate(m.date)}{m.compte_nom ? ` · ${m.compte_nom}` : ""}</p>
                         </div>
                         <Montant valeur={m.montant_xof} devise={null} signe className={entree ? "text-gain-texte" : "text-perte"} />
+                        {(m.entite === "vente" || m.entite === "frais") && <CaretRight size={14} weight="bold" className="shrink-0 text-encre-3 transition-transform group-hover:translate-x-0.5 group-hover:text-primaire" aria-hidden />}
+                      </>
+                    );
+                    const cls = "group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-surface-2";
+                    return (
+                      <li key={i}>
+                        {m.entite === "vente" && m.entite_id ? (
+                          <Link href={`/ventes/fiche/?id=${m.entite_id}`} className={cls}>{corps}</Link>
+                        ) : m.entite === "frais" && m.entite_id ? (
+                          <button type="button" className={cls} onClick={() => { setFraisEnEvidence(m.entite_id); setPeriode("annee"); setOnglet("depenses"); router.replace("/finances/?onglet=depenses", { scroll: false }); }}>{corps}</button>
+                        ) : (
+                          <div className="flex items-center gap-3 rounded-xl px-2 py-2.5">{corps}</div>
+                        )}
                       </li>
                     );
                   })}
@@ -167,7 +181,7 @@ function Finances() {
         depenses.error && !depenses.data ? <EtatErreur erreur={depenses.error} onReessayer={() => void depenses.refetch()} /> : depenses.isPending ? <SqueletteListe /> : !depenses.data?.length ? (
           <EtatVide titre="Aucune dépense sur cette période" />
         ) : (
-          <Depenses liste={depenses.data} enEvidence={params.get("frais")} peutModifier={peutModifier} />
+          <ListeDepenses liste={depenses.data} enEvidence={fraisEnEvidence} peutModifier={peutModifier} />
         )
       )}
 
@@ -266,78 +280,6 @@ function Finances() {
       <FeuilleFrais ouverte={nouvelleDepense} onFermer={() => setNouvelleDepense(false)} portee="generale" titre="Ajouter une dépense" />
       <FeuilleTransfert ouverte={transfert} onFermer={() => setTransfert(false)} comptes={comptes.data ?? []} />
     </>
-  );
-}
-
-const COULEURS_CATEGORIES = ["#6366f1", "#0ea5e9", "#f97316", "#14b8a6", "#a855f7", "#f59e0b", "#ec4899", "#22c55e", "#3b82f6", "#64748b"];
-
-function Depenses({ liste, enEvidence, peutModifier }: { liste: Frais[]; enEvidence: string | null; peutModifier: boolean }) {
-  const total = liste.reduce((s, f) => s + f.montant_xof, 0);
-  const aPayer = liste.filter((f) => f.statut === "a_payer").reduce((s, f) => s + f.montant_xof, 0);
-  const parCategorie = [...liste.reduce((m, f) => m.set(f.categorie, (m.get(f.categorie) ?? 0) + f.montant_xof), new Map<string, number>())]
-    .sort((a, b) => b[1] - a[1]);
-  const couleurDe = (cat: string) => COULEURS_CATEGORIES[parCategorie.findIndex(([c]) => c === cat) % COULEURS_CATEGORIES.length]!;
-  return (
-    <div className="flex flex-col gap-5">
-      <section className="carte apparition p-4 lg:p-5" aria-labelledby="titre-repartition">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 id="titre-repartition" className="text-[17px] font-bold">Où part l&apos;argent</h2>
-            <p className="chiffres mt-1 text-[30px] leading-tight font-extrabold tracking-tight">{formatCourt(total)} <span className="text-[14px] font-semibold text-encre-3">FCFA</span></p>
-          </div>
-          {aPayer > 0 && <span className="rounded-full bg-ocre-voile px-3 py-1 text-[13px] font-bold text-ocre-texte">dont {formatCourt(aPayer)} encore à payer</span>}
-        </div>
-        <div className="mt-4 flex h-4 overflow-hidden rounded-full bg-surface-2" role="img" aria-label="Répartition des dépenses par catégorie">
-          {parCategorie.map(([cat, m]) => (
-            <span key={cat} className="h-full origin-left border-r-2 border-surface last:border-r-0 [animation:remplit_900ms_both]" style={{ width: `${(m / total) * 100}%`, background: couleurDe(cat) }} />
-          ))}
-        </div>
-        <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
-          {parCategorie.map(([cat, m]) => (
-            <li key={cat} className="flex items-center gap-2.5 text-[14px]">
-              <span className="size-3 shrink-0 rounded-[4px]" style={{ background: couleurDe(cat) }} />
-              <span className="min-w-0 flex-1 truncate">{libelleCategorie(cat)}</span>
-              <span className="chiffres font-bold">{formatCourt(m)}</span>
-              <span className="chiffres w-10 text-right text-[12px] text-encre-3">{Math.round((m / total) * 100)} %</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <ul className="carte apparition divide-y divide-trait/70 overflow-hidden">
-        {liste.map((f) => <LigneDepense key={f.id} f={f} couleur={couleurDe(f.categorie)} enEvidence={f.id === enEvidence} peutModifier={peutModifier} />)}
-      </ul>
-    </div>
-  );
-}
-
-function LigneDepense({ f, couleur, enEvidence, peutModifier }: { f: Frais; couleur: string; enEvidence: boolean; peutModifier: boolean }) {
-  const org = useOrg();
-  const marquerPaye = useEcriture("frais_enregistrer", { onSuccess: () => toast.success("Marqué payé"), onError: (e) => toast.error(e.message) });
-  const supprimer = useEcriture("frais_supprimer", { onSuccess: () => toast.success("Dépense supprimée"), onError: (e) => toast.error(e.message) });
-  return (
-    <li className={cn("flex flex-wrap items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-2", enEvidence && "bg-primaire-voile")}>
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl text-white" style={{ background: couleur }}><CurrencyCircleDollar size={20} weight="fill" aria-hidden /></span>
-      <div className="min-w-0 flex-1">
-        <p className="flex flex-wrap items-center gap-2 font-semibold">
-          {libelleCategorie(f.categorie)}
-          {f.statut === "a_payer" && <span className="rounded-full bg-ocre-voile px-2 py-0.5 text-[11px] font-bold text-ocre-texte">à payer</span>}
-        </p>
-        <p className="truncate text-[12px] text-encre-3">{formatDate(f.date)}{f.libelle ? ` · ${f.libelle}` : ""}{f.fournisseur ? ` · ${f.fournisseur}` : ""}{f.vehicule_libelle ? ` · ${f.vehicule_libelle}` : ""}{f.expedition_reference ? ` · ${f.expedition_reference}` : ""}</p>
-      </div>
-      <Montant valeur={f.montant_xof} devise={null} className="shrink-0" />
-      {peutModifier && (
-        <div className="flex shrink-0 gap-1.5">
-          {f.statut === "a_payer" && (
-            <Bouton taille="sm" variante="secondaire" icone={<CheckCircle size={16} weight="duotone" className="text-gain" />} chargement={marquerPaye.isPending}
-              onClick={() => marquerPaye.executer({ p_org: org.id, p_data: { id: f.id, statut: "paye" } })}>Marquer payé</Bouton>
-          )}
-          <button type="button" onClick={() => { if (window.confirm("Supprimer cette dépense ?")) supprimer.executer({ p_org: org.id, p_id: f.id }); }}
-            className="onde inline-flex h-9 items-center gap-1 rounded-full px-3 text-[12px] font-semibold text-encre-3 hover:bg-perte-voile hover:text-perte-texte">
-            <Trash size={15} weight="duotone" aria-hidden /> Supprimer
-          </button>
-        </div>
-      )}
-    </li>
   );
 }
 

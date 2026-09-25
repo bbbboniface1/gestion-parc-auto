@@ -4,14 +4,17 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
+import { etape as defEtape } from "@/lib/domaine";
+import { etapeMinimale, type StatutExpedition } from "@/lib/workflow";
+import { pluriel } from "@/lib/format";
 import type { Vehicule } from "@/lib/api/types";
 import { finDeVin } from "@/lib/vin";
 import { EtiquetteEtape } from "@/components/ui/signature";
 import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 
-export function FeuilleAffecter({ ouverte, onFermer, expeditionId, actuels }: {
-  ouverte: boolean; onFermer: () => void; expeditionId: string; actuels: string[];
+export function FeuilleAffecter({ ouverte, onFermer, expeditionId, reference, statut, actuels }: {
+  ouverte: boolean; onFermer: () => void; expeditionId: string; reference?: string; statut?: StatutExpedition; actuels: string[];
 }) {
   const org = useOrg();
   const { data } = useLecture<Vehicule[]>("vehicules_lister", { p_org: org.id, p_filtres: {} }, { enabled: ouverte });
@@ -19,7 +22,15 @@ export function FeuilleAffecter({ ouverte, onFermer, expeditionId, actuels }: {
 
   useEffect(() => { if (ouverte) setSelection(new Set(actuels)); }, [ouverte, actuels]);
 
-  const affecter = useEcriture("expedition_affecter", { onSuccess: () => { toast.success("Véhicules mis à jour"); onFermer(); }, onError: (e) => toast.error(e.message) });
+  const affecter = useEcriture<{ vehicules_mis_a_jour?: number }>("expedition_affecter", {
+    onSuccess: (r) => {
+      const n = r?.vehicules_mis_a_jour ?? 0;
+      toast.success(n ? `Véhicules mis à jour · ${pluriel(n, "véhicule prend", "véhicules prennent")} l'étape du conteneur` : "Véhicules mis à jour");
+      onFermer();
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const mini = statut ? etapeMinimale(statut) : null;
 
   const disponibles = (data ?? []).filter((v) => v.statut_commercial !== "vendu" && !v.archive && (v.expedition_id === null || v.expedition_id === expeditionId));
 
@@ -31,6 +42,11 @@ export function FeuilleAffecter({ ouverte, onFermer, expeditionId, actuels }: {
           Enregistrer ({selection.size})
         </Bouton>
       </>}>
+      {mini && (
+        <p className="mb-3 rounded-xl bg-primaire-voile px-3 py-2.5 text-[13px] leading-snug text-encre-2">
+          {reference ?? "Ce conteneur"} est déjà « {statut === "en_mer" ? "en mer" : "arrivé au port"} » : un véhicule ajouté passe directement à « {defEtape(mini).libelle} ».
+        </p>
+      )}
       <ul className="flex flex-col">
         {disponibles.map((v) => {
           const cochee = selection.has(v.id);

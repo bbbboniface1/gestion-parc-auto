@@ -16,6 +16,7 @@ const TYPES: Record<string, { libelle: string; icone: Icon }> = {
   reservation_echue: { libelle: "Réservation échue", icone: Tag },
   livraison_en_attente: { libelle: "À livrer", icone: Truck },
   demande_correspondante: { libelle: "Demande client", icone: UserCircle },
+  incoherence_conteneur: { libelle: "À vérifier", icone: Warning },
 };
 
 export function lienEntite(entite: string, id: string): string {

@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Kanban, MagnifyingGlass, Plus, Rows, SquaresFour, X } from "@phosphor-icons/react";
+import { Archive, Kanban, MagnifyingGlass, Plus, Rows, SquaresFour, Warning, X } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import type { Vehicule } from "@/lib/api/types";
@@ -12,14 +12,16 @@ import { useOrdinateur } from "@/lib/ecran";
 import { cn } from "@/lib/cn";
 import { ETAPES, etape as defEtape, etapeSuivante, peut, type Etape } from "@/lib/domaine";
 import { aujourdhui, formatCourt } from "@/lib/format";
+import { aVerifier, incoherence } from "@/lib/workflow";
 import { EnTetePage } from "@/components/coque/coque";
 import { CarteGalerie, CarteKanban } from "@/components/metier/carte-vehicule";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
+import { PastillesConteneur } from "@/components/metier/pastille-conteneur";
 import { Bouton } from "@/components/ui/bouton";
 import { EtatErreur, EtatVide, Squelette } from "@/components/ui/etats";
 import { EtiquetteEtape, Montant, teintesEtape } from "@/components/ui/signature";
 
-type FiltreStatut = "tous" | "disponible" | "reserve" | "vendu";
+type FiltreStatut = "tous" | "disponible" | "reserve" | "vendu" | "a_verifier" | "archives";
 type Vue = "galerie" | "colonnes" | "liste";
 
 const STATUTS: { valeur: FiltreStatut; libelle: string }[] = [
@@ -57,12 +59,17 @@ function Parc() {
 
   const etapeParam = params.get("etape") as Etape | null;
   const [etapeActive, setEtapeActive] = useState<Etape | "toutes">(etapeParam && ETAPES.some((e) => e.code === etapeParam) ? etapeParam : "toutes");
-  const [statut, setStatut] = useState<FiltreStatut>(params.get("vue") === "en_vente" ? "disponible" : "tous");
+  const filtreParam = params.get("filtre");
+  const [statut, setStatut] = useState<FiltreStatut>(
+    params.get("vue") === "en_vente" ? "disponible" : filtreParam === "a_verifier" || filtreParam === "archives" ? filtreParam : "tous",
+  );
   const [vue, setVue] = useState<Vue>(lireVue);
   const [q, setQ] = useState("");
   const [selection, setSelection] = useState<Set<string>>(new Set());
 
   const { data, error, isPending, refetch } = useLecture<Vehicule[]>("vehicules_lister", { p_org: org.id, p_filtres: {} });
+  // Les véhicules archivés ne sont plus au parc : on les retrouve ici, dans un filtre à part, pour les remettre au parc.
+  const archives = useLecture<Vehicule[]>("vehicules_lister", { p_org: org.id, p_filtres: { archives_seulement: true } });
   const changerLot = useEcriture("vehicules_changer_etape_lot", {
     onSuccess: () => {
       toast.success("Étape mise à jour");
@@ -74,13 +81,15 @@ function Parc() {
 
   const filtres = useMemo(() => {
     const motif = q.trim().toLowerCase();
-    return (data ?? []).filter((v) => {
-      if (statut !== "tous" && v.statut_commercial !== statut) return false;
+    return (statut === "archives" ? archives.data ?? [] : data ?? []).filter((v) => {
+      if (statut === "a_verifier") {
+        if (!incoherence({ etape: v.etape, archive: v.archive, statut_commercial: v.statut_commercial, expedition: v.expedition })) return false;
+      } else if (statut !== "tous" && statut !== "archives" && v.statut_commercial !== statut) return false;
       if (!motif) return true;
       return [v.libelle, v.reference, v.vin, v.lot_numero, v.immatriculation, v.reserve_client_nom, v.vente?.client_nom, v.expedition?.numero_conteneur]
         .some((x) => x?.toLowerCase().includes(motif));
     });
-  }, [data, statut, q]);
+  }, [data, archives.data, statut, q]);
 
   const parEtape = useMemo(() => {
     const m = new Map<Etape, Vehicule[]>(ETAPES.map((e) => [e.code, []]));
@@ -90,6 +99,8 @@ function Parc() {
 
   const visibles = etapeActive === "toutes" ? filtres : parEtape.get(etapeActive) ?? [];
   const vueEffective: Vue = ordinateur ? vue : "galerie";
+  const nbVerifier = useMemo(() => aVerifier(data ?? []).length, [data]);
+  const nbArchives = archives.data?.length ?? 0;
   const nbDispo = (data ?? []).filter((v) => v.statut_commercial === "disponible").length;
   const valeurStock = (data ?? []).filter((v) => v.statut_commercial !== "vendu").reduce((s, v) => s + (v.prix_affiche_xof ?? 0), 0);
 
@@ -143,8 +154,8 @@ function Parc() {
       />
 
       {/* Recherche et statut */}
-      <div className="apparition mb-4 flex flex-col gap-3 lg:flex-row lg:items-center" style={{ animationDelay: "60ms" }}>
-        <label className="relative flex-1 lg:max-w-md">
+      <div className="apparition mb-4 flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center" style={{ animationDelay: "60ms" }}>
+        <label className="relative flex-1 lg:max-w-md lg:min-w-[260px]">
           <span className="sr-only">Rechercher dans le parc</span>
           <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Modèle, VIN, lot, conteneur, client…"
@@ -155,7 +166,7 @@ function Parc() {
             </button>
           )}
         </label>
-        <div className="sans-barre -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:px-0" role="group" aria-label="Statut commercial">
+        <div className="sans-barre -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0" role="group" aria-label="Statut commercial">
           {STATUTS.map((s) => (
             <button key={s.valeur} type="button" aria-pressed={statut === s.valeur} onClick={() => setStatut(s.valeur)}
               className={cn("h-10 shrink-0 rounded-full px-4 text-[14px] font-semibold transition-all",
@@ -163,6 +174,20 @@ function Parc() {
               {s.libelle}
             </button>
           ))}
+          {(nbVerifier > 0 || statut === "a_verifier") && (
+            <button type="button" aria-pressed={statut === "a_verifier"} onClick={() => setStatut(statut === "a_verifier" ? "tous" : "a_verifier")}
+              className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all",
+                statut === "a_verifier" ? "bg-ocre text-white shadow-[0_6px_14px_-6px_var(--ocre)]" : "bg-ocre-voile text-ocre-texte ring-1 ring-ocre/30 hover:ring-ocre/60")}>
+              <Warning size={16} weight="fill" aria-hidden /> À vérifier <span className="chiffres text-[12px] opacity-80">{nbVerifier}</span>
+            </button>
+          )}
+          {(nbArchives > 0 || statut === "archives") && (
+            <button type="button" aria-pressed={statut === "archives"} onClick={() => setStatut(statut === "archives" ? "tous" : "archives")}
+              className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all",
+                statut === "archives" ? "bg-nuit text-white shadow-[0_6px_16px_-6px_rgb(11_22_51/0.6)]" : "bg-surface text-encre-3 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
+              <Archive size={16} weight="duotone" aria-hidden /> Archivés <span className="chiffres text-[12px] opacity-80">{nbArchives}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -194,7 +219,7 @@ function Parc() {
 
       {error && !data ? (
         <EtatErreur erreur={error} onReessayer={() => void refetch()} />
-      ) : isPending || !data ? (
+      ) : isPending || !data || (statut === "archives" && archives.isPending) ? (
         <SqueletteGalerie />
       ) : data.length === 0 ? (
         <EtatVide
@@ -234,7 +259,9 @@ function Parc() {
           </div>
         </div>
       ) : visibles.length === 0 ? (
-        <EtatVide titre={etapeActive === "toutes" ? "Aucun véhicule ne correspond" : `Aucun véhicule : ${defEtape(etapeActive).libelle.toLowerCase()}`} texte={q ? "Essayez une autre recherche." : undefined} />
+        <EtatVide
+          titre={statut === "archives" ? "Aucun véhicule archivé" : statut === "a_verifier" ? "Tout concorde" : etapeActive === "toutes" ? "Aucun véhicule ne correspond" : `Aucun véhicule : ${defEtape(etapeActive).libelle.toLowerCase()}`}
+          texte={q ? "Essayez une autre recherche." : statut === "a_verifier" ? "Chaque véhicule est cohérent avec son conteneur." : statut === "archives" ? "Un véhicule archivé quitte le parc sans rien perdre : il apparaît ici." : undefined} />
       ) : vueEffective === "liste" ? (
         <TableauVehicules vehicules={visibles} selection={selection} basculer={basculer} />
       ) : (
@@ -291,7 +318,10 @@ function TableauVehicules({ vehicules, selection, basculer }: { vehicules: Vehic
                   </span>
                 </Link>
               </td>
-              <td className="px-3 py-2 text-right"><EtiquetteEtape etape={v.etape} compacte /></td>
+              <td className="px-3 py-2 text-right">
+                <EtiquetteEtape etape={v.etape} compacte />
+                <PastillesConteneur v={v} className="mt-1 justify-end" />
+              </td>
               <td className={cn("chiffres px-3 py-2 text-right", v.jours_etape > 30 && "font-bold text-ocre-texte")}>{v.jours_etape}</td>
               {voitCouts && <td className="px-3 py-2 text-right"><Montant valeur={v.prix_revient_xof} devise={null} /></td>}
               {voitCouts && (

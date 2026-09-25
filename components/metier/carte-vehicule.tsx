@@ -8,6 +8,7 @@ import { finDeVin } from "@/lib/vin";
 import { formatCourt, formatNombre } from "@/lib/format";
 import { EtiquetteEtape, MiniPiste, Montant, Tampon } from "@/components/ui/signature";
 import { PhotoVehicule } from "./photo-vehicule";
+import { PastillesConteneur } from "./pastille-conteneur";
 
 export function TamponCommercial({ v, compact = true }: { v: Pick<Vehicule, "statut_commercial" | "reserve_client_nom" | "vente">; compact?: boolean }) {
   if (v.statut_commercial === "reserve") return <Tampon type="reserve" detail={v.reserve_client_nom?.split(" ").slice(-1)[0]} grand={!compact} />;
@@ -51,6 +52,7 @@ export function CarteGalerie({ v, cochee, basculer, index = 0 }: { v: Vehicule; 
             {[v.couleur, v.kilometrage_km ? `${formatNombre(v.kilometrage_km)} km` : null, v.reference].filter(Boolean).join(" · ")}
           </p>
           <MiniPiste etape={v.etape} className="mt-3" />
+          <PastillesConteneur v={v} className="mt-2.5 empty:hidden" />
           <div className="mt-3 flex items-center justify-between gap-2 text-[12px]">
             <span className="truncate font-mono text-encre-3">{v.vin ? finDeVin(v.vin) : v.lot_numero ? `Lot ${v.lot_numero}` : ""}</span>
             {marge !== null && (
@@ -90,6 +92,7 @@ export function LigneVehicule({ v, selection }: { v: Vehicule; selection?: { coc
             <EtiquetteEtape etape={v.etape} compacte />
             <span className={cn("text-[12px] font-medium", v.jours_etape > 30 ? "text-ocre-texte" : "text-encre-3")}>{v.jours_etape} j</span>
             <TamponCommercial v={v} />
+            <PastillesConteneur v={v} />
           </div>
         </div>
       </Link>
@@ -113,6 +116,7 @@ export function CarteKanban({ v, cochee, basculer, avancer }: { v: Vehicule; coc
             </span>
           </div>
           {v.statut_commercial !== "disponible" && <div className="mt-2"><TamponCommercial v={v} /></div>}
+          <PastillesConteneur v={v} className="mt-2" />
         </div>
       </Link>
       <input type="checkbox" checked={cochee} onChange={basculer} aria-label={`Sélectionner ${v.libelle}`}
