@@ -65,7 +65,7 @@ export default function PageBienvenue() {
           Créer l&apos;entreprise
         </Bouton>
         <p className="text-[14px] text-encre-2">
-          Vous avez reçu un code d&apos;invitation ? <Link href="/rejoindre/" className="font-medium text-laterite underline-offset-4 hover:underline">Rejoindre une entreprise</Link>
+          Vous avez reçu un code d&apos;invitation ? <Link href="/rejoindre/" className="font-medium text-primaire underline-offset-4 hover:underline">Rejoindre une entreprise</Link>
         </p>
       </form>
     </CadreAccueil>

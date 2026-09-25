@@ -62,7 +62,7 @@ function Connexion() {
           </Bouton>
           <div className="flex justify-between text-[14px]">
             <Link href="/mot-de-passe/" className="text-encre-2 underline-offset-4 hover:underline">Mot de passe oublié</Link>
-            <Link href="/inscription/" className="font-medium text-laterite underline-offset-4 hover:underline">Créer un compte</Link>
+            <Link href="/inscription/" className="font-medium text-primaire underline-offset-4 hover:underline">Créer un compte</Link>
           </div>
         </form>
       )}

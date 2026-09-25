@@ -121,7 +121,7 @@ function Fiche() {
 
       <div className="grid gap-4 lg:grid-cols-12 lg:gap-5">
         <div className="flex flex-col gap-4 lg:col-span-8">
-          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+          <section className="carte p-4 lg:p-5">
             <h2 className="etiquette mb-3 text-[12px] text-encre-3">Montants</h2>
             <Registre lignes={[
               ...(v.remise_xof ? [{ libelle: "Prix", valeur: v.prix_xof.toLocaleString("fr-FR") }, { libelle: "Remise", valeur: `− ${v.remise_xof.toLocaleString("fr-FR")}` }] : []),
@@ -132,14 +132,14 @@ function Fiche() {
             ]} />
             {v.prix_revient_xof !== null && (
               <p className="mt-2 border-t border-trait pt-2 text-[13px] text-encre-2">
-                Marge : <span className={cn("chiffres font-semibold", (v.marge_xof ?? 0) < 0 ? "text-perte" : "text-gain")}>{v.marge_xof?.toLocaleString("fr-FR")} FCFA</span> {v.marge_pct !== null && `(${v.marge_pct}%)`}
+                Marge : <span className={cn("chiffres font-semibold", (v.marge_xof ?? 0) < 0 ? "text-perte" : "text-gain-texte")}>{v.marge_xof?.toLocaleString("fr-FR")} FCFA</span> {v.marge_pct !== null && `(${v.marge_pct}%)`}
               </p>
             )}
             {!annulee && v.reste_xof > 0 && peutEncaisser && <Bouton variante="primaire" className="mt-4" icone={<Receipt className="size-4" />} onClick={() => setFeuille("encaisser")}>Encaisser</Bouton>}
             {annulee && v.a_rembourser_xof > 0 && peutEncaisser && <Bouton variante="secondaire" className="mt-4" onClick={() => setFeuille("rembourser")}>Rembourser {v.a_rembourser_xof.toLocaleString("fr-FR")} FCFA</Bouton>}
           </section>
 
-          <section className="rounded-carte border border-trait bg-surface">
+          <section className="carte">
             <h2 className="etiquette border-b border-trait px-4 py-2.5 text-[12px] text-encre-3 lg:px-5">Versements · {v.paiements.filter((p) => !p.annule).length}</h2>
             {v.paiements.length === 0 ? <p className="px-4 py-4 text-encre-3 lg:px-5">Aucun versement.</p> : (
               <ul>
@@ -163,13 +163,13 @@ function Fiche() {
           </section>
 
           {v.echeances.length > 0 && (
-            <section className="rounded-carte border border-trait bg-surface">
+            <section className="carte">
               <h2 className="etiquette border-b border-trait px-4 py-2.5 text-[12px] text-encre-3 lg:px-5">Échéancier</h2>
               <ul>
                 {v.echeances.map((e) => (
                   <li key={e.id} className="flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0 lg:px-5">
                     <span className="flex-1">{formatDate(e.date_echeance)}</span>
-                    <span className={cn("text-[13px]", e.statut === "en_retard" ? "font-medium text-perte" : e.statut === "payee" ? "text-gain" : "text-encre-3")}>{LIBELLES_ECHEANCE[e.statut]}</span>
+                    <span className={cn("text-[13px]", e.statut === "en_retard" ? "font-medium text-perte" : e.statut === "payee" ? "text-gain-texte" : "text-encre-3")}>{LIBELLES_ECHEANCE[e.statut]}</span>
                     <Montant valeur={e.montant_xof} devise={null} />
                   </li>
                 ))}
@@ -179,7 +179,7 @@ function Fiche() {
         </div>
 
         <aside className="flex flex-col gap-4 lg:col-span-4">
-          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+          <section className="carte p-4 lg:p-5">
             <h2 className="etiquette mb-2 text-[12px] text-encre-3">Client</h2>
             <Link href={`/clients/fiche/?id=${v.client.id}`} className="font-semibold hover:underline">{v.client.nom}</Link>
             {v.client.ville && <p className="text-[13px] text-encre-3">{v.client.ville}</p>}
@@ -188,7 +188,7 @@ function Fiche() {
               {v.client.telephone && <a href={lienWhatsApp(v.client.telephone, `Bonjour ${v.client.nom},`)} target="_blank" rel="noopener" className="inline-flex h-9 items-center gap-1.5 rounded-controle border border-trait-fort px-3 text-[13px]"><MessageCircle className="size-3.5" aria-hidden /> WhatsApp</a>}
             </div>
           </section>
-          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+          <section className="carte p-4 lg:p-5">
             <h2 className="etiquette mb-2 text-[12px] text-encre-3">Véhicule</h2>
             <Link href={`/parc/vehicule/?id=${v.vehicule.id}`} className="font-semibold hover:underline">{v.vehicule.libelle}</Link>
             {v.vehicule.vin && <p className="mt-0.5 font-mono text-[12px] text-encre-3">{grouperVin(v.vehicule.vin)}</p>}

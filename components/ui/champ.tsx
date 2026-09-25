@@ -3,8 +3,8 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 const BASE =
-  "w-full rounded-controle border bg-surface text-encre placeholder:text-encre-3 transition-colors " +
-  "focus:outline-none focus:border-laterite focus:shadow-[0_0_0_3px_var(--laterite-voile)] " +
+  "w-full rounded-controle border bg-surface text-encre placeholder:text-encre-3/70 shadow-[0_1px_2px_rgb(15_23_42/0.04)] transition-all " +
+  "focus:outline-none focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] " +
   "disabled:bg-surface-2 disabled:text-encre-3";
 
 export function classesChamp(erreur?: boolean) {
@@ -138,7 +138,7 @@ export function Interrupteur({
         onClick={() => onChange(!actif)}
         className={cn(
           "relative mt-0.5 h-7 w-12 shrink-0 rounded-full border transition-colors disabled:opacity-50",
-          actif ? "border-laterite bg-laterite" : "border-trait-fort bg-surface-2",
+          actif ? "border-primaire bg-primaire" : "border-trait-fort bg-surface-2",
         )}
       >
         <span className={cn("absolute top-0.5 size-[22px] rounded-full bg-surface shadow-sm transition-transform", actif ? "translate-x-[22px]" : "translate-x-0.5")} />

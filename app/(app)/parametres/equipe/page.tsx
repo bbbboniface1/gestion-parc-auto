@@ -42,7 +42,7 @@ export default function PageEquipe() {
 
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending || !data ? <SqueletteListe lignes={3} /> : (
         <>
-          <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
+          <ul className="overflow-hidden carte">
             {data.membres.map((m) => (
               <li key={m.user_id} className={cn("flex flex-col gap-3 border-b border-trait px-4 py-3 last:border-b-0 sm:flex-row sm:items-center", !m.actif && "opacity-60")}>
                 <div className="min-w-0 flex-1">
@@ -70,7 +70,7 @@ export default function PageEquipe() {
           {proprietaire && data.invitations.length > 0 && (
             <section className="mt-6">
               <h2 className="etiquette mb-2 text-[12px] text-encre-3">Invitations en attente</h2>
-              <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
+              <ul className="overflow-hidden carte">
                 {data.invitations.map((i) => (
                   <li key={i.id} className="flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0">
                     <Code className="text-[15px]">{i.code}</Code>
@@ -84,7 +84,7 @@ export default function PageEquipe() {
             </section>
           )}
 
-          <section className="mt-6 rounded-carte border border-trait bg-surface p-4 lg:p-5">
+          <section className="mt-6 carte p-4 lg:p-5">
             <h2 className="etiquette mb-3 text-[12px] text-encre-3">Ce que chaque rôle peut faire</h2>
             <dl className="grid gap-3 sm:grid-cols-2">
               {(Object.keys(ROLES) as Role[]).map((r) => (
@@ -100,7 +100,7 @@ export default function PageEquipe() {
         pied={nouvelle ? (
           <>
             <Bouton icone={<Copy className="size-4" />} onClick={() => { void navigator.clipboard?.writeText(message(nouvelle)); toast.success("Message copié"); }}>Copier</Bouton>
-            <a href={lienWhatsApp(null, message(nouvelle))} target="_blank" rel="noopener" className="inline-flex h-11 items-center justify-center gap-2 rounded-controle bg-laterite px-4 text-[15px] font-medium text-sur-laterite lg:h-10 lg:text-sm">
+            <a href={lienWhatsApp(null, message(nouvelle))} target="_blank" rel="noopener" className="inline-flex h-11 items-center justify-center gap-2 rounded-controle bg-primaire px-4 text-[15px] font-medium text-sur-primaire lg:h-10 lg:text-sm">
               <MessageCircle className="size-4" aria-hidden /> WhatsApp
             </a>
           </>

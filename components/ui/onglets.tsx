@@ -12,7 +12,7 @@ export interface Onglet<T extends string> {
 
 /**
  * Onglets défilants : sur téléphone, ils débordent horizontalement (les étapes du parc ne tiennent
- * pas sur 390 px), l'onglet actif est souligné en latérite ou dans la couleur de l'étape.
+ * pas sur 390 px). L'onglet actif est une pastille bleu nuit ; un point rappelle la couleur de l'étape.
  */
 export function Onglets<T extends string>({ onglets, valeur, onChange, libelle, className }: {
   onglets: Onglet<T>[];
@@ -22,7 +22,7 @@ export function Onglets<T extends string>({ onglets, valeur, onChange, libelle, 
   className?: string;
 }) {
   return (
-    <div role="tablist" aria-label={libelle} className={cn("sans-barre -mx-4 flex gap-1 overflow-x-auto border-b border-trait px-4 lg:mx-0 lg:px-0", className)}>
+    <div role="tablist" aria-label={libelle} className={cn("sans-barre -mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 lg:mx-0 lg:px-0", className)}>
       {onglets.map((o) => {
         const actif = o.valeur === valeur;
         return (
@@ -33,15 +33,15 @@ export function Onglets<T extends string>({ onglets, valeur, onChange, libelle, 
             aria-selected={actif}
             onClick={() => onChange(o.valeur)}
             className={cn(
-              "relative flex h-11 shrink-0 items-center gap-1.5 px-3 text-[15px] font-medium whitespace-nowrap transition-colors lg:h-10 lg:text-sm",
-              actif ? "text-encre" : "text-encre-3 hover:text-encre-2",
+              "relative flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold whitespace-nowrap transition-all",
+              actif ? "bg-nuit text-sur-nuit shadow-[0_4px_12px_-4px_rgb(11_22_51/0.5)]" : "bg-surface text-encre-2 shadow-[0_1px_2px_rgb(15_23_42/0.06)] hover:text-encre",
             )}
           >
+            {o.couleur && <span aria-hidden className="size-2 rounded-full" style={{ background: o.couleur }} />}
             {o.libelle}
             {o.compteur !== undefined && o.compteur !== null && (
-              <span className={cn("chiffres text-[13px]", actif ? "text-encre-2" : "text-encre-3")}>{o.compteur}</span>
+              <span className={cn("chiffres rounded-full px-1.5 text-[12px]", actif ? "bg-white/15 text-sur-nuit" : "bg-surface-2 text-encre-3")}>{o.compteur}</span>
             )}
-            {actif && <span aria-hidden className="absolute inset-x-2 -bottom-px h-[3px] rounded-t-sm" style={{ background: o.couleur ?? "var(--laterite)" }} />}
           </button>
         );
       })}

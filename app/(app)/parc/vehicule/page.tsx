@@ -40,7 +40,7 @@ const TYPES_DOCUMENT = [
 
 function Bloc({ titre, action, children, className }: { titre: string; action?: React.ReactNode; children: React.ReactNode; className?: string }) {
   return (
-    <section className={cn("rounded-carte border border-trait bg-surface", className)}>
+    <section className={cn("carte", className)}>
       <header className="flex items-center justify-between gap-2 border-b border-trait px-4 py-2.5 lg:px-5">
         <h2 className="etiquette text-[12px] text-encre-3">{titre}</h2>
         {action}
@@ -132,16 +132,16 @@ function Fiche() {
   ];
 
   const blocPrix = (
-    <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+    <section className="carte p-4 lg:p-5">
       {v.vente ? (
         <>
           <Surtitre>Vendu à</Surtitre>
           <p className="mt-1 text-[17px] font-semibold">{v.vente.client_nom}</p>
           <Montant valeur={v.vente.montant_ttc} taille="lg" className="mt-1 block" />
           <p className="mt-1 text-[13px] text-encre-2">
-            {formatDate(v.vente.date_vente)} · {v.vente.livree ? `livré le ${formatDate(v.vente.date_livraison)}` : <span className="font-medium text-ocre">à livrer</span>}
+            {formatDate(v.vente.date_vente)} · {v.vente.livree ? `livré le ${formatDate(v.vente.date_livraison)}` : <span className="font-medium text-ocre-texte">à livrer</span>}
           </p>
-          <Link href={`/ventes/fiche/?id=${v.vente.id}`} className="mt-3 inline-flex items-center gap-1 font-mono text-[13px] font-medium text-laterite hover:underline">
+          <Link href={`/ventes/fiche/?id=${v.vente.id}`} className="mt-3 inline-flex items-center gap-1 font-mono text-[13px] font-medium text-primaire hover:underline">
             {v.vente.numero} <ArrowRight className="size-3.5" />
           </Link>
         </>
@@ -151,7 +151,7 @@ function Fiche() {
           {v.prix_affiche_xof !== null ? <Montant valeur={v.prix_affiche_xof} taille="xl" className="mt-1 block" /> : <p className="mt-1 text-encre-3">Pas encore fixé</p>}
           {v.prix_plancher_xof !== null && <p className="mt-1 text-[13px] text-encre-2">Plancher <span className="chiffres font-medium text-encre">{formatNombre(v.prix_plancher_xof)}</span> FCFA</p>}
           {v.statut_commercial === "reserve" && (
-            <p className={cn("mt-3 rounded-controle px-3 py-2 text-[14px]", v.reservation_echue ? "bg-ocre-voile text-ocre" : "bg-surface-2 text-encre-2")}>
+            <p className={cn("mt-3 rounded-controle px-3 py-2 text-[14px]", v.reservation_echue ? "bg-ocre-voile text-ocre-texte" : "bg-surface-2 text-encre-2")}>
               Réservé pour <strong className="text-encre">{v.reserve_client_nom}</strong>{v.reserve_jusqu_au ? ` jusqu'au ${formatDate(v.reserve_jusqu_au)}` : ""}{v.reservation_echue ? " — échue" : ""}
             </p>
           )}
@@ -168,7 +168,7 @@ function Fiche() {
         </Link>
         <div className="flex items-center gap-2">
           {vendre && (
-            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="hidden h-10 items-center gap-2 rounded-controle bg-laterite px-4 text-sm font-medium text-sur-laterite hover:bg-laterite-fonce lg:inline-flex">
+            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="hidden h-10 items-center gap-2 rounded-controle bg-primaire px-4 text-sm font-medium text-sur-primaire hover:bg-primaire-fonce lg:inline-flex">
               <Receipt className="size-4" aria-hidden /> Vendre
             </Link>
           )}
@@ -181,10 +181,10 @@ function Fiche() {
         </div>
       </div>
 
-      <CarteEmbarquement v={v} uniteCompteur={p?.unite_compteur} />
+      <CarteEmbarquement v={v} uniteCompteur={p?.unite_compteur} photo={v.photo_principale_path} />
 
       <div className="mt-4 grid gap-4 lg:mt-5 lg:grid-cols-12 lg:gap-5">
-        <div className="flex flex-col gap-4 lg:col-span-8 lg:gap-5">
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-8 lg:gap-5">
           <Trajet
             etape={v.etape}
             historique={v.etapes.map((e) => ({ etape: e.etape, date: e.date }))}
@@ -214,7 +214,7 @@ function Fiche() {
                       <div className="min-w-0 flex-1">
                         <p className="text-[15px] font-medium lg:text-sm">
                           {libelleCategorie(f.categorie)}
-                          {f.statut === "a_payer" && <span className="etiquette ml-2 text-[11px] text-ocre">à payer</span>}
+                          {f.statut === "a_payer" && <span className="etiquette ml-2 text-[11px] text-ocre-texte">à payer</span>}
                           {f.portee === "expedition" && <span className="etiquette ml-2 text-[11px] text-acier">part {f.expedition_reference}</span>}
                         </p>
                         <p className="truncate text-[13px] text-encre-3">
@@ -259,7 +259,7 @@ function Fiche() {
           </Bloc>
         </div>
 
-        <div className="flex flex-col gap-4 lg:col-span-4 lg:gap-5">
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-4 lg:gap-5">
           <div className="hidden lg:block">{blocPrix}</div>
 
           <Bloc titre={`Photos · ${v.photos.length}`}
@@ -330,7 +330,7 @@ function Fiche() {
             </Bouton>
           )}
           {vendre ? (
-            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-controle bg-laterite text-[15px] font-medium text-sur-laterite active:bg-laterite-fonce">
+            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-controle bg-primaire text-[15px] font-medium text-sur-primaire active:bg-primaire-fonce">
               <Receipt className="size-4" aria-hidden /> Vendre
             </Link>
           ) : v.vente ? (

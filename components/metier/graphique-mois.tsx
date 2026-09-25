@@ -28,7 +28,7 @@ export function GraphiqueMois({ points }: { points: Point[] }) {
         {p && (
           <span className="text-[13px] text-encre-2" aria-live="polite">
             {formatMoisCourt(p.mois)} : <span className="chiffres font-semibold text-encre">{formatCourt(p.ca)}</span>
-            {voitMarge && p.marge !== null && <> · marge <span className="chiffres font-semibold text-laterite">{formatCourt(p.marge)}</span></>}
+            {voitMarge && p.marge !== null && <> · marge <span className="chiffres font-semibold text-primaire">{formatCourt(p.marge)}</span></>}
             {` · ${p.nb} vente${p.nb > 1 ? "s" : ""}`}
           </span>
         )}
@@ -48,7 +48,7 @@ export function GraphiqueMois({ points }: { points: Point[] }) {
               className="group relative flex h-full flex-1 flex-col justify-end"
             >
               <span className={`relative w-full rounded-t-[2px] ${i === actif ? "bg-encre-2" : "bg-trait-fort group-hover:bg-encre-3"}`} style={{ height: `${Math.max(h, x.ca > 0 ? 2 : 0)}%` }}>
-                {hm > 0 && <span className="absolute inset-x-0 top-0 rounded-t-[2px] bg-laterite" style={{ height: `${(hm / h) * 100}%` }} />}
+                {hm > 0 && <span className="absolute inset-x-0 top-0 rounded-t-[2px] bg-primaire" style={{ height: `${(hm / h) * 100}%` }} />}
               </span>
             </button>
           );

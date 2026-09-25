@@ -65,14 +65,14 @@ function Finances() {
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {tresorerie.data.comptes.map((c) => (
-                <div key={c.id} className="rounded-carte border border-trait bg-surface p-4">
+                <div key={c.id} className="carte p-4">
                   <p className="etiquette text-[11px] text-encre-3">{c.nom}</p>
                   <Montant valeur={c.solde_xof} taille="lg" className="mt-1 block" />
                   <p className="mt-1 text-[12px] text-encre-3">+{formatCourt(c.entrees_periode)} · −{formatCourt(c.sorties_periode)}</p>
                 </div>
               ))}
             </div>
-            <section className="rounded-carte border border-trait bg-surface">
+            <section className="carte">
               <h2 className="etiquette border-b border-trait px-4 py-2.5 text-[12px] text-encre-3 lg:px-5">Mouvements</h2>
               {tresorerie.data.mouvements.length === 0 ? <p className="px-4 py-4 text-encre-3 lg:px-5">Aucun mouvement sur cette période.</p> : (
                 <ul>
@@ -82,7 +82,7 @@ function Finances() {
                         <p className="truncate text-[14px]">{m.libelle}</p>
                         <p className="text-[12px] text-encre-3">{formatDate(m.date)}{m.compte_nom ? ` · ${m.compte_nom}` : ""}</p>
                       </div>
-                      <Montant valeur={m.montant_xof} devise={null} className={m.montant_xof < 0 ? "text-perte" : "text-gain"} />
+                      <Montant valeur={m.montant_xof} devise={null} className={m.montant_xof < 0 ? "text-perte" : "text-gain-texte"} />
                     </li>
                   ))}
                 </ul>
@@ -98,7 +98,7 @@ function Finances() {
         ) : (
           <>
             <p className="mb-3 text-[14px] text-encre-2">Total : <Montant valeur={depenses.data.reduce((s, f) => s + f.montant_xof, 0)} devise={null} /></p>
-            <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
+            <ul className="overflow-hidden carte">
               {depenses.data.map((f) => <LigneDepense key={f.id} f={f} enEvidence={f.id === params.get("frais")} peutModifier={peutModifier} />)}
             </ul>
           </>
@@ -110,10 +110,10 @@ function Finances() {
           <EtatVide titre="Aucune créance" texte="Tous les clients sont à jour." />
         ) : (
           <>
-            <p className="mb-3 text-[14px] text-encre-2">Total dû : <Montant valeur={tresorerie.data.creances.reduce((s, c) => s + c.reste_xof, 0)} devise={null} className="text-ocre" /></p>
+            <p className="mb-3 text-[14px] text-encre-2">Total dû : <Montant valeur={tresorerie.data.creances.reduce((s, c) => s + c.reste_xof, 0)} devise={null} className="text-ocre-texte" /></p>
             <ul className="flex flex-col gap-2">
               {tresorerie.data.creances.map((c) => (
-                <li key={c.vente_id} className="rounded-carte border border-trait bg-surface p-4">
+                <li key={c.vente_id} className="carte p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="min-w-0">
                       <Link href={`/ventes/fiche/?id=${c.vente_id}`} className="font-semibold hover:underline">{c.client_nom}</Link>
@@ -121,7 +121,7 @@ function Finances() {
                       {c.jours_retard !== null && <p className="mt-0.5 text-[13px] font-medium text-perte">{pluriel(c.jours_retard, "jour")} de retard</p>}
                     </div>
                     <div className="flex items-center gap-3">
-                      <Montant valeur={c.reste_xof} devise={null} className="text-ocre" />
+                      <Montant valeur={c.reste_xof} devise={null} className="text-ocre-texte" />
                       {c.client_telephone && (
                         <a href={lienWhatsApp(c.client_telephone, `Bonjour ${c.client_nom}, un rappel amical concernant votre facture ${c.numero} : il reste ${c.reste_xof.toLocaleString("fr-FR")} FCFA à régler. Merci.`)}
                           target="_blank" rel="noopener" className="inline-flex h-9 items-center gap-1.5 rounded-controle border border-trait-fort px-3 text-[13px]">
@@ -147,7 +147,7 @@ function Finances() {
                 ["Marge", formatCourt(marges.data.totaux.marge)],
                 ["Taux de marge", marges.data.totaux.marge_pct !== null ? formatPourcent(marges.data.totaux.marge_pct, 1) : "—"],
               ].map(([l, v]) => (
-                <div key={l} className="rounded-carte border border-trait bg-surface p-4"><p className="etiquette text-[11px] text-encre-3">{l}</p><p className="chiffres mt-1 text-[22px] font-semibold">{v}</p></div>
+                <div key={l} className="carte p-4"><p className="etiquette text-[11px] text-encre-3">{l}</p><p className="chiffres mt-1 text-[22px] font-semibold">{v}</p></div>
               ))}
             </div>
             <div className="flex justify-end">
@@ -169,7 +169,7 @@ function Finances() {
                 telechargerCSV(`rentabilite-${p.du}-${p.au}`, csv);
               }}>Exporter en CSV</Bouton>
             </div>
-            <section className="overflow-x-auto rounded-carte border border-trait bg-surface">
+            <section className="overflow-x-auto carte">
               <table className="w-full min-w-[720px] text-sm">
                 <thead><tr className="border-b border-trait bg-surface-2/60 text-left"><th className="px-3 py-2">Véhicule</th><th className="px-3 py-2">Client</th><th className="px-3 py-2 text-right">Prix HT</th><th className="px-3 py-2 text-right">Revient</th><th className="px-3 py-2 text-right">Marge</th><th className="px-3 py-2 text-right">Jours</th></tr></thead>
                 <tbody>
@@ -202,9 +202,9 @@ function LigneDepense({ f, enEvidence, peutModifier }: { f: Frais; enEvidence: b
   const marquerPaye = useEcriture("frais_enregistrer", { onSuccess: () => toast.success("Marqué payé"), onError: (e) => toast.error(e.message) });
   const supprimer = useEcriture("frais_supprimer", { onSuccess: () => toast.success("Dépense supprimée"), onError: (e) => toast.error(e.message) });
   return (
-    <li className={cn("flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0 lg:px-5", enEvidence && "bg-laterite-voile")}>
+    <li className={cn("flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0 lg:px-5", enEvidence && "bg-primaire-voile")}>
       <div className="min-w-0 flex-1">
-        <p className="font-medium">{libelleCategorie(f.categorie)}{f.statut === "a_payer" && <span className="etiquette ml-2 text-[11px] text-ocre">à payer</span>}</p>
+        <p className="font-medium">{libelleCategorie(f.categorie)}{f.statut === "a_payer" && <span className="etiquette ml-2 text-[11px] text-ocre-texte">à payer</span>}</p>
         <p className="truncate text-[13px] text-encre-3">{formatDate(f.date)}{f.libelle ? ` · ${f.libelle}` : ""}{f.fournisseur ? ` · ${f.fournisseur}` : ""}{f.vehicule_libelle ? ` · ${f.vehicule_libelle}` : ""}{f.expedition_reference ? ` · ${f.expedition_reference}` : ""}</p>
       </div>
       <Montant valeur={f.montant_xof} devise={null} />

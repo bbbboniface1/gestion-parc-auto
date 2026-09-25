@@ -68,7 +68,7 @@ export default function PageMotDePasse() {
         <div>
           <h1 className="text-[26px] font-semibold tracking-tight">Lien envoyé</h1>
           <p className="mt-2 text-encre-2">Si un compte existe pour <strong className="text-encre">{email}</strong>, un lien de réinitialisation vient d&apos;être envoyé.</p>
-          <Link href="/connexion/" className="mt-6 inline-block font-medium text-laterite underline-offset-4 hover:underline">Retour à la connexion</Link>
+          <Link href="/connexion/" className="mt-6 inline-block font-medium text-primaire underline-offset-4 hover:underline">Retour à la connexion</Link>
         </div>
       ) : (
         <form onSubmit={demander} className="flex flex-col gap-4">

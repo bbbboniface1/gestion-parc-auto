@@ -45,7 +45,7 @@ function Liste({ type, titre, description, exemple, elements }: { type: string; 
         <label className="flex-1">
           <span className="sr-only">Ajouter à « {titre} »</span>
           <input value={saisie} onChange={(e) => setSaisie(e.target.value)} placeholder={exemple}
-            className="h-11 w-full rounded-controle border border-trait-fort bg-surface px-3 text-[15px] focus:border-laterite focus:outline-none lg:h-10 lg:text-sm" />
+            className="h-11 w-full rounded-controle border border-trait-fort bg-surface px-3 text-[15px] focus:border-primaire focus:outline-none lg:h-10 lg:text-sm" />
         </label>
         <Bouton type="submit" icone={<Plus className="size-4" />} disabled={!saisie.trim()} chargement={ajouter.isPending}>Ajouter</Bouton>
       </form>
@@ -60,7 +60,7 @@ export default function PageLogistique() {
     <>
       <EnTetePage titre="Logistique" sousTitre="Les listes proposées lors de la saisie des expéditions et des frais." />
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending || !data ? <Squelette className="h-96 rounded-carte" /> : (
-        <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
+        <div className="carte px-4 py-6 lg:px-8">
           {TYPES.map((t) => <Liste key={t.type} {...t} elements={data.filter((r) => r.type === t.type && r.actif).sort((a, b) => a.ordre - b.ordre)} />)}
         </div>
       )}

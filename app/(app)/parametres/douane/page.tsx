@@ -46,7 +46,7 @@ export default function PageDouane() {
       <EnTetePage titre="Frais et douane"
         sousTitre="Ces valeurs servent uniquement aux estimations : le coût réel est toujours le frais que vous saisissez."
         actions={<Link href="/outils/simulateur/" className="inline-flex h-10 items-center gap-2 rounded-controle border border-trait-fort bg-surface px-4 text-sm font-medium hover:bg-surface-2"><Calculator className="size-4" aria-hidden /> Ouvrir le simulateur</Link>} />
-      <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
+      <div className="carte px-4 py-6 lg:px-8">
         <Groupe titre="Barème de dédouanement" description="Les taux publiés pour le Mali sont tous indiqués comme approximatifs : faites valider ces valeurs par votre transitaire.">
           <div className="grid grid-cols-2 gap-3">
             <ChampNombre libelle="Droit de douane" valeur={b.droit_douane_pct ?? 0} onChange={(v) => majB("droit_douane_pct", v)} decimales={2} unite="% CAF" />

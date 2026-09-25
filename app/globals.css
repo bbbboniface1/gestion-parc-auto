@@ -3,118 +3,129 @@
 /* Thème sombre : suit le téléphone, sauf choix explicite dans Préférences (data-theme). */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* ─── Jetons « Connaissement » (docs/DIRECTION_ARTISTIQUE.md) ─────────────────────── */
+/*
+ * Design v3 — couleur, profondeur, mouvement.
+ *  - fond bleuté clair, cartes blanches arrondies (16 px) avec ombre douce qui se soulève au survol ;
+ *  - barre latérale bleu nuit en dégradé ; bleu roi pour les actions, orange pour ce qui doit sauter aux yeux ;
+ *  - une couleur vive par étape du voyage (indigo → bleu → ciel → turquoise → ambre → orange → violet → vert) ;
+ *  - badges en fond teinté et texte foncé : contraste ≥ 4,5:1 vérifié pour chaque couleur.
+ */
 :root {
-  --papier: #f5f3ee;
+  --papier: #f2f5fa;
   --surface: #ffffff;
-  --surface-2: #efece5;
-  --trait: #e3ded3;
-  --trait-fort: #cfc8ba;
-  --encre: #17171a;
-  --encre-2: #5b5a57;
-  --encre-3: #6b6861;
-  --laterite: #b5461e;
-  --laterite-fonce: #9c3a17;
-  --laterite-voile: #f6e6de;
-  --sur-laterite: #ffffff;
-  --nuit: #1b1d22;
-  --nuit-2: #262931;
-  --sur-nuit: #edeae3;
-  --sur-nuit-2: #a6a29a;
-  --gain: #1b7148;
-  --gain-voile: #e1f0e7;
-  --perte: #b3261e;
-  --perte-voile: #f8e1de;
-  --ocre: #8e5f08;
-  --ocre-voile: #f6ebd6;
-  --acier: #2f5a7a;
-  --acier-voile: #e1eaf1;
-  --reserve: #7a3e5d;
+  --surface-2: #f5f7fb;
+  --trait: #e3e8f0;
+  --trait-fort: #cbd3e1;
+  --encre: #0f172a;
+  --encre-2: #3c475a;
+  --encre-3: #5b6679;
 
-  --etape-achete: #5e6b7a;
-  --etape-transport-usa: #3f6784;
-  --etape-en-mer: #1f6f7a;
-  --etape-au-port: #76673d;
-  --etape-convoi: #8a5f23;
-  --etape-douane: #a34f26;
-  --etape-atelier: #8a4b2e;
-  --etape-parc: #b5461e;
+  --primaire: #2457e5;
+  --primaire-fonce: #1a44bf;
+  --primaire-voile: #e8eefd;
+  --sur-primaire: #ffffff;
+  --accent: #ff7a1a;
+  --accent-voile: #fff0e4;
 
-  --ombre-flottante: 0 8px 24px rgb(23 23 26 / 0.12), 0 1px 2px rgb(23 23 26 / 0.06);
-  --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--laterite);
+  --nuit: #0b1633;
+  --nuit-2: #16275a;
+  --sur-nuit: #f2f5fb;
+  --sur-nuit-2: #b7c0d6;
+
+  --gain: #16a34a;
+  --gain-texte: #0f7234;
+  --gain-voile: #e3f5e9;
+  --perte: #dc2626;
+  --perte-texte: #9a1b1b;
+  --perte-voile: #fde6e6;
+  --ocre: #d97706;
+  --ocre-texte: #985304;
+  --ocre-voile: #fdf0dc;
+  --acier: #2563eb;
+  --acier-voile: #e4ecfd;
+  --reserve: #9333ea;
+  --reserve-texte: #6724a4;
+  --reserve-voile: #f1e6fd;
+
+  --etape-achete: #6366f1;
+  --etape-transport-usa: #3b82f6;
+  --etape-en-mer: #0ea5e9;
+  --etape-au-port: #14b8a6;
+  --etape-convoi: #f59e0b;
+  --etape-douane: #f97316;
+  --etape-atelier: #a855f7;
+  --etape-parc: #22c55e;
+
+  --ombre-carte: 0 1px 2px rgb(15 23 42 / 0.04), 0 6px 20px -6px rgb(15 23 42 / 0.08);
+  --ombre-survol: 0 2px 4px rgb(15 23 42 / 0.05), 0 18px 36px -12px rgb(15 23 42 / 0.18);
+  --ombre-flottante: 0 12px 40px -8px rgb(15 23 42 / 0.25), 0 2px 6px rgb(15 23 42 / 0.06);
+  --ombre-bouton: 0 1px 2px rgb(36 87 229 / 0.25), 0 6px 16px -4px rgb(36 87 229 / 0.45);
+  --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--primaire);
 
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --papier: #121316;
-    --surface: #1a1c20;
-    --surface-2: #22252a;
-    --trait: #2a2d33;
-    --trait-fort: #3a3e45;
-    --encre: #edeae3;
-    --encre-2: #a6a29a;
-    --encre-3: #96928a;
-    --laterite: #e0724a;
-    --laterite-fonce: #ea8a66;
-    --laterite-voile: #3a231a;
-    --sur-laterite: #17171a;
-    --nuit: #0d0e10;
-    --nuit-2: #1a1c20;
-    --gain: #4fb383;
-    --gain-voile: #16291f;
-    --perte: #ef6b61;
-    --perte-voile: #331715;
-    --ocre: #d9a040;
-    --ocre-voile: #2e2414;
-    --acier: #7aa6c8;
-    --acier-voile: #17232d;
-    --reserve: #c27ea0;
-    --etape-achete: #93a0ae;
-    --etape-transport-usa: #7ea5c3;
-    --etape-en-mer: #5fb0ba;
-    --etape-au-port: #c2ae7c;
-    --etape-convoi: #d39e55;
-    --etape-douane: #e08a5d;
-    --etape-atelier: #c9876a;
-    --etape-parc: #e0724a;
+    --papier: #0a1022;
+    --surface: #121a31;
+    --surface-2: #18223d;
+    --trait: #24304f;
+    --trait-fort: #34446b;
+    --encre: #eef2fa;
+    --encre-2: #c3cbdd;
+    --encre-3: #97a3bd;
+    --primaire: #5b84ff;
+    --primaire-fonce: #7c9dff;
+    --primaire-voile: #1b2a57;
+    --sur-primaire: #ffffff;
+    --accent: #ff9447;
+    --accent-voile: #3a2413;
+    --nuit: #070c1c;
+    --nuit-2: #121d40;
+    --gain-texte: #5ad48a;
+    --gain-voile: #0f2a1b;
+    --perte-texte: #ff8a80;
+    --perte-voile: #3a1616;
+    --ocre-texte: #f7b457;
+    --ocre-voile: #33240f;
+    --reserve-texte: #d0a6ff;
+    --reserve-voile: #2a1840;
+    --acier-voile: #16254a;
+    --ombre-carte: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+    --ombre-survol: 0 2px 4px rgb(0 0 0 / 0.3), 0 20px 40px -12px rgb(0 0 0 / 0.6);
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --papier: #121316;
-  --surface: #1a1c20;
-  --surface-2: #22252a;
-  --trait: #2a2d33;
-  --trait-fort: #3a3e45;
-  --encre: #edeae3;
-  --encre-2: #a6a29a;
-  --encre-3: #96928a;
-  --laterite: #e0724a;
-  --laterite-fonce: #ea8a66;
-  --laterite-voile: #3a231a;
-  --sur-laterite: #17171a;
-  --nuit: #0d0e10;
-  --nuit-2: #1a1c20;
-  --gain: #4fb383;
-  --gain-voile: #16291f;
-  --perte: #ef6b61;
-  --perte-voile: #331715;
-  --ocre: #d9a040;
-  --ocre-voile: #2e2414;
-  --acier: #7aa6c8;
-  --acier-voile: #17232d;
-  --reserve: #c27ea0;
-  --etape-achete: #93a0ae;
-  --etape-transport-usa: #7ea5c3;
-  --etape-en-mer: #5fb0ba;
-  --etape-au-port: #c2ae7c;
-  --etape-convoi: #d39e55;
-  --etape-douane: #e08a5d;
-  --etape-atelier: #c9876a;
-  --etape-parc: #e0724a;
+  --papier: #0a1022;
+  --surface: #121a31;
+  --surface-2: #18223d;
+  --trait: #24304f;
+  --trait-fort: #34446b;
+  --encre: #eef2fa;
+  --encre-2: #c3cbdd;
+  --encre-3: #97a3bd;
+  --primaire: #5b84ff;
+  --primaire-fonce: #7c9dff;
+  --primaire-voile: #1b2a57;
+  --sur-primaire: #ffffff;
+  --accent: #ff9447;
+  --accent-voile: #3a2413;
+  --nuit: #070c1c;
+  --nuit-2: #121d40;
+  --gain-texte: #5ad48a;
+  --gain-voile: #0f2a1b;
+  --perte-texte: #ff8a80;
+  --perte-voile: #3a1616;
+  --ocre-texte: #f7b457;
+  --ocre-voile: #33240f;
+  --reserve-texte: #d0a6ff;
+  --reserve-voile: #2a1840;
+  --acier-voile: #16254a;
+  --ombre-carte: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+  --ombre-survol: 0 2px 4px rgb(0 0 0 / 0.3), 0 20px 40px -12px rgb(0 0 0 / 0.6);
   color-scheme: dark;
 }
 
@@ -127,33 +138,43 @@
   --color-encre: var(--encre);
   --color-encre-2: var(--encre-2);
   --color-encre-3: var(--encre-3);
-  --color-laterite: var(--laterite);
-  --color-laterite-fonce: var(--laterite-fonce);
-  --color-laterite-voile: var(--laterite-voile);
-  --color-sur-laterite: var(--sur-laterite);
+  --color-primaire: var(--primaire);
+  --color-primaire-fonce: var(--primaire-fonce);
+  --color-primaire-voile: var(--primaire-voile);
+  --color-sur-primaire: var(--sur-primaire);
+  --color-accent: var(--accent);
+  --color-accent-voile: var(--accent-voile);
   --color-nuit: var(--nuit);
   --color-nuit-2: var(--nuit-2);
   --color-sur-nuit: var(--sur-nuit);
   --color-sur-nuit-2: var(--sur-nuit-2);
   --color-gain: var(--gain);
+  --color-gain-texte: var(--gain-texte);
   --color-gain-voile: var(--gain-voile);
   --color-perte: var(--perte);
+  --color-perte-texte: var(--perte-texte);
   --color-perte-voile: var(--perte-voile);
   --color-ocre: var(--ocre);
+  --color-ocre-texte: var(--ocre-texte);
   --color-ocre-voile: var(--ocre-voile);
   --color-acier: var(--acier);
   --color-acier-voile: var(--acier-voile);
   --color-reserve: var(--reserve);
+  --color-reserve-texte: var(--reserve-texte);
+  --color-reserve-voile: var(--reserve-voile);
 
   --font-sans: var(--police-texte), ui-sans-serif, system-ui, sans-serif;
-  --font-etiquette: var(--police-etiquette), "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-etiquette: var(--police-texte), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--police-code), ui-monospace, "SFMono-Regular", monospace;
 
-  --radius-controle: 6px;
-  --radius-carte: 10px;
-  --radius-feuille: 16px;
+  --radius-controle: 10px;
+  --radius-carte: 16px;
+  --radius-feuille: 22px;
 
+  --shadow-carte: var(--ombre-carte);
+  --shadow-survol: var(--ombre-survol);
   --shadow-flottante: var(--ombre-flottante);
+  --shadow-bouton: var(--ombre-bouton);
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────────────────── */
@@ -168,7 +189,7 @@
     color: var(--encre);
     font-family: var(--font-sans);
     font-size: 15px;
-    line-height: 1.45;
+    line-height: 1.5;
     font-feature-settings: "kern", "liga";
     -webkit-font-smoothing: antialiased;
   }
@@ -181,7 +202,7 @@
     border-radius: var(--radius-controle);
   }
   ::selection {
-    background: var(--laterite-voile);
+    background: var(--primaire-voile);
     color: var(--encre);
   }
   input, textarea, select, button {
@@ -193,11 +214,37 @@
   }
 }
 
+/* Carte : surface blanche, arrondie, ombre douce. */
+@utility carte {
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--trait) 70%, transparent);
+  border-radius: var(--radius-carte);
+  box-shadow: var(--ombre-carte);
+}
+/* Carte cliquable : se soulève au survol. */
+@utility carte-lien {
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ombre-survol);
+    border-color: var(--trait-fort);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+/* Libellé de section : petites capitales espacées. */
 @utility etiquette {
-  font-family: var(--font-etiquette);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+}
+@utility chiffres {
+  font-variant-numeric: tabular-nums;
+}
+/* Entrée des blocs : glissement léger vers le haut (décalage par style animation-delay). */
+@utility apparition {
+  animation: apparition 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 @utility zone-sure-bas {
   padding-bottom: env(safe-area-inset-bottom);
@@ -211,8 +258,26 @@
     display: none;
   }
 }
-@utility chiffres {
-  font-variant-numeric: tabular-nums;
+
+@keyframes apparition {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pousse {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes remplit {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes trace {
+  from { stroke-dashoffset: var(--longueur, 1000); }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes navigue {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -6,11 +6,11 @@ type Variante = "primaire" | "secondaire" | "fantome" | "danger" | "sur-nuit";
 type Taille = "sm" | "md" | "lg";
 
 const VARIANTES: Record<Variante, string> = {
-  primaire: "bg-laterite text-sur-laterite hover:bg-laterite-fonce active:bg-laterite-fonce",
-  secondaire: "bg-surface text-encre border border-trait-fort hover:bg-surface-2",
-  fantome: "text-encre-2 hover:bg-surface-2 hover:text-encre",
-  danger: "bg-surface text-perte border border-trait-fort hover:bg-perte-voile",
-  "sur-nuit": "bg-nuit-2 text-sur-nuit hover:bg-white/10",
+  primaire: "bg-gradient-to-b from-[#3a6cf0] to-primaire text-sur-primaire shadow-bouton hover:to-primaire-fonce hover:from-primaire active:translate-y-px",
+  secondaire: "bg-surface text-encre border border-trait-fort shadow-[0_1px_2px_rgb(15_23_42/0.05)] hover:bg-surface-2 hover:border-encre-3/40",
+  fantome: "text-encre-2 hover:bg-primaire-voile hover:text-primaire",
+  danger: "bg-surface text-perte border border-perte/30 hover:bg-perte-voile",
+  "sur-nuit": "bg-white/10 text-sur-nuit hover:bg-white/15",
 };
 
 const TAILLES: Record<Taille, string> = {
@@ -38,7 +38,7 @@ export const Bouton = forwardRef<HTMLButtonElement, ProprietesBouton>(function B
       disabled={disabled || chargement}
       aria-busy={chargement || undefined}
       className={cn(
-        "inline-flex select-none items-center justify-center rounded-controle font-medium whitespace-nowrap transition-colors",
+        "inline-flex select-none items-center justify-center rounded-controle font-semibold whitespace-nowrap transition-all duration-150",
         "disabled:cursor-not-allowed disabled:opacity-50",
         VARIANTES[variante],
         TAILLES[taille],
@@ -63,8 +63,8 @@ export const BoutonIcone = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HT
         aria-label={libelle}
         title={libelle}
         className={cn(
-          "inline-flex size-11 items-center justify-center rounded-controle transition-colors lg:size-10",
-          surNuit ? "text-sur-nuit-2 hover:bg-white/10 hover:text-sur-nuit" : "text-encre-2 hover:bg-surface-2 hover:text-encre",
+          "inline-flex size-11 items-center justify-center rounded-full transition-colors lg:size-10",
+          surNuit ? "text-sur-nuit-2 hover:bg-white/10 hover:text-sur-nuit" : "text-encre-2 hover:bg-primaire-voile hover:text-primaire",
           className,
         )}
         {...reste}

@@ -21,7 +21,7 @@ export function MenuActions({ declencheur, entrees, aligne = "end" }: { declench
       <Menu.Trigger asChild>{declencheur}</Menu.Trigger>
       <Menu.Portal>
         <Menu.Content align={aligne} sideOffset={6}
-          className="z-50 min-w-56 rounded-carte border border-trait bg-surface p-1 shadow-flottante">
+          className="z-50 min-w-56 carte p-1 shadow-flottante">
           {visibles.map((e) => (
             <Menu.Item key={e.libelle} onSelect={e.onSelect}
               className={cn("flex h-11 cursor-pointer items-center gap-2.5 rounded-controle px-3 text-[15px] outline-none select-none data-[highlighted]:bg-surface-2 lg:h-9 lg:text-sm",

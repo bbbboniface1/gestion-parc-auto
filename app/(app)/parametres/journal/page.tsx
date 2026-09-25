@@ -40,7 +40,7 @@ export default function PageJournal() {
     <>
       <EnTetePage titre="Journal" sousTitre="Qui a fait quoi, et quand. Les 150 dernières opérations." />
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending ? <SqueletteListe /> : !data?.length ? <EtatVide titre="Rien à afficher" /> : (
-        <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
+        <ul className="overflow-hidden carte">
           {data.map((l) => (
             <li key={l.id} className="flex items-start gap-3 border-b border-trait px-4 py-3 last:border-b-0">
               <span className="chiffres w-24 shrink-0 pt-0.5 text-[13px] text-encre-3">{formatDate(l.created_at)}</span>

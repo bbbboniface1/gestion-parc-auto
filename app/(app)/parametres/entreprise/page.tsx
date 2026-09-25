@@ -20,7 +20,7 @@ export default function PageEntreprise() {
   return (
     <>
       <EnTetePage titre="Entreprise" sousTitre="Ces informations figurent sur chaque facture, reçu et proforma." />
-      <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
+      <div className="carte px-4 py-6 lg:px-8">
         <Groupe titre="Identité" description="Le nom commercial s'affiche en grand ; la raison sociale apparaît dessous si elle diffère.">
           <Champ libelle="Nom commercial" value={p.nom_commercial} onChange={(e) => maj("nom_commercial", e.target.value)} erreur={!p.nom_commercial.trim() ? "Obligatoire." : null} />
           <Champ libelle="Raison sociale" facultatif placeholder="Sahel Auto Import SARL" {...texte("raison_sociale")} />

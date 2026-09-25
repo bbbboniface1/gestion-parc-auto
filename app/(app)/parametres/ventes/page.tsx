@@ -16,7 +16,7 @@ export default function PageVentesAlertes() {
   return (
     <>
       <EnTetePage titre="Ventes et alertes" />
-      <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
+      <div className="carte px-4 py-6 lg:px-8">
         <Groupe titre="Modes de paiement" description="Seuls les modes cochés sont proposés à l'encaissement.">
           {modes.map((m) => (
             <Interrupteur key={m} libelle={MODES_PAIEMENT[m].libelle}

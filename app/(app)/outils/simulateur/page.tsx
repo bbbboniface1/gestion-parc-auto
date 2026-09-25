@@ -59,7 +59,7 @@ export default function PageSimulateur() {
     <>
       <EnTetePage titre="Simulateur d'enchère" sousTitre="Jusqu'où enchérir aux USA pour atteindre la marge visée, une fois toutes les charges payées." />
       <div className="grid gap-5 lg:grid-cols-12">
-        <section className="rounded-carte border border-trait bg-surface p-4 lg:col-span-5 lg:p-5">
+        <section className="carte p-4 lg:col-span-5 lg:p-5">
           <h2 className="mb-3 text-[16px] font-semibold">Ce que vous visez</h2>
           <div className="flex flex-col gap-4">
             <ChampMontant libelle="Prix de vente à Bamako" valeur={prixVente} onChange={setPrixVente} devise="XOF" />
@@ -77,7 +77,7 @@ export default function PageSimulateur() {
           </p>
         </section>
 
-        <section className="rounded-carte border border-trait bg-surface p-4 lg:col-span-7 lg:p-5">
+        <section className="carte p-4 lg:col-span-7 lg:p-5">
           <h2 className="mb-3 text-[16px] font-semibold">Enchère maximale</h2>
           {!resultat ? (
             <p className="text-encre-3">Renseignez le prix de vente et la marge voulue.</p>
@@ -86,7 +86,7 @@ export default function PageSimulateur() {
           ) : (
             <>
               <div className="flex items-baseline gap-3">
-                <Calculator className="size-6 text-laterite" aria-hidden />
+                <Calculator className="size-6 text-primaire" aria-hidden />
                 <p className="chiffres text-[36px] font-semibold tracking-tight">{formatNombre(resultat.enchereMaxUsd)}<span className="ml-1 text-[16px] font-normal text-encre-3">$</span></p>
               </div>
               <p className="mt-1 text-[13px] text-encre-3">Marge obtenue : <Montant valeur={resultat.margeObtenueXof} devise={null} className={cn(resultat.margeObtenueXof < 0 && "text-perte")} /> ({formatFCFA(resultat.detail.totalXof)} de coût total)</p>

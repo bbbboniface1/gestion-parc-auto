@@ -70,7 +70,7 @@ export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineE
       <div className="flex flex-col gap-4">
         <ChampMontant libelle="Montant" valeur={montant} onChange={setMontant} devise="XOF" autoFocus />
         {!venteAnnulee && !!reste && montant !== reste && (
-          <button type="button" onClick={() => setMontant(reste)} className="self-start text-[13px] font-medium text-laterite hover:underline">
+          <button type="button" onClick={() => setMontant(reste)} className="self-start text-[13px] font-medium text-primaire hover:underline">
             Solder le reste ({formatFCFA(reste)})
           </button>
         )}
@@ -79,7 +79,7 @@ export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineE
           <div className="flex flex-wrap gap-1.5">
             {modesAutorises.map((m) => (
               <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}
-                className={cn("h-10 rounded-controle border px-3 text-[14px] font-medium", mode === m ? "border-laterite bg-laterite-voile text-encre" : "border-trait-fort text-encre-2 hover:bg-surface-2")}>
+                className={cn("h-10 rounded-controle border px-3 text-[14px] font-medium", mode === m ? "border-primaire bg-primaire-voile text-encre" : "border-trait-fort text-encre-2 hover:bg-surface-2")}>
                 {MODES_PAIEMENT[m].libelle}
               </button>
             ))}

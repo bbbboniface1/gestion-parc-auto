@@ -50,7 +50,7 @@ function Fiche() {
 
       <div className="grid gap-4 lg:grid-cols-12 lg:gap-5">
         <div className="flex flex-col gap-4 lg:col-span-8">
-          <section className="rounded-carte border border-trait bg-surface">
+          <section className="carte">
             <h2 className="etiquette border-b border-trait px-4 py-2.5 text-[12px] text-encre-3 lg:px-5">Achats · {c.ventes.length}</h2>
             {c.ventes.length === 0 ? <p className="px-4 py-4 text-encre-3 lg:px-5">Aucun achat pour l&apos;instant.</p> : (
               <ul>
@@ -62,7 +62,7 @@ function Fiche() {
                         <p className="truncate text-[14px]">{v.vehicule_libelle} · {formatDate(v.date_vente)}</p>
                       </div>
                       <Montant valeur={v.montant_ttc} devise={null} />
-                      {v.reste_xof > 0 && <span className="chiffres text-[13px] text-ocre">reste {v.reste_xof.toLocaleString("fr-FR")}</span>}
+                      {v.reste_xof > 0 && <span className="chiffres text-[13px] text-ocre-texte">reste {v.reste_xof.toLocaleString("fr-FR")}</span>}
                     </Link>
                   </li>
                 ))}
@@ -70,7 +70,7 @@ function Fiche() {
             )}
           </section>
 
-          <section className="rounded-carte border border-trait bg-surface">
+          <section className="carte">
             <div className="flex items-center justify-between border-b border-trait px-4 py-2.5 lg:px-5">
               <h2 className="etiquette text-[12px] text-encre-3">Ce qu&apos;il cherche</h2>
               {peutModifier && <Bouton variante="fantome" taille="sm" icone={<Plus className="size-4" />} onClick={() => setFeuille("demande")}>Ajouter</Bouton>}
@@ -112,7 +112,7 @@ function Fiche() {
         </div>
 
         <aside className="flex flex-col gap-4 lg:col-span-4">
-          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+          <section className="carte p-4 lg:p-5">
             <h2 className="etiquette mb-2 text-[12px] text-encre-3">Coordonnées</h2>
             <dl className="flex flex-col gap-1.5 text-[14px]">
               {c.telephone && <div className="flex justify-between"><dt className="text-encre-3">Téléphone</dt><dd>{c.telephone}</dd></div>}
@@ -122,14 +122,14 @@ function Fiche() {
             {c.notes && <p className="mt-3 rounded-controle bg-surface-2 px-3 py-2 text-[13px] text-encre-2">{c.notes}</p>}
           </section>
           {(c.total_achats_xof > 0 || c.reste_du_xof > 0) && (
-            <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+            <section className="carte p-4 lg:p-5">
               <h2 className="etiquette mb-2 text-[12px] text-encre-3">Résumé</h2>
               <p className="text-[14px]">Total achats <Montant valeur={c.total_achats_xof} devise={null} className="ml-1" /></p>
-              {c.reste_du_xof > 0 && <p className="mt-1 text-[14px]">Reste dû <Montant valeur={c.reste_du_xof} devise={null} className="ml-1 text-ocre" /></p>}
+              {c.reste_du_xof > 0 && <p className="mt-1 text-[14px]">Reste dû <Montant valeur={c.reste_du_xof} devise={null} className="ml-1 text-ocre-texte" /></p>}
             </section>
           )}
           {c.reservations.length > 0 && (
-            <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+            <section className="carte p-4 lg:p-5">
               <h2 className="etiquette mb-2 text-[12px] text-encre-3">Réservé pour lui</h2>
               {c.reservations.map((r) => (
                 <Link key={r.vehicule_id} href={`/parc/vehicule/?id=${r.vehicule_id}`} className="block py-1 text-[14px] hover:underline">{r.libelle}{r.reserve_jusqu_au ? ` · jusqu'au ${formatDate(r.reserve_jusqu_au)}` : ""}</Link>

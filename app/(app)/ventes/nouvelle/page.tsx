@@ -112,18 +112,18 @@ function NouvelleVente() {
       <EnTetePage titre="Nouvelle vente" />
       <div className="grid gap-5 pb-28 lg:grid-cols-12 lg:pb-8">
         <div className="flex flex-col gap-4 lg:col-span-7">
-          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+          <section className="carte p-4 lg:p-5">
             <h2 className="mb-3 text-[16px] font-semibold">Véhicule</h2>
             <ChoixVehicule valeur={vehicule} onChoix={setVehicule} />
-            {livraisonAlarriveee && vehicule && <p className="mt-2 text-[13px] text-ocre">Ce véhicule n&apos;est pas encore au parc : la facture indiquera une livraison à l&apos;arrivée.</p>}
+            {livraisonAlarriveee && vehicule && <p className="mt-2 text-[13px] text-ocre-texte">Ce véhicule n&apos;est pas encore au parc : la facture indiquera une livraison à l&apos;arrivée.</p>}
           </section>
 
-          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+          <section className="carte p-4 lg:p-5">
             <h2 className="mb-3 text-[16px] font-semibold">Client</h2>
             <ChoixClient valeur={client} onChoix={setClient} />
           </section>
 
-          <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+          <section className="carte p-4 lg:p-5">
             <h2 className="mb-3 text-[16px] font-semibold">Prix et modalités</h2>
             <div className="grid grid-cols-2 gap-3">
               <ChampMontant libelle="Prix de vente" valeur={prix} onChange={setPrix} devise="XOF" />
@@ -170,7 +170,7 @@ function NouvelleVente() {
                   <div className="flex flex-wrap gap-1.5">
                     {modesAutorises.map((m) => (
                       <button key={m} type="button" aria-pressed={modePaiement === m} onClick={() => setModePaiement(m)}
-                        className={cn("h-10 rounded-controle border px-3 text-[14px] font-medium", modePaiement === m ? "border-laterite bg-laterite-voile" : "border-trait-fort text-encre-2")}>
+                        className={cn("h-10 rounded-controle border px-3 text-[14px] font-medium", modePaiement === m ? "border-primaire bg-primaire-voile" : "border-trait-fort text-encre-2")}>
                         {MODES_PAIEMENT[m].libelle}
                       </button>
                     ))}
@@ -185,7 +185,7 @@ function NouvelleVente() {
         </div>
 
         <aside className="flex flex-col gap-4 lg:col-span-5">
-          <section className="rounded-carte border border-trait bg-surface p-4 lg:sticky lg:top-8 lg:p-5">
+          <section className="carte p-4 lg:sticky lg:top-8 lg:p-5">
             <h2 className="mb-3 text-[16px] font-semibold">Récapitulatif</h2>
             <Registre lignes={[
               ...(remise ? [{ libelle: "Prix", valeur: formatNombre(prix ?? 0) }, { libelle: "Remise", valeur: `− ${formatNombre(remise)}` }] : []),

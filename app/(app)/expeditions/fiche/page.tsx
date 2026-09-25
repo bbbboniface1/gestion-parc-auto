@@ -98,7 +98,7 @@ function Fiche() {
 
       <div className="mt-4 grid gap-4 lg:grid-cols-12 lg:gap-5">
         <div className="lg:col-span-7">
-          <section className="overflow-hidden rounded-carte border border-trait bg-surface">
+          <section className="overflow-hidden carte">
             <h2 className="etiquette border-b border-trait px-4 py-2.5 text-[12px] text-encre-3 lg:px-5">Véhicules · {e.nb_vehicules}</h2>
             {e.vehicules.length === 0 ? <p className="px-4 py-4 text-encre-3 lg:px-5">Aucun véhicule affecté.</p> : e.vehicules.map((v) => (
               <Link key={v.id} href={`/parc/vehicule/?id=${v.id}`} className="flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0 hover:bg-surface-2/50 lg:px-5">
@@ -116,7 +116,7 @@ function Fiche() {
 
         {voitCouts && (
           <div className="lg:col-span-5">
-            <section className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+            <section className="carte p-4 lg:p-5">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="etiquette text-[12px] text-encre-3">Frais communs · {e.total_frais_xof?.toLocaleString("fr-FR")} FCFA</h2>
                 {peutGerer && <Bouton variante="fantome" taille="sm" icone={<Plus className="size-4" />} onClick={() => setFeuille("frais")}>Ajouter</Bouton>}
@@ -126,7 +126,7 @@ function Fiche() {
                   {e.frais.map((f) => (
                     <li key={f.id} className="border-b border-trait py-2.5 last:border-b-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span>{libelleCategorie(f.categorie)}{f.statut === "a_payer" && <span className="etiquette ml-2 text-[11px] text-ocre">à payer</span>}</span>
+                        <span>{libelleCategorie(f.categorie)}{f.statut === "a_payer" && <span className="etiquette ml-2 text-[11px] text-ocre-texte">à payer</span>}</span>
                         <Montant valeur={f.montant_xof} devise={null} />
                       </div>
                       <p className={cn("mt-0.5 text-[12px] text-encre-3")}>{formatDate(f.date)}{f.fournisseur ? ` · ${f.fournisseur}` : ""} · réparti sur {f.parts.length} véhicule(s)</p>

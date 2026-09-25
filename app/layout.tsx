@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, IBM_Plex_Mono, Schibsted_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { Fournisseurs } from "@/components/fournisseurs";
 import "./globals.css";
 
 // Polices embarquées au build (aucune requête vers Google au chargement) : l'app
 // garde sa typographie hors ligne.
-const texte = Schibsted_Grotesk({ subsets: ["latin"], variable: "--police-texte", display: "swap" });
-const etiquette = Barlow_Condensed({ subsets: ["latin"], weight: ["600"], variable: "--police-etiquette", display: "swap" });
+const texte = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--police-texte", display: "swap" });
 const code = IBM_Plex_Mono({ subsets: ["latin"], weight: ["500"], variable: "--police-code", display: "swap" });
 
 export const metadata: Metadata = {
@@ -29,8 +28,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#1B1D22" },
-    { media: "(prefers-color-scheme: dark)", color: "#0D0E10" },
+    { media: "(prefers-color-scheme: light)", color: "#0B1633" },
+    { media: "(prefers-color-scheme: dark)", color: "#070C1C" },
   ],
 };
 
@@ -39,7 +38,7 @@ const scriptTheme = `try{var t=localStorage.getItem("parc-auto:theme");if(t==="l
 
 export default function RacineLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${texte.variable} ${etiquette.variable} ${code.variable}`} suppressHydrationWarning>
+    <html lang="fr" className={`${texte.variable} ${code.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: scriptTheme }} />
       </head>

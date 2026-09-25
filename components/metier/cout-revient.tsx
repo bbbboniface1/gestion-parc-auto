@@ -50,7 +50,7 @@ export function CoutRevient({ lignes, prixAffiche, prixPlancher, margeReelle, pr
   const perte = marge !== null && marge < 0;
 
   return (
-    <section aria-labelledby="titre-cout" className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+    <section aria-labelledby="titre-cout" className="carte p-4 lg:p-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 id="titre-cout" className="etiquette text-[12px] text-encre-3">Coût de revient{estime > 0 ? " prévisionnel" : ""}</h2>
@@ -60,7 +60,7 @@ export function CoutRevient({ lignes, prixAffiche, prixPlancher, margeReelle, pr
         {marge !== null && (
           <div className="text-right">
             <p className="etiquette text-[12px] text-encre-3">{margeReelle !== undefined && margeReelle !== null ? "Marge réelle" : "Marge prévue"}</p>
-            <p className={cn("chiffres text-[22px] font-semibold", perte ? "text-perte" : "text-gain")}>
+            <p className={cn("chiffres text-[22px] font-semibold", perte ? "text-perte" : "text-gain-texte")}>
               {perte ? "−" : "+"}{formatCourt(Math.abs(marge))}
               {tauxMarge !== null && <span className="ml-1.5 text-[14px] font-medium">{formatPourcent(tauxMarge, 1)}</span>}
             </p>
@@ -97,7 +97,7 @@ export function CoutRevient({ lignes, prixAffiche, prixPlancher, margeReelle, pr
             <span aria-hidden className="size-3 shrink-0 rounded-[2px]" style={fond(l)} />
             <span className="flex-1 text-[14px]">
               {libelleCategorie(l.categorie)}
-              {l.estime && <span className="etiquette ml-2 text-[11px] text-ocre">estimé</span>}
+              {l.estime && <span className="etiquette ml-2 text-[11px] text-ocre-texte">estimé</span>}
             </span>
             <Montant valeur={l.montant_xof} devise={null} className={l.estime ? "font-normal text-encre-2" : undefined} />
           </li>

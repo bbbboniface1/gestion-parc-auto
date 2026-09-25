@@ -50,9 +50,9 @@ function Verifier() {
           </div>
         )}
         {typeof etat === "object" && (
-          <div className="mt-6 rounded-carte border border-trait bg-surface p-6">
+          <div className="mt-6 carte p-6">
             <div className="flex items-start justify-between gap-3">
-              <ShieldCheck className="size-9 text-gain" aria-hidden />
+              <ShieldCheck className="size-9 text-gain-texte" aria-hidden />
               {etat.statut === "annulee" && <Tampon type="annule" grand />}
             </div>
             <h1 className="mt-3 text-[22px] font-semibold">

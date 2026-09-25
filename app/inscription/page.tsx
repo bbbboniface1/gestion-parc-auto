@@ -37,13 +37,13 @@ export default function PageInscription() {
   if (envoye) {
     return (
       <CadreAccueil>
-        <MailCheck className="size-10 text-gain" aria-hidden />
+        <MailCheck className="size-10 text-gain-texte" aria-hidden />
         <h1 className="mt-4 text-[26px] font-semibold tracking-tight">Vérifiez votre boîte e-mail</h1>
         <p className="mt-2 text-encre-2">
           Un lien de confirmation a été envoyé à <strong className="text-encre">{email}</strong>. Ouvrez-le pour activer votre compte,
           puis créez votre entreprise.
         </p>
-        <Link href="/connexion/" className="mt-6 inline-block font-medium text-laterite underline-offset-4 hover:underline">Retour à la connexion</Link>
+        <Link href="/connexion/" className="mt-6 inline-block font-medium text-primaire underline-offset-4 hover:underline">Retour à la connexion</Link>
       </CadreAccueil>
     );
   }
@@ -69,7 +69,7 @@ export default function PageInscription() {
           Créer mon compte
         </Bouton>
         <p className="text-[14px] text-encre-2">
-          Déjà inscrit ? <Link href="/connexion/" className="font-medium text-laterite underline-offset-4 hover:underline">Se connecter</Link>
+          Déjà inscrit ? <Link href="/connexion/" className="font-medium text-primaire underline-offset-4 hover:underline">Se connecter</Link>
         </p>
       </form>
     </CadreAccueil>

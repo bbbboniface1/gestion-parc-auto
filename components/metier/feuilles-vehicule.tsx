@@ -38,8 +38,8 @@ export function FeuilleEtape({ ouverte, onFermer, vehiculeId, actuelle, proposee
       <fieldset className="flex flex-col gap-1.5">
         <legend className="mb-2 text-[13px] font-medium text-encre-2">Nouvelle étape</legend>
         {ETAPES.map((e) => (
-          <label key={e.code} className={cn("flex h-12 cursor-pointer items-center gap-3 rounded-controle border px-3", etape === e.code ? "border-laterite bg-laterite-voile" : "border-trait")}>
-            <input type="radio" name="etape" value={e.code} checked={etape === e.code} onChange={() => setEtape(e.code)} className="accent-[var(--laterite)]" />
+          <label key={e.code} className={cn("flex h-12 cursor-pointer items-center gap-3 rounded-controle border px-3", etape === e.code ? "border-primaire bg-primaire-voile" : "border-trait")}>
+            <input type="radio" name="etape" value={e.code} checked={etape === e.code} onChange={() => setEtape(e.code)} className="accent-[var(--primaire)]" />
             <span aria-hidden className="h-5 w-[3px] rounded-sm" style={{ background: e.couleur }} />
             <span className="flex-1 font-medium">{e.libelle}</span>
             {e.code === actuelle && <span className="text-[12px] text-encre-3">actuelle</span>}
@@ -72,7 +72,7 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
 
   if (valeur) {
     return (
-      <div className="flex items-center justify-between rounded-controle border border-laterite bg-laterite-voile px-3 py-2.5">
+      <div className="flex items-center justify-between rounded-controle border border-primaire bg-primaire-voile px-3 py-2.5">
         <div>
           <p className="font-semibold">{valeur.nom}</p>
           <p className="text-[13px] text-encre-2">{[valeur.telephone, valeur.ville].filter(Boolean).join(" · ")}</p>
@@ -102,7 +102,7 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
         <span className="sr-only">Rechercher un client</span>
         <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nom ou téléphone"
-          className="h-11 w-full rounded-controle border border-trait-fort bg-surface pl-9 text-[15px] focus:border-laterite focus:outline-none" />
+          className="h-11 w-full rounded-controle border border-trait-fort bg-surface pl-9 text-[15px] focus:border-primaire focus:outline-none" />
       </label>
       <ul className="flex flex-col">
         {liste.map((c) => (

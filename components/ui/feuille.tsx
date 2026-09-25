@@ -34,7 +34,7 @@ export function Feuille({ ouverte, onFermer, titre, description, pied, children,
           <Dialog.Overlay className="fixed inset-0 z-50 bg-[rgb(23_23_26/0.45)]" />
           <Dialog.Content
             className={cn(
-              "fixed top-1/2 left-1/2 z-50 flex max-h-[88vh] w-[calc(100vw-48px)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-carte border border-trait bg-surface shadow-flottante",
+              "fixed top-1/2 left-1/2 z-50 flex max-h-[88vh] w-[calc(100vw-48px)] -translate-x-1/2 -translate-y-1/2 flex-col carte shadow-flottante",
               largeur === "md" && "max-w-lg",
               largeur === "lg" && "max-w-2xl",
               largeur === "xl" && "max-w-4xl",

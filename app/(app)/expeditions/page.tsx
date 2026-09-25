@@ -33,7 +33,7 @@ export default function PageExpeditions() {
       ) : (
         <ul className="flex flex-col gap-2">
           {data.map((e) => (
-            <li key={e.id} className="rounded-carte border border-trait bg-surface">
+            <li key={e.id} className="carte">
               <Link href={`/expeditions/fiche/?id=${e.id}`} className="flex flex-col gap-2 p-4 hover:bg-surface-2/40 lg:flex-row lg:items-center lg:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -46,7 +46,7 @@ export default function PageExpeditions() {
                     {[e.port_depart, e.port_arrivee].filter(Boolean).join(" → ")}
                     {e.date_arrivee_prevue && ` · arrivée ${formatDate(e.date_arrivee_prevue)}`}
                     {e.jours_avant_arrivee !== null && e.jours_avant_arrivee !== undefined && (
-                      <span className={cn(e.jours_avant_arrivee <= 3 && "font-medium text-ocre")}> ({e.jours_avant_arrivee} j)</span>
+                      <span className={cn(e.jours_avant_arrivee <= 3 && "font-medium text-ocre-texte")}> ({e.jours_avant_arrivee} j)</span>
                     )}
                   </p>
                 </div>

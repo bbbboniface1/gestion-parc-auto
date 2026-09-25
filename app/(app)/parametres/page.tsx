@@ -40,7 +40,7 @@ export default function PageParametres() {
       <EnTetePage titre="Paramètres" sousTitre={data?.organisation.nom} />
 
       {configurer && (
-        <section aria-labelledby="titre-preparation" className="mb-6 rounded-carte border border-trait bg-surface p-4 lg:p-5">
+        <section aria-labelledby="titre-preparation" className="mb-6 carte p-4 lg:p-5">
           {!p ? (
             <Squelette className="h-24" />
           ) : (
@@ -57,7 +57,7 @@ export default function PageParametres() {
                   {controles.map((c) => (
                     <li key={c.libelle}>
                       <Link href={`/parametres/${c.section}/`} className="flex items-center gap-2.5 border-b border-trait py-2 text-[14px] hover:bg-surface-2/50">
-                        {c.ok ? <CheckCircle2 className="size-4 shrink-0 text-gain" aria-hidden /> : <Circle className="size-4 shrink-0 text-encre-3" aria-hidden />}
+                        {c.ok ? <CheckCircle2 className="size-4 shrink-0 text-gain-texte" aria-hidden /> : <Circle className="size-4 shrink-0 text-encre-3" aria-hidden />}
                         <span className={cn("flex-1", c.ok ? "text-encre-3" : "text-encre")}>{c.libelle}</span>
                         <span className="sr-only">{c.ok ? "fait" : "à compléter"}</span>
                       </Link>
@@ -72,7 +72,7 @@ export default function PageParametres() {
         </section>
       )}
 
-      <ul className="overflow-hidden rounded-carte border border-trait bg-surface lg:hidden">
+      <ul className="overflow-hidden carte lg:hidden">
         {sections.map((s) => (
           <li key={s.cle} className="border-b border-trait last:border-b-0">
             <Link href={`/parametres/${s.cle}/`} className="flex items-center gap-3 px-4 py-3.5 active:bg-surface-2">
@@ -89,8 +89,8 @@ export default function PageParametres() {
 
       <div className="hidden gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3">
         {sections.map((s) => (
-          <Link key={s.cle} href={`/parametres/${s.cle}/`} className="flex gap-3 rounded-carte border border-trait bg-surface p-4 hover:border-trait-fort">
-            <s.icone className="mt-0.5 size-5 shrink-0 text-laterite" aria-hidden />
+          <Link key={s.cle} href={`/parametres/${s.cle}/`} className="flex gap-3 carte p-4 hover:border-trait-fort">
+            <s.icone className="mt-0.5 size-5 shrink-0 text-primaire" aria-hidden />
             <span>
               <span className="block font-semibold">{s.libelle}</span>
               <span className="mt-0.5 block text-[13px] text-encre-3">{s.description}</span>

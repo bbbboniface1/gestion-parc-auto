@@ -91,7 +91,7 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
   if (!sale) return null;
   return (
     <div role="region" aria-label="Modifications non enregistrées"
-      className="zone-sure-bas fixed inset-x-0 bottom-16 z-40 border-t border-trait bg-nuit px-4 py-3 text-sur-nuit lg:bottom-0 lg:left-60">
+      className="zone-sure-bas fixed inset-x-0 bottom-16 z-40 border-t border-trait bg-nuit px-4 py-3 text-sur-nuit lg:bottom-0 lg:left-64">
       <div className="mx-auto flex max-w-[1280px] items-center gap-3">
         <span className="flex-1 text-[14px]">Modifications non enregistrées</span>
         <Bouton variante="sur-nuit" taille="sm" onClick={onAnnuler}>Annuler</Bouton>

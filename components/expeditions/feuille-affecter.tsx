@@ -37,7 +37,7 @@ export function FeuilleAffecter({ ouverte, onFermer, expeditionId, actuels }: {
           return (
             <li key={v.id}>
               <label className="flex items-center gap-3 border-b border-trait py-2.5 last:border-b-0">
-                <input type="checkbox" checked={cochee} className="size-5 accent-[var(--laterite)]"
+                <input type="checkbox" checked={cochee} className="size-5 accent-[var(--primaire)]"
                   onChange={() => setSelection((s) => { const n = new Set(s); if (n.has(v.id)) n.delete(v.id); else n.add(v.id); return n; })} />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-medium">{v.libelle}</span>

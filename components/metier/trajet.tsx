@@ -43,7 +43,7 @@ export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
   const lieux: Record<number, string> = { 0: depart || "États-Unis", 3: port || "Port", 5: arrivee || "Bamako" };
 
   return (
-    <section aria-label="Trajet du véhicule" className="rounded-carte border border-trait bg-surface p-4 lg:p-5">
+    <section aria-label="Trajet du véhicule" className="carte p-4 lg:p-5">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="etiquette text-[12px] text-encre-3">Le trajet</h2>
         <p className="text-[13px] text-encre-2">

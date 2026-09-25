@@ -94,7 +94,7 @@ export default function PageDocuments() {
         sousTitre="Factures, proformas, reçus et avoirs."
         actions={<Bouton icone={<Eye className="size-4" />} chargement={apercu} onClick={() => void ouvrirApercu()}>Aperçu d&apos;une facture</Bouton>}
       />
-      <div className="rounded-carte border border-trait bg-surface px-4 py-6 lg:px-8">
+      <div className="carte px-4 py-6 lg:px-8">
         <Groupe titre="Numérotation" description="Numéros attribués par le serveur, sans trou ni doublon. Une vente annulée garde son numéro et reçoit un avoir.">
           <Champ libelle="Format" mono value={p.format_numero} onChange={(e) => maj("format_numero", e.target.value)} erreur={erreurFormat} />
           <div className="flex flex-wrap gap-1.5" aria-label="Jetons disponibles">

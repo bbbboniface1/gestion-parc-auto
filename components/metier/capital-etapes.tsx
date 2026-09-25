@@ -25,7 +25,7 @@ export function CapitalParEtape({ tranches, className }: { tranches: Tranche[]; 
   const presentes = ETAPES.map((e) => tranches.find((t) => t.etape === e.code) ?? { etape: e.code, nb: 0, montant: voitCouts ? 0 : null });
 
   return (
-    <section aria-labelledby="titre-capital" className={cn("rounded-carte border border-trait bg-surface p-4 lg:p-6", className)}>
+    <section aria-labelledby="titre-capital" className={cn("carte p-4 lg:p-6", className)}>
       <h2 id="titre-capital" className="etiquette text-[12px] text-encre-3">{voitCouts ? "Où est votre argent ?" : "Où sont vos véhicules ?"}</h2>
       <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
         {voitCouts ? <Montant valeur={total} court taille="heros" /> : <span className="chiffres text-[40px] leading-none font-semibold tracking-tight">{nbTotal}</span>}

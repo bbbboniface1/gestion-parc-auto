@@ -60,7 +60,7 @@ function Ventes() {
         actions={
           <>
             {peutEncaisser && <Bouton icone={<Banknote className="size-4" />} onClick={() => setChoisirPourEncaisser(true)}>Encaisser</Bouton>}
-            {peutVendre && <Link href="/ventes/nouvelle/" className="inline-flex h-11 items-center gap-2 rounded-controle bg-laterite px-4 text-[15px] font-medium text-sur-laterite hover:bg-laterite-fonce lg:h-10 lg:text-sm"><Plus className="size-4" aria-hidden /> Nouvelle vente</Link>}
+            {peutVendre && <Link href="/ventes/nouvelle/" className="inline-flex h-11 items-center gap-2 rounded-controle bg-primaire px-4 text-[15px] font-medium text-sur-primaire hover:bg-primaire-fonce lg:h-10 lg:text-sm"><Plus className="size-4" aria-hidden /> Nouvelle vente</Link>}
           </>
         } />
 
@@ -74,7 +74,7 @@ function Ventes() {
               <span className="sr-only">Rechercher une vente</span>
               <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Client, facture, véhicule…"
-                className="h-11 w-full rounded-controle border border-trait-fort bg-surface pr-3 pl-9 text-[15px] focus:border-laterite focus:outline-none lg:h-10 lg:text-sm" />
+                className="h-11 w-full rounded-controle border border-trait-fort bg-surface pr-3 pl-9 text-[15px] focus:border-primaire focus:outline-none lg:h-10 lg:text-sm" />
             </label>
             <div className="flex gap-1.5 overflow-x-auto">
               {([["toutes", "Toutes"], ["a_encaisser", "À encaisser"], ["soldees", "Soldées"], ["annulees", "Annulées"]] as const).map(([v, l]) => (
@@ -88,7 +88,7 @@ function Ventes() {
             return liste.length === 0 ? <EtatVide titre="Aucune vente" texte={peutVendre ? "Vendez votre premier véhicule depuis sa fiche, ou ici." : undefined} /> : (
               <ul className="flex flex-col gap-2">
                 {liste.map((v) => (
-                  <li key={v.id} className="rounded-carte border border-trait bg-surface">
+                  <li key={v.id} className="carte">
                     <Link href={`/ventes/fiche/?id=${v.id}`} className="flex flex-col gap-2 p-4 hover:bg-surface-2/40 lg:flex-row lg:items-center lg:justify-between">
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
@@ -103,7 +103,7 @@ function Ventes() {
                       </div>
                       <div className="flex shrink-0 items-center gap-4 text-right">
                         <div><p className="text-[12px] text-encre-3">Total</p><Montant valeur={v.montant_ttc} devise={null} /></div>
-                        <div><p className="text-[12px] text-encre-3">Reste</p><Montant valeur={v.reste_xof} devise={null} className={v.reste_xof > 0 ? "text-ocre" : "text-gain"} /></div>
+                        <div><p className="text-[12px] text-encre-3">Reste</p><Montant valeur={v.reste_xof} devise={null} className={v.reste_xof > 0 ? "text-ocre-texte" : "text-gain-texte"} /></div>
                       </div>
                     </Link>
                   </li>
@@ -135,7 +135,7 @@ function Ventes() {
         encaissements.error && !encaissements.data ? <EtatErreur erreur={encaissements.error} onReessayer={() => void encaissements.refetch()} /> : encaissements.isPending ? <SqueletteListe /> : !encaissements.data?.length ? (
           <EtatVide titre="Aucun encaissement" />
         ) : (
-          <ul className="overflow-hidden rounded-carte border border-trait bg-surface">
+          <ul className="overflow-hidden carte">
             {encaissements.data.map((p) => (
               <li key={p.id} className="flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0">
                 <div className="min-w-0 flex-1">
@@ -155,7 +155,7 @@ function Ventes() {
             <li key={v.id}>
               <button type="button" onClick={() => setVenteAEncaisser(v)} className="flex w-full items-center justify-between gap-3 border-b border-trait py-2.5 text-left hover:bg-surface-2">
                 <span className="min-w-0"><span className="block truncate font-medium">{v.client_nom}</span><span className="block truncate font-mono text-[12px] text-encre-3">{v.numero} · {v.vehicule_libelle}</span></span>
-                <Montant valeur={v.reste_xof} devise={null} className="shrink-0 text-ocre" />
+                <Montant valeur={v.reste_xof} devise={null} className="shrink-0 text-ocre-texte" />
               </button>
             </li>
           ))}
@@ -181,7 +181,7 @@ function LigneProforma({ p, peutAgir }: { p: ProformaListe; peutAgir: boolean })
   });
   const LIBELLES: Record<string, string> = { emise: "Émise", acceptee: "Acceptée", expiree: "Expirée", convertie: "Convertie", annulee: "Annulée" };
   return (
-    <li className="flex flex-col gap-2 rounded-carte border border-trait bg-surface p-4 lg:flex-row lg:items-center lg:justify-between">
+    <li className="flex flex-col gap-2 carte p-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <span className="font-mono text-[14px] font-semibold">{p.numero}</span>
@@ -199,7 +199,7 @@ function LigneProforma({ p, peutAgir }: { p: ProformaListe; peutAgir: boolean })
         {peutAgir && p.statut_effectif !== "convertie" && p.statut_effectif !== "annulee" && (
           <Bouton taille="sm" variante="danger" onClick={() => changerStatut.executer({ p_org: org.id, p_id: p.id, p_statut: "annulee" })}>Annuler</Bouton>
         )}
-        {p.vente_id && <Link href={`/ventes/fiche/?id=${p.vente_id}`} className="text-[13px] font-medium text-laterite hover:underline">Voir la vente</Link>}
+        {p.vente_id && <Link href={`/ventes/fiche/?id=${p.vente_id}`} className="text-[13px] font-medium text-primaire hover:underline">Voir la vente</Link>}
       </div>
     </li>
   );
