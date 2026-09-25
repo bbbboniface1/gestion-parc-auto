@@ -21,18 +21,20 @@ export function ChoixVehicule({ valeur, onChoix }: { valeur: Vehicule | null; on
     return (
       <div className="apparition overflow-hidden rounded-2xl bg-primaire-voile ring-2 ring-primaire/40">
         <PhotoVehicule path={valeur.photo_principale_path} alt="" arrondi={false} className="aspect-[16/8] w-full" />
-        <div className="flex items-center gap-3 px-4 py-3">
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[17px] font-extrabold">{valeur.libelle}</p>
-            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-encre-3">
-              <span className="font-mono">{valeur.reference}{valeur.vin ? ` · ${finDeVin(valeur.vin)}` : ""}</span>
-              <EtiquetteEtape etape={valeur.etape} compacte />
-            </p>
+        <div className="px-4 py-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[17px] leading-tight font-extrabold">{valeur.libelle}</p>
+              <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-encre-3">
+                <span className="font-mono">{valeur.reference}{valeur.vin ? ` · ${finDeVin(valeur.vin)}` : ""}</span>
+                <EtiquetteEtape etape={valeur.etape} compacte />
+              </p>
+            </div>
+            <button type="button" onClick={() => onChoix(null)} className="onde inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-surface px-3 text-[13px] font-semibold text-primaire shadow-carte hover:bg-primaire hover:text-white">
+              <ArrowsClockwise size={15} weight="bold" aria-hidden />Changer
+            </button>
           </div>
-          {valeur.prix_affiche_xof !== null && <Montant valeur={valeur.prix_affiche_xof} devise={null} className="text-[16px]" />}
-          <button type="button" onClick={() => onChoix(null)} className="onde inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-surface px-3 text-[13px] font-semibold text-primaire shadow-carte hover:bg-primaire hover:text-white">
-            <ArrowsClockwise size={15} weight="bold" aria-hidden />Changer
-          </button>
+          {valeur.prix_affiche_xof !== null && <p className="mt-2 flex items-baseline gap-2 text-[13px] text-encre-3">Prix affiché <Montant valeur={valeur.prix_affiche_xof} devise={null} className="text-[16px] text-encre" /></p>}
         </div>
       </div>
     );
@@ -45,7 +47,7 @@ export function ChoixVehicule({ valeur, onChoix }: { valeur: Vehicule | null; on
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Modèle, VIN, référence…"
           className="h-12 w-full rounded-full border border-trait bg-surface pr-4 pl-11 text-[15px] shadow-carte transition-all placeholder:text-encre-3/70 focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] focus:outline-none" />
       </label>
-      <ul className="grid gap-2 sm:grid-cols-2">
+      <ul className="grid gap-2 @xl:grid-cols-2">
         {liste.map((v, i) => (
           <li key={v.id} className="apparition" style={{ animationDelay: `${i * 35}ms` }}>
             <button type="button" onClick={() => onChoix(v)} className="onde carte carte-lien group flex w-full items-center gap-3 p-2 text-left">

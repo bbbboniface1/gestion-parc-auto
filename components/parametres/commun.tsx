@@ -94,9 +94,12 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
   if (!sale) return null;
   return (
     <div role="region" aria-label="Modifications non enregistrées"
-      className="zone-sure-bas fixed inset-x-0 bottom-16 z-40 border-t border-trait bg-nuit px-4 py-3 text-sur-nuit lg:bottom-0 lg:left-64">
+      className="zone-sure-bas apparition fixed inset-x-4 bottom-20 z-40 rounded-2xl bg-nuit px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(16rem+2rem)] lg:right-8">
       <div className="mx-auto flex max-w-[1280px] items-center gap-3">
-        <span className="flex-1 text-[14px]">Modifications non enregistrées</span>
+        <span className="flex flex-1 items-center gap-2.5 text-[14px] font-semibold">
+          <span aria-hidden className="relative flex size-2.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-[#ff9447] opacity-60" /><span className="relative inline-flex size-2.5 rounded-full bg-[#ff9447]" /></span>
+          Modifications non enregistrées
+        </span>
         <Bouton variante="sur-nuit" taille="sm" onClick={onAnnuler}>Annuler</Bouton>
         <Bouton variante="primaire" taille="sm" chargement={enregistrement} onClick={onEnregistrer}>Enregistrer</Bouton>
       </div>
@@ -107,10 +110,12 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
 /** Bloc de réglages : titre et explication à gauche sur ordinateur, champs à droite. */
 export function Groupe({ titre, description, children }: { titre: string; description?: ReactNode; children: ReactNode }) {
   return (
-    <section className="border-b border-trait py-6 first:pt-0 last:border-b-0 xl:grid xl:grid-cols-[240px_1fr] xl:gap-10">
+    <section className="carte apparition p-4 lg:p-6 xl:grid xl:grid-cols-[240px_1fr] xl:gap-10">
       <div className="mb-4 xl:mb-0">
-        <h2 className="text-[16px] font-semibold tracking-tight">{titre}</h2>
-        {description && <p className="mt-1 text-[13px] leading-snug text-encre-3">{description}</p>}
+        <h2 className="flex items-center gap-2.5 text-[16px] font-bold tracking-tight">
+          <span aria-hidden className="h-5 w-1 shrink-0 rounded-full bg-[var(--section,var(--primaire))]" />{titre}
+        </h2>
+        {description && <p className="mt-1.5 pl-[14px] text-[13px] leading-snug text-encre-3">{description}</p>}
       </div>
       <div className="flex max-w-xl flex-col gap-4">{children}</div>
     </section>

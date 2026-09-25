@@ -5,7 +5,7 @@ import { Plus, Trash } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
-import { EnTetePage } from "@/components/coque/coque";
+import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { Groupe } from "@/components/parametres/commun";
 import { Bouton } from "@/components/ui/bouton";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
@@ -58,9 +58,9 @@ export default function PageLogistique() {
   const { data, error, isPending, refetch } = useLecture<Referentiel[]>("referentiels_lister", { p_org: org.id });
   return (
     <>
-      <EnTetePage titre="Logistique" sousTitre="Les listes proposées lors de la saisie des expéditions et des frais." />
+      <EnTeteSection cle="logistique" titre="Logistique" sousTitre="Les listes proposées lors de la saisie des expéditions et des frais." />
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending || !data ? <Squelette className="h-96 rounded-carte" /> : (
-        <div className="carte px-4 py-6 lg:px-8">
+        <div className="flex flex-col gap-4">
           {TYPES.map((t) => <Liste key={t.type} {...t} elements={data.filter((r) => r.type === t.type && r.actif).sort((a, b) => a.ordre - b.ordre)} />)}
         </div>
       )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, X } from "@phosphor-icons/react";
-import { EnTetePage } from "@/components/coque/coque";
+import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { BarreEnregistrement, Groupe, useBrouillon } from "@/components/parametres/commun";
 import { ChampImage } from "@/components/parametres/champs-image";
 import { Bouton } from "@/components/ui/bouton";
@@ -19,8 +19,8 @@ export default function PageEntreprise() {
 
   return (
     <>
-      <EnTetePage titre="Entreprise" sousTitre="Ces informations figurent sur chaque facture, reçu et proforma." />
-      <div className="carte px-4 py-6 lg:px-8">
+      <EnTeteSection cle="entreprise" titre="Entreprise" sousTitre="Ces informations figurent sur chaque facture, reçu et proforma." />
+      <div className="flex flex-col gap-4">
         <Groupe titre="Identité" description="Le nom commercial s'affiche en grand ; la raison sociale apparaît dessous si elle diffère.">
           <Champ libelle="Nom commercial" value={p.nom_commercial} onChange={(e) => maj("nom_commercial", e.target.value)} erreur={!p.nom_commercial.trim() ? "Obligatoire." : null} />
           <Champ libelle="Raison sociale" facultatif placeholder="Sahel Auto Import SARL" {...texte("raison_sociale")} />

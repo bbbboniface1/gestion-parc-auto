@@ -6,11 +6,11 @@ import type { Frais } from "@/lib/api/types";
 import { libelleCategorie } from "@/lib/domaine";
 import { formatCourt, formatJour, lireDate, pluriel } from "@/lib/format";
 import { cn } from "@/lib/cn";
-import { couleurCategorie, LigneDepense } from "./ligne-depense";
+import { couleurCategorie, filtrerDepenses, montantLigne, regrouperParJour, repartitionParCategorie, type PorteeDepense } from "@/lib/depenses";
+import { LigneDepense } from "./ligne-depense";
 import { EtatVide } from "@/components/ui/etats";
 
-type Portee = "toutes" | "vehicule" | "expedition" | "generale";
-const PORTEES: { valeur: Portee; libelle: string; icone: typeof Boat }[] = [
+const PORTEES: { valeur: PorteeDepense; libelle: string; icone: typeof Boat }[] = [
   { valeur: "toutes", libelle: "Toutes", icone: CarProfile },
   { valeur: "vehicule", libelle: "Voitures", icone: CarProfile },
   { valeur: "expedition", libelle: "Conteneurs", icone: Boat },
@@ -34,30 +34,19 @@ function libelleJour(iso: string): string {
  */
 export function ListeDepenses({ liste, enEvidence, peutModifier }: { liste: Frais[]; enEvidence: string | null; peutModifier: boolean }) {
   const [q, setQ] = useState("");
-  const [portee, setPortee] = useState<Portee>("toutes");
+  const [portee, setPortee] = useState<PorteeDepense>("toutes");
   const [aPayerSeul, setAPayerSeul] = useState(false);
   const [categorie, setCategorie] = useState<string | null>(null);
 
   const total = liste.reduce((s, f) => s + f.montant_xof, 0);
   const aPayer = liste.filter((f) => f.statut === "a_payer").reduce((s, f) => s + f.montant_xof, 0);
   const nbAPayer = liste.filter((f) => f.statut === "a_payer").length;
-  const parCategorie = [...liste.reduce((m, f) => m.set(f.categorie, (m.get(f.categorie) ?? 0) + f.montant_xof), new Map<string, number>())].sort((a, b) => b[1] - a[1]);
+  const parCategorie = repartitionParCategorie(liste);
   const couleurDe = couleurCategorie;
 
-  const motif = q.trim().toLowerCase();
-  const visibles = liste.filter((f) => {
-    if (portee !== "toutes" && f.portee !== portee) return false;
-    if (aPayerSeul && f.statut !== "a_payer") return false;
-    if (categorie && f.categorie !== categorie) return false;
-    if (!motif) return true;
-    return [f.vehicule_libelle, f.vehicule_reference, f.expedition_reference, f.fournisseur, f.libelle, f.compte_nom, libelleCategorie(f.categorie)]
-      .some((x) => x?.toLowerCase().includes(motif));
-  });
-
-  const parJour = new Map<string, Frais[]>();
-  for (const f of visibles) parJour.set(f.date, [...(parJour.get(f.date) ?? []), f]);
-  const jours = [...parJour.entries()];
-  const totalVisible = visibles.reduce((s, f) => s + (f.part_xof ?? f.montant_xof), 0);
+  const visibles = filtrerDepenses(liste, { q, portee, aPayerSeul, categorie });
+  const jours = regrouperParJour(visibles);
+  const totalVisible = visibles.reduce((s, f) => s + montantLigne(f), 0);
   const filtre = q.trim() !== "" || portee !== "toutes" || aPayerSeul || categorie !== null;
 
   return (
@@ -137,7 +126,7 @@ export function ListeDepenses({ liste, enEvidence, peutModifier }: { liste: Frai
             <section key={jour} className="apparition" style={{ animationDelay: `${Math.min(i, 6) * 40}ms` }} aria-label={libelleJour(jour)}>
               <h3 className="mb-1.5 flex items-baseline justify-between gap-2 px-2 text-[13px] font-bold text-encre-2">
                 <span>{libelleJour(jour)}</span>
-                <span className="chiffres text-[12px] font-semibold text-encre-3">−{formatCourt(lignes.reduce((s, f) => s + (f.part_xof ?? f.montant_xof), 0))} FCFA</span>
+                <span className="chiffres text-[12px] font-semibold text-encre-3">−{formatCourt(lignes.reduce((s, f) => s + montantLigne(f), 0))} FCFA</span>
               </h3>
               <ul className="carte divide-y divide-trait/70 overflow-hidden">
                 {lignes.map((f) => <LigneDepense key={f.id} f={f} couleur={couleurDe(f.categorie)} enEvidence={f.id === enEvidence} peutModifier={peutModifier} />)}

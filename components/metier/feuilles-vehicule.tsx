@@ -109,7 +109,7 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nom ou téléphone"
           className="h-12 w-full rounded-full border border-trait bg-surface pr-4 pl-11 text-[15px] shadow-carte transition-all placeholder:text-encre-3/70 focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] focus:outline-none" />
       </label>
-      <ul className="grid gap-1 sm:grid-cols-2">
+      <ul className="grid gap-1 @xl:grid-cols-2">
         {liste.map((c, i) => (
           <li key={c.id} className="apparition" style={{ animationDelay: `${i * 30}ms` }}>
             <button type="button" onClick={() => onChoix(c)} className="onde group flex w-full items-center gap-3 rounded-2xl p-2 text-left transition-colors hover:bg-surface-2">

@@ -5,7 +5,7 @@ import { Calculator } from "@phosphor-icons/react";
 import { estimerDouane, type BaremeDouane } from "@/lib/estimation";
 import { HYPOTHESES_PAR_DEFAUT } from "@/lib/simulateur";
 import { formatNombre } from "@/lib/format";
-import { EnTetePage } from "@/components/coque/coque";
+import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { BarreEnregistrement, Groupe, useBrouillon } from "@/components/parametres/commun";
 import { ChampNombre, Champ } from "@/components/ui/champ";
 import { EtatErreur, SqueletteListe } from "@/components/ui/etats";
@@ -43,10 +43,10 @@ export default function PageDouane() {
 
   return (
     <>
-      <EnTetePage titre="Frais et douane"
+      <EnTeteSection cle="douane" titre="Frais et douane"
         sousTitre="Ces valeurs servent uniquement aux estimations : le coût réel est toujours le frais que vous saisissez."
         actions={<Link href="/outils/simulateur/" className="inline-flex h-10 items-center gap-2 rounded-controle border border-trait-fort bg-surface px-4 text-sm font-medium hover:bg-surface-2"><Calculator className="size-4" aria-hidden /> Ouvrir le simulateur</Link>} />
-      <div className="carte px-4 py-6 lg:px-8">
+      <div className="flex flex-col gap-4">
         <Groupe titre="Barème de dédouanement" description="Les taux publiés pour le Mali sont tous indiqués comme approximatifs : faites valider ces valeurs par votre transitaire.">
           <div className="grid grid-cols-2 gap-3">
             <ChampNombre libelle="Droit de douane" valeur={b.droit_douane_pct ?? 0} onChange={(v) => majB("droit_douane_pct", v)} decimales={2} unite="% CAF" />

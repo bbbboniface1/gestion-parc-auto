@@ -1,7 +1,7 @@
 "use client";
 
 import { MODES_PAIEMENT, type ModePaiement } from "@/lib/domaine";
-import { EnTetePage } from "@/components/coque/coque";
+import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { BarreEnregistrement, Groupe, useBrouillon } from "@/components/parametres/commun";
 import { ChampNombre, Interrupteur } from "@/components/ui/champ";
 import { Choix } from "@/components/ui/choix";
@@ -15,8 +15,8 @@ export default function PageVentesAlertes() {
 
   return (
     <>
-      <EnTetePage titre="Ventes et alertes" />
-      <div className="carte px-4 py-6 lg:px-8">
+      <EnTeteSection cle="ventes" titre="Ventes et alertes" />
+      <div className="flex flex-col gap-4">
         <Groupe titre="Modes de paiement" description="Seuls les modes cochés sont proposés à l'encaissement.">
           {modes.map((m) => (
             <Interrupteur key={m} libelle={MODES_PAIEMENT[m].libelle}

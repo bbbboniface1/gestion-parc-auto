@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowsClockwise } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { formatDate, formatNombre, joursDepuis } from "@/lib/format";
-import { EnTetePage } from "@/components/coque/coque";
+import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { BarreEnregistrement, Groupe, useBrouillon } from "@/components/parametres/commun";
 import { Bouton } from "@/components/ui/bouton";
 import { ChampNombre } from "@/components/ui/champ";
@@ -29,8 +29,8 @@ export default function PageDevises() {
 
   return (
     <>
-      <EnTetePage titre="Devises et taux" sousTitre="Chaque achat et chaque frais garde le taux du jour où il a été saisi." />
-      <div className="carte px-4 py-6 lg:px-8">
+      <EnTeteSection cle="devises" titre="Devises et taux" sousTitre="Chaque achat et chaque frais garde le taux du jour où il a été saisi." />
+      <div className="flex flex-col gap-4">
         <Groupe titre="Dollar américain" description="Proposé par défaut pour les enchères, le remorquage et le fret. Modifier ce taux ne change pas les frais déjà saisis.">
           <ChampNombre libelle="1 $ US =" valeur={Number(p.taux_usd)} onChange={(v) => maj("taux_usd", v ?? 0)} min={1} max={10000} decimales={2} unite="FCFA"
             aide={age !== null ? `Mis à jour le ${formatDate(donnees?.parametres.taux_maj_le)}${age > 30 ? " — il y a plus d'un mois" : ""}.` : undefined} />

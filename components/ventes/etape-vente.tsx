@@ -18,7 +18,7 @@ export function EtapeVente({ numero, titre, fait, couleur, icone: Ico, children,
   className?: string;
 }) {
   return (
-    <section className={cn("carte apparition p-4 lg:p-5", className)} style={{ animationDelay: `${(numero - 1) * 60}ms` }} aria-label={titre}>
+    <section className={cn("@container carte apparition p-4 lg:p-5", className)} style={{ animationDelay: `${(numero - 1) * 60}ms` }} aria-label={titre}>
       <h2 className="mb-4 flex items-center gap-3 text-[17px] font-bold">
         <span className={cn("relative grid size-9 shrink-0 place-items-center rounded-xl text-white transition-all duration-300", fait && "scale-105")}
           style={{ background: fait ? "var(--gain)" : couleur, boxShadow: `0 8px 16px -8px ${fait ? "var(--gain)" : couleur}` }}>

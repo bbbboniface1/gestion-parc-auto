@@ -13,6 +13,7 @@ export default function ParametresLayout({ children }: { children: React.ReactNo
   const chemin = usePathname();
   const sections = sectionsPour(org.role);
   const accueil = chemin === "/parametres" || chemin === "/parametres/";
+  const courante = sections.find((s) => chemin.startsWith(`/parametres/${s.cle}`));
 
   return (
     <div className="lg:grid lg:grid-cols-[220px_1fr] lg:gap-10">
@@ -42,7 +43,7 @@ export default function ParametresLayout({ children }: { children: React.ReactNo
           })}
         </ul>
       </nav>
-      <div className="min-w-0">
+      <div className="min-w-0" style={courante ? ({ "--section": courante.couleur } as React.CSSProperties) : undefined}>
         {!accueil && (
           <div className="lg:hidden">
             <FilAriane retour={{ href: "/parametres/", libelle: "Paramètres", icone: GearSix, couleur: "var(--encre-3)", detail: "Toutes les sections" }} />

@@ -288,7 +288,9 @@
 }
 /* Transition entre les pages. */
 .transition-page {
-  animation: arrivee-page 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* « backwards » et non « both » : une fois l'animation finie, plus aucun transform ni filter résiduel.
+     Sinon la page devient le repère des éléments position: fixed (barres d'action collées en bas) et les décolle de l'écran. */
+  animation: arrivee-page 380ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 @keyframes arrivee-page {

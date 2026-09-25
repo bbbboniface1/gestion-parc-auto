@@ -233,7 +233,7 @@ function NouvelleVente() {
                   </div>
                 </>
               ) : (
-                <div className="grid aspect-[16/6] place-items-center px-4 text-center text-[14px] text-white/70"><span>Le véhicule choisi apparaîtra ici.</span></div>
+                <div className="grid place-items-center px-4 py-6 text-center text-[14px] text-white/70 lg:py-10"><span>Le véhicule choisi apparaîtra ici.</span></div>
               )}
             </div>
             <div className="p-4 lg:p-5">
@@ -248,8 +248,8 @@ function NouvelleVente() {
                 ...(acomptePrevu ? [{ libelle: mode === "echelonne" ? "Acompte" : "Encaissé aujourd'hui", valeur: formatNombre(acomptePrevu) }] : []),
               ]} />
               <div className="mt-2 flex items-baseline justify-between gap-3 border-t border-trait pt-3">
-                <span className="text-[14px] font-semibold text-encre-2">Total à payer</span>
-                <span className="chiffres text-[28px] leading-none font-extrabold tracking-tight">{formatNombre(Math.round(totalAffiche))}<span className="ml-1 text-[13px] font-semibold text-encre-3">FCFA</span></span>
+                <span className="text-[14px] font-semibold whitespace-nowrap text-encre-2">Total à payer</span>
+                <span className="chiffres text-[26px] leading-none font-extrabold tracking-tight whitespace-nowrap">{formatNombre(Math.round(totalAffiche))}<span className="ml-1 text-[13px] font-semibold text-encre-3">FCFA</span></span>
               </div>
               {manque.length > 0 && (
                 <p className="mt-3 rounded-xl bg-surface-2 px-3 py-2 text-[13px] text-encre-2" role="status">Il manque : {manque.join(", ")}.</p>

@@ -10,7 +10,7 @@ import { useOrg } from "@/lib/session";
 import { peut } from "@/lib/domaine";
 import { genererCSV, telechargerCSV } from "@/lib/csv";
 import { aujourdhui } from "@/lib/format";
-import { EnTetePage } from "@/components/coque/coque";
+import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { Groupe } from "@/components/parametres/commun";
 import { Bouton } from "@/components/ui/bouton";
 
@@ -56,8 +56,8 @@ export default function PageDonnees() {
 
   return (
     <>
-      <EnTetePage titre="Données" sousTitre="Vos informations vous appartiennent : exportez-les à tout moment." />
-      <div className="carte px-4 py-6 lg:px-8">
+      <EnTeteSection cle="donnees" titre="Données" sousTitre="Vos informations vous appartiennent : exportez-les à tout moment." />
+      <div className="flex flex-col gap-4">
         <Groupe titre="Exports Excel" description="Fichiers CSV qui s'ouvrent directement dans Excel, accents et virgules décimales compris.">
           {([["vehicules", "Tous les véhicules"], ["ventes", "Toutes les ventes"], ["clients", "Tous les clients"]] as const).map(([cle, libelle]) => (
             <Bouton key={cle} className="self-start" icone={<DownloadSimple className="size-4" />} chargement={en === cle} onClick={() => void exporter(cle)}>{libelle}</Bouton>

@@ -9,7 +9,7 @@ import { ROLES, type Role } from "@/lib/domaine";
 import { formatDate } from "@/lib/format";
 import { lienWhatsApp } from "@/lib/whatsapp";
 import { cn } from "@/lib/cn";
-import { EnTetePage } from "@/components/coque/coque";
+import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { Bouton } from "@/components/ui/bouton";
 import { Feuille } from "@/components/ui/feuille";
 import { Selection } from "@/components/ui/champ";
@@ -37,7 +37,7 @@ export default function PageEquipe() {
 
   return (
     <>
-      <EnTetePage titre="Équipe" sousTitre="Chaque personne a son compte : le journal sait qui a fait quoi."
+      <EnTeteSection cle="equipe" titre="Équipe" sousTitre="Chaque personne a son compte : le journal sait qui a fait quoi."
         actions={proprietaire ? <Bouton variante="primaire" icone={<UserPlus className="size-4" />} onClick={() => { setNouvelle(null); setInviter(true); }}>Inviter</Bouton> : undefined} />
 
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending || !data ? <SqueletteListe lignes={3} /> : (

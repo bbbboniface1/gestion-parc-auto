@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { EnTetePage } from "@/components/coque/coque";
+import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { Groupe } from "@/components/parametres/commun";
 import { Choix } from "@/components/ui/choix";
 
@@ -49,8 +49,8 @@ export default function PagePreferences() {
 
   return (
     <>
-      <EnTetePage titre="Préférences" sousTitre="Ces réglages ne concernent que cet appareil." />
-      <div className="carte px-4 py-6 lg:px-8">
+      <EnTeteSection cle="preferences" titre="Préférences" sousTitre="Ces réglages ne concernent que cet appareil." />
+      <div className="flex flex-col gap-4">
         <Groupe titre="Apparence" description="Le thème sombre repose les yeux le soir et économise la batterie des écrans OLED.">
           <Choix libelle="Thème" colonnes={3} valeur={theme} onChange={(v) => v && appliquerTheme(v)}
             options={[{ valeur: "systeme", libelle: "Automatique" }, { valeur: "light", libelle: "Clair" }, { valeur: "dark", libelle: "Sombre" }]} />

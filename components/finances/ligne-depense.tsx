@@ -9,7 +9,8 @@ import {
 import { useEcriture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { Frais } from "@/lib/api/types";
-import { CATEGORIES_FRAIS, libelleCategorie } from "@/lib/domaine";
+import { libelleCategorie } from "@/lib/domaine";
+import { lienDepense } from "@/lib/depenses";
 import { formatDate, formatDevise, formatNombre, pluriel } from "@/lib/format";
 import { urlFichier } from "@/lib/stockage";
 import { cn } from "@/lib/cn";
@@ -23,21 +24,6 @@ const ICONES: Record<string, Icon> = {
   frais_enchere: Gavel, remorquage: Truck, fret: Boat, assurance: Stamp, port: Anchor, convoi: Truck, douane: Stamp,
   transitaire: Stamp, atelier: Wrench, pieces: Wrench, carte_grise: Receipt, commission: Tag, loyer: Buildings, salaires: Buildings,
 };
-
-const PALETTE = ["#6366f1", "#0ea5e9", "#f97316", "#14b8a6", "#a855f7", "#f59e0b", "#ec4899", "#22c55e", "#3b82f6", "#64748b"];
-
-/** Une couleur stable par catégorie : la même dans la liste des dépenses, sur la fiche véhicule et dans la répartition. */
-export function couleurCategorie(categorie: string): string {
-  const i = Object.keys(CATEGORIES_FRAIS).indexOf(categorie);
-  return PALETTE[(i < 0 ? PALETTE.length - 1 : i) % PALETTE.length]!;
-}
-
-/** Où mène une ligne : la voiture concernée, sinon le conteneur, sinon nulle part (dépense générale : on ouvre le détail). */
-export function lienDepense(f: Pick<Frais, "vehicule_id" | "expedition_id">, contexte: "liste" | "vehicule" = "liste"): string | null {
-  if (contexte === "liste" && f.vehicule_id) return `/parc/vehicule/?id=${f.vehicule_id}`;
-  if (f.expedition_id) return `/expeditions/fiche/?id=${f.expedition_id}`;
-  return null;
-}
 
 /**
  * Une dépense, lisible d'un coup d'œil : la voiture (photo, nom, référence) ou le conteneur concerné, la catégorie, le

@@ -3,7 +3,7 @@
 import { useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import { formatDate } from "@/lib/format";
-import { EnTetePage } from "@/components/coque/coque";
+import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { EtatErreur, EtatVide, SqueletteListe } from "@/components/ui/etats";
 import { Code } from "@/components/ui/signature";
 
@@ -38,7 +38,7 @@ export default function PageJournal() {
   const { data, error, isPending, refetch } = useLecture<Ligne[]>("journal_lister", { p_org: org.id, p_filtres: { limite: 150 } });
   return (
     <>
-      <EnTetePage titre="Journal" sousTitre="Qui a fait quoi, et quand. Les 150 dernières opérations." />
+      <EnTeteSection cle="journal" titre="Journal" sousTitre="Qui a fait quoi, et quand. Les 150 dernières opérations." />
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending ? <SqueletteListe /> : !data?.length ? <EtatVide titre="Rien à afficher" /> : (
         <ul className="overflow-hidden carte">
           {data.map((l) => (

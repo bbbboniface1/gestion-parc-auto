@@ -11,7 +11,7 @@ import { libelleCategorie } from "@/lib/domaine";
 import { useCompteur, decalage } from "@/lib/animation";
 import { cn } from "@/lib/cn";
 import { EnTetePage } from "@/components/coque/coque";
-import { couleurCategorie } from "@/components/finances/ligne-depense";
+import { couleurCategorie } from "@/lib/depenses";
 import { ChampMontant } from "@/components/ui/champ-montant";
 import { ChampNombre } from "@/components/ui/champ";
 import { Choix } from "@/components/ui/choix";
