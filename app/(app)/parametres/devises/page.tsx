@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { ArrowsClockwise } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { formatDate, formatNombre, joursDepuis } from "@/lib/format";
 import { EnTetePage } from "@/components/coque/coque";
@@ -35,7 +35,7 @@ export default function PageDevises() {
           <ChampNombre libelle="1 $ US =" valeur={Number(p.taux_usd)} onChange={(v) => maj("taux_usd", v ?? 0)} min={1} max={10000} decimales={2} unite="FCFA"
             aide={age !== null ? `Mis à jour le ${formatDate(donnees?.parametres.taux_maj_le)}${age > 30 ? " — il y a plus d'un mois" : ""}.` : undefined} />
           <div className="flex flex-wrap items-center gap-3">
-            <Bouton taille="sm" icone={<RefreshCw className="size-4" />} chargement={chargement} onClick={async () => {
+            <Bouton taille="sm" icone={<ArrowsClockwise className="size-4" />} chargement={chargement} onClick={async () => {
               setChargement(true);
               try { setMarche(await tauxDuMarche()); } catch { toast.error("Impossible de joindre le service de taux. Réessayez plus tard."); } finally { setChargement(false); }
             }}>Consulter le taux du marché</Bouton>

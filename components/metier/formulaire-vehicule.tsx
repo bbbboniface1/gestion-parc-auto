@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { CheckCircle2, Loader2, ScanLine, TriangleAlert } from "lucide-react";
+import { CheckCircle, CircleNotch, Scan, Warning } from "@phosphor-icons/react";
 import { nouvelId, useEcriture } from "@/lib/api/requetes";
 import { tauxPour, useParametres } from "@/lib/api/parametres";
 import type { Vehicule } from "@/lib/api/types";
@@ -17,6 +17,7 @@ import { Bouton } from "@/components/ui/bouton";
 import { Champ, Selection, ZoneTexte } from "@/components/ui/champ";
 import { ChampMontant } from "@/components/ui/champ-montant";
 import { Choix } from "@/components/ui/choix";
+import { celebrer } from "@/lib/celebration";
 
 type Brouillon = {
   vin: string; marque: string; modele: string; finition: string; annee: string; couleur: string;
@@ -113,7 +114,8 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
 
   const enregistrer = useEcriture<{ id: string }>("vehicule_enregistrer", {
     onSuccess: (r) => {
-      toast.success(vehicule ? "Modifications enregistrées" : "Véhicule ajouté au parc");
+      if (vehicule) toast.success("Modifications enregistrées");
+      else celebrer({ type: "vehicule", titre: "Véhicule ajouté au parc", detail: [b.marque, b.modele, b.annee].filter(Boolean).join(" ") });
       router.push(`/parc/vehicule/?id=${r?.id ?? id}`);
     },
     onError: (e) => toast.error(e.message),
@@ -176,11 +178,11 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
           />
           <div className="mt-1.5 min-h-5 text-[13px]" aria-live="polite">
             {verif.etat === "cle_incorrecte" && (
-              <p className="flex items-center gap-1.5 text-ocre-texte"><TriangleAlert className="size-4" aria-hidden /> Clé de contrôle incorrecte (attendu « {verif.attendue} » en 9e position) : vérifiez la saisie. Les VIN hors Amérique du Nord peuvent ne pas en avoir.</p>
+              <p className="flex items-center gap-1.5 text-ocre-texte"><Warning className="size-4" aria-hidden /> Clé de contrôle incorrecte (attendu « {verif.attendue} » en 9e position) : vérifiez la saisie. Les VIN hors Amérique du Nord peuvent ne pas en avoir.</p>
             )}
-            {verif.etat === "valide" && decodage === "en_cours" && <p className="flex items-center gap-1.5 text-encre-3"><Loader2 className="size-4 animate-spin" aria-hidden /> Recherche du véhicule…</p>}
-            {verif.etat === "valide" && decodage === "trouve" && <p className="flex items-center gap-1.5 text-gain-texte"><CheckCircle2 className="size-4" aria-hidden /> VIN valide · informations remplies depuis la base NHTSA, vérifiez-les.</p>}
-            {verif.etat === "valide" && decodage === "introuvable" && <p className="flex items-center gap-1.5 text-encre-3"><ScanLine className="size-4" aria-hidden /> VIN valide, mais inconnu de la base américaine : complétez à la main.</p>}
+            {verif.etat === "valide" && decodage === "en_cours" && <p className="flex items-center gap-1.5 text-encre-3"><CircleNotch className="size-4 animate-spin" aria-hidden /> Recherche du véhicule…</p>}
+            {verif.etat === "valide" && decodage === "trouve" && <p className="flex items-center gap-1.5 text-gain-texte"><CheckCircle className="size-4" aria-hidden /> VIN valide · informations remplies depuis la base NHTSA, vérifiez-les.</p>}
+            {verif.etat === "valide" && decodage === "introuvable" && <p className="flex items-center gap-1.5 text-encre-3"><Scan className="size-4" aria-hidden /> VIN valide, mais inconnu de la base américaine : complétez à la main.</p>}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">

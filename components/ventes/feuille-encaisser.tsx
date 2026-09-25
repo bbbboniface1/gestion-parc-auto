@@ -12,6 +12,7 @@ import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ, Selection } from "@/components/ui/champ";
 import { ChampMontant } from "@/components/ui/champ-montant";
+import { celebrer } from "@/lib/celebration";
 
 interface Compte { id: string; nom: string; actif: boolean }
 
@@ -45,7 +46,12 @@ export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineE
   }, [ouverte, venteId]);
 
   const ajouter = useEcriture("paiement_ajouter", {
-    onSuccess: () => { toast.success(venteAnnulee ? "Remboursement enregistré" : "Encaissement enregistré"); onFermer(); },
+    onSuccess: () => {
+      if (venteAnnulee) toast.success("Remboursement enregistré");
+      else if (montant !== null && reste != null && montant >= reste) celebrer({ type: "solde", titre: "Vente soldée !", detail: `${montant.toLocaleString("fr-FR")} FCFA reçus : plus rien à encaisser.` });
+      else celebrer({ type: "encaissement", titre: "Versement enregistré", detail: `${(montant ?? 0).toLocaleString("fr-FR")} FCFA · ${MODES_PAIEMENT[mode]?.libelle ?? ""} · reçu prêt` });
+      onFermer();
+    },
     onError: (e) => toast.error(e.message),
   });
 

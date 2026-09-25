@@ -2,7 +2,7 @@
 
 import { useId, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowDownRight, ArrowUpRight, ChevronRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, CaretRight } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 import { ETAPES, etape as defEtape, type Etape } from "@/lib/domaine";
 import { formatCourt, formatMoisCourt, formatNombre, formatPourcent, pluriel } from "@/lib/format";
@@ -240,7 +240,7 @@ export function VitrineParc({ vehicules }: { vehicules: Vehicule[] }) {
           <p className="text-[13px] text-encre-3">{pluriel(vehicules.length, "véhicule")} au parc, disponibles aujourd&apos;hui</p>
         </div>
         <Link href="/parc/?vue=en_vente" className="inline-flex items-center gap-1 text-[13px] font-semibold text-primaire hover:underline">
-          Tout voir <ChevronRight className="size-4" aria-hidden />
+          Tout voir <CaretRight className="size-4" aria-hidden />
         </Link>
       </div>
       <div className="sans-barre -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-3 lg:mx-0 lg:px-0">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Calculator } from "lucide-react";
+import { Calculator } from "@phosphor-icons/react";
 import { useParametres } from "@/lib/api/parametres";
 import type { BaremeDouane } from "@/lib/estimation";
 import { enchereMaximale, HYPOTHESES_PAR_DEFAUT, type HypothesesSimulateur } from "@/lib/simulateur";

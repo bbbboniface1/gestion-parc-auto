@@ -4,12 +4,15 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useIsMutating } from "@tanstack/react-query";
-import { Banknote, Car, ChevronRight, CloudOff, Ellipsis, Home, LogOut, Plus, Receipt, Search, Wallet, ChevronsUpDown, Check } from "lucide-react";
+import { CaretUpDown, Car, Check, CloudSlash, HandCoins, Invoice, MagnifyingGlass, Plus, SignOut, SquaresFour, Wallet } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 import { useEnLigne } from "@/lib/ecran";
 import { useSession } from "@/lib/session";
 import { ROLES } from "@/lib/domaine";
 import { Feuille } from "@/components/ui/feuille";
+import { Picto } from "@/components/ui/picto";
+import { useCompteursNavigation, type Compteur } from "@/lib/compteurs";
+import { EffetsGlobaux } from "./effets";
 import { Logo } from "./logo";
 import { NAVIGATION_PRINCIPALE, NAVIGATION_SECONDAIRE, estActif } from "./navigation";
 import { PaletteRecherche } from "./palette-recherche";
@@ -31,7 +34,7 @@ function EtatReseau({ surNuit }: { surNuit?: boolean }) {
         surNuit ? "bg-white/10 text-[#ffc27a]" : "bg-ocre-voile text-ocre-texte",
       )}
     >
-      <CloudOff className="size-3.5" aria-hidden />
+      <CloudSlash size={14} weight="bold" aria-hidden />
       {enLigne ? `${enAttente} en attente` : enAttente ? `Hors ligne · ${enAttente} en attente` : "Hors ligne"}
     </span>
   );
@@ -39,8 +42,8 @@ function EtatReseau({ surNuit }: { surNuit?: boolean }) {
 
 const ACTIONS_RAPIDES = [
   { href: "/parc/nouveau/", titre: "Véhicule", texte: "Acheté aux enchères ou localement", icone: Car, couleur: "var(--etape-achete)" },
-  { href: "/ventes/nouvelle/", titre: "Vente", texte: "Facture, acompte, échéancier", icone: Receipt, couleur: "var(--primaire)" },
-  { href: "/ventes/?encaisser=1", titre: "Encaissement", texte: "Versement d'un client", icone: Banknote, couleur: "var(--gain)" },
+  { href: "/ventes/nouvelle/", titre: "Vente", texte: "Facture, acompte, échéancier", icone: Invoice, couleur: "var(--gain)" },
+  { href: "/ventes/?encaisser=1", titre: "Encaissement", texte: "Versement d'un client", icone: HandCoins, couleur: "var(--primaire)" },
   { href: "/finances/?depense=1", titre: "Dépense", texte: "Frais d'un véhicule ou charge", icone: Wallet, couleur: "var(--accent)" },
 ];
 
@@ -49,10 +52,8 @@ function ActionsRapides({ ouverte, onFermer }: { ouverte: boolean; onFermer: () 
     <Feuille ouverte={ouverte} onFermer={onFermer} titre="Ajouter">
       <div className="grid grid-cols-2 gap-3 pb-2">
         {ACTIONS_RAPIDES.map((a) => (
-          <Link key={a.href} href={a.href} onClick={onFermer} className="carte carte-lien flex min-h-32 flex-col justify-between p-4">
-            <span className="grid size-11 place-items-center rounded-2xl" style={{ background: `color-mix(in srgb, ${a.couleur} 14%, var(--surface))`, color: a.couleur }}>
-              <a.icone className="size-6" aria-hidden />
-            </span>
+          <Link key={a.href} href={a.href} onClick={onFermer} className="carte carte-lien onde flex min-h-32 flex-col justify-between p-4">
+            <Picto icone={a.icone} couleur={a.couleur} taille="md" />
             <span>
               <span className="block font-bold text-encre">{a.titre}</span>
               <span className="block text-[13px] leading-snug text-encre-3">{a.texte}</span>
@@ -64,22 +65,42 @@ function ActionsRapides({ ouverte, onFermer }: { ouverte: boolean; onFermer: () 
   );
 }
 
+function Badge({ c, surNuit }: { c?: Compteur; surNuit?: boolean }) {
+  if (!c) return null;
+  return (
+    <span title={c.sens} aria-label={c.sens}
+      className={cn("chiffres ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold",
+        c.alerte ? "bg-perte text-white shadow-[0_0_0_3px_rgb(220_38_38/0.2)]" : surNuit ? "bg-white/12 text-white" : "bg-surface-2 text-encre-2")}>
+      {c.valeur}
+    </span>
+  );
+}
+
 function MenuPlus({ ouverte, onFermer }: { ouverte: boolean; onFermer: () => void }) {
   const { etat, choisirOrganisation, deconnecter } = useSession();
   const chemin = usePathname();
-  const entrees = [...NAVIGATION_PRINCIPALE.slice(3), ...NAVIGATION_SECONDAIRE];
+  const compteurs = useCompteursNavigation();
+  const entrees = [...NAVIGATION_PRINCIPALE, ...NAVIGATION_SECONDAIRE];
   if (etat.statut !== "connecte") return null;
   return (
-    <Feuille ouverte={ouverte} onFermer={onFermer} titre="Plus">
-      <nav className="flex flex-col gap-1" aria-label="Autres sections">
-        {entrees.map((e) => (
-          <Link key={e.href} href={e.href} onClick={onFermer} aria-current={estActif(chemin, e) ? "page" : undefined}
-            className="flex h-14 items-center gap-3 rounded-2xl px-2 text-[16px] font-medium text-encre active:bg-surface-2 aria-[current=page]:bg-primaire-voile aria-[current=page]:text-primaire">
-            <span className="grid size-10 place-items-center rounded-xl bg-surface-2 text-encre-2"><e.icone className="size-5" aria-hidden /></span>
-            <span className="flex-1">{e.libelle}</span>
-            <ChevronRight className="size-4 text-encre-3" aria-hidden />
-          </Link>
-        ))}
+    <Feuille ouverte={ouverte} onFermer={onFermer} titre="Menu">
+      <nav className="grid grid-cols-2 gap-2.5" aria-label="Toutes les sections">
+        {entrees.map((e, i) => {
+          const c = e.compteur ? compteurs[e.compteur] : undefined;
+          return (
+            <Link key={e.href} href={e.href} onClick={onFermer} aria-current={estActif(chemin, e) ? "page" : undefined}
+              className="carte carte-lien onde apparition flex flex-col gap-2 p-3 aria-[current=page]:ring-2 aria-[current=page]:ring-primaire" style={{ animationDelay: `${i * 30}ms` }}>
+              <span className="flex items-start">
+                <Picto icone={e.icone} couleur={e.couleur} taille="sm" />
+                <Badge c={c} />
+              </span>
+              <span>
+                <span className="block text-[14px] leading-tight font-bold text-encre">{e.libelle}</span>
+                <span className="mt-0.5 block text-[12px] leading-snug text-encre-3">{c ? c.sens : e.description}</span>
+              </span>
+            </Link>
+          );
+        })}
       </nav>
       {etat.organisations.length > 1 && (
         <div className="mt-5">
@@ -88,13 +109,13 @@ function MenuPlus({ ouverte, onFermer }: { ouverte: boolean; onFermer: () => voi
             <button key={o.id} type="button" onClick={() => { choisirOrganisation(o.id); onFermer(); }}
               className="flex h-12 w-full items-center justify-between rounded-xl px-2 text-left text-encre hover:bg-surface-2">
               <span>{o.nom} <span className="text-encre-3">· {ROLES[o.role]?.libelle}</span></span>
-              {o.id === etat.org?.id && <Check className="size-5 text-primaire" aria-hidden />}
+              {o.id === etat.org?.id && <Check size={20} weight="bold" className="text-primaire" aria-hidden />}
             </button>
           ))}
         </div>
       )}
-      <button type="button" onClick={() => void deconnecter()} className="mt-4 flex h-12 w-full items-center gap-3 rounded-xl px-2 font-medium text-perte hover:bg-perte-voile">
-        <LogOut className="size-5" aria-hidden /> {etat.mode === "demo" ? "Quitter la démonstration" : "Se déconnecter"}
+      <button type="button" onClick={() => void deconnecter()} className="onde mt-4 flex h-12 w-full items-center gap-3 rounded-xl px-2 font-semibold text-perte-texte hover:bg-perte-voile">
+        <SignOut size={20} weight="duotone" aria-hidden /> {etat.mode === "demo" ? "Quitter la démonstration" : "Se déconnecter"}
       </button>
     </Feuille>
   );
@@ -102,13 +123,20 @@ function MenuPlus({ ouverte, onFermer }: { ouverte: boolean; onFermer: () => voi
 
 function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () => void }) {
   const chemin = usePathname();
-  const lien = (href: string, libelle: string, Icone: typeof Home, prefixe: string) => {
-    const actif = chemin.startsWith(prefixe);
+  const compteurs = useCompteursNavigation();
+  const [accueil, parc, ventes] = [NAVIGATION_PRINCIPALE[0]!, NAVIGATION_PRINCIPALE[1]!, NAVIGATION_PRINCIPALE[2]!];
+  const lien = (e: typeof accueil, libelle: string) => {
+    const actif = estActif(chemin, e);
+    const c = e.compteur ? compteurs[e.compteur] : undefined;
     return (
-      <Link href={href} aria-current={actif ? "page" : undefined}
-        className={cn("flex flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition-colors", actif ? "text-primaire" : "text-encre-3")}>
-        <span className={cn("grid h-7 w-12 place-items-center rounded-full transition-colors", actif && "bg-primaire-voile")}>
-          <Icone className="size-[20px]" strokeWidth={actif ? 2.3 : 1.8} aria-hidden />
+      <Link href={e.href} aria-current={actif ? "page" : undefined}
+        className={cn("onde relative flex flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition-colors", actif ? "text-encre" : "text-encre-3")}>
+        <span className={cn("relative grid h-8 w-12 place-items-center rounded-full transition-all", actif && "scale-105")}
+          style={actif ? { background: `color-mix(in srgb, ${e.couleur} 16%, var(--surface))`, color: `color-mix(in srgb, ${e.couleur} 85%, black)` } : undefined}>
+          <e.icone size={22} weight={actif ? "fill" : "duotone"} aria-hidden />
+          {c && (
+            <span aria-label={c.sens} className={cn("chiffres absolute -top-1 right-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold ring-2 ring-surface", c.alerte ? "bg-perte text-white" : "bg-nuit text-white")}>{c.valeur}</span>
+          )}
         </span>
         {libelle}
       </Link>
@@ -117,18 +145,18 @@ function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () 
   return (
     <nav aria-label="Navigation principale" className="zone-sure-bas fixed inset-x-0 bottom-0 z-40 border-t border-trait/70 bg-surface/90 shadow-[0_-8px_24px_-12px_rgb(15_23_42/0.18)] backdrop-blur-xl lg:hidden">
       <div className="flex h-16 items-stretch">
-        {lien("/accueil/", "Aujourd'hui", Home, "/accueil")}
-        {lien("/parc/", "Parc", Car, "/parc")}
+        {lien(accueil, "Accueil")}
+        {lien(parc, "Parc")}
         <div className="flex flex-1 items-center justify-center">
-          <button type="button" onClick={onAjouter} aria-label="Ajouter"
-            className="-mt-6 flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[#ff9a3d] to-[#f2541b] text-white shadow-[0_10px_24px_-6px_rgb(242_84_27/0.6)] ring-4 ring-papier transition-transform active:scale-95">
-            <Plus className="size-7" strokeWidth={2.4} aria-hidden />
+          <button type="button" onClick={onAjouter} aria-label="Ajouter : véhicule, vente, encaissement, dépense"
+            className="onde -mt-6 flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[#ff9a3d] to-[#f2541b] text-white shadow-[0_10px_24px_-6px_rgb(242_84_27/0.6)] ring-4 ring-papier transition-transform active:scale-95">
+            <Plus size={28} weight="bold" aria-hidden />
           </button>
         </div>
-        {lien("/ventes/", "Ventes", Banknote, "/ventes")}
-        <button type="button" onClick={onPlus} className="flex flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold text-encre-3">
-          <span className="grid h-7 w-12 place-items-center"><Ellipsis className="size-[20px]" aria-hidden /></span>
-          Plus
+        {lien(ventes, "Ventes")}
+        <button type="button" onClick={onPlus} className="onde flex flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold text-encre-3">
+          <span className="grid h-8 w-12 place-items-center"><SquaresFour size={22} weight="duotone" aria-hidden /></span>
+          Menu
         </button>
       </div>
     </nav>
@@ -138,19 +166,23 @@ function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () 
 function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
   const { etat, choisirOrganisation, deconnecter } = useSession();
   const chemin = usePathname();
+  const compteurs = useCompteursNavigation();
   const [menuOrg, setMenuOrg] = useState(false);
   if (etat.statut !== "connecte" || !etat.org) return null;
   const org = etat.org;
   const lien = (e: (typeof NAVIGATION_PRINCIPALE)[number]) => {
     const actif = estActif(chemin, e);
+    const c = e.compteur ? compteurs[e.compteur] : undefined;
     return (
-      <Link key={e.href} href={e.href} aria-current={actif ? "page" : undefined}
-        className={cn("group flex h-11 items-center gap-3 rounded-xl px-3 text-[14px] font-medium transition-all",
-          actif
-            ? "bg-gradient-to-r from-primaire to-[#3a6cf0] text-white shadow-[0_8px_20px_-8px_rgb(36_87_229/0.9)]"
-            : "text-sur-nuit-2 hover:bg-white/[0.06] hover:text-white")}>
-        <e.icone className={cn("size-[18px] transition-transform group-hover:scale-110", actif ? "text-white" : "text-sur-nuit-2")} aria-hidden />
-        {e.libelle}
+      <Link key={e.href} href={e.href} aria-current={actif ? "page" : undefined} title={e.description}
+        className={cn("group onde flex h-12 items-center gap-3 rounded-xl px-2 text-[14px] font-medium transition-all",
+          actif ? "bg-white/[0.11] text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]" : "text-sur-nuit-2 hover:bg-white/[0.06] hover:text-white")}>
+        <span className="grid size-8 shrink-0 place-items-center rounded-lg transition-transform group-hover:scale-110"
+          style={{ background: actif ? e.couleur : `color-mix(in srgb, ${e.couleur} 22%, transparent)`, color: actif ? "white" : `color-mix(in srgb, ${e.couleur} 55%, white)`, boxShadow: actif ? `0 6px 16px -6px ${e.couleur}` : undefined }}>
+          <e.icone size={18} weight={actif ? "fill" : "duotone"} aria-hidden />
+        </span>
+        <span className="truncate">{e.libelle}</span>
+        <Badge c={c} surNuit />
       </Link>
     );
   };
@@ -163,38 +195,38 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
 
       <div className="relative">
         <button type="button" onClick={() => setMenuOrg((v) => !v)} aria-expanded={menuOrg}
-          className="flex w-full items-center gap-3 rounded-xl bg-white/[0.06] p-2.5 text-left ring-1 ring-white/10 transition-colors hover:bg-white/[0.1]">
+          className="onde flex w-full items-center gap-3 rounded-xl bg-white/[0.06] p-2.5 text-left ring-1 ring-white/10 transition-colors hover:bg-white/[0.1]">
           <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#5b84ff] to-primaire text-[13px] font-bold text-white">{initiales(org.nom)}</span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-[14px] font-semibold">{org.nom}</span>
             <span className="block truncate text-[12px] text-sur-nuit-2">{ROLES[org.role]?.libelle}{etat.mode === "demo" ? " · démonstration" : ""}</span>
           </span>
-          <ChevronsUpDown className="size-4 text-sur-nuit-2" aria-hidden />
+          <CaretUpDown size={16} className="text-sur-nuit-2" aria-hidden />
         </button>
         {menuOrg && (
-          <div className="absolute top-full right-0 left-0 z-10 mt-2 rounded-2xl bg-nuit-2 p-1.5 shadow-flottante ring-1 ring-white/10">
+          <div className="absolute top-full right-0 left-0 z-10 mt-2 rounded-2xl bg-nuit-2 p-1.5 shadow-flottante ring-1 ring-white/10 [animation:apparition_180ms_both]">
             {etat.organisations.map((o) => (
               <button key={o.id} type="button" onClick={() => { choisirOrganisation(o.id); setMenuOrg(false); }}
                 className="flex h-10 w-full items-center justify-between rounded-lg px-2.5 text-left text-[13px] hover:bg-white/[0.08]">
                 <span className="truncate">{o.nom}</span>
-                {o.id === org.id && <Check className="size-4 text-[#7c9dff]" aria-hidden />}
+                {o.id === org.id && <Check size={16} weight="bold" className="text-[#7c9dff]" aria-hidden />}
               </button>
             ))}
             <button type="button" onClick={() => void deconnecter()} className="mt-1 flex h-10 w-full items-center gap-2 rounded-lg px-2.5 text-[13px] text-[#ff9b93] hover:bg-white/[0.08]">
-              <LogOut className="size-4" aria-hidden /> {etat.mode === "demo" ? "Quitter la démonstration" : "Se déconnecter"}
+              <SignOut size={16} aria-hidden /> {etat.mode === "demo" ? "Quitter la démonstration" : "Se déconnecter"}
             </button>
           </div>
         )}
       </div>
 
       <button type="button" onClick={onRecherche}
-        className="mt-4 flex h-10 items-center gap-2 rounded-xl bg-white/[0.04] px-3 text-left text-[13px] text-sur-nuit-2 ring-1 ring-white/10 transition-colors hover:bg-white/[0.08]">
-        <Search className="size-4" aria-hidden />
-        <span className="flex-1">Rechercher…</span>
+        className="onde mt-4 flex h-10 items-center gap-2 rounded-xl bg-white/[0.04] px-3 text-left text-[13px] text-sur-nuit-2 ring-1 ring-white/10 transition-colors hover:bg-white/[0.08]">
+        <MagnifyingGlass size={16} weight="bold" aria-hidden />
+        <span className="flex-1 truncate">Rechercher…</span>
         <kbd className="rounded-md bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-sur-nuit-2">Ctrl K</kbd>
       </button>
 
-      <p className="etiquette mt-7 mb-2 px-3 text-[10px] text-sur-nuit-2/70">Gestion</p>
+      <p className="etiquette mt-7 mb-2 px-2 text-[10px] text-sur-nuit-2/70">Gestion</p>
       <nav aria-label="Navigation principale" className="flex flex-col gap-1">
         {NAVIGATION_PRINCIPALE.map(lien)}
       </nav>
@@ -215,8 +247,8 @@ function EnTeteMobile({ onRecherche }: { onRecherche: () => void }) {
         <Logo className="size-8" />
         <span className="min-w-0 flex-1 truncate text-[15px] font-bold">{etat.org.nom}</span>
         <EtatReseau />
-        <button type="button" onClick={onRecherche} aria-label="Rechercher" className="inline-flex size-11 items-center justify-center rounded-full bg-surface text-encre-2 shadow-carte">
-          <Search className="size-[20px]" aria-hidden />
+        <button type="button" onClick={onRecherche} className="onde inline-flex h-10 items-center gap-1.5 rounded-full bg-surface px-3.5 text-[13px] font-semibold text-encre-2 shadow-carte ring-1 ring-trait/70">
+          <MagnifyingGlass size={17} weight="bold" aria-hidden /> Chercher
         </button>
       </div>
     </header>
@@ -253,6 +285,7 @@ export function Coque({ children }: { children: ReactNode }) {
       <BarreMobile onAjouter={() => setAjouter(true)} onPlus={() => setPlus(true)} />
       <ActionsRapides ouverte={ajouter} onFermer={() => setAjouter(false)} />
       <MenuPlus ouverte={plus} onFermer={() => setPlus(false)} />
+      <EffetsGlobaux />
       <PaletteRecherche ouverte={recherche} onFermer={() => setRecherche(false)} onAller={(href) => { setRecherche(false); router.push(href); }} />
     </div>
   );

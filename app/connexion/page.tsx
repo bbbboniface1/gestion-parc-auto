@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { PlayCircle } from "lucide-react";
+import { PlayCircle } from "@phosphor-icons/react";
 import { supabaseConfigure } from "@/lib/config";
 import { useSession } from "@/lib/session";
 import { versErreurApi } from "@/lib/api/erreurs";

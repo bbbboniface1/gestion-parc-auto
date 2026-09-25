@@ -4,9 +4,7 @@ import { Suspense, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import {
-  Archive, ArrowLeft, ArrowRight, Bookmark, BookmarkX, Camera, Ellipsis, FilePlus2, FileText, Pencil, Plus, Receipt, Route,
-} from "lucide-react";
+import { Archive, ArrowFatLineRight, ArrowRight, BookmarkSimple, Camera, Car, CurrencyCircleDollar, FileText, FolderSimplePlus, Invoice, Path, PencilSimple, Plus, XCircle } from "@phosphor-icons/react";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useParametres } from "@/lib/api/parametres";
 import type { VehiculeDetail } from "@/lib/api/types";
@@ -22,10 +20,12 @@ import { CoutRevient } from "@/components/metier/cout-revient";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
 import { FeuilleFrais } from "@/components/metier/feuille-frais";
 import { FeuilleEtape, FeuilleReservation } from "@/components/metier/feuilles-vehicule";
-import { Bouton, BoutonIcone } from "@/components/ui/bouton";
+import { Bouton } from "@/components/ui/bouton";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
 import { EtiquetteEtape, Montant, Surtitre } from "@/components/ui/signature";
-import { MenuActions } from "@/components/ui/menu";
+import { FilAriane } from "@/components/ui/fil-ariane";
+import { PanneauActions, type ActionVisible } from "@/components/ui/panneau-actions";
+import { useCompteursNavigation } from "@/lib/compteurs";
 import { Feuille } from "@/components/ui/feuille";
 import { Selection } from "@/components/ui/champ";
 
@@ -56,6 +56,7 @@ function Fiche() {
   const router = useRouter();
   const { data: reglages } = useParametres();
   const { data: v, error, isPending, refetch } = useLecture<VehiculeDetail>("vehicule_obtenir", { p_org: org.id, p_id: id }, { enabled: !!id });
+  const compteurs = useCompteursNavigation();
 
   const [feuille, setFeuille] = useState<null | "frais" | "etape" | "reserver" | "document">(null);
   const [etapeProposee, setEtapeProposee] = useState<ReturnType<typeof etapeSuivante>>(null);
@@ -120,15 +121,17 @@ function Fiche() {
     }
   }
 
-  const actionsMenu = [
-    { libelle: "Modifier la fiche", icone: <Pencil className="size-4" />, onSelect: () => router.push(`/parc/modifier/?id=${v.id}`), masque: !modifier },
-    { libelle: "Changer d'étape", icone: <Route className="size-4" />, onSelect: () => { setEtapeProposee(null); setFeuille("etape"); }, masque: !modifier },
-    { libelle: "Ajouter un frais", icone: <Receipt className="size-4" />, onSelect: () => setFeuille("frais"), masque: !saisirFrais },
-    { libelle: "Ajouter des photos", icone: <Camera className="size-4" />, onSelect: () => champPhoto.current?.click(), masque: !modifier },
-    { libelle: "Ajouter un document", icone: <FilePlus2 className="size-4" />, onSelect: () => setFeuille("document"), masque: !modifier },
-    { libelle: "Réserver pour un client", icone: <Bookmark className="size-4" />, onSelect: () => setFeuille("reserver"), masque: !vendre || v.statut_commercial !== "disponible" },
-    { libelle: "Lever la réservation", icone: <BookmarkX className="size-4" />, onSelect: () => liberer.executer({ p_org: org.id, p_id: v.id }), masque: !vendre || v.statut_commercial !== "reserve" },
-    { libelle: v.archive ? "Désarchiver" : "Archiver", icone: <Archive className="size-4" />, danger: !v.archive, onSelect: () => archiver.executer({ p_org: org.id, p_id: v.id, p_archive: !v.archive }), masque: !modifier || v.statut_commercial === "vendu" },
+  const actions: ActionVisible[] = [
+    { cle: "vendre", titre: "Vendre ce véhicule", detail: v.prix_affiche_xof ? `Facture au prix affiché ${formatNombre(v.prix_affiche_xof)} FCFA` : "Facture, acompte ou paiement échelonné", icone: Invoice, couleur: "var(--gain)", principale: true, href: `/ventes/nouvelle/?vehicule=${v.id}`, masque: !vendre },
+    { cle: "suivante", titre: suivante ? `Passer à « ${defEtape(suivante).libelle} »` : "Étape suivante", detail: suivante ? `Étape ${["achete", "transport_usa", "en_mer", "au_port", "convoi", "douane", "atelier", "parc"].indexOf(suivante) + 1} sur 8 · daté d'aujourd'hui` : undefined, icone: ArrowFatLineRight, couleur: suivante ? defEtape(suivante).couleur : "var(--primaire)", onClick: () => { setEtapeProposee(suivante); setFeuille("etape"); }, masque: !modifier || !suivante },
+    { cle: "frais", titre: "Ajouter un frais", detail: "Fret, douane, atelier : compté dans le coût", icone: CurrencyCircleDollar, couleur: "var(--accent)", onClick: () => setFeuille("frais"), masque: !saisirFrais },
+    { cle: "photos", titre: "Ajouter des photos", detail: `${pluriel(v.photos.length, "photo")} · appareil ou galerie`, icone: Camera, couleur: "var(--etape-en-mer)", onClick: () => champPhoto.current?.click(), masque: !modifier },
+    { cle: "document", titre: "Ajouter un document", detail: `${pluriel(v.documents.length, "document")} · BL, titre, douane`, icone: FolderSimplePlus, couleur: "var(--etape-achete)", onClick: () => setFeuille("document"), masque: !modifier },
+    { cle: "reserver", titre: "Réserver pour un client", detail: "Bloque la vente jusqu'à une date", icone: BookmarkSimple, couleur: "var(--reserve)", onClick: () => setFeuille("reserver"), masque: !vendre || v.statut_commercial !== "disponible" },
+    { cle: "liberer", titre: "Lever la réservation", detail: v.reserve_client_nom ? `Réservé pour ${v.reserve_client_nom}` : undefined, icone: XCircle, couleur: "var(--reserve)", onClick: () => liberer.executerAsync({ p_org: org.id, p_id: v.id }), masque: !vendre || v.statut_commercial !== "reserve" },
+    { cle: "modifier", titre: "Modifier la fiche", detail: "VIN, prix, kilométrage, notes", icone: PencilSimple, couleur: "var(--primaire)", href: `/parc/modifier/?id=${v.id}`, masque: !modifier },
+    { cle: "etape", titre: "Choisir une autre étape", detail: "Revenir en arrière ou sauter une étape", icone: Path, couleur: "var(--encre-3)", onClick: () => { setEtapeProposee(null); setFeuille("etape"); }, masque: !modifier },
+    { cle: "archiver", titre: v.archive ? "Remettre au parc" : "Archiver", detail: v.archive ? "Le véhicule réapparaît dans le parc" : "Le retire du parc, sans rien effacer", icone: Archive, couleur: "var(--encre-3)", danger: !v.archive, onClick: () => archiver.executerAsync({ p_org: org.id, p_id: v.id, p_archive: !v.archive }), masque: !modifier || v.statut_commercial === "vendu" },
   ];
 
   const blocPrix = (
@@ -162,24 +165,10 @@ function Fiche() {
 
   return (
     <div className="pb-24 lg:pb-0">
-      <div className="mb-3 flex items-center justify-between">
-        <Link href="/parc/" className="inline-flex h-10 items-center gap-1.5 text-[14px] text-encre-2 hover:text-encre">
-          <ArrowLeft className="size-4" aria-hidden /> Parc
-        </Link>
-        <div className="flex items-center gap-2">
-          {vendre && (
-            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="hidden h-10 items-center gap-2 rounded-controle bg-primaire px-4 text-sm font-medium text-sur-primaire hover:bg-primaire-fonce lg:inline-flex">
-              <Receipt className="size-4" aria-hidden /> Vendre
-            </Link>
-          )}
-          {modifier && suivante && (
-            <Bouton className="hidden lg:inline-flex" icone={<ArrowRight className="size-4" />} onClick={() => { setEtapeProposee(suivante); setFeuille("etape"); }}>
-              {defEtape(suivante).libelle}
-            </Bouton>
-          )}
-          <MenuActions entrees={actionsMenu} declencheur={<BoutonIcone libelle="Plus d'actions"><Ellipsis className="size-5" /></BoutonIcone>} />
-        </div>
-      </div>
+      <FilAriane
+        retour={{ href: "/parc/", libelle: "Parc", icone: Car, couleur: "var(--etape-achete)", detail: compteurs.parc?.sens }}
+        etapes={[defEtape(v.etape).libelle, v.libelle]}
+      />
 
       <CarteEmbarquement v={v} uniteCompteur={p?.unite_compteur} photo={v.photo_principale_path} />
 
@@ -194,6 +183,7 @@ function Fiche() {
             eta={v.expedition?.date_arrivee_reelle ? null : v.expedition?.date_arrivee_prevue}
           />
           <div className="lg:hidden">{blocPrix}</div>
+          <PanneauActions titre="Que voulez-vous faire ?" actions={actions} className="lg:hidden" />
           {voitCouts && (
             <CoutRevient
               lignes={lignesCout}
@@ -261,6 +251,7 @@ function Fiche() {
 
         <div className="flex min-w-0 flex-col gap-4 lg:col-span-4 lg:gap-5">
           <div className="hidden lg:block">{blocPrix}</div>
+          <PanneauActions titre="Que voulez-vous faire ?" actions={actions} className="hidden lg:block" />
 
           <Bloc titre={`Photos · ${v.photos.length}`}
             action={modifier ? <Bouton variante="fantome" taille="sm" icone={<Camera className="size-4" />} chargement={envoiPhotos > 0} onClick={() => champPhoto.current?.click()}>Ajouter</Bouton> : undefined}>
@@ -323,15 +314,15 @@ function Fiche() {
 
       {/* Barre d'action mobile, au pouce */}
       {(vendre || (modifier && suivante) || v.vente) && (
-        <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex gap-2 border-t border-trait bg-surface/95 px-4 py-3 backdrop-blur lg:hidden">
+        <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex gap-2 border-t border-trait/70 bg-surface/90 px-4 py-3 shadow-[0_-8px_24px_-12px_rgb(15_23_42/0.18)] backdrop-blur-xl lg:hidden">
           {modifier && suivante && (
-            <Bouton className="flex-1" icone={<ArrowRight className="size-4" />} onClick={() => { setEtapeProposee(suivante); setFeuille("etape"); }}>
-              {defEtape(suivante).libelle}
+            <Bouton className="flex-1" icone={<ArrowFatLineRight size={18} weight="duotone" />} onClick={() => { setEtapeProposee(suivante); setFeuille("etape"); }}>
+              Passer à « {defEtape(suivante).libelle} »
             </Bouton>
           )}
           {vendre ? (
-            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-controle bg-primaire text-[15px] font-medium text-sur-primaire active:bg-primaire-fonce">
-              <Receipt className="size-4" aria-hidden /> Vendre
+            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="onde inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire text-[15px] font-semibold text-white shadow-bouton">
+              <Invoice size={18} weight="fill" aria-hidden /> Vendre
             </Link>
           ) : v.vente ? (
             <Link href={`/ventes/fiche/?id=${v.vente.id}`} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-controle border border-trait-fort bg-surface text-[15px] font-medium">

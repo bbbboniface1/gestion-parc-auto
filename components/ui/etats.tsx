@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CloudOff, RotateCw } from "lucide-react";
+import { ArrowClockwise, CloudSlash } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 import type { ErreurApi } from "@/lib/api/erreurs";
 import { Bouton } from "./bouton";
@@ -46,12 +46,12 @@ export function EtatErreur({ erreur, onReessayer, className }: { erreur: ErreurA
   return (
     <div role="alert" className={cn("flex flex-col items-start gap-3 carte px-5 py-6", className)}>
       <div className="flex items-center gap-2 text-encre">
-        {horsLigne && <CloudOff className="size-5 text-ocre-texte" aria-hidden />}
+        {horsLigne && <CloudSlash className="size-5 text-ocre-texte" aria-hidden />}
         <p className="font-semibold">{horsLigne ? "Pas de connexion" : "Impossible d'afficher ces données"}</p>
       </div>
       <p className="text-encre-2">{erreur?.message ?? "Une erreur est survenue."}</p>
       {onReessayer && (
-        <Bouton variante="secondaire" taille="sm" icone={<RotateCw className="size-4" />} onClick={onReessayer}>
+        <Bouton variante="secondaire" taille="sm" icone={<ArrowClockwise className="size-4" />} onClick={onReessayer}>
           Réessayer
         </Bouton>
       )}

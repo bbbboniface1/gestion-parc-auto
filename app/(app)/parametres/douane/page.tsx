@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Calculator } from "lucide-react";
+import { Calculator } from "@phosphor-icons/react";
 import { estimerDouane, type BaremeDouane } from "@/lib/estimation";
 import { HYPOTHESES_PAR_DEFAUT } from "@/lib/simulateur";
 import { formatNombre } from "@/lib/format";

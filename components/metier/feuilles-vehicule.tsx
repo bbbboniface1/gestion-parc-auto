@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Search, UserPlus } from "lucide-react";
+import { MagnifyingGlass, UserPlus } from "@phosphor-icons/react";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import { ETAPES, type Etape } from "@/lib/domaine";
@@ -11,6 +11,8 @@ import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ, ZoneTexte } from "@/components/ui/champ";
 import { cn } from "@/lib/cn";
+import { celebrer } from "@/lib/celebration";
+import { etape as defEtapeCelebration } from "@/lib/domaine";
 
 export function FeuilleEtape({ ouverte, onFermer, vehiculeId, actuelle, proposee }: {
   ouverte: boolean; onFermer: () => void; vehiculeId: string; actuelle: Etape; proposee?: Etape | null;
@@ -23,7 +25,7 @@ export function FeuilleEtape({ ouverte, onFermer, vehiculeId, actuelle, proposee
     if (ouverte) { setEtape(proposee ?? actuelle); setDate(aujourdhui()); setNote(""); }
   }, [ouverte, proposee, actuelle]);
   const changer = useEcriture("vehicule_changer_etape", {
-    onSuccess: () => { toast.success("Étape enregistrée"); onFermer(); },
+    onSuccess: () => { const d = defEtapeCelebration(etape); celebrer({ type: "etape", titre: `${d.libelle} : c'est noté`, detail: date === aujourdhui() ? "Le véhicule avance sur son trajet." : `Étape datée du ${date.split("-").reverse().join("/")}.`, couleur: d.couleur }); onFermer(); },
     onError: (e) => toast.error(e.message),
   });
   return (
@@ -100,7 +102,7 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
     <div className="flex flex-col gap-2">
       <label className="relative">
         <span className="sr-only">Rechercher un client</span>
-        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
+        <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nom ou téléphone"
           className="h-11 w-full rounded-controle border border-trait-fort bg-surface pl-9 text-[15px] focus:border-primaire focus:outline-none" />
       </label>
@@ -126,7 +128,7 @@ export function FeuilleReservation({ ouverte, onFermer, vehiculeId }: { ouverte:
   const [client, setClient] = useState<ClientLigne | null>(null);
   const [jusquau, setJusquau] = useState("");
   const reserver = useEcriture("vehicule_reserver", {
-    onSuccess: () => { toast.success("Véhicule réservé"); onFermer(); },
+    onSuccess: () => { celebrer({ type: "simple", titre: "Véhicule réservé", detail: "Personne d'autre ne pourra le vendre d'ici là." }); onFermer(); },
     onError: (e) => toast.error(e.message),
   });
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Calculator, CircleDollarSign, HandCoins, Plus, Receipt, TrendingUp } from "lucide-react";
+import { Calculator, CurrencyCircleDollar, HandCoins, Plus, Receipt, TrendUp } from "@phosphor-icons/react";
 import { useLecture } from "@/lib/api/requetes";
 import type { TableauDeBord, Vehicule } from "@/lib/api/types";
 import { useOrg } from "@/lib/session";
@@ -76,12 +76,12 @@ function Contenu({ d, vehicules }: { d: TableauDeBord; vehicules: Vehicule[] }) 
           <TuileIndicateur index={1} libelle="Ventes du mois" valeur={i.ventes_mois.nb} format={(v) => String(Math.round(v))}
             evolution={evolution(nbs)} serie={nbs} couleur="var(--primaire)" icone={<Receipt className="size-5" />} lien="/ventes/" />
           <TuileIndicateur index={2} libelle="Chiffre d'affaires" valeur={i.ventes_mois.ca} complement="FCFA ce mois"
-            evolution={evolution(ca)} serie={ca} couleur="var(--etape-en-mer)" icone={<TrendingUp className="size-5" />} lien="/finances/?onglet=rentabilite" />
+            evolution={evolution(ca)} serie={ca} couleur="var(--etape-en-mer)" icone={<TrendUp className="size-5" />} lien="/finances/?onglet=rentabilite" />
           {i.ventes_mois.marge !== null ? (
             <TuileIndicateur index={3} libelle="Marge du mois" valeur={i.ventes_mois.marge} complement={tauxMarge !== null ? `${formatPourcent(tauxMarge, 0)} du chiffre d'affaires` : undefined}
-              evolution={evolution(marges)} serie={marges} couleur="var(--gain)" icone={<CircleDollarSign className="size-5" />} lien="/finances/?onglet=rentabilite" />
+              evolution={evolution(marges)} serie={marges} couleur="var(--gain)" icone={<CurrencyCircleDollar className="size-5" />} lien="/finances/?onglet=rentabilite" />
           ) : (
-            <TuileIndicateur index={3} libelle="Encaissé ce mois" valeur={i.encaisse_mois} couleur="var(--gain)" icone={<CircleDollarSign className="size-5" />} />
+            <TuileIndicateur index={3} libelle="Encaissé ce mois" valeur={i.encaisse_mois} couleur="var(--gain)" icone={<CurrencyCircleDollar className="size-5" />} />
           )}
           <TuileIndicateur index={4} libelle="Créances clients" valeur={i.creances_total}
             complement={i.a_payer_fournisseurs !== null ? `${formatCourt(i.a_payer_fournisseurs)} à payer aux fournisseurs` : "reste à encaisser"}

@@ -18,6 +18,7 @@ import { Champ } from "@/components/ui/champ";
 import { ChampMontant } from "@/components/ui/champ-montant";
 import { Choix } from "@/components/ui/choix";
 import { Registre } from "@/components/metier/registre";
+import { celebrer } from "@/lib/celebration";
 
 interface ClientLigne { id: string; nom: string; telephone: string | null; ville: string | null }
 interface Echeance { date: string; montant: number }
@@ -82,7 +83,7 @@ function NouvelleVente() {
   const sommeEcheances = (acompte ?? 0) + echeancesFinales.reduce((s, e) => s + e.montant, 0);
 
   const creer = useEcriture<{ id: string; numero: string }>("vente_creer", {
-    onSuccess: (v) => { toast.success(`Vente ${v?.numero ?? ""} enregistrée`); router.push(`/ventes/fiche/?id=${v?.id ?? ""}`); },
+    onSuccess: (v) => { celebrer({ type: "vente", titre: "Vente enregistrée", detail: `Facture ${v?.numero ?? ""} prête à envoyer` }); router.push(`/ventes/fiche/?id=${v?.id ?? ""}`); },
     onError: (e) => toast.error(e.message),
   });
 

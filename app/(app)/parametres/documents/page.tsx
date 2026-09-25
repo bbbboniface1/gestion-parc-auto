@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Eye } from "lucide-react";
+import { Eye } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import type { Parametres } from "@/lib/api/parametres";
 import { formaterNumero, JETONS_NUMERO, verifierFormat } from "@/lib/numerotation";

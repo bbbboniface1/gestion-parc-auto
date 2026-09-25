@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { GearSix, SquaresFour } from "@phosphor-icons/react";
 import { useOrg } from "@/lib/session";
 import { cn } from "@/lib/cn";
 import { sectionsPour } from "@/components/parametres/commun";
+import { FilAriane } from "@/components/ui/fil-ariane";
 
 export default function ParametresLayout({ children }: { children: React.ReactNode }) {
   const org = useOrg();
@@ -16,11 +17,12 @@ export default function ParametresLayout({ children }: { children: React.ReactNo
   return (
     <div className="lg:grid lg:grid-cols-[220px_1fr] lg:gap-10">
       <nav aria-label="Sections des paramètres" className="hidden lg:block">
-        <p className="etiquette mb-2 text-[12px] text-encre-3">Paramètres</p>
-        <ul className="sticky top-8 flex flex-col gap-0.5">
+        <p className="etiquette mb-2 px-2 text-[11px] text-encre-3">Paramètres</p>
+        <ul className="carte sticky top-8 flex flex-col gap-0.5 p-2">
           <li>
             <Link href="/parametres/" aria-current={accueil ? "page" : undefined}
-              className={cn("flex h-9 items-center rounded-controle px-3 text-sm", accueil ? "bg-surface font-medium text-encre shadow-[inset_3px_0_0_var(--primaire)]" : "text-encre-2 hover:bg-surface/60")}>
+              className={cn("onde flex h-10 items-center gap-2.5 rounded-xl px-2 text-sm font-medium transition-colors", accueil ? "bg-primaire-voile font-bold text-primaire" : "text-encre-2 hover:bg-surface-2")}>
+              <span className="grid size-7 place-items-center rounded-lg bg-surface-2 text-encre-2"><SquaresFour size={16} weight="duotone" aria-hidden /></span>
               Vue d&apos;ensemble
             </Link>
           </li>
@@ -29,8 +31,10 @@ export default function ParametresLayout({ children }: { children: React.ReactNo
             return (
               <li key={s.cle}>
                 <Link href={`/parametres/${s.cle}/`} aria-current={actif ? "page" : undefined}
-                  className={cn("flex h-9 items-center gap-2.5 rounded-controle px-3 text-sm", actif ? "bg-surface font-medium text-encre shadow-[inset_3px_0_0_var(--primaire)]" : "text-encre-2 hover:bg-surface/60")}>
-                  <s.icone className="size-4 text-encre-3" aria-hidden />
+                  className={cn("onde flex h-10 items-center gap-2.5 rounded-xl px-2 text-sm font-medium transition-colors", actif ? "bg-primaire-voile font-bold text-primaire" : "text-encre-2 hover:bg-surface-2")}>
+                  <span className="grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: `color-mix(in srgb, ${s.couleur} 14%, var(--surface))`, color: `color-mix(in srgb, ${s.couleur} 85%, black)` }}>
+                    <s.icone size={16} weight={actif ? "fill" : "duotone"} aria-hidden />
+                  </span>
                   {s.libelle}
                 </Link>
               </li>
@@ -40,9 +44,9 @@ export default function ParametresLayout({ children }: { children: React.ReactNo
       </nav>
       <div className="min-w-0">
         {!accueil && (
-          <Link href="/parametres/" className="mb-2 inline-flex h-10 items-center gap-1.5 text-[14px] text-encre-2 hover:text-encre lg:hidden">
-            <ArrowLeft className="size-4" aria-hidden /> Paramètres
-          </Link>
+          <div className="lg:hidden">
+            <FilAriane retour={{ href: "/parametres/", libelle: "Paramètres", icone: GearSix, couleur: "var(--encre-3)", detail: "Toutes les sections" }} />
+          </div>
         )}
         {children}
       </div>

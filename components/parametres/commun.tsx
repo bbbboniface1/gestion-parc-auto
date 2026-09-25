@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
-  Building2, Coins, Database, FileText, History, Landmark, Palette, Ship, Store, Users, type LucideIcon,
-} from "lucide-react";
+  Anchor, Buildings, ClockCounterClockwise, CurrencyDollar, Database, Invoice, Palette, Stamp, Storefront, UsersThree, type Icon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useEcriture } from "@/lib/api/requetes";
 import { useParametres, type Parametres } from "@/lib/api/parametres";
@@ -15,21 +15,22 @@ export interface SectionParametres {
   cle: string;
   libelle: string;
   description: string;
-  icone: LucideIcon;
+  icone: Icon;
+  couleur: string;
   roles: Role[];
 }
 
 export const SECTIONS: SectionParametres[] = [
-  { cle: "entreprise", libelle: "Entreprise", description: "Nom, adresse, NIF, RCCM, logo, cachet et signature", icone: Building2, roles: ["proprietaire", "gerant"] },
-  { cle: "documents", libelle: "Documents et facturation", description: "Numérotation, TVA, mentions, modèle WhatsApp", icone: FileText, roles: ["proprietaire", "gerant"] },
-  { cle: "devises", libelle: "Devises et taux", description: "Taux du dollar, parité de l'euro", icone: Coins, roles: ["proprietaire", "gerant"] },
-  { cle: "douane", libelle: "Frais et douane", description: "Barème de dédouanement, hypothèses du simulateur", icone: Landmark, roles: ["proprietaire", "gerant"] },
-  { cle: "logistique", libelle: "Logistique", description: "Ports, transitaires, compagnies, fournisseurs", icone: Ship, roles: ["proprietaire", "gerant"] },
-  { cle: "ventes", libelle: "Ventes et alertes", description: "Modes de paiement, alertes, confidentialité des coûts", icone: Store, roles: ["proprietaire", "gerant"] },
-  { cle: "equipe", libelle: "Équipe", description: "Membres, rôles, invitations", icone: Users, roles: ["proprietaire", "gerant"] },
-  { cle: "preferences", libelle: "Préférences", description: "Thème, taille du texte sur cet appareil", icone: Palette, roles: ["proprietaire", "gerant", "vendeur", "comptable", "lecture"] },
-  { cle: "donnees", libelle: "Données", description: "Exports, sauvegarde, démonstration", icone: Database, roles: ["proprietaire", "gerant", "comptable"] },
-  { cle: "journal", libelle: "Journal", description: "Qui a fait quoi, et quand", icone: History, roles: ["proprietaire", "gerant", "comptable"] },
+  { cle: "entreprise", libelle: "Entreprise", description: "Nom, adresse, NIF, RCCM, logo, cachet et signature", icone: Buildings, couleur: "var(--primaire)", roles: ["proprietaire", "gerant"] },
+  { cle: "documents", libelle: "Documents et facturation", description: "Numérotation, TVA, mentions, modèle WhatsApp", icone: Invoice, couleur: "var(--gain)", roles: ["proprietaire", "gerant"] },
+  { cle: "devises", libelle: "Devises et taux", description: "Taux du dollar, parité de l'euro", icone: CurrencyDollar, couleur: "var(--accent)", roles: ["proprietaire", "gerant"] },
+  { cle: "douane", libelle: "Frais et douane", description: "Barème de dédouanement, hypothèses du simulateur", icone: Stamp, couleur: "var(--etape-douane)", roles: ["proprietaire", "gerant"] },
+  { cle: "logistique", libelle: "Logistique", description: "Ports, transitaires, compagnies, fournisseurs", icone: Anchor, couleur: "var(--etape-en-mer)", roles: ["proprietaire", "gerant"] },
+  { cle: "ventes", libelle: "Ventes et alertes", description: "Modes de paiement, alertes, confidentialité des coûts", icone: Storefront, couleur: "var(--reserve)", roles: ["proprietaire", "gerant"] },
+  { cle: "equipe", libelle: "Équipe", description: "Membres, rôles, invitations", icone: UsersThree, couleur: "var(--etape-achete)", roles: ["proprietaire", "gerant"] },
+  { cle: "preferences", libelle: "Préférences", description: "Thème, taille du texte sur cet appareil", icone: Palette, couleur: "var(--etape-atelier)", roles: ["proprietaire", "gerant", "vendeur", "comptable", "lecture"] },
+  { cle: "donnees", libelle: "Données", description: "Exports, sauvegarde, démonstration", icone: Database, couleur: "var(--etape-au-port)", roles: ["proprietaire", "gerant", "comptable"] },
+  { cle: "journal", libelle: "Journal", description: "Qui a fait quoi, et quand", icone: ClockCounterClockwise, couleur: "var(--encre-3)", roles: ["proprietaire", "gerant", "comptable"] },
 ];
 
 export function sectionsPour(role: Role): SectionParametres[] {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, MessageCircle, UserPlus, X } from "lucide-react";
+import { Copy, UserPlus, WhatsappLogo, X } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
@@ -75,7 +75,7 @@ export default function PageEquipe() {
                   <li key={i.id} className="flex items-center gap-3 border-b border-trait px-4 py-3 last:border-b-0">
                     <Code className="text-[15px]">{i.code}</Code>
                     <span className="flex-1 text-[14px] text-encre-2">{ROLES[i.role].libelle} · expire le {formatDate(i.expire_le)}</span>
-                    <a href={lienWhatsApp(null, message(i))} target="_blank" rel="noopener" aria-label="Envoyer par WhatsApp" className="inline-flex size-10 items-center justify-center rounded-controle text-encre-2 hover:bg-surface-2"><MessageCircle className="size-4" /></a>
+                    <a href={lienWhatsApp(null, message(i))} target="_blank" rel="noopener" aria-label="Envoyer par WhatsApp" className="inline-flex size-10 items-center justify-center rounded-controle text-encre-2 hover:bg-surface-2"><WhatsappLogo className="size-4" /></a>
                     <button type="button" aria-label={`Annuler l'invitation ${i.code}`} onClick={() => annulerInvitation.executer({ p_org: org.id, p_id: i.id })}
                       className="inline-flex size-10 items-center justify-center rounded-controle text-encre-3 hover:bg-surface-2 hover:text-perte"><X className="size-4" /></button>
                   </li>
@@ -101,7 +101,7 @@ export default function PageEquipe() {
           <>
             <Bouton icone={<Copy className="size-4" />} onClick={() => { void navigator.clipboard?.writeText(message(nouvelle)); toast.success("Message copié"); }}>Copier</Bouton>
             <a href={lienWhatsApp(null, message(nouvelle))} target="_blank" rel="noopener" className="inline-flex h-11 items-center justify-center gap-2 rounded-controle bg-primaire px-4 text-[15px] font-medium text-sur-primaire lg:h-10 lg:text-sm">
-              <MessageCircle className="size-4" aria-hidden /> WhatsApp
+              <WhatsappLogo className="size-4" aria-hidden /> WhatsApp
             </a>
           </>
         ) : (

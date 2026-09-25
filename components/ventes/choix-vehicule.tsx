@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import { useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { Vehicule } from "@/lib/api/types";
@@ -33,7 +33,7 @@ export function ChoixVehicule({ valeur, onChoix }: { valeur: Vehicule | null; on
     <div className="flex flex-col gap-2">
       <label className="relative">
         <span className="sr-only">Rechercher un véhicule</span>
-        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
+        <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Modèle, VIN, référence…"
           className="h-11 w-full rounded-controle border border-trait-fort bg-surface pl-9 text-[15px] focus:border-primaire focus:outline-none" />
       </label>

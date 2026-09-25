@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Columns3, LayoutGrid, List, Plus, Search, X } from "lucide-react";
+import { Kanban, MagnifyingGlass, Plus, Rows, SquaresFour, X } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import type { Vehicule } from "@/lib/api/types";
@@ -123,7 +123,7 @@ function Parc() {
           <>
             {ordinateur && (
               <div className="flex rounded-full bg-surface p-1 shadow-carte ring-1 ring-trait/70" role="group" aria-label="Affichage">
-                {([["galerie", "Galerie", LayoutGrid], ["colonnes", "Colonnes", Columns3], ["liste", "Liste", List]] as const).map(([valeur, libelle, Icone]) => (
+                {([["galerie", "Galerie", SquaresFour], ["colonnes", "Colonnes", Kanban], ["liste", "Liste", Rows]] as const).map(([valeur, libelle, Icone]) => (
                   <button key={valeur} type="button" aria-pressed={vue === valeur}
                     onClick={() => { setVue(valeur); localStorage.setItem("parc-auto:vue-parc", valeur); }}
                     className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold transition-all",
@@ -146,7 +146,7 @@ function Parc() {
       <div className="apparition mb-4 flex flex-col gap-3 lg:flex-row lg:items-center" style={{ animationDelay: "60ms" }}>
         <label className="relative flex-1 lg:max-w-md">
           <span className="sr-only">Rechercher dans le parc</span>
-          <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
+          <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Modèle, VIN, lot, conteneur, client…"
             className="h-12 w-full rounded-full border border-trait bg-surface pr-10 pl-11 text-[15px] shadow-carte transition-all placeholder:text-encre-3/70 focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] focus:outline-none lg:h-11 lg:text-sm" />
           {q && (

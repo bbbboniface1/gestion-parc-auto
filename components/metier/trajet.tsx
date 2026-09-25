@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { Boat, Car, Check, Stamp, Truck, Warehouse, Wrench, type Icon } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 import { ETAPES, ORDRE_ETAPES, type Etape } from "@/lib/domaine";
 import { formatDate, joursDepuis, lireDate } from "@/lib/format";
@@ -25,9 +29,14 @@ export function joursParEtape(historique: Passage[], actuelle: Etape, aujourdhui
   return jours;
 }
 
+/** Ce qui transporte le véhicule à chaque étape. */
+const VEHICULE: Record<Etape, Icon> = {
+  achete: Car, transport_usa: Truck, en_mer: Boat, au_port: Warehouse, convoi: Truck, douane: Stamp, atelier: Wrench, parc: Car,
+};
+
 /**
- * Le trajet : une étape par point, pleins pour le passé, anneau pour l'étape en cours, vides pour
- * la suite ; sous chaque point, le nombre de jours qu'on y a passé. Au-dessus, les lieux.
+ * Le trajet : la ligne se trace depuis l'enchère jusqu'à l'étape en cours, les étapes franchies sont cochées
+ * dans leur couleur, et le moyen de transport (camion, bateau…) flotte au-dessus de l'étape actuelle.
  */
 export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
   etape: Etape;
@@ -40,51 +49,83 @@ export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
   const indexActuel = ORDRE_ETAPES.indexOf(etape);
   const jours = joursParEtape(historique, etape);
   const total = [...jours.values()].reduce((s, j) => s + j, 0);
-  const lieux: Record<number, string> = { 0: depart || "États-Unis", 3: port || "Port", 5: arrivee || "Bamako" };
+  const lieux: Record<number, string> = { 0: depart || "États-Unis", 3: port || "Port", 7: arrivee || "Bamako" };
+  const courante = ETAPES[indexActuel]!;
+  const Transport = VEHICULE[etape];
+  const piste = useRef<HTMLDivElement>(null);
+  const cible = useRef<HTMLLIElement>(null);
+
+  // Sur téléphone la piste défile : on amène l'étape en cours au centre.
+  useEffect(() => {
+    const p = piste.current, c = cible.current;
+    if (!p || !c || p.scrollWidth <= p.clientWidth) return;
+    p.scrollTo({ left: c.offsetLeft - p.clientWidth / 2 + c.clientWidth / 2, behavior: "smooth" });
+  }, [etape]);
+
+  const pas = 100 / ETAPES.length;
+  const finLigne = pas * indexActuel + pas / 2;
 
   return (
-    <section aria-label="Trajet du véhicule" className="carte p-4 lg:p-5">
-      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="etiquette text-[12px] text-encre-3">Le trajet</h2>
-        <p className="text-[13px] text-encre-2">
-          {total > 0 && <span className="chiffres">{total} jours depuis l&apos;achat</span>}
+    <section aria-label="Trajet du véhicule" className="carte apparition p-4 lg:p-5">
+      <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-[17px] font-bold">Le trajet</h2>
+        <p className="text-[13px] text-encre-3">
+          {total > 0 && <span className="chiffres font-semibold text-encre">{total} jours depuis l&apos;achat</span>}
           {eta && indexActuel <= ORDRE_ETAPES.indexOf("en_mer") && (
-            <span className="ml-2 font-medium text-encre">· arrivée au port prévue le {formatDate(eta)}</span>
+            <span className="ml-2 rounded-full bg-acier-voile px-2 py-0.5 font-semibold text-acier">Arrivée au port prévue le {formatDate(eta)}</span>
           )}
         </p>
       </div>
-      <div className="sans-barre -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-        <ol className="relative grid min-w-[620px] grid-cols-8">
-          {ETAPES.map((e, i) => {
-            const etat = i < indexActuel ? "passee" : i === indexActuel ? "courante" : "future";
-            const j = jours.get(e.code);
-            return (
-              <li key={e.code} className="relative flex flex-col items-center text-center" aria-current={etat === "courante" ? "step" : undefined}>
-                <span className="etiquette h-4 text-[11px] text-encre-2">{lieux[i] ?? ""}</span>
-                <div className="relative mt-1 flex h-6 w-full items-center justify-center">
-                  {i > 0 && (
-                    <span aria-hidden className={cn("absolute top-1/2 right-1/2 left-0 border-t-2", i <= indexActuel ? "border-solid" : "border-dashed border-trait-fort")}
-                      style={i <= indexActuel ? { borderColor: ETAPES[i - 1]!.couleur } : undefined} />
-                  )}
-                  {i < ETAPES.length - 1 && (
-                    <span aria-hidden className={cn("absolute top-1/2 right-0 left-1/2 border-t-2", i < indexActuel ? "border-solid" : "border-dashed border-trait-fort")}
-                      style={i < indexActuel ? { borderColor: e.couleur } : undefined} />
-                  )}
-                  <span
-                    aria-hidden
-                    className={cn("relative z-10 rounded-full border-[3px] bg-surface", etat === "courante" ? "size-5" : "size-3.5")}
-                    style={{ borderColor: etat === "future" ? "var(--trait-fort)" : e.couleur, background: etat === "passee" ? e.couleur : undefined }}
-                  />
-                </div>
-                <span className={cn("mt-1.5 text-[12px] leading-tight", etat === "courante" ? "font-semibold text-encre" : etat === "passee" ? "text-encre-2" : "text-encre-3")}>
-                  {e.libelle}
-                </span>
-                <span className="chiffres mt-0.5 h-4 text-[11px] text-encre-3">{j !== undefined ? `${j} j` : ""}</span>
-                <span className="sr-only">{etat === "passee" ? "étape passée" : etat === "courante" ? "étape en cours" : "à venir"}</span>
-              </li>
-            );
-          })}
-        </ol>
+
+      <div ref={piste} className="sans-barre -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
+        <div className="relative min-w-[640px] pt-14 pb-1">
+          {/* Lieux */}
+          <div aria-hidden className="absolute inset-x-0 top-0 h-4">
+            {Object.entries(lieux).map(([i, lieu]) => (
+              <span key={i} className="etiquette absolute -translate-x-1/2 text-[10px] whitespace-nowrap text-encre-3" style={{ left: `${pas * Number(i) + pas / 2}%` }}>{lieu}</span>
+            ))}
+          </div>
+
+          {/* Ligne de fond, puis ligne parcourue qui se trace */}
+          <div aria-hidden className="absolute top-[69px] h-1.5 rounded-full bg-surface-2" style={{ left: `${pas / 2}%`, right: `${pas / 2}%` }} />
+          <div aria-hidden className="absolute top-[69px] h-1.5 origin-left rounded-full [animation:remplit_1100ms_cubic-bezier(0.22,1,0.36,1)_both]"
+            style={{ left: `${pas / 2}%`, width: `${finLigne - pas / 2}%`, background: `linear-gradient(90deg, ${ETAPES[0]!.couleur}, ${courante.couleur})` }} />
+
+          {/* Le transport, au-dessus de l'étape en cours */}
+          <div aria-hidden className="absolute top-3 -translate-x-1/2 [animation:apparition_500ms_700ms_both]" style={{ left: `${finLigne}%` }}>
+            <span className="grid size-10 place-items-center rounded-2xl text-white shadow-[0_10px_20px_-8px_rgb(15_23_42/0.5)] [animation:flotte_2.4s_ease-in-out_infinite]"
+              style={{ background: `linear-gradient(145deg, color-mix(in srgb, ${courante.couleur} 70%, white), ${courante.couleur})` }}>
+              <Transport size={22} weight="fill" />
+            </span>
+          </div>
+
+          <ol className="relative grid grid-cols-8">
+            {ETAPES.map((e, i) => {
+              const etat = i < indexActuel ? "passee" : i === indexActuel ? "courante" : "future";
+              const j = jours.get(e.code);
+              return (
+                <li key={e.code} ref={etat === "courante" ? cible : undefined} className="relative flex flex-col items-center text-center" aria-current={etat === "courante" ? "step" : undefined}>
+                  <span className="relative grid h-8 place-items-center">
+                    {etat === "courante" && <span aria-hidden className="absolute size-8 rounded-full [animation:anneau_1.8s_ease-out_infinite]" style={{ background: e.couleur }} />}
+                    <span aria-hidden
+                      className={cn("relative z-10 grid place-items-center rounded-full ring-4 ring-surface", etat === "courante" ? "size-8" : "size-6", etat === "future" && "bg-surface-2")}
+                      style={etat === "future" ? { boxShadow: "inset 0 0 0 2px var(--trait-fort)" } : { background: e.couleur, animation: `apparition 400ms ${i * 90}ms both` }}>
+                      {etat === "passee" && <Check size={13} weight="bold" className="text-white" />}
+                      {etat === "courante" && <span className="size-2.5 rounded-full bg-white" />}
+                    </span>
+                  </span>
+                  <span className={cn("mt-2 text-[12px] leading-tight", etat === "courante" ? "font-extrabold text-encre" : etat === "passee" ? "font-semibold text-encre-2" : "text-encre-3")}>
+                    {e.libelle}
+                  </span>
+                  <span className={cn("chiffres mt-0.5 h-4 text-[11px]", etat === "courante" ? "font-bold" : "text-encre-3")} style={etat === "courante" ? { color: `color-mix(in srgb, ${e.couleur} 65%, black)` } : undefined}>
+                    {j !== undefined ? `${j} j` : ""}
+                  </span>
+                  <span className="sr-only">{etat === "passee" ? "étape passée" : etat === "courante" ? "étape en cours" : "à venir"}</span>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
       </div>
     </section>
   );

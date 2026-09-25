@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Car, FileText, Search, User } from "lucide-react";
+import { Car, FileText, MagnifyingGlass, User } from "@phosphor-icons/react";
 import { useLecture } from "@/lib/api/requetes";
 import { useSession } from "@/lib/session";
 import { grouperVin } from "@/lib/vin";
@@ -47,7 +47,7 @@ export function PaletteRecherche({ ouverte, onFermer, onAller }: { ouverte: bool
           <Dialog.Description className="sr-only">Rechercher un véhicule, un client ou un document</Dialog.Description>
           <Command shouldFilter={false} label="Recherche globale">
             <div className="flex items-center gap-2 border-b border-trait px-4">
-              <Search className="size-5 text-encre-3" aria-hidden />
+              <MagnifyingGlass className="size-5 text-encre-3" aria-hidden />
               <Command.Input
                 value={saisie}
                 onValueChange={setSaisie}

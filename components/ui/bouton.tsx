@@ -1,5 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
-import { Loader2 } from "lucide-react";
+import { CircleNotch } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 
 type Variante = "primaire" | "secondaire" | "fantome" | "danger" | "sur-nuit";
@@ -38,7 +38,7 @@ export const Bouton = forwardRef<HTMLButtonElement, ProprietesBouton>(function B
       disabled={disabled || chargement}
       aria-busy={chargement || undefined}
       className={cn(
-        "inline-flex select-none items-center justify-center rounded-controle font-semibold whitespace-nowrap transition-all duration-150",
+        "onde inline-flex select-none items-center justify-center rounded-controle font-semibold whitespace-nowrap transition-all duration-150",
         "disabled:cursor-not-allowed disabled:opacity-50",
         VARIANTES[variante],
         TAILLES[taille],
@@ -47,7 +47,7 @@ export const Bouton = forwardRef<HTMLButtonElement, ProprietesBouton>(function B
       )}
       {...reste}
     >
-      {chargement ? <Loader2 className="size-[18px] animate-spin" aria-hidden /> : icone}
+      {chargement ? <CircleNotch className="size-[18px] animate-spin" aria-hidden /> : icone}
       {children}
     </button>
   );

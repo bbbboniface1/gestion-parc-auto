@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ShieldCheck, ShieldX } from "lucide-react";
+import { ShieldCheck, ShieldSlash } from "@phosphor-icons/react";
 import { rpc } from "@/lib/api/client";
 import { formatDateLongue } from "@/lib/format";
 import { Montant, Tampon, Code } from "@/components/ui/signature";
@@ -44,7 +44,7 @@ function Verifier() {
         {etat === "erreur" && <p className="mt-6 text-encre-2">Vérification impossible pour le moment. Réessayez dans quelques instants.</p>}
         {etat === "introuvable" && (
           <div className="mt-6 rounded-carte border border-perte/40 bg-surface p-6">
-            <ShieldX className="size-9 text-perte" aria-hidden />
+            <ShieldSlash className="size-9 text-perte" aria-hidden />
             <h1 className="mt-3 text-[22px] font-semibold">Document inconnu</h1>
             <p className="mt-1 text-encre-2">Aucun document ne correspond à ce code. Ce document n&apos;a pas été émis par ce système : méfiez-vous.</p>
           </div>

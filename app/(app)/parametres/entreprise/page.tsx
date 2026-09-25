@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { Plus, X } from "@phosphor-icons/react";
 import { EnTetePage } from "@/components/coque/coque";
 import { BarreEnregistrement, Groupe, useBrouillon } from "@/components/parametres/commun";
 import { ChampImage } from "@/components/parametres/champs-image";

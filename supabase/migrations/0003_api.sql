@@ -1617,7 +1617,8 @@ begin
                           'vehicules', coalesce((
                               select jsonb_agg(jsonb_build_object('id', v.id, 'reference', v.reference,
                                                                   'libelle', concat_ws(' ', v.marque, v.modele, v.annee),
-                                                                  'etape', v.etape, 'statut_commercial', v.statut_commercial)
+                                                                  'etape', v.etape, 'statut_commercial', v.statut_commercial,
+                                                                  'photo_principale_path', v.photo_principale_path)
                                                order by v.reference)
                                 from public.vehicules v where v.expedition_id = e.id), '[]'::jsonb))
                      order by array_position(array['en_mer', 'preparation', 'arrivee', 'cloturee'], e.statut),

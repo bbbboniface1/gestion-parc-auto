@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, ChevronRight, Circle } from "lucide-react";
+import { CaretRight, CheckCircle, Circle } from "@phosphor-icons/react";
 import { useParametres } from "@/lib/api/parametres";
 import { useOrg } from "@/lib/session";
 import { joursDepuis } from "@/lib/format";
 import { cn } from "@/lib/cn";
+import { decalage } from "@/lib/animation";
 import { EnTetePage } from "@/components/coque/coque";
 import { sectionsPour } from "@/components/parametres/commun";
+import { AnneauPaiement } from "@/components/ventes/paiement-visuel";
+import { Picto } from "@/components/ui/picto";
 import { Squelette } from "@/components/ui/etats";
 
 /**
@@ -34,67 +37,56 @@ export default function PageParametres() {
     { ok: (joursDepuis(p.taux_maj_le) ?? 99) <= 30, libelle: "Taux du dollar mis à jour depuis moins de 30 jours", section: "devises" },
   ] : [];
   const faits = controles.filter((c) => c.ok).length;
+  const restants = controles.filter((c) => !c.ok);
 
   return (
     <>
-      <EnTetePage titre="Paramètres" sousTitre={data?.organisation.nom} />
+      <EnTetePage titre="Paramètres" sousTitre={data?.organisation.nom ? `${data.organisation.nom} · réglages de l'entreprise et de vos factures` : undefined} />
 
       {configurer && (
-        <section aria-labelledby="titre-preparation" className="mb-6 carte p-4 lg:p-5">
+        <section aria-labelledby="titre-preparation" className="carte apparition mb-6 p-4 lg:p-6">
           {!p ? (
-            <Squelette className="h-24" />
+            <Squelette className="h-28" />
           ) : (
-            <>
-              <div className="flex items-baseline justify-between gap-3">
-                <h2 id="titre-preparation" className="text-[17px] font-semibold tracking-tight">Vos factures sont prêtes à</h2>
-                <span className="chiffres text-[28px] font-semibold">{Math.round((faits / controles.length) * 100)} %</span>
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+              <AnneauPaiement encaisse={faits} total={controles.length} taille={120} />
+              <div className="min-w-0 flex-1">
+                <h2 id="titre-preparation" className="text-[19px] font-extrabold tracking-tight">
+                  {restants.length === 0 ? "Vos factures sont complètes" : `Vos factures sont prêtes à ${Math.round((faits / controles.length) * 100)} %`}
+                </h2>
+                <p className="mt-0.5 text-[14px] text-encre-3">
+                  {restants.length === 0 ? "Identité légale, cachet, signature et mentions : tout y est." : `Il reste ${restants.length} élément${restants.length > 1 ? "s" : ""} pour des factures crédibles devant un client ou la banque.`}
+                </p>
+                {restants.length > 0 && (
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {controles.map((c) => (
+                      <li key={c.libelle}>
+                        <Link href={`/parametres/${c.section}/`}
+                          className={cn("onde inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold transition-colors",
+                            c.ok ? "bg-gain-voile text-gain-texte" : "bg-surface-2 text-encre-2 ring-1 ring-trait-fort hover:bg-primaire-voile hover:text-primaire")}>
+                          {c.ok ? <CheckCircle size={15} weight="fill" aria-hidden /> : <Circle size={15} weight="bold" aria-hidden />}
+                          {c.libelle}
+                          <span className="sr-only">{c.ok ? " : fait" : " : à compléter"}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-              <div className="mt-3 flex h-2 gap-1" aria-hidden>
-                {controles.map((c, i) => <span key={i} className={cn("flex-1 rounded-sm", c.ok ? "bg-gain" : "bg-surface-2")} />)}
-              </div>
-              {faits < controles.length ? (
-                <ul className="mt-4 grid gap-x-6 sm:grid-cols-2">
-                  {controles.map((c) => (
-                    <li key={c.libelle}>
-                      <Link href={`/parametres/${c.section}/`} className="flex items-center gap-2.5 border-b border-trait py-2 text-[14px] hover:bg-surface-2/50">
-                        {c.ok ? <CheckCircle2 className="size-4 shrink-0 text-gain-texte" aria-hidden /> : <Circle className="size-4 shrink-0 text-encre-3" aria-hidden />}
-                        <span className={cn("flex-1", c.ok ? "text-encre-3" : "text-encre")}>{c.libelle}</span>
-                        <span className="sr-only">{c.ok ? "fait" : "à compléter"}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-3 text-[14px] text-encre-2">Identité légale, cachet, signature et mentions : tout y est.</p>
-              )}
-            </>
+            </div>
           )}
         </section>
       )}
 
-      <ul className="overflow-hidden carte lg:hidden">
-        {sections.map((s) => (
-          <li key={s.cle} className="border-b border-trait last:border-b-0">
-            <Link href={`/parametres/${s.cle}/`} className="flex items-center gap-3 px-4 py-3.5 active:bg-surface-2">
-              <s.icone className="size-5 shrink-0 text-encre-3" aria-hidden />
-              <span className="min-w-0 flex-1">
-                <span className="block text-[16px] font-medium">{s.libelle}</span>
-                <span className="block truncate text-[13px] text-encre-3">{s.description}</span>
-              </span>
-              <ChevronRight className="size-4 shrink-0 text-encre-3" aria-hidden />
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      <div className="hidden gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3">
-        {sections.map((s) => (
-          <Link key={s.cle} href={`/parametres/${s.cle}/`} className="flex gap-3 carte p-4 hover:border-trait-fort">
-            <s.icone className="mt-0.5 size-5 shrink-0 text-primaire" aria-hidden />
-            <span>
-              <span className="block font-semibold">{s.libelle}</span>
-              <span className="mt-0.5 block text-[13px] text-encre-3">{s.description}</span>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {sections.map((s, i) => (
+          <Link key={s.cle} href={`/parametres/${s.cle}/`} className="carte carte-lien onde apparition group flex items-center gap-3 p-4" style={decalage(i, 40)}>
+            <Picto icone={s.icone} couleur={s.couleur} taille="md" className="group-hover:scale-105" />
+            <span className="min-w-0 flex-1">
+              <span className="block font-bold group-hover:text-primaire">{s.libelle}</span>
+              <span className="mt-0.5 block text-[13px] leading-snug text-encre-3">{s.description}</span>
             </span>
+            <CaretRight size={16} weight="bold" className="shrink-0 text-encre-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
           </Link>
         ))}
       </div>

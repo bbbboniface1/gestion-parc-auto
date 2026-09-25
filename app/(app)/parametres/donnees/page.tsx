@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, RotateCcw } from "lucide-react";
+import { ArrowCounterClockwise, DownloadSimple } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { modeActuel, rpc } from "@/lib/api/client";
 import type { Vehicule } from "@/lib/api/types";
@@ -60,12 +60,12 @@ export default function PageDonnees() {
       <div className="carte px-4 py-6 lg:px-8">
         <Groupe titre="Exports Excel" description="Fichiers CSV qui s'ouvrent directement dans Excel, accents et virgules décimales compris.">
           {([["vehicules", "Tous les véhicules"], ["ventes", "Toutes les ventes"], ["clients", "Tous les clients"]] as const).map(([cle, libelle]) => (
-            <Bouton key={cle} className="self-start" icone={<Download className="size-4" />} chargement={en === cle} onClick={() => void exporter(cle)}>{libelle}</Bouton>
+            <Bouton key={cle} className="self-start" icone={<DownloadSimple className="size-4" />} chargement={en === cle} onClick={() => void exporter(cle)}>{libelle}</Bouton>
           ))}
         </Groupe>
         {demo ? (
           <Groupe titre="Démonstration" description="Vous travaillez sur une entreprise fictive, dans ce navigateur uniquement. Rien n'est envoyé à un serveur.">
-            <Bouton variante="danger" className="self-start" icone={<RotateCcw className="size-4" />} onClick={async () => {
+            <Bouton variante="danger" className="self-start" icone={<ArrowCounterClockwise className="size-4" />} onClick={async () => {
               if (!window.confirm("Effacer la démonstration et repartir de données neuves ?")) return;
               const { reinitialiserDemo } = await import("@/lib/demo/moteur");
               await reinitialiserDemo();

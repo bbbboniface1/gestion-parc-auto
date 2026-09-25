@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MailCheck } from "lucide-react";
+import { EnvelopeSimpleOpen } from "@phosphor-icons/react";
 import { versErreurApi } from "@/lib/api/erreurs";
 import { CadreAccueil } from "@/components/coque/cadre-accueil";
 import { Bouton } from "@/components/ui/bouton";
@@ -37,7 +37,7 @@ export default function PageInscription() {
   if (envoye) {
     return (
       <CadreAccueil>
-        <MailCheck className="size-10 text-gain-texte" aria-hidden />
+        <EnvelopeSimpleOpen className="size-10 text-gain-texte" aria-hidden />
         <h1 className="mt-4 text-[26px] font-semibold tracking-tight">Vérifiez votre boîte e-mail</h1>
         <p className="mt-2 text-encre-2">
           Un lien de confirmation a été envoyé à <strong className="text-encre">{email}</strong>. Ouvrez-le pour activer votre compte,

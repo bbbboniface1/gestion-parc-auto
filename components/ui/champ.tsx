@@ -1,5 +1,5 @@
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
-import { ChevronDown } from "lucide-react";
+import { CaretDown } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 
 const BASE =
@@ -112,7 +112,7 @@ export const Selection = forwardRef<HTMLSelectElement, ProprietesSelection>(func
               <option key={o.valeur} value={o.valeur}>{o.libelle}</option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
+          <CaretDown className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
         </div>
       )}
     </Enveloppe>

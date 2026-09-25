@@ -259,6 +259,67 @@
   }
 }
 
+/* Onde au toucher : une goutte de lumière part du doigt (voir components/coque/effets.tsx). */
+@utility onde {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.onde-goutte {
+  position: absolute;
+  z-index: -1;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: currentColor;
+  opacity: 0.18;
+  transform: translate(-50%, -50%) scale(0);
+  animation: goutte 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+/* Apparition au défilement (navigateurs qui savent lier une animation au défilement). */
+@supports (animation-timeline: view()) {
+  .revele {
+    animation: apparition linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+/* Transition entre les pages. */
+.transition-page {
+  animation: arrivee-page 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes arrivee-page {
+  from { opacity: 0; transform: translateY(8px) scale(0.995); filter: blur(2px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes goutte {
+  to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+@keyframes confetti {
+  0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; }
+}
+@keyframes pose-tampon {
+  0% { transform: scale(2.2) rotate(-14deg); opacity: 0; }
+  60% { transform: scale(0.94) rotate(-4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-4deg); opacity: 1; }
+}
+@keyframes anneau {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@keyframes flotte {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes voyage {
+  from { left: var(--depart); }
+  to { left: var(--arrivee); }
+}
+@keyframes brille {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
 @keyframes apparition {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }

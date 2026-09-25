@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Eraser, ImageUp, PenLine, Trash2 } from "lucide-react";
+import { Eraser, ImageSquare, PenNib, Trash } from "@phosphor-icons/react";
 import { useOrg } from "@/lib/session";
 import { televerser, useUrlFichier } from "@/lib/stockage";
 import { detourer } from "@/lib/image";
@@ -59,14 +59,14 @@ export function ChampImage({ libelle, aide, path, onChange, detourage, dossier =
       <div className="flex items-center gap-3">
         <Apercu path={path} alt={libelle} className="h-24 w-36 shrink-0" />
         <div className="flex flex-col items-start gap-1.5">
-          <Bouton taille="sm" icone={<ImageUp className="size-4" />} chargement={envoi} onClick={() => champ.current?.click()}>
+          <Bouton taille="sm" icone={<ImageSquare className="size-4" />} chargement={envoi} onClick={() => champ.current?.click()}>
             {path ? "Remplacer" : "Choisir une image"}
           </Bouton>
           {signature && (
-            <Bouton taille="sm" variante="fantome" icone={<PenLine className="size-4" />} onClick={() => setPave(true)}>Signer au doigt</Bouton>
+            <Bouton taille="sm" variante="fantome" icone={<PenNib className="size-4" />} onClick={() => setPave(true)}>Signer au doigt</Bouton>
           )}
           {path && (
-            <Bouton taille="sm" variante="fantome" icone={<Trash2 className="size-4" />} onClick={() => onChange(null)}>Retirer</Bouton>
+            <Bouton taille="sm" variante="fantome" icone={<Trash className="size-4" />} onClick={() => onChange(null)}>Retirer</Bouton>
           )}
         </div>
       </div>

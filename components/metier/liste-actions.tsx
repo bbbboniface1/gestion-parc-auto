@@ -1,21 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle, BellRing, CheckCircle2, ChevronRight, Clock, Ship, Tag, Truck, UserRound, Warehouse, Wallet, type LucideIcon } from "lucide-react";
+import { BellRinging, Boat, CaretRight, CheckCircle, Clock, type Icon, Tag, Truck, UserCircle, Wallet, Warehouse, Warning } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 import type { ActionAFaire, Gravite } from "@/lib/api/types";
 import { decalage } from "@/lib/animation";
 
 const COULEUR: Record<Gravite, string> = { haute: "var(--perte)", moyenne: "var(--ocre)", info: "var(--acier)" };
-const TYPES: Record<string, { libelle: string; icone: LucideIcon }> = {
-  echeance_retard: { libelle: "Échéance en retard", icone: AlertTriangle },
+const TYPES: Record<string, { libelle: string; icone: Icon }> = {
+  echeance_retard: { libelle: "Échéance en retard", icone: Warning },
   magasinage_port: { libelle: "Magasinage", icone: Warehouse },
   stock_dormant: { libelle: "Stock dormant", icone: Clock },
-  arrivee_proche: { libelle: "Arrivée", icone: Ship },
+  arrivee_proche: { libelle: "Arrivée", icone: Boat },
   frais_a_payer: { libelle: "À payer", icone: Wallet },
   reservation_echue: { libelle: "Réservation échue", icone: Tag },
   livraison_en_attente: { libelle: "À livrer", icone: Truck },
-  demande_correspondante: { libelle: "Demande client", icone: UserRound },
+  demande_correspondante: { libelle: "Demande client", icone: UserCircle },
 };
 
 export function lienEntite(entite: string, id: string): string {
@@ -35,7 +35,7 @@ export function ListeActions({ actions, limite, className }: { actions: ActionAF
   if (actions.length === 0) {
     return (
       <div className={cn("carte flex items-center gap-3 px-4 py-5", className)}>
-        <span className="grid size-11 place-items-center rounded-2xl bg-gain-voile text-gain"><CheckCircle2 className="size-6" aria-hidden /></span>
+        <span className="grid size-11 place-items-center rounded-2xl bg-gain-voile text-gain"><CheckCircle className="size-6" aria-hidden /></span>
         <div>
           <p className="font-bold">Rien d&apos;urgent</p>
           <p className="text-[14px] text-encre-3">Aucune échéance en retard, aucun véhicule oublié au port.</p>
@@ -46,7 +46,7 @@ export function ListeActions({ actions, limite, className }: { actions: ActionAF
   return (
     <ul className={cn("carte divide-y divide-trait/70 overflow-hidden", className)}>
       {visibles.map((a, i) => {
-        const type = TYPES[a.type] ?? { libelle: a.type, icone: BellRing };
+        const type = TYPES[a.type] ?? { libelle: a.type, icone: BellRinging };
         const couleur = COULEUR[a.gravite] ?? "var(--acier)";
         return (
           <li key={`${a.type}-${a.entite_id}-${i}`} className="apparition" style={decalage(i, 50)}>
@@ -62,7 +62,7 @@ export function ListeActions({ actions, limite, className }: { actions: ActionAF
                 <span className="block truncate text-[14px] font-semibold text-encre">{a.titre}</span>
                 {a.detail && <span className="block truncate text-[13px] text-encre-3">{a.detail}</span>}
               </span>
-              <ChevronRight className="size-4 shrink-0 text-encre-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              <CaretRight className="size-4 shrink-0 text-encre-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
             </Link>
           </li>
         );

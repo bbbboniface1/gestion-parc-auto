@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { Car } from "@phosphor-icons/react";
+import { FilAriane } from "@/components/ui/fil-ariane";
+import { useCompteursNavigation } from "@/lib/compteurs";
 import { useOrg } from "@/lib/session";
 import { peut } from "@/lib/domaine";
 import { EnTetePage } from "@/components/coque/coque";
@@ -10,12 +11,11 @@ import { EtatVide } from "@/components/ui/etats";
 
 export default function PageNouveauVehicule() {
   const org = useOrg();
+  const compteurs = useCompteursNavigation();
   return (
     <>
-      <Link href="/parc/" className="mb-2 inline-flex h-10 items-center gap-1.5 text-[14px] text-encre-2 hover:text-encre">
-        <ArrowLeft className="size-4" aria-hidden /> Parc
-      </Link>
-      <EnTetePage titre="Nouveau véhicule" />
+      <FilAriane retour={{ href: "/parc/", libelle: "Parc", icone: Car, couleur: "var(--etape-achete)", detail: compteurs.parc?.sens }} etapes={["Nouveau véhicule"]} />
+      <EnTetePage titre="Nouveau véhicule" sousTitre="Saisissez le VIN : marque, modèle et année se remplissent seuls." />
       {peut(org.role, "modifierVehicule") ? (
         <FormulaireVehicule />
       ) : (

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ShieldAlert, ShieldCheck } from "lucide-react";
+import { ShieldCheck, ShieldWarning } from "@phosphor-icons/react";
 import type { VehiculeDetail } from "@/lib/api/types";
 import { CARBURANTS, SOURCES, TITRES, TRANSMISSIONS } from "@/lib/domaine";
 import { formatNombre } from "@/lib/format";
@@ -52,7 +52,7 @@ export function CarteEmbarquement({ v, uniteCompteur = "km", photo }: { v: Vehic
               <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-white/10 px-2.5 py-1 font-mono text-[14px] font-medium tracking-wider ring-1 ring-white/15 backdrop-blur">
                 {grouperVin(v.vin)}
                 {v.vin_cle_valide === true && <ShieldCheck className="size-4 text-[#7fd1a6]" aria-label="Clé de contrôle du VIN valide" />}
-                {v.vin_cle_valide === false && <ShieldAlert className="size-4 text-[#e7b25a]" aria-label="Clé de contrôle du VIN incorrecte : vérifiez la saisie" />}
+                {v.vin_cle_valide === false && <ShieldWarning className="size-4 text-[#e7b25a]" aria-label="Clé de contrôle du VIN incorrecte : vérifiez la saisie" />}
               </p>
             )}
           </div>

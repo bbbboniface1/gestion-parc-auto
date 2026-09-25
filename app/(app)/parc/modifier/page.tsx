@@ -1,9 +1,9 @@
 "use client";
 
 import { Suspense } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { Car } from "@phosphor-icons/react";
+import { FilAriane } from "@/components/ui/fil-ariane";
 import { useLecture } from "@/lib/api/requetes";
 import type { VehiculeDetail } from "@/lib/api/types";
 import { useOrg } from "@/lib/session";
@@ -17,9 +17,7 @@ function Modifier() {
   const { data, error, refetch } = useLecture<VehiculeDetail>("vehicule_obtenir", { p_org: org.id, p_id: id }, { enabled: !!id });
   return (
     <>
-      <Link href={`/parc/vehicule/?id=${id}`} className="mb-2 inline-flex h-10 items-center gap-1.5 text-[14px] text-encre-2 hover:text-encre">
-        <ArrowLeft className="size-4" aria-hidden /> Retour à la fiche
-      </Link>
+      <FilAriane retour={{ href: `/parc/vehicule/?id=${id}`, libelle: data?.libelle ?? "La fiche", icone: Car, couleur: "var(--etape-achete)", detail: "Retour à la fiche" }} etapes={["Modifier"]} />
       <EnTetePage titre={data ? `Modifier ${data.libelle}` : "Modifier le véhicule"} surtitre={data?.reference} />
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : !data ? <SqueletteListe lignes={4} /> : <FormulaireVehicule vehicule={data} />}
     </>
