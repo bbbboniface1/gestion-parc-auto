@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   turbopack: { root: process.cwd() },
+  // Next 16 régénère AGENTS.md et CLAUDE.md à chaque « next dev » : inutile ici, on coupe.
+  agentRules: false,
 };
 
 export default nextConfig;

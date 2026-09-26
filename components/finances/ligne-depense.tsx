@@ -20,6 +20,9 @@ import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { Montant } from "@/components/ui/signature";
 
+/** Séparateur « · » en fin d'élément : quand la ligne passe à la suivante, aucune ligne ne commence par un point. */
+const SEP = "after:ml-2 after:content-['·'] last:after:hidden";
+
 const ICONES: Record<string, Icon> = {
   frais_enchere: Gavel, remorquage: Truck, fret: Boat, assurance: Stamp, port: Anchor, convoi: Truck, douane: Stamp,
   transitaire: Stamp, atelier: Wrench, pieces: Wrench, carte_grise: Receipt, commission: Tag, loyer: Buildings, salaires: Buildings,
@@ -82,10 +85,10 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
           {conteneur && f.expedition_nb_vehicules ? <span className="text-encre-3">réparti sur {pluriel(f.expedition_nb_vehicules, "véhicule")}</span> : null}
         </span>
         <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12px] text-encre-3">
-          <span>{formatDate(f.date)}</span>
-          {f.fournisseur && <span>· {f.fournisseur}</span>}
-          {f.statut === "paye" && f.compte_nom && <span>· {f.compte_nom}</span>}
-          {f.piece_path && <span className="inline-flex items-center gap-0.5"><Paperclip size={12} aria-hidden />justificatif</span>}
+          <span className={SEP}>{formatDate(f.date)}</span>
+          {f.fournisseur && <span className={SEP}>{f.fournisseur}</span>}
+          {f.statut === "paye" && f.compte_nom && <span className={SEP}>{f.compte_nom}</span>}
+          {f.piece_path && <span className={cn("inline-flex items-center gap-0.5", SEP)}><Paperclip size={12} aria-hidden />justificatif</span>}
           {f.statut === "a_payer" && <span className="inline-flex items-center gap-1 rounded-full bg-ocre-voile px-2 py-0.5 text-[11px] font-bold text-ocre-texte"><Clock size={12} weight="fill" aria-hidden />à payer</span>}
         </span>
       </span>
@@ -98,7 +101,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
     </>
   );
 
-  const classes = "group flex min-w-0 flex-1 basis-[240px] items-center gap-3 rounded-2xl px-2 py-2 text-left";
+  const classes = "group flex min-w-0 flex-1 basis-full items-center @md:basis-[240px] gap-3 rounded-2xl px-2 py-2 text-left";
 
   return (
     <li ref={ligne} className={cn("@container flex flex-wrap items-center gap-x-1 gap-y-1 px-2 py-1.5 transition-colors hover:bg-surface-2/70", enEvidence && "bg-primaire-voile")}>
@@ -108,7 +111,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
         <button type="button" onClick={() => setDetail(true)} className={classes}>{contenu}</button>
       )}
       {peutModifier && (
-        <div className="flex shrink-0 items-center gap-1 pr-1 pl-[68px] @md:pl-0">
+        <div className="ml-auto flex shrink-0 items-center gap-1 pr-1">
           {f.statut === "a_payer" && (
             <Bouton taille="sm" variante="secondaire" icone={<CheckCircle size={16} weight="duotone" className="text-gain" />} chargement={marquerPaye.isPending}
               onClick={() => marquerPaye.executer({ p_org: org.id, p_data: { id: f.id, statut: "paye" } })}>Marquer payé</Bouton>

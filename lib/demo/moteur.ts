@@ -2,11 +2,19 @@
 // tournent dans le navigateur (PGlite, Postgres compilé en WebAssembly), avec des données
 // réalistes. Ce qu'un prospect essaie ici est exactement ce qui tourne en production.
 //
-// Les fichiers WebAssembly sont servis depuis /pglite/ (copiés au build par
-// scripts/copier-pglite.mjs) et chargés à la demande : un utilisateur connecté à Supabase
-// ne les télécharge jamais.
+// Le moteur (JavaScript et WebAssembly) est servi tel que publié depuis /pglite/ (copié au build par
+// scripts/copier-ressources.mjs) et chargé à la demande : un utilisateur connecté à Supabase ne le télécharge jamais.
+// Il n'est volontairement pas passé par le bundler : regroupé par Turbopack, son démarrage restait bloqué en production.
 
 import type { PGlite } from "@electric-sql/pglite";
+
+type ModulePGlite = typeof import("@electric-sql/pglite");
+const URL_MOTEUR = "/pglite/index.js";
+
+/** Charge le moteur depuis les fichiers statiques, hors bundle. */
+async function chargerMoteur(): Promise<ModulePGlite> {
+  return (await import(/* webpackIgnore: true */ /* turbopackIgnore: true */ URL_MOTEUR)) as ModulePGlite;
+}
 
 export const UTILISATEUR_DEMO = "00000000-0000-4000-8000-00000000d3e0";
 export const EMAIL_DEMO = "demo@parc-auto.app";
@@ -48,7 +56,7 @@ async function supprimerAnciennesBases(actuelle: string) {
 
 async function ouvrir(): Promise<PGlite> {
   const [{ PGlite }, sql] = await Promise.all([
-    import("@electric-sql/pglite"),
+    chargerMoteur(),
     import("./sql.generated"),
   ]);
   const version = empreinte(sql.BOUCHON + sql.MIGRATIONS.join("") + sql.DEMO);

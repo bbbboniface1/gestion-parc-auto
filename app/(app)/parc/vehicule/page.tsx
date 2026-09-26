@@ -408,7 +408,7 @@ function Fiche() {
       {(vendre || (modifier && suivante) || v.vente) && (
         <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex gap-2 border-t border-trait/70 bg-surface/90 px-4 py-3 shadow-[0_-8px_24px_-12px_rgb(15_23_42/0.18)] backdrop-blur-xl lg:hidden">
           {modifier && suivante && (
-            <Bouton className="flex-1" icone={<ArrowFatLineRight size={18} weight="duotone" />} chargement={changerStatut.isPending} onClick={jouerProchaine}>
+            <Bouton className="h-auto min-h-11 flex-[1.5] py-1.5 text-center text-[14px] leading-tight whitespace-normal" icone={<ArrowFatLineRight size={18} weight="duotone" />} chargement={changerStatut.isPending} onClick={jouerProchaine}>
               {suivante.genre === "etape" ? `Passer à « ${defEtape(suivante.vers).libelle} »` : suivante.titre}
             </Bouton>
           )}
