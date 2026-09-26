@@ -85,7 +85,7 @@ function Fiche() {
               </a>
             )}
             {tel && (
-              <a href={lienWhatsApp(tel, `Bonjour ${c.nom},`)} target="_blank" rel="noopener" className="onde inline-flex h-11 items-center gap-2 rounded-full bg-[#25d366] px-4 font-semibold text-white shadow-lg transition-transform hover:-translate-y-0.5">
+              <a href={lienWhatsApp(tel, `Bonjour ${c.nom},`)} target="_blank" rel="noopener" className="onde inline-flex h-11 items-center gap-2 rounded-full bg-[#25d366] px-4 font-semibold text-[#062b14] shadow-lg transition-transform hover:-translate-y-0.5">
                 <WhatsappLogo size={19} weight="fill" aria-hidden /> WhatsApp
               </a>
             )}
@@ -226,7 +226,7 @@ function Fiche() {
           </section>
           {c.reservations.length > 0 && (
             <section className="carte apparition p-4 lg:p-5">
-              <h2 className="mb-3 flex items-center gap-2 text-[17px] font-bold"><BookmarkSimple size={20} weight="duotone" className="text-reserve" aria-hidden /> Réservé pour {prenom}</h2>
+              <h2 className="mb-3 flex items-center gap-2 text-[17px] font-bold"><BookmarkSimple size={20} weight="duotone" className="text-reserve-texte" aria-hidden /> Réservé pour {prenom}</h2>
               <ul className="flex flex-col gap-2">
                 {c.reservations.map((r) => (
                   <li key={r.vehicule_id}>

@@ -60,7 +60,7 @@ export function CoutRevient({ lignes, prixAffiche, prixPlancher, margeReelle, pr
         {marge !== null && (
           <div className="text-right">
             <p className="etiquette text-[12px] text-encre-3">{margeReelle !== undefined && margeReelle !== null ? "Marge réelle" : "Marge prévue"}</p>
-            <p className={cn("chiffres text-[22px] font-semibold", perte ? "text-perte" : "text-gain-texte")}>
+            <p className={cn("chiffres text-[22px] font-semibold", perte ? "text-perte-texte" : "text-gain-texte")}>
               {perte ? "−" : "+"}{formatCourt(Math.abs(marge))}
               {tauxMarge !== null && <span className="ml-1.5 text-[14px] font-medium">{formatPourcent(tauxMarge, 1)}</span>}
             </p>
@@ -88,7 +88,7 @@ export function CoutRevient({ lignes, prixAffiche, prixPlancher, margeReelle, pr
         {prixPlancher && prixPlancher <= echelle && (
           <span aria-hidden title={`Plancher ${formatNombre(prixPlancher)} FCFA`} className="absolute -bottom-2 h-2 w-px bg-encre-3" style={{ left: `${(prixPlancher / echelle) * 100}%` }} />
         )}
-        {perte && <p className="mt-2 text-[13px] font-medium text-perte">Le coût dépasse le prix : ce véhicule se vendrait à perte.</p>}
+        {perte && <p className="mt-2 text-[13px] font-medium text-perte-texte">Le coût dépasse le prix : ce véhicule se vendrait à perte.</p>}
       </div>
 
       <ul className="flex flex-col">

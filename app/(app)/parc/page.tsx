@@ -145,7 +145,7 @@ function Parc() {
               </div>
             )}
             {peutModifier && (
-              <Link href="/parc/nouveau/" className="inline-flex h-11 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire px-4 text-[15px] font-semibold text-white shadow-bouton transition-all hover:to-primaire-fonce lg:h-10 lg:text-sm">
+              <Link href="/parc/nouveau/" className="inline-flex h-11 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein px-4 text-[15px] font-semibold text-white shadow-bouton transition-all hover:from-[#3560e0] lg:h-10 lg:text-sm">
                 <Plus className="size-4" aria-hidden /> Ajouter un véhicule
               </Link>
             )}
@@ -170,7 +170,7 @@ function Parc() {
           {STATUTS.map((s) => (
             <button key={s.valeur} type="button" aria-pressed={statut === s.valeur} onClick={() => setStatut(s.valeur)}
               className={cn("h-10 shrink-0 rounded-full px-4 text-[14px] font-semibold transition-all",
-                statut === s.valeur ? "bg-primaire text-white shadow-bouton" : "bg-surface text-encre-2 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
+                statut === s.valeur ? "bg-primaire-plein text-white shadow-bouton" : "bg-surface text-encre-2 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
               {s.libelle}
             </button>
           ))}
@@ -178,14 +178,14 @@ function Parc() {
             <button type="button" aria-pressed={statut === "a_verifier"} onClick={() => setStatut(statut === "a_verifier" ? "tous" : "a_verifier")}
               className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all",
                 statut === "a_verifier" ? "bg-ocre text-white shadow-[0_6px_14px_-6px_var(--ocre)]" : "bg-ocre-voile text-ocre-texte ring-1 ring-ocre/30 hover:ring-ocre/60")}>
-              <Warning size={16} weight="fill" aria-hidden /> À vérifier <span className="chiffres text-[12px] opacity-80">{nbVerifier}</span>
+              <Warning size={16} weight="fill" aria-hidden /> À vérifier <span className="chiffres text-[12px] font-bold">{nbVerifier}</span>
             </button>
           )}
           {(nbArchives > 0 || statut === "archives") && (
             <button type="button" aria-pressed={statut === "archives"} onClick={() => setStatut(statut === "archives" ? "tous" : "archives")}
               className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all",
                 statut === "archives" ? "bg-nuit text-white shadow-[0_6px_16px_-6px_rgb(11_22_51/0.6)]" : "bg-surface text-encre-3 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
-              <Archive size={16} weight="duotone" aria-hidden /> Archivés <span className="chiffres text-[12px] opacity-80">{nbArchives}</span>
+              <Archive size={16} weight="duotone" aria-hidden /> Archivés <span className="chiffres text-[12px] font-bold">{nbArchives}</span>
             </button>
           )}
         </div>
@@ -210,7 +210,7 @@ function Parc() {
                 style={actif ? { background: t.fond, color: t.texte, boxShadow: `inset 0 0 0 2px ${e.couleur}` } : { background: "var(--surface)", color: "var(--encre-2)", boxShadow: "inset 0 0 0 1px color-mix(in srgb, var(--trait) 70%, transparent)" }}>
                 <span className="size-2.5 rounded-full" style={{ background: e.couleur }} />
                 {e.libelle}
-                <span className="chiffres text-[12px] opacity-70">{n}</span>
+                <span className="chiffres text-[12px] font-bold">{n}</span>
               </button>
             );
           })}
@@ -325,7 +325,7 @@ function TableauVehicules({ vehicules, selection, basculer }: { vehicules: Vehic
               <td className={cn("chiffres px-3 py-2 text-right", v.jours_etape > 30 && "font-bold text-ocre-texte")}>{v.jours_etape}</td>
               {voitCouts && <td className="px-3 py-2 text-right"><Montant valeur={v.prix_revient_xof} devise={null} /></td>}
               {voitCouts && (
-                <td className={cn("px-3 py-2 text-right", (v.marge_xof ?? 0) < 0 ? "text-perte" : "text-gain-texte")}>
+                <td className={cn("px-3 py-2 text-right", (v.marge_xof ?? 0) < 0 ? "text-perte-texte" : "text-gain-texte")}>
                   <Montant valeur={v.marge_xof} devise={null} className={v.marge_type === "previsionnelle" ? "font-medium" : undefined} />
                 </td>
               )}

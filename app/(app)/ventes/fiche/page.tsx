@@ -162,7 +162,7 @@ function Fiche() {
               ) : (
                 <>
                   <p className="text-[13px] font-semibold text-encre-3">Reste à encaisser</p>
-                  <p className="chiffres text-[30px] leading-tight font-extrabold tracking-tight text-ocre-texte">{formatCourt(reste)}<span className="ml-1 text-[14px] font-semibold opacity-70">FCFA</span></p>
+                  <p className="chiffres text-[30px] leading-tight font-extrabold tracking-tight text-ocre-texte">{formatCourt(reste)}<span className="ml-1 text-[14px] font-semibold">FCFA</span></p>
                 </>
               )}
               <p className="mt-1 text-[13px] text-encre-3">
@@ -194,7 +194,7 @@ function Fiche() {
                         <p className="truncate font-bold">{MODES_PAIEMENT[p.mode]?.libelle}<span className="font-medium text-encre-3"> · {formatDate(p.date)}</span></p>
                         <p className="truncate font-mono text-[12px] text-encre-3">{p.numero_recu}{p.reference ? ` · ${p.reference}` : ""}{p.annule ? " · annulé" : ""}</p>
                       </div>
-                      <Montant valeur={p.montant_xof} devise={null} className={cn("shrink-0", p.montant_xof < 0 ? "text-perte" : "text-gain-texte")} />
+                      <Montant valeur={p.montant_xof} devise={null} className={cn("shrink-0", p.montant_xof < 0 ? "text-perte-texte" : "text-gain-texte")} />
                       {!p.annule && (
                         <div className="flex shrink-0 gap-1.5">
                           <button type="button" onClick={() => void agir("recu", "telecharger", p.id)} className="onde inline-flex h-9 items-center gap-1 rounded-full bg-surface-2 px-3 text-[12px] font-semibold text-encre-2 hover:bg-primaire-voile hover:text-primaire">
@@ -249,7 +249,7 @@ function Fiche() {
             {v.prix_revient_xof !== null && (
               <div className="mt-3 flex items-center justify-between rounded-xl bg-gain-voile px-3 py-2">
                 <span className="text-[13px] font-semibold text-gain-texte">Marge sur cette vente</span>
-                <span className={cn("chiffres font-extrabold", (v.marge_xof ?? 0) < 0 ? "text-perte" : "text-gain-texte")}>{v.marge_xof?.toLocaleString("fr-FR")} {v.marge_pct !== null && <span className="text-[12px]">({v.marge_pct} %)</span>}</span>
+                <span className={cn("chiffres font-extrabold", (v.marge_xof ?? 0) < 0 ? "text-perte-texte" : "text-gain-texte")}>{v.marge_xof?.toLocaleString("fr-FR")} {v.marge_pct !== null && <span className="text-[12px]">({v.marge_pct} %)</span>}</span>
               </div>
             )}
             {annulee && v.a_rembourser_xof > 0 && peutEncaisser && <Bouton variante="secondaire" className="mt-4" onClick={() => setFeuille("rembourser")}>Rembourser {v.a_rembourser_xof.toLocaleString("fr-FR")} FCFA</Bouton>}
@@ -261,7 +261,7 @@ function Fiche() {
                 <a href={`tel:${v.client.telephone}`} className="onde flex h-12 items-center justify-center gap-2 rounded-2xl bg-primaire-voile font-semibold text-primaire transition-transform hover:-translate-y-0.5">
                   <Phone size={20} weight="fill" aria-hidden /> Appeler
                 </a>
-                <a href={lienWhatsApp(v.client.telephone, `Bonjour ${v.client.nom},`)} target="_blank" rel="noopener" className="onde flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#25d366] font-semibold text-white shadow-[0_8px_18px_-8px_#25d366] transition-transform hover:-translate-y-0.5">
+                <a href={lienWhatsApp(v.client.telephone, `Bonjour ${v.client.nom},`)} target="_blank" rel="noopener" className="onde flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#25d366] font-semibold text-[#062b14] shadow-[0_8px_18px_-8px_#25d366] transition-transform hover:-translate-y-0.5">
                   <WhatsappLogo size={20} weight="fill" aria-hidden /> WhatsApp
                 </a>
               </div>

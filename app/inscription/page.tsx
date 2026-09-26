@@ -66,7 +66,7 @@ export default function PageInscription() {
           aide="10 caractères au moins."
           erreur={trop_court ? "10 caractères au moins." : null}
         />
-        {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte">{erreur}</p>}
+        {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte-texte">{erreur}</p>}
         <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email || motDePasse.length < 10}>
           Créer mon compte
         </Bouton>

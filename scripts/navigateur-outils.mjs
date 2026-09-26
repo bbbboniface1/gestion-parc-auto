@@ -35,7 +35,7 @@ export async function ouvrirApplication({ port = Number(process.env.PORT ?? 4173
       try { navigateur = await chromium.launch(canal ? { channel: canal } : {}); break; } catch { /* essai suivant */ }
     }
     if (!navigateur) throw new Error("Aucun navigateur disponible (installez Edge/Chrome ou `npx playwright install chromium`).");
-    const contexte = await navigateur.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: process.env.SW === "allow" ? "allow" : "block" });
+    const contexte = await navigateur.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: process.env.SW === "allow" ? "allow" : "block", colorScheme: process.env.THEME === "dark" ? "dark" : "light" });
     const page = await contexte.newPage();
     return {
       page,

@@ -55,7 +55,7 @@ function Rejoindre() {
           onChange={(e) => setCode(e.target.value.toUpperCase())}
           className="text-center text-[20px] tracking-[0.3em]"
         />
-        {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte">{erreur}</p>}
+        {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte-texte">{erreur}</p>}
         <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={code.trim().length < 6}>
           Rejoindre
         </Bouton>

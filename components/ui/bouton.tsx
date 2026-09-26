@@ -6,10 +6,10 @@ type Variante = "primaire" | "secondaire" | "fantome" | "danger" | "sur-nuit";
 type Taille = "sm" | "md" | "lg";
 
 const VARIANTES: Record<Variante, string> = {
-  primaire: "bg-gradient-to-b from-[#3a6cf0] to-primaire text-sur-primaire shadow-bouton hover:to-primaire-fonce hover:from-primaire active:translate-y-px",
+  primaire: "bg-gradient-to-b from-[#3a6cf0] to-primaire-plein text-sur-primaire shadow-bouton hover:from-[#3560e0] hover:to-primaire-plein active:translate-y-px",
   secondaire: "bg-surface text-encre border border-trait-fort shadow-[0_1px_2px_rgb(15_23_42/0.05)] hover:bg-surface-2 hover:border-encre-3/40",
   fantome: "text-encre-2 hover:bg-primaire-voile hover:text-primaire",
-  danger: "bg-surface text-perte border border-perte/30 hover:bg-perte-voile",
+  danger: "bg-surface text-perte-texte border border-perte/30 hover:bg-perte-voile",
   "sur-nuit": "bg-white/10 text-sur-nuit hover:bg-white/15",
 };
 

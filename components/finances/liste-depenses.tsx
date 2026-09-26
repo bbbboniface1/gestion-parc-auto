@@ -96,7 +96,7 @@ export function ListeDepenses({ liste, enEvidence, peutModifier }: { liste: Frai
           {PORTEES.map((p) => (
             <button key={p.valeur} type="button" aria-pressed={portee === p.valeur} onClick={() => setPortee(p.valeur)}
               className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all",
-                portee === p.valeur ? "bg-primaire text-white shadow-bouton" : "bg-surface text-encre-2 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
+                portee === p.valeur ? "bg-primaire-plein text-white shadow-bouton" : "bg-surface text-encre-2 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
               {p.valeur !== "toutes" && <p.icone size={16} weight="duotone" aria-hidden />}{p.libelle}
             </button>
           ))}
@@ -104,7 +104,7 @@ export function ListeDepenses({ liste, enEvidence, peutModifier }: { liste: Frai
             <button type="button" aria-pressed={aPayerSeul} onClick={() => setAPayerSeul((v) => !v)}
               className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all",
                 aPayerSeul ? "bg-ocre text-white shadow-[0_6px_14px_-6px_var(--ocre)]" : "bg-ocre-voile text-ocre-texte ring-1 ring-ocre/30 hover:ring-ocre/60")}>
-              <Clock size={16} weight="fill" aria-hidden />À payer <span className="chiffres text-[12px] opacity-80">{nbAPayer}</span>
+              <Clock size={16} weight="fill" aria-hidden />À payer <span className="chiffres text-[12px] font-bold">{nbAPayer}</span>
             </button>
           )}
         </div>

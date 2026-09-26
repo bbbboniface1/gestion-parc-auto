@@ -199,7 +199,7 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
       <div className="relative">
         <button type="button" onClick={() => setMenuOrg((v) => !v)} aria-expanded={menuOrg} title={org.nom} aria-label={org.nom}
           className="onde flex w-full items-center gap-3 rounded-xl bg-white/[0.06] p-2.5 text-left ring-1 ring-white/10 transition-colors hover:bg-white/[0.1] max-[1099px]:justify-center max-[1099px]:p-1.5">
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#5b84ff] to-primaire text-[13px] font-bold text-white">{initiales(org.nom)}</span>
+          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#4a72ee] to-primaire-plein text-[13px] font-bold text-white">{initiales(org.nom)}</span>
           <span className="min-w-0 flex-1 max-[1099px]:hidden">
             <span className="block truncate text-[14px] font-semibold">{org.nom}</span>
             <span className="block truncate text-[12px] text-sur-nuit-2">{ROLES[org.role]?.libelle}{etat.mode === "demo" ? " · démonstration" : ""}</span>

@@ -128,7 +128,7 @@ export default function PageSimulateur() {
                   {MARGES_RAPIDES.map((m) => (
                     <button key={m} type="button" aria-pressed={margeValeur === m} onClick={() => setMargeValeur(m)}
                       className={cn("h-9 rounded-full px-4 text-[14px] font-semibold transition-all",
-                        margeValeur === m ? "bg-primaire text-white shadow-bouton" : "bg-surface-2 text-encre-2 hover:bg-primaire-voile hover:text-primaire")}>{m} %</button>
+                        margeValeur === m ? "bg-primaire-plein text-white shadow-bouton" : "bg-surface-2 text-encre-2 hover:bg-primaire-voile hover:text-primaire")}>{m} %</button>
                   ))}
                 </div>
               </div>
@@ -150,7 +150,7 @@ export default function PageSimulateur() {
             </section>
           ) : resultat.impossible ? (
             <section role="alert" className="apparition flex items-start gap-3 rounded-2xl bg-perte-voile p-4 ring-1 ring-perte/25">
-              <Warning size={26} weight="fill" className="shrink-0 text-perte" aria-hidden />
+              <Warning size={26} weight="fill" className="shrink-0 text-perte-texte" aria-hidden />
               <p className="text-perte-texte"><strong>Ce prix ne couvre pas les frais fixes.</strong> Même sans enchérir, la marge demandée n&apos;est pas tenable : baissez la marge ou revoyez le prix de vente.</p>
             </section>
           ) : (

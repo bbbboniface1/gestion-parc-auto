@@ -77,7 +77,7 @@ export default function PageEquipe() {
                     <span className="flex-1 text-[14px] text-encre-2">{ROLES[i.role].libelle} · expire le {formatDate(i.expire_le)}</span>
                     <a href={lienWhatsApp(null, message(i))} target="_blank" rel="noopener" aria-label="Envoyer par WhatsApp" className="inline-flex size-10 items-center justify-center rounded-controle text-encre-2 hover:bg-surface-2"><WhatsappLogo className="size-4" /></a>
                     <button type="button" aria-label={`Annuler l'invitation ${i.code}`} onClick={() => annulerInvitation.executer({ p_org: org.id, p_id: i.id })}
-                      className="inline-flex size-10 items-center justify-center rounded-controle text-encre-3 hover:bg-surface-2 hover:text-perte"><X className="size-4" /></button>
+                      className="inline-flex size-10 items-center justify-center rounded-controle text-encre-3 hover:bg-surface-2 hover:text-perte-texte"><X className="size-4" /></button>
                   </li>
                 ))}
               </ul>

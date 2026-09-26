@@ -77,7 +77,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
         </span>
         <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-encre-2">
           {(vehicule || conteneur) && (
-            <span className="inline-flex h-5 items-center gap-1 rounded-full px-2 text-[11px] font-bold" style={{ background: `color-mix(in srgb, ${couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 65%, var(--pole-texte))` }}>
+            <span className="inline-flex h-5 items-center gap-1 rounded-full px-2 text-[11px] font-bold" style={{ background: `color-mix(in srgb, ${couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 50%, var(--pole-texte))` }}>
               {libelleCategorie(f.categorie)}
             </span>
           )}
@@ -113,7 +113,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
       {peutModifier && (
         <div className="ml-auto flex shrink-0 items-center gap-1 pr-1">
           {f.statut === "a_payer" && (
-            <Bouton taille="sm" variante="secondaire" icone={<CheckCircle size={16} weight="duotone" className="text-gain" />} chargement={marquerPaye.isPending}
+            <Bouton taille="sm" variante="secondaire" icone={<CheckCircle size={16} weight="duotone" className="text-gain-texte" />} chargement={marquerPaye.isPending}
               onClick={() => marquerPaye.executer({ p_org: org.id, p_data: { id: f.id, statut: "paye" } })}>Marquer payé</Bouton>
           )}
           <button type="button" aria-label="Supprimer cette dépense" title="Supprimer"

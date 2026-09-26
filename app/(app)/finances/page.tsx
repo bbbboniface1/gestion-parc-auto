@@ -154,14 +154,14 @@ function Finances() {
                     const entree = m.montant_xof >= 0;
                     const corps = (
                       <>
-                        <span className={cn("grid size-10 shrink-0 place-items-center rounded-full", entree ? "bg-gain-voile text-gain" : "bg-perte-voile text-perte")}>
+                        <span className={cn("grid size-10 shrink-0 place-items-center rounded-full", entree ? "bg-gain-voile text-gain-texte" : "bg-perte-voile text-perte-texte")}>
                           {entree ? <ArrowDownLeft size={18} weight="bold" aria-label="Entrée" /> : <ArrowUpRight size={18} weight="bold" aria-label="Sortie" />}
                         </span>
                         <div className="min-w-0 flex-1">
                           <p className="truncate font-semibold group-hover:text-primaire">{m.libelle}</p>
                           <p className="text-[12px] text-encre-3">{formatDate(m.date)}{m.compte_nom ? ` · ${m.compte_nom}` : ""}</p>
                         </div>
-                        <Montant valeur={m.montant_xof} devise={null} signe className={entree ? "text-gain-texte" : "text-perte"} />
+                        <Montant valeur={m.montant_xof} devise={null} signe className={entree ? "text-gain-texte" : "text-perte-texte"} />
                         {(m.entite === "vente" || m.entite === "frais") && <CaretRight size={14} weight="bold" className="shrink-0 text-encre-3 transition-transform group-hover:translate-x-0.5 group-hover:text-primaire" aria-hidden />}
                       </>
                     );
@@ -234,7 +234,7 @@ function Finances() {
                       ) : <span className="text-[12px] text-encre-3">{formatCourt(c.encaisse_xof)} déjà reçus sur {formatCourt(c.montant_ttc)}</span>}
                       {c.client_telephone && (
                         <a href={lienWhatsApp(c.client_telephone, `Bonjour ${c.client_nom}, un rappel amical concernant votre facture ${c.numero} : il reste ${c.reste_xof.toLocaleString("fr-FR")} FCFA à régler. Merci.`)}
-                          target="_blank" rel="noopener" className="onde inline-flex h-10 items-center gap-2 rounded-full bg-[#25d366] px-4 text-[13px] font-bold text-white shadow-[0_8px_18px_-8px_#25d366] transition-transform hover:-translate-y-0.5">
+                          target="_blank" rel="noopener" className="onde inline-flex h-10 items-center gap-2 rounded-full bg-[#25d366] px-4 text-[13px] font-bold text-[#062b14] shadow-[0_8px_18px_-8px_#25d366] transition-transform hover:-translate-y-0.5">
                           <WhatsappLogo size={18} weight="fill" aria-hidden /> Relancer sur WhatsApp
                         </a>
                       )}
@@ -271,7 +271,7 @@ function Finances() {
                         <Link href={`/ventes/fiche/?id=${l.vente_id}`} className="group block rounded-xl px-2 py-1.5 transition-colors hover:bg-surface-2">
                           <div className="flex items-baseline justify-between gap-3">
                             <span className="min-w-0 truncate font-semibold group-hover:text-primaire">{l.vehicule_libelle} <span className="font-normal text-encre-3">· {l.client_nom}</span></span>
-                            <span className={cn("chiffres shrink-0 font-extrabold", l.marge_xof < 0 ? "text-perte" : "text-gain-texte")}>
+                            <span className={cn("chiffres shrink-0 font-extrabold", l.marge_xof < 0 ? "text-perte-texte" : "text-gain-texte")}>
                               {l.marge_xof >= 0 ? "+" : ""}{formatCourt(l.marge_xof)} <span className="text-[12px] font-semibold text-encre-3">{l.marge_pct !== null ? formatPourcent(l.marge_pct, 0) : ""}</span>
                             </span>
                           </div>

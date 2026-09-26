@@ -50,7 +50,7 @@ function CarteClient({ c, index }: { c: ClientListe; index: number }) {
             <a href={`tel:${c.telephone ?? tel}`} aria-label={`Appeler ${c.nom}`} className="onde grid size-10 place-items-center rounded-full bg-primaire-voile text-primaire transition-transform hover:scale-105">
               <Phone size={18} weight="fill" aria-hidden />
             </a>
-            <a href={lienWhatsApp(tel, `Bonjour ${c.nom},`)} target="_blank" rel="noopener" aria-label={`Écrire à ${c.nom} sur WhatsApp`} className="onde grid size-10 place-items-center rounded-full bg-[#25d366] text-white shadow-[0_6px_14px_-6px_#25d366] transition-transform hover:scale-105">
+            <a href={lienWhatsApp(tel, `Bonjour ${c.nom},`)} target="_blank" rel="noopener" aria-label={`Écrire à ${c.nom} sur WhatsApp`} className="onde grid size-10 place-items-center rounded-full bg-[#25d366] text-[#062b14] shadow-[0_6px_14px_-6px_#25d366] transition-transform hover:scale-105">
               <WhatsappLogo size={19} weight="fill" aria-hidden />
             </a>
           </span>

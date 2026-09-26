@@ -32,7 +32,7 @@ function Liste({ type, titre, description, exemple, elements }: { type: string; 
           <li key={e.id} className="inline-flex h-9 items-center gap-1 rounded-controle border border-trait bg-surface pl-3 text-[14px]">
             {e.libelle}
             <button type="button" aria-label={`Retirer ${e.libelle}`} onClick={() => supprimer.executer({ p_org: org.id, p_id: e.id })}
-              className="inline-flex size-8 items-center justify-center text-encre-3 hover:text-perte"><Trash className="size-3.5" /></button>
+              className="inline-flex size-8 items-center justify-center text-encre-3 hover:text-perte-texte"><Trash className="size-3.5" /></button>
           </li>
         ))}
         {elements.length === 0 && <li className="text-[14px] text-encre-3">Aucun pour l&apos;instant.</li>}

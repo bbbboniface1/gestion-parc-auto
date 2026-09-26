@@ -71,7 +71,7 @@ export function Tampon({ type, detail, grand, className }: {
     >
       <span aria-hidden className={cn("rounded-full", grand ? "size-2" : "size-1.5")} style={{ background: t.couleur }} />
       {t.texte}
-      {detail && <span className="font-medium opacity-80">· {detail}</span>}
+      {detail && <span className="font-medium">· {detail}</span>}
     </span>
   );
 }

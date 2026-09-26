@@ -69,7 +69,7 @@ export function VisionneusePhotos({ ouverte, onFermer, photos, index, onIndex, v
       <div className="relative">
         <PhotoVehicule path={photo.path} alt={`${libelle}, photo ${i + 1}`} className="aspect-[4/3] w-full rounded-2xl" />
         {i === 0 && (
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[12px] font-bold text-white shadow-sm"><Star size={13} weight="fill" aria-hidden />Vitrine</span>
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-[#c2410c] px-2.5 py-1 text-[12px] font-bold text-white shadow-sm"><Star size={13} weight="fill" aria-hidden />Vitrine</span>
         )}
         {total > 1 && (
           <>

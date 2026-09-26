@@ -41,7 +41,7 @@ export function CarteGalerie({ v, cochee, basculer, index = 0 }: { v: Vehicule; 
                 {formatCourt(prix)} <span className="text-[12px] font-semibold text-white/80">FCFA</span>
               </span>
             ) : <span className="text-[13px] font-semibold text-white/80">Prix à fixer</span>}
-            <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-bold backdrop-blur", v.jours_etape > 30 ? "bg-[#ff7a1a] text-white" : "bg-white/20 text-white")}>
+            <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-bold backdrop-blur", v.jours_etape > 30 ? "bg-[#c2410c] text-white" : "bg-white/20 text-white")}>
               {v.jours_etape} j
             </span>
           </div>

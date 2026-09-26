@@ -42,7 +42,7 @@ function Tuile({ a, index }: { a: ActionVisible; index: number }) {
   const classe = cn(
     "onde apparition group relative flex min-h-[68px] w-full items-center gap-3 overflow-hidden rounded-2xl p-3 text-left transition-all duration-200",
     a.principale
-      ? "bg-gradient-to-br from-[#3a6cf0] to-primaire text-white shadow-bouton hover:-translate-y-0.5 hover:shadow-[0_14px_28px_-10px_rgb(36_87_229/0.7)]"
+      ? "bg-gradient-to-br from-[#3a6cf0] to-primaire-plein text-white shadow-bouton hover:-translate-y-0.5 hover:shadow-[0_14px_28px_-10px_rgb(36_87_229/0.7)]"
       : "carte carte-lien",
     a.danger && "hover:bg-perte-voile",
   );
@@ -51,7 +51,7 @@ function Tuile({ a, index }: { a: ActionVisible; index: number }) {
       {etat === "cours" ? (
         <span className="grid size-9 shrink-0 place-items-center"><CircleNotch size={22} className="animate-spin" aria-hidden /></span>
       ) : etat === "fait" ? (
-        <span className="grid size-9 shrink-0 place-items-center text-gain [animation:apparition_300ms_both]"><CheckCircle size={26} weight="fill" aria-hidden /></span>
+        <span className="grid size-9 shrink-0 place-items-center text-gain-texte [animation:apparition_300ms_both]"><CheckCircle size={26} weight="fill" aria-hidden /></span>
       ) : a.principale ? (
         <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/15"><a.icone size={22} weight="fill" aria-hidden /></span>
       ) : (

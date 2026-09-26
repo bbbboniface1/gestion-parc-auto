@@ -349,7 +349,7 @@ function Fiche() {
                   <button key={ph.id} type="button" onClick={() => setPhotoOuverte(k)} aria-label={`Agrandir la photo ${k + 1} sur ${v.photos.length}`}
                     className="group relative shrink-0 snap-start overflow-hidden rounded-controle transition-transform hover:-translate-y-0.5">
                     <PhotoVehicule path={ph.path} alt={v.libelle} className="aspect-[4/3] w-44 transition-transform duration-300 group-hover:scale-[1.04]" />
-                    {k === 0 && <span className="absolute top-1.5 left-1.5 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">Vitrine</span>}
+                    {k === 0 && <span className="absolute top-1.5 left-1.5 rounded-full bg-[#c2410c] px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">Vitrine</span>}
                   </button>
                 ))}
               </div>
@@ -413,7 +413,7 @@ function Fiche() {
             </Bouton>
           )}
           {vendre ? (
-            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="onde inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire text-[15px] font-semibold text-white shadow-bouton">
+            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="onde inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein text-[15px] font-semibold text-white shadow-bouton">
               <Invoice size={18} weight="fill" aria-hidden /> Vendre
             </Link>
           ) : v.vente ? (

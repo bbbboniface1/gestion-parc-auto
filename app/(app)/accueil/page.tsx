@@ -28,7 +28,7 @@ export default function PageAujourdhui() {
             <Link href="/outils/simulateur/" className="inline-flex h-11 items-center gap-2 rounded-controle border border-trait-fort bg-surface px-4 text-[15px] font-semibold shadow-[0_1px_2px_rgb(15_23_42/0.05)] transition-colors hover:bg-surface-2 lg:h-10 lg:text-sm">
               <Calculator className="size-4 text-primaire" aria-hidden /> Simuler une enchère
             </Link>
-            <Link href="/parc/nouveau/" className="hidden h-10 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire px-4 text-sm font-semibold text-white shadow-bouton transition-all hover:to-primaire-fonce lg:inline-flex">
+            <Link href="/parc/nouveau/" className="hidden h-10 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein px-4 text-sm font-semibold text-white shadow-bouton transition-all hover:from-[#3560e0] lg:inline-flex">
               <Plus className="size-4" aria-hidden /> Ajouter un véhicule
             </Link>
           </>

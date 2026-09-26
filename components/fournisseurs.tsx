@@ -30,7 +30,7 @@ export function Fournisseurs({ children }: { children: ReactNode }) {
           classNames: {
             toast: "!rounded-2xl !border !border-trait !bg-surface !text-encre !shadow-flottante !font-sans !font-semibold",
             description: "!text-encre-2",
-            actionButton: "!bg-primaire !text-sur-primaire",
+            actionButton: "!bg-primaire-plein !text-sur-primaire",
           },
         }}
       />

@@ -118,7 +118,7 @@ function Ventes() {
           <>
             {peutEncaisser && <Bouton icone={<HandCoins size={18} weight="duotone" className="text-primaire" />} onClick={() => setChoisirPourEncaisser(true)}>Encaisser un versement</Bouton>}
             {peutVendre && (
-              <Link href="/ventes/nouvelle/" className="onde inline-flex h-11 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire px-4 text-[15px] font-semibold text-white shadow-bouton transition-all hover:to-primaire-fonce lg:h-10 lg:text-sm">
+              <Link href="/ventes/nouvelle/" className="onde inline-flex h-11 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein px-4 text-[15px] font-semibold text-white shadow-bouton transition-all hover:from-[#3560e0] lg:h-10 lg:text-sm">
                 <Plus size={18} weight="bold" aria-hidden /> Nouvelle vente
               </Link>
             )}
@@ -193,7 +193,7 @@ function Ventes() {
                     <p className="truncate font-bold">{p.client_nom} <span className="font-mono text-[12px] font-medium text-encre-3">· {p.vente_numero}</span></p>
                     <p className="truncate text-[13px] text-encre-3">{MODES_PAIEMENT[p.mode]?.libelle} · {formatDate(p.date)}{p.reference ? ` · ${p.reference}` : ""}{p.annule ? " · annulé" : ""}</p>
                   </div>
-                  <Montant valeur={p.montant_xof} devise={null} className={cn(p.annule ? "text-encre-3 line-through" : p.montant_xof < 0 ? "text-perte" : "text-gain-texte")} />
+                  <Montant valeur={p.montant_xof} devise={null} className={cn(p.annule ? "text-encre-3 line-through" : p.montant_xof < 0 ? "text-perte-texte" : "text-gain-texte")} />
                 </li>
               );
             })}
@@ -273,7 +273,7 @@ function LigneProforma({ p, peutAgir, index }: { p: ProformaListe; peutAgir: boo
           <Bouton taille="sm" variante="primaire" icone={<Invoice size={16} weight="fill" />} chargement={convertir.isPending} onClick={() => convertir.executer({ p_org: org.id, p_id: p.id })}>Convertir en facture</Bouton>
         )}
         {peutAgir && p.statut_effectif === "emise" && (
-          <Bouton taille="sm" icone={<CheckCircle size={16} weight="duotone" className="text-gain" />} onClick={() => changerStatut.executer({ p_org: org.id, p_id: p.id, p_statut: "acceptee" })}>Le client accepte</Bouton>
+          <Bouton taille="sm" icone={<CheckCircle size={16} weight="duotone" className="text-gain-texte" />} onClick={() => changerStatut.executer({ p_org: org.id, p_id: p.id, p_statut: "acceptee" })}>Le client accepte</Bouton>
         )}
         {peutAgir && p.statut_effectif !== "convertie" && p.statut_effectif !== "annulee" && (
           <Bouton taille="sm" variante="fantome" icone={<XCircle size={16} weight="duotone" />} onClick={() => changerStatut.executer({ p_org: org.id, p_id: p.id, p_statut: "annulee" })}>Annuler la proforma</Bouton>

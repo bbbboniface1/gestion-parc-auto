@@ -36,7 +36,7 @@ export function ListeActions({ actions, limite, className }: { actions: ActionAF
   if (actions.length === 0) {
     return (
       <div className={cn("carte flex items-center gap-3 px-4 py-5", className)}>
-        <span className="grid size-11 place-items-center rounded-2xl bg-gain-voile text-gain"><CheckCircle className="size-6" aria-hidden /></span>
+        <span className="grid size-11 place-items-center rounded-2xl bg-gain-voile text-gain-texte"><CheckCircle className="size-6" aria-hidden /></span>
         <div>
           <p className="font-bold">Rien d&apos;urgent</p>
           <p className="text-[14px] text-encre-3">Aucune échéance en retard, aucun véhicule oublié au port.</p>

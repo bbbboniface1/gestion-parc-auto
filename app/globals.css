@@ -22,6 +22,7 @@
 
   --primaire: #2457e5;
   --primaire-fonce: #1a44bf;
+  --primaire-plein: #2457e5;
   --primaire-voile: #e8eefd;
   --sur-primaire: #ffffff;
   --accent: #ff7a1a;
@@ -41,7 +42,7 @@
   --ocre: #d97706;
   --ocre-texte: #985304;
   --ocre-voile: #fdf0dc;
-  --acier: #2563eb;
+  --acier: #1d4ed8;
   --acier-voile: #e4ecfd;
   --reserve: #9333ea;
   --reserve-texte: #6724a4;
@@ -78,7 +79,9 @@
     --encre-3: #97a3bd;
     --primaire: #5b84ff;
     --primaire-fonce: #7c9dff;
-    --primaire-voile: #1b2a57;
+    --primaire-plein: #2f54c4;
+    --acier: #8fb0ff;
+    --primaire-voile: #152246;
     --sur-primaire: #ffffff;
     --accent: #ff9447;
     --accent-voile: #3a2413;
@@ -112,7 +115,9 @@
   --encre-3: #97a3bd;
   --primaire: #5b84ff;
   --primaire-fonce: #7c9dff;
-  --primaire-voile: #1b2a57;
+  --primaire-plein: #2f54c4;
+  --acier: #8fb0ff;
+  --primaire-voile: #152246;
   --sur-primaire: #ffffff;
   --accent: #ff9447;
   --accent-voile: #3a2413;
@@ -149,6 +154,7 @@
   --color-encre-3: var(--encre-3);
   --color-primaire: var(--primaire);
   --color-primaire-fonce: var(--primaire-fonce);
+  --color-primaire-plein: var(--primaire-plein);
   --color-primaire-voile: var(--primaire-voile);
   --color-sur-primaire: var(--sur-primaire);
   --color-accent: var(--accent);

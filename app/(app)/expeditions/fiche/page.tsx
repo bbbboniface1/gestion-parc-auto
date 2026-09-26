@@ -179,7 +179,7 @@ function Fiche() {
                         <Montant valeur={f.montant_xof} devise={null} />
                       </div>
                       <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-encre-3">
-                        {f.statut === "a_payer" ? <span className="shrink-0 font-bold whitespace-nowrap text-ocre-texte">à payer</span> : <CheckCircle size={13} weight="fill" className="text-gain" aria-label="payé" />}
+                        {f.statut === "a_payer" ? <span className="shrink-0 font-bold whitespace-nowrap text-ocre-texte">à payer</span> : <CheckCircle size={13} weight="fill" className="text-gain-texte" aria-label="payé" />}
                         {formatDate(f.date)}{f.fournisseur ? ` · ${f.fournisseur}` : ""} · {pluriel(f.parts.length, "véhicule")}
                       </p>
                     </li>

@@ -34,7 +34,7 @@ export function Enveloppe({ libelle, aide, erreur, facultatif, className, childr
       )}
       {children({ id, "aria-invalid": erreur ? true : undefined, "aria-describedby": aide || erreur ? idAide : undefined })}
       {(erreur || aide) && (
-        <p id={idAide} className={cn("text-[13px]", erreur ? "text-perte" : "text-encre-3")} role={erreur ? "alert" : undefined}>
+        <p id={idAide} className={cn("text-[13px]", erreur ? "text-perte-texte" : "text-encre-3")} role={erreur ? "alert" : undefined}>
           {erreur || aide}
         </p>
       )}
