@@ -19,6 +19,10 @@
     "verifier:workflow": "node scripts/verifier-workflow.mjs",
     "verifier:erreurs": "node scripts/verifier-erreurs.mjs",
     "verifier:accessibilite": "node scripts/verifier-accessibilite.mjs",
+    "verifier:parcours": "node scripts/verifier-parcours.mjs",
+    "verifier:mise-en-page": "node scripts/verifier-mise-en-page.mjs",
+    "verifier:hors-ligne": "node scripts/verifier-hors-ligne.mjs",
+    "verifier:navigateur": "npm run verifier:demo && npm run verifier:workflow && npm run verifier:erreurs && npm run verifier:accessibilite && npm run verifier:mise-en-page && npm run verifier:hors-ligne && npm run verifier:parcours",
     "sql:bundle": "node scripts/assembler-sql.mjs",
     "verifier": "npm run typecheck && npm run lint && npm test && npm run build"
   },

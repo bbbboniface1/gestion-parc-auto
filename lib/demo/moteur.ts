@@ -23,6 +23,49 @@ const PREFIXE_BASE = "parc-auto-demo-";
 
 let instance: Promise<PGlite> | null = null;
 
+/**
+ * Cette base tourne dans le navigateur : PGlite la range dans IndexedDB en différé (mode « relaxé », bien plus rapide).
+ * Mesuré : une page rechargée dans les secondes qui suivent une saisie retrouve la base d'avant. Forcer
+ * l'enregistrement à chaque écriture coûte ~3 s par opération, ce qui est pire. On protège donc la fenêtre de risque :
+ * pendant DELAI_ENREGISTREMENT_MS après une écriture, fermer ou recharger l'onglet demande confirmation.
+ * (Chez le client, avec Supabase, cette question ne se pose pas : les écritures partent sur le serveur.)
+ */
+const DELAI_ENREGISTREMENT_MS = 4_000;
+let derniereEcriture = 0;
+let gardeInstallee = false;
+let reprises = 0;
+
+function installerGarde() {
+  if (gardeInstallee || typeof window === "undefined") return;
+  gardeInstallee = true;
+  window.addEventListener("beforeunload", (e) => {
+    if (Date.now() - derniereEcriture < DELAI_ENREGISTREMENT_MS) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+  // En mode relaxé, PGlite lance l'enregistrement sans en attendre le résultat. Quand un fichier temporaire de Postgres
+  // disparaît pendant l'opération (ENOENT, errno 44 : fréquent pendant la création de la base), l'échec ressort en
+  // « promesse rejetée non gérée » dans la console. Rien n'est perdu, l'enregistrement suivant recopie tout ce qui diffère :
+  // on écarte l'alerte et on relance l'enregistrement, quelques fois au plus.
+  window.addEventListener("unhandledrejection", (e) => {
+    const raison = e.reason as { name?: string; errno?: number } | null;
+    if (raison?.name !== "ErrnoError" || raison.errno !== 44) return;
+    e.preventDefault();
+    if (reprises++ < 3) setTimeout(() => void instance?.then((db) => db.syncToFs()).catch(() => {}), 800);
+  });
+}
+
+/** Noms des fonctions de l'API qui écrivent (volatiles). */
+let fonctionsEcriture: Promise<Set<string>> | null = null;
+function listerEcritures(db: PGlite): Promise<Set<string>> {
+  fonctionsEcriture ??= db
+    .query<{ nom: string }>(`select p.proname as nom from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.provolatile = 'v'`)
+    .then((r) => new Set(r.rows.map((x) => x.nom)));
+  return fonctionsEcriture;
+}
+
 async function compiler(url: string): Promise<WebAssembly.Module> {
   const reponse = await fetch(url);
   if (!reponse.ok) throw new Error(`Chargement impossible : ${url}`);
@@ -55,6 +98,7 @@ async function supprimerAnciennesBases(actuelle: string) {
 }
 
 async function ouvrir(): Promise<PGlite> {
+  installerGarde(); // avant la création de la base : c'est là que l'enregistrement en différé peut échouer
   const [{ PGlite }, sql] = await Promise.all([
     chargerMoteur(),
     import("./sql.generated"),
@@ -125,6 +169,7 @@ export async function rpcDemo<T>(fonction: string, params: Record<string, unknow
   });
   const appel = `select public.${fonction}(${cles.map((k, i) => `${k} => $${i + 1}`).join(", ")}) as r`;
   const r = await db.query<{ r: T }>(appel, valeurs);
+  if ((await listerEcritures(db)).has(fonction)) derniereEcriture = Date.now();
   return r.rows[0]?.r as T;
 }
 
@@ -137,6 +182,8 @@ export async function reinitialiserDemo(): Promise<void> {
   const db = instance ? await instance.catch(() => null) : null;
   await db?.close();
   instance = null;
+  fonctionsEcriture = null;
+  derniereEcriture = 0; // la base vient d'être supprimée : rien à protéger
   localStorage.removeItem(CLE_ORG);
   await supprimerAnciennesBases("__aucune__");
 }
