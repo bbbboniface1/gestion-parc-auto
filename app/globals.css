@@ -138,9 +138,12 @@
 }
 
 /* « lg » = 56 rem (896 px) au lieu de 64 rem : une fenêtre de PC à moitié d'écran (≈ 950 px) doit déjà afficher la
-   navigation latérale et non celle d'un téléphone. Voir aussi useOrdinateur (lib/ecran.ts). */
+   navigation latérale et non celle d'un téléphone. Voir aussi useOrdinateur (lib/ecran.ts).
+   « rail » = 68,75 rem (1100 px) : en dessous, la navigation est réduite à ses icônes ; au-dessus, elle affiche les libellés.
+   Un point de rupture nommé (et non `min-[1100px]:`) garantit l'ordre des règles : lg, puis rail, puis xl. */
 @theme {
   --breakpoint-lg: 56rem;
+  --breakpoint-rail: 68.75rem;
 }
 
 @theme inline {
@@ -210,6 +213,11 @@
   }
   @media (min-width: 56rem) {
     body { font-size: 14px; }
+  }
+  /* Une grille sans colonnes déclarées a une colonne « auto » : un contenu long (numéro de conteneur, nom de client)
+     l'élargit au-delà de l'écran du téléphone. minmax(0, 1fr) la garde à la largeur disponible ; grid-cols-* l'emporte. */
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
   }
   :focus-visible {
     outline: none;

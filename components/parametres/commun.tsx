@@ -94,7 +94,7 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
   if (!sale) return null;
   return (
     <div role="region" aria-label="Modifications non enregistrées"
-      className="zone-sure-bas apparition fixed inset-x-4 bottom-20 z-40 rounded-2xl bg-nuit px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(76px+1.5rem)] min-[1100px]:left-[calc(16rem+2rem)] lg:right-8">
+      className="zone-sure-bas apparition fixed inset-x-4 bottom-20 z-40 rounded-2xl bg-nuit px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(76px+1.5rem)] rail:left-[calc(16rem+2rem)] lg:right-8">
       <div className="mx-auto flex max-w-[1280px] items-center gap-3">
         <span className="flex flex-1 items-center gap-2.5 text-[14px] font-semibold">
           <span aria-hidden className="relative flex size-2.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-[#ff9447] opacity-60" /><span className="relative inline-flex size-2.5 rounded-full bg-[#ff9447]" /></span>

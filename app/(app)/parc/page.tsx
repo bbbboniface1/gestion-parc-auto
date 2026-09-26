@@ -273,7 +273,7 @@ function Parc() {
       )}
 
       {selection.size > 0 && peutModifier && (
-        <div className="zone-sure-bas fixed inset-x-4 bottom-20 z-40 rounded-2xl bg-nuit px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(76px+1.5rem)] min-[1100px]:left-[calc(16rem+2rem)] lg:right-8">
+        <div className="zone-sure-bas fixed inset-x-4 bottom-20 z-40 rounded-2xl bg-nuit px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(76px+1.5rem)] rail:left-[calc(16rem+2rem)] lg:right-8">
           <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-3">
             <span className="text-[14px] font-semibold">{selection.size} sélectionné{selection.size > 1 ? "s" : ""}</span>
             <label className="flex items-center gap-2 text-[14px]">

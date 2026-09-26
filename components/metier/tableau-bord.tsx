@@ -212,8 +212,9 @@ export function GraphiqueVentes({ points }: { points: { mois: string; ca: number
       </div>
       <div aria-hidden className="mt-2 ml-11 flex gap-1 sm:gap-2">
         {points.map((x, k) => (
-          <span key={x.mois} className={cn("flex-1 text-center text-[11px] capitalize", k === i ? "font-bold text-primaire" : "text-encre-3")}>
-            {formatMoisCourt(x.mois).replace(".", "")}
+          <span key={x.mois} className={cn("min-w-0 flex-1 text-center text-[11px] capitalize", k === i ? "font-bold text-primaire" : "text-encre-3")}>
+            <span className="sm:hidden">{formatMoisCourt(x.mois).charAt(0)}</span>
+            <span className="hidden sm:inline">{formatMoisCourt(x.mois).replace(".", "")}</span>
           </span>
         ))}
       </div>
