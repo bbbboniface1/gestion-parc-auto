@@ -7,10 +7,19 @@ import { toast } from "sonner";
  * Enregistre le service worker (build de production seulement) et propose de recharger
  * quand une nouvelle version de l'application est prête — sans jamais recharger de force
  * au milieu d'une saisie.
+ *
+ * En développement, il n'y a pas de sw.js : un service worker resté enregistré par une session de production sur
+ * le même port (localhost:3000) le redemanderait en boucle (« Failed to update a ServiceWorker… 404 ») et pourrait
+ * servir de vieux fichiers. On le désinscrit donc, ainsi que ses caches.
  */
 export function EnregistrementServiceWorker() {
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
+    if (!("serviceWorker" in navigator)) return;
+    if (process.env.NODE_ENV !== "production") {
+      void navigator.serviceWorker.getRegistrations().then((liste) => liste.forEach((r) => void r.unregister())).catch(() => {});
+      void caches?.keys().then((cles) => cles.forEach((c) => void caches.delete(c))).catch(() => {});
+      return;
+    }
 
     let rechargement = false;
     navigator.serviceWorker.addEventListener("controllerchange", () => {
