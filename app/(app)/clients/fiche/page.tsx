@@ -65,7 +65,7 @@ function Fiche() {
       <FilAriane retour={{ href: "/clients/", libelle: "Clients", icone: UsersThree, couleur: "var(--reserve)", detail: compteurs.clients?.sens }} etapes={[c.nom]} />
 
       {/* En-tête : la personne et comment la joindre */}
-      <section className="apparition relative overflow-hidden rounded-carte bg-nuit p-5 text-white shadow-flottante lg:p-7">
+      <section className="apparition relative overflow-hidden rounded-carte bg-heros p-5 text-white shadow-flottante lg:p-7">
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <Avatar nom={c.nom} taille={72} className="ring-4 ring-white/20" />

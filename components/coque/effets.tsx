@@ -58,17 +58,18 @@ export function EffetsGlobaux() {
   const a = APPARENCE[fete.type];
   const couleur = fete.couleur ?? a.couleur;
   const Icone = a.icone;
-  const morceaux = Array.from({ length: 46 }, (_, i) => {
-    const angle = (i / 46) * Math.PI * 2 + (i % 3) * 0.3;
-    const distance = 140 + ((i * 37) % 120);
+  // Confettis sobres : moins nombreux, plus près du centre, plus petits.
+  const morceaux = Array.from({ length: 28 }, (_, i) => {
+    const angle = (i / 28) * Math.PI * 2 + (i % 3) * 0.3;
+    const distance = 90 + ((i * 37) % 70);
     return {
       i,
       dx: `${Math.cos(angle) * distance}px`,
-      dy: `${Math.sin(angle) * distance - 40}px`,
-      rot: `${(i * 97) % 540}deg`,
+      dy: `${Math.sin(angle) * distance - 24}px`,
+      rot: `${(i * 97) % 300}deg`,
       couleur: COULEURS_CONFETTI[i % COULEURS_CONFETTI.length],
       forme: i % 3 === 0 ? "9999px" : "2px",
-      taille: 6 + (i % 4) * 2,
+      taille: 5 + (i % 3) * 2,
       delai: `${(i % 6) * 25}ms`,
     };
   });

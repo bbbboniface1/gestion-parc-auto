@@ -31,7 +31,8 @@ dans `<Suspense>`.
   (FCFA/USD/EUR, « 8,5M »), `Choix` (segments), `Feuille` (bas d'écran sur téléphone, fenêtre sur ordinateur,
   `pied` = boutons), `MenuActions`, `Onglets`, `EtatVide`, `EtatErreur`, `Squelette`, `SqueletteListe`,
   `EtiquetteEtape`, `Tampon`, `Montant`, `Surtitre`, `Code`.
-- `components/metier/` : `Registre` (libellé … valeur), `CarteEmbarquement`, `Trajet`, `CoutRevient`,
+- `components/metier/` : tableau de bord — `HeroCapital`, `TuileIndicateur` (premier plan), `ResumeMois`
+  (second plan), `GraphiqueVentes`, `VitrineParc` ; `Registre` (libellé … valeur), `CarteEmbarquement`, `Trajet`, `CoutRevient`,
   `LigneVehicule`, `TamponCommercial`, `PhotoVehicule`, `FeuilleFrais`, `ChoixClient`, `ListeActions` + `lienEntite`.
 - Documents : `genererPDF(donnees)`, `telecharger`, `imprimer`, `nomFichier`, `urlVerification`
   (`lib/documents/generer.tsx`), types `DonneesDocument` (`lib/documents/types.ts`).
@@ -71,6 +72,23 @@ dans `<Suspense>`.
 - **Rangées de filtres et d'onglets** : elles passent à la ligne (`flex flex-wrap gap-2`), jamais coupées au bord de
   l'écran. Une rangée qui défile horizontalement n'est admise que pour un carrousel (photos, véhicules), un tableau
   ou une frise, et porte alors `data-defilement="horizontal"` ; `verifier:mise-en-page` refuse toutes les autres.
+## Mesures et hiérarchie (écran pilote : `app/(app)/accueil/page.tsx`)
+
+- **Espacements** : multiples de 8 px, 4 px pour les ajustements fins. Écart entre sections d'une page `gap-6`
+  (24) sur téléphone, `lg:gap-8` (32) ; entre cartes `gap-4` (16), `lg:gap-6` (24) ; intérieur d'une carte `p-4`
+  (16), `lg:p-6` (24) ; carte héro `p-6`, `lg:p-8`. À l'intérieur : 4, 8, 12, 16, 24. Pas de `p-5`, `gap-5`, `p-7`
+  (20 / 28 px) dans un écran repris.
+- **Tailles de texte** : 12 (méta, étiquettes), 14 (texte secondaire), 16 (texte), 18 (titre de section),
+  24 (valeur de second plan), 32 (valeur de premier plan, titre de page sur ordinateur), 40 et 56 (chiffre héro).
+- **Deux niveaux par écran** : un premier plan (carte héro `bg-heros` et au plus deux ou trois indicateurs
+  `TuileIndicateur` : pictogramme, valeur 32 px, évolution, mini-courbe) et un second plan plus calme (valeurs
+  24 px sans pictogramme, graphiques, listes). Rien n'est supprimé : on règle ce qui attire l'œil en premier.
+  Entre 896 et 1279 px, la carte héro prend toute la largeur et les indicateurs se rangent dessous.
+- **Animations** : l'esprit reste (onde au toucher, apparition des blocs, confettis, tampon), l'intensité est basse :
+  apparition 360 ms sur 4 px, arrivée de page 240 ms sans flou, carte cliquable soulevée de 1 px, onde à 12 %
+  d'opacité, confettis resserrés, tampon posé depuis 130 %. Décalage entre éléments d'une liste : 30 à 60 ms.
+  Tout disparaît avec le réglage « animations réduites » de l'appareil.
+
 - Chaque écran a ses états : squelette pendant le chargement, `EtatVide` avec l'action utile, `EtatErreur`
   avec « Réessayer ».
 - Textes en français, vouvoiement, phrases courtes. Aucune mention d'un outil d'assistance dans le code.

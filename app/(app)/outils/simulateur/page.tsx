@@ -50,7 +50,7 @@ function EnchereHero({ enchereUsd, tauxUsd, coutTotal, margeXof, margePct, sensi
 }) {
   const affiche = useCompteur(enchereUsd, 700);
   return (
-    <section className="apparition relative overflow-hidden rounded-carte bg-nuit p-5 text-white shadow-flottante lg:p-7" aria-live="polite">
+    <section className="apparition relative overflow-hidden rounded-carte bg-heros p-5 text-white shadow-flottante lg:p-7" aria-live="polite">
       <p className="etiquette relative flex items-center gap-2 text-[11px] text-white/75"><Gavel size={16} weight="fill" aria-hidden />Vous pouvez enchérir jusqu&apos;à</p>
       <p className="chiffres relative mt-2 text-[56px] leading-none font-extrabold tracking-tight lg:text-[72px]">
         {formatNombre(Math.round(affiche))}<span className="ml-2 text-[26px] font-bold text-white/70">$</span>

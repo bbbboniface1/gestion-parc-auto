@@ -186,7 +186,7 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
       <Link key={e.href} href={e.href} aria-current={actif ? "page" : undefined} title={e.description} aria-label={e.libelle}
         className={cn("group onde relative flex h-12 items-center gap-3 rounded-xl px-2 text-[14px] font-medium transition-all max-rail:justify-center max-rail:px-0",
           actif ? "bg-white/[0.11] text-white ring-1 ring-inset ring-white/12" : "text-sur-nuit-2 hover:bg-white/[0.06] hover:text-white")}>
-        <span className="grid size-8 shrink-0 place-items-center rounded-lg transition-transform group-hover:scale-110"
+        <span className="grid size-8 shrink-0 place-items-center rounded-lg transition-transform group-hover:scale-105"
           style={{ background: actif ? e.couleur : `color-mix(in srgb, ${e.couleur} 22%, transparent)`, color: actif ? "white" : `color-mix(in srgb, ${e.couleur} 55%, white)` }}>
           <e.icone size={18} weight={actif ? "fill" : "duotone"} aria-hidden />
         </span>
@@ -260,10 +260,10 @@ function EnTeteMobile({ onRecherche }: { onRecherche: () => void }) {
         <span className="min-w-0 flex-1 truncate text-[15px] font-bold">{etat.org.nom}</span>
         <EtatReseau />
         <Link href="/parametres/" aria-label="Paramètres" title="Paramètres"
-          className="onde grid size-10 shrink-0 place-items-center rounded-full bg-surface text-encre-2 shadow-carte ring-1 ring-trait/70">
+          className="onde grid size-11 shrink-0 place-items-center rounded-full bg-surface text-encre-2 shadow-carte ring-1 ring-trait/70">
           <GearSix size={20} weight="duotone" aria-hidden />
         </Link>
-        <button type="button" onClick={onRecherche} className="onde inline-flex h-10 items-center gap-1.5 rounded-full bg-surface px-3.5 text-[13px] font-semibold text-encre-2 shadow-carte ring-1 ring-trait/70">
+        <button type="button" onClick={onRecherche} className="onde inline-flex h-11 items-center gap-2 rounded-full bg-surface px-4 text-[14px] font-semibold text-encre-2 shadow-carte ring-1 ring-trait/70">
           <MagnifyingGlass size={17} weight="bold" aria-hidden /> Chercher
         </button>
       </div>
@@ -312,13 +312,13 @@ export function EnTetePage({ titre, surtitre, sousTitre, actions, className }: {
   titre: ReactNode; surtitre?: ReactNode; sousTitre?: ReactNode; actions?: ReactNode; className?: string;
 }) {
   return (
-    <div className={cn("apparition mb-5 flex flex-col gap-3 lg:mb-7 lg:flex-row lg:items-end lg:justify-between", className)}>
+    <div className={cn("apparition mb-6 flex flex-col gap-4 lg:mb-8 lg:flex-row lg:items-end lg:justify-between", className)}>
       <div className="min-w-0">
-        {surtitre && <p className="etiquette mb-1 text-[11px] text-primaire">{surtitre}</p>}
-        <h1 className="text-[26px] leading-tight font-extrabold tracking-tight text-encre lg:text-[30px]">{titre}</h1>
-        {sousTitre && <p className="mt-1 text-encre-3">{sousTitre}</p>}
+        {surtitre && <p className="etiquette mb-1 text-[12px] text-primaire">{surtitre}</p>}
+        <h1 className="text-[28px] leading-tight font-extrabold tracking-tight text-encre lg:text-[32px]">{titre}</h1>
+        {sousTitre && <p className="mt-1 text-[14px] text-encre-3 lg:text-[16px]">{sousTitre}</p>}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="flex flex-wrap gap-2 lg:shrink-0 lg:flex-nowrap">{actions}</div>}
     </div>
   );
 }

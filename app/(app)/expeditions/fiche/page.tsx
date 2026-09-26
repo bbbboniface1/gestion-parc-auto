@@ -88,7 +88,7 @@ function Fiche() {
     <div>
       <FilAriane retour={{ href: "/expeditions/", libelle: "Expéditions", icone: Boat, couleur: "var(--etape-en-mer)", detail: compteurs.expeditions?.sens }} etapes={[e.reference]} />
 
-      <section className="apparition relative overflow-hidden rounded-carte bg-nuit p-5 text-white shadow-flottante lg:p-7">
+      <section className="apparition relative overflow-hidden rounded-carte bg-heros p-5 text-white shadow-flottante lg:p-7">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="etiquette text-[11px] text-white/70">{e.mode === "conteneur" ? "Conteneur" : "RoRo"}{e.numero_conteneur ? ` · ${e.numero_conteneur}` : ""}</p>

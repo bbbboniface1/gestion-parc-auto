@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Calculator, CurrencyCircleDollar, HandCoins, Plus, Receipt, TrendUp } from "@phosphor-icons/react";
+import { Calculator, HandCoins, Plus, TrendUp } from "@phosphor-icons/react";
 import { useLecture } from "@/lib/api/requetes";
 import type { ActionAFaire, TableauDeBord, Vehicule } from "@/lib/api/types";
 import { aVerifier } from "@/lib/workflow";
@@ -9,7 +9,7 @@ import { useOrg } from "@/lib/session";
 import { formatCourt, formatJour, formatPourcent, pluriel } from "@/lib/format";
 import { EnTetePage } from "@/components/coque/coque";
 import { ListeActions } from "@/components/metier/liste-actions";
-import { GraphiqueVentes, HeroCapital, TuileIndicateur, VitrineParc } from "@/components/metier/tableau-bord";
+import { GraphiqueVentes, HeroCapital, ResumeMois, TuileIndicateur, VitrineParc } from "@/components/metier/tableau-bord";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
 import { classesBouton } from "@/components/ui/bouton";
 
@@ -39,10 +39,10 @@ export default function PageAujourdhui() {
       {error && !data ? (
         <EtatErreur erreur={error} onReessayer={() => void refetch()} />
       ) : isPending || !data ? (
-        <div className="grid gap-5 lg:grid-cols-12" role="status" aria-label="Chargement">
-          <Squelette className="h-80 rounded-[22px] lg:col-span-8" />
-          <Squelette className="h-80 rounded-[22px] lg:col-span-4" />
-          <Squelette className="h-72 rounded-[22px] lg:col-span-8" />
+        <div className="grid gap-4 lg:grid-cols-12 lg:gap-6" role="status" aria-label="Chargement">
+          <Squelette className="h-96 rounded-carte lg:col-span-12 xl:col-span-8" />
+          <Squelette className="h-96 rounded-carte lg:col-span-12 xl:col-span-4" />
+          <Squelette className="h-72 rounded-carte lg:col-span-7 xl:col-span-8" />
         </div>
       ) : (
         <Contenu d={data} vehicules={parc.data ?? []} />
@@ -75,38 +75,40 @@ function Contenu({ d: brut, vehicules }: { d: TableauDeBord; vehicules: Vehicule
   const urgentes = d.actions.filter((a) => a.gravite === "haute").length;
   const prets = vehicules.filter((v) => v.etape === "parc" && v.statut_commercial === "disponible");
 
+  // Deux niveaux (docs/CONVENTIONS_FRONT.md, « Hiérarchie ») :
+  //  1. premier plan — le capital immobilisé et les deux chiffres qui décident de la journée : ce qui rentre
+  //     (chiffre d'affaires du mois) et ce qu'on attend encore des clients (créances) ;
+  //  2. second plan, plus calme — ce qu'il y a à faire, le reste du mois, les 12 derniers mois, la vitrine.
   return (
-    <div className="flex flex-col gap-5 lg:gap-6">
-      <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">
-        <div className="min-w-0 lg:col-span-7 xl:col-span-8">
+    <div className="flex flex-col gap-6 lg:gap-8">
+      <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
+        <div className="min-w-0 lg:col-span-12 xl:col-span-8">
           <HeroCapital tranches={i.capital_par_etape} disponibles={i.nb_au_parc_disponibles} />
         </div>
-        <div className="grid min-w-0 grid-cols-2 gap-3 lg:col-span-5 lg:gap-4 xl:col-span-4">
-          <TuileIndicateur index={1} libelle="Ventes du mois" valeur={i.ventes_mois.nb} format={(v) => String(Math.round(v))}
-            evolution={evolution(nbs)} serie={nbs} couleur="var(--primaire)" icone={<Receipt className="size-5" />} lien="/ventes/" />
-          <TuileIndicateur index={2} libelle="Chiffre d'affaires" valeur={i.ventes_mois.ca} complement="FCFA ce mois"
-            evolution={evolution(ca)} serie={ca} couleur="var(--etape-en-mer)" icone={<TrendUp className="size-5" />} lien="/finances/?onglet=rentabilite" />
-          {i.ventes_mois.marge !== null ? (
-            <TuileIndicateur index={3} libelle="Marge du mois" valeur={i.ventes_mois.marge} complement={tauxMarge !== null ? `${formatPourcent(tauxMarge, 0)} du chiffre d'affaires` : undefined}
-              evolution={evolution(marges)} serie={marges} couleur="var(--gain)" icone={<CurrencyCircleDollar className="size-5" />} lien="/finances/?onglet=rentabilite" />
-          ) : (
-            <TuileIndicateur index={3} libelle="Encaissé ce mois" valeur={i.encaisse_mois} couleur="var(--gain)" icone={<CurrencyCircleDollar className="size-5" />} />
-          )}
-          <TuileIndicateur index={4} libelle="Créances clients" valeur={i.creances_total}
-            complement={i.a_payer_fournisseurs !== null ? `${formatCourt(i.a_payer_fournisseurs)} à payer aux fournisseurs` : "reste à encaisser"}
+        <div className="grid min-w-0 grid-cols-2 gap-4 lg:col-span-12 lg:gap-6 xl:col-span-4 xl:grid-cols-1">
+          <TuileIndicateur index={1} libelle="Chiffre d'affaires du mois" valeur={i.ventes_mois.ca} complement="FCFA facturés ce mois"
+            evolution={evolution(ca)} serie={ca} couleur="var(--primaire)" icone={<TrendUp className="size-5" />} lien="/finances/?onglet=rentabilite" />
+          <TuileIndicateur index={2} libelle="Créances clients" valeur={i.creances_total}
+            complement={i.a_payer_fournisseurs !== null ? `FCFA à encaisser · ${formatCourt(i.a_payer_fournisseurs)} à payer aux fournisseurs` : "FCFA à encaisser"}
             couleur="var(--accent)" icone={<HandCoins className="size-5" />} lien="/finances/?onglet=creances" />
         </div>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">
-        <div className="min-w-0 lg:col-span-7 xl:col-span-8">
+      <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
+        <div className="order-2 flex min-w-0 flex-col gap-4 lg:order-1 lg:col-span-7 lg:gap-6 xl:col-span-8">
+          <ResumeMois index={3} mesures={[
+            { libelle: "Ventes", valeur: String(i.ventes_mois.nb), evolution: evolution(nbs), lien: "/ventes/" },
+            i.ventes_mois.marge !== null
+              ? { libelle: "Marge", valeur: formatCourt(i.ventes_mois.marge), evolution: evolution(marges), detail: tauxMarge !== null ? `${formatPourcent(tauxMarge, 0)} du chiffre d'affaires` : undefined, lien: "/finances/?onglet=rentabilite" }
+              : { libelle: "Encaissé", valeur: formatCourt(i.encaisse_mois), detail: "FCFA reçus ce mois" },
+          ]} />
           <GraphiqueVentes points={d.series} />
         </div>
-        <section aria-labelledby="titre-actions" className="apparition min-w-0 lg:col-span-5 xl:col-span-4" style={{ animationDelay: "180ms" }}>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 id="titre-actions" className="text-[17px] font-bold">À faire</h2>
+        <section aria-labelledby="titre-actions" className="apparition order-1 min-w-0 lg:order-2 lg:col-span-5 xl:col-span-4" style={{ animationDelay: "120ms" }}>
+          <div className="mb-3 flex min-h-7 items-center justify-between gap-2">
+            <h2 id="titre-actions" className="text-[18px] font-bold">À faire</h2>
             {d.actions.length > 0 && (
-              <span className={urgentes > 0 ? "rounded-full bg-perte-voile px-2.5 py-0.5 text-[12px] font-bold text-perte-texte" : "text-[13px] text-encre-3"}>
+              <span className={urgentes > 0 ? "inline-flex h-6 items-center rounded-full bg-perte-voile px-2 text-[12px] font-bold text-perte-texte" : "text-[14px] text-encre-3"}>
                 {urgentes > 0 ? `${urgentes} urgent${urgentes > 1 ? "s" : ""} sur ${d.actions.length}` : pluriel(d.actions.length, "élément")}
               </span>
             )}

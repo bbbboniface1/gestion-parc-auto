@@ -34,6 +34,8 @@
 
   --nuit: #0b1633;
   --nuit-2: #16275a;
+  /* Carte héro (premier plan) : bleu nuit en clair ; en sombre, un bleu plus lumineux que les cartes pour rester devant. */
+  --heros: #0b1633;
   --sur-nuit: #f2f5fb;
   --sur-nuit-2: #b7c0d6;
 
@@ -122,6 +124,7 @@
     --accent-voile: #3a2413;
     --nuit: #070c1c;
     --nuit-2: #121d40;
+    --heros: #1b2c63;
     --gain-texte: #5ad48a;
     --gain-voile: #0f2a1b;
     --perte-texte: #ff8a80;
@@ -159,6 +162,7 @@
   --accent-voile: #3a2413;
   --nuit: #070c1c;
   --nuit-2: #121d40;
+  --heros: #1b2c63;
   --gain-texte: #5ad48a;
   --gain-voile: #0f2a1b;
   --perte-texte: #ff8a80;
@@ -209,6 +213,7 @@
   --color-sur-marque-whatsapp: var(--sur-marque-whatsapp);
   --color-nuit: var(--nuit);
   --color-nuit-2: var(--nuit-2);
+  --color-heros: var(--heros);
   --color-sur-nuit: var(--sur-nuit);
   --color-sur-nuit-2: var(--sur-nuit-2);
   --color-gain: var(--gain);
@@ -292,11 +297,11 @@
   border-radius: var(--radius-carte);
   box-shadow: var(--ombre-carte);
 }
-/* Carte cliquable : se soulève au survol. */
+/* Carte cliquable : se soulève à peine au survol (1 px) ; l'ombre fait le reste. */
 @utility carte-lien {
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: var(--ombre-survol);
     border-color: var(--trait-fort);
   }
@@ -322,7 +327,7 @@
 }
 /* Entrée des blocs : glissement léger vers le haut (décalage par style animation-delay). */
 @utility apparition {
-  animation: apparition 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: apparition 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 @utility zone-sure-bas {
   padding-bottom: env(safe-area-inset-bottom);
@@ -349,9 +354,9 @@
   border-radius: 9999px;
   pointer-events: none;
   background: currentColor;
-  opacity: 0.18;
+  opacity: 0.12;
   transform: translate(-50%, -50%) scale(0);
-  animation: goutte 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: goutte 480ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 /* Apparition au défilement (navigateurs qui savent lier une animation au défilement). */
 @supports (animation-timeline: view()) {
@@ -365,12 +370,12 @@
 .transition-page {
   /* « backwards » et non « both » : une fois l'animation finie, plus aucun transform ni filter résiduel.
      Sinon la page devient le repère des éléments position: fixed (barres d'action collées en bas) et les décolle de l'écran. */
-  animation: arrivee-page 380ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation: arrivee-page 240ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 @keyframes arrivee-page {
-  from { opacity: 0; transform: translateY(8px) scale(0.995); filter: blur(2px); }
-  to { opacity: 1; transform: none; filter: none; }
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
 }
 @keyframes goutte {
   to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
@@ -380,17 +385,17 @@
   100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; }
 }
 @keyframes pose-tampon {
-  0% { transform: scale(2.2) rotate(-14deg); opacity: 0; }
-  60% { transform: scale(0.94) rotate(-4deg); opacity: 1; }
+  0% { transform: scale(1.3) rotate(-8deg); opacity: 0; }
+  60% { transform: scale(0.98) rotate(-4deg); opacity: 1; }
   100% { transform: scale(1) rotate(-4deg); opacity: 1; }
 }
 @keyframes anneau {
-  0% { transform: scale(0.8); opacity: 0.7; }
-  100% { transform: scale(1.9); opacity: 0; }
+  0% { transform: scale(0.9); opacity: 0.35; }
+  100% { transform: scale(1.4); opacity: 0; }
 }
 @keyframes flotte {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
+  50% { transform: translateY(-2px); }
 }
 @keyframes voyage {
   from { left: var(--depart); }
@@ -401,7 +406,7 @@
   to { background-position: -200% 0; }
 }
 @keyframes apparition {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes pousse {
@@ -418,7 +423,7 @@
 }
 @keyframes navigue {
   0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(4px); }
+  50% { transform: translateX(2px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
