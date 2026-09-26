@@ -23,7 +23,7 @@ s'en écarte doit être notée ici.
 | 10 | Modification d'une vente écrase `montant_recu` sans historique | Pas de trace des encaissements, pas de reçus |
 | 11 | Service worker qui ne met rien en cache + icône SVG seule | App non installable sur Android (192/512 PNG requis), inutilisable hors ligne |
 | 12 | `maximumScale: 1` | Zoom bloqué : défaut d'accessibilité |
-| 13 | 4 bibliothèques d'icônes, emojis partout, dégradés | L'aspect « généré », sans identité |
+| 13 | 4 bibliothèques d'icônes, emojis partout, dégradés | Un aspect standard, sans identité |
 
 ## 2. Principes produit
 

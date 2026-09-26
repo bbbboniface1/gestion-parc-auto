@@ -25,12 +25,8 @@ next-env.d.ts
 .DS_Store
 *.pem
 npm-debug.log*
-.replit
-.replitignore
 .local/
-.agents/
 .cache/
-.claude/
 .migration-backup/
 
 # polices des PDF copiées depuis node_modules au build

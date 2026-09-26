@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PlayCircle } from "@phosphor-icons/react";
-import { supabaseConfigure } from "@/lib/config";
+import { demoDisponible, supabaseConfigure } from "@/lib/config";
 import { useSession } from "@/lib/session";
 import { versErreurApi } from "@/lib/api/erreurs";
 import { CadreAccueil } from "@/components/coque/cadre-accueil";
@@ -27,6 +27,7 @@ function Connexion() {
   const [envoi, setEnvoi] = useState(false);
   const [demo, setDemo] = useState(false);
   const production = supabaseConfigure();
+  const avecDemo = demoDisponible();
 
   useEffect(() => {
     if (etat.statut === "connecte") router.replace(etat.org ? retour : "/bienvenue/");
@@ -67,6 +68,7 @@ function Connexion() {
         </form>
       )}
 
+      {avecDemo && (
       <div className={production ? "mt-8 border-t border-trait pt-6" : "mt-6"}>
         <p className="etiquette text-[12px] text-encre-3">Sans compte</p>
         <p className="mt-1 text-[14px] text-encre-2">
@@ -88,6 +90,7 @@ function Connexion() {
         </Bouton>
         {demo && <p className="mt-2 text-[13px] text-encre-3" role="status">Préparation de la base de démonstration (quelques secondes la première fois)…</p>}
       </div>
+      )}
     </CadreAccueil>
   );
 }

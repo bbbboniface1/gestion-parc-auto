@@ -174,37 +174,40 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
     const actif = estActif(chemin, e);
     const c = e.compteur ? compteurs[e.compteur] : undefined;
     return (
-      <Link key={e.href} href={e.href} aria-current={actif ? "page" : undefined} title={e.description}
-        className={cn("group onde flex h-12 items-center gap-3 rounded-xl px-2 text-[14px] font-medium transition-all",
+      <Link key={e.href} href={e.href} aria-current={actif ? "page" : undefined} title={e.description} aria-label={e.libelle}
+        className={cn("group onde relative flex h-12 items-center gap-3 rounded-xl px-2 text-[14px] font-medium transition-all max-[1099px]:justify-center max-[1099px]:px-0",
           actif ? "bg-white/[0.11] text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]" : "text-sur-nuit-2 hover:bg-white/[0.06] hover:text-white")}>
         <span className="grid size-8 shrink-0 place-items-center rounded-lg transition-transform group-hover:scale-110"
           style={{ background: actif ? e.couleur : `color-mix(in srgb, ${e.couleur} 22%, transparent)`, color: actif ? "white" : `color-mix(in srgb, ${e.couleur} 55%, white)`, boxShadow: actif ? `0 6px 16px -6px ${e.couleur}` : undefined }}>
           <e.icone size={18} weight={actif ? "fill" : "duotone"} aria-hidden />
         </span>
-        <span className="truncate">{e.libelle}</span>
-        <Badge c={c} surNuit />
+        <span className="truncate max-[1099px]:hidden">{e.libelle}</span>
+        <span className="contents max-[1099px]:hidden"><Badge c={c} surNuit /></span>
+        {c && (
+          <span aria-hidden className={cn("chiffres absolute top-0.5 right-1.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[9px] font-bold ring-2 ring-nuit min-[1100px]:hidden", c.alerte ? "bg-perte text-white" : "bg-white/25 text-white")}>{c.valeur}</span>
+        )}
       </Link>
     );
   };
   return (
-    <aside className="sans-barre fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto bg-gradient-to-b from-nuit to-nuit-2 px-4 py-5 text-sur-nuit lg:flex">
-      <div className="mb-6 flex shrink-0 items-center gap-3 px-1 [@media(max-height:700px)]:mb-3">
+    <aside className="sans-barre fixed inset-y-0 left-0 z-30 hidden w-[76px] flex-col overflow-y-auto bg-gradient-to-b from-nuit to-nuit-2 px-2.5 py-5 text-sur-nuit lg:flex min-[1100px]:w-64 min-[1100px]:px-4">
+      <div className="mb-6 flex shrink-0 items-center justify-center gap-3 px-1 min-[1100px]:justify-start [@media(max-height:700px)]:mb-3">
         <Logo className="size-9" />
-        <span className="text-[17px] font-extrabold tracking-tight">Parc Auto</span>
+        <span className="text-[17px] font-extrabold tracking-tight max-[1099px]:hidden">Parc Auto</span>
       </div>
 
       <div className="relative">
-        <button type="button" onClick={() => setMenuOrg((v) => !v)} aria-expanded={menuOrg}
-          className="onde flex w-full items-center gap-3 rounded-xl bg-white/[0.06] p-2.5 text-left ring-1 ring-white/10 transition-colors hover:bg-white/[0.1]">
+        <button type="button" onClick={() => setMenuOrg((v) => !v)} aria-expanded={menuOrg} title={org.nom} aria-label={org.nom}
+          className="onde flex w-full items-center gap-3 rounded-xl bg-white/[0.06] p-2.5 text-left ring-1 ring-white/10 transition-colors hover:bg-white/[0.1] max-[1099px]:justify-center max-[1099px]:p-1.5">
           <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#5b84ff] to-primaire text-[13px] font-bold text-white">{initiales(org.nom)}</span>
-          <span className="min-w-0 flex-1">
+          <span className="min-w-0 flex-1 max-[1099px]:hidden">
             <span className="block truncate text-[14px] font-semibold">{org.nom}</span>
             <span className="block truncate text-[12px] text-sur-nuit-2">{ROLES[org.role]?.libelle}{etat.mode === "demo" ? " · démonstration" : ""}</span>
           </span>
-          <CaretUpDown size={16} className="text-sur-nuit-2" aria-hidden />
+          <CaretUpDown size={16} className="text-sur-nuit-2 max-[1099px]:hidden" aria-hidden />
         </button>
         {menuOrg && (
-          <div className="absolute top-full right-0 left-0 z-10 mt-2 rounded-2xl bg-nuit-2 p-1.5 shadow-flottante ring-1 ring-white/10 [animation:apparition_180ms_both]">
+          <div className="absolute top-full left-0 z-10 mt-2 min-w-56 rounded-2xl min-[1100px]:right-0 bg-nuit-2 p-1.5 shadow-flottante ring-1 ring-white/10 [animation:apparition_180ms_both]">
             {etat.organisations.map((o) => (
               <button key={o.id} type="button" onClick={() => { choisirOrganisation(o.id); setMenuOrg(false); }}
                 className="flex h-10 w-full items-center justify-between rounded-lg px-2.5 text-left text-[13px] hover:bg-white/[0.08]">
@@ -219,15 +222,15 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
         )}
       </div>
 
-      <button type="button" onClick={onRecherche}
-        className="onde mt-4 flex h-10 items-center gap-2 rounded-xl bg-white/[0.04] px-3 text-left text-[13px] text-sur-nuit-2 ring-1 ring-white/10 transition-colors hover:bg-white/[0.08]">
+      <button type="button" onClick={onRecherche} aria-label="Rechercher" title="Rechercher (Ctrl K)"
+        className="onde mt-4 flex h-10 items-center gap-2 rounded-xl bg-white/[0.04] px-3 text-left text-[13px] text-sur-nuit-2 ring-1 ring-white/10 transition-colors hover:bg-white/[0.08] max-[1099px]:justify-center max-[1099px]:px-0">
         <MagnifyingGlass size={16} weight="bold" aria-hidden />
-        <span className="flex-1 truncate">Rechercher…</span>
-        <kbd className="rounded-md bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-sur-nuit-2">Ctrl K</kbd>
+        <span className="flex-1 truncate max-[1099px]:hidden">Rechercher…</span>
+        <kbd className="rounded-md bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-sur-nuit-2 max-[1099px]:hidden">Ctrl K</kbd>
       </button>
 
-      <p className="etiquette mt-7 mb-2 px-2 text-[10px] text-sur-nuit-2/70">Gestion</p>
-      <nav aria-label="Navigation principale" className="flex flex-col gap-1">
+      <p className="etiquette mt-7 mb-2 px-2 text-[10px] text-sur-nuit-2/70 max-[1099px]:hidden">Gestion</p>
+      <nav aria-label="Navigation principale" className="flex flex-col gap-1 max-[1099px]:mt-5">
         {NAVIGATION_PRINCIPALE.map(lien)}
       </nav>
       <div className="mt-auto flex shrink-0 flex-col gap-1 pt-4">
@@ -283,8 +286,8 @@ export function Coque({ children }: { children: ReactNode }) {
       </a>
       <RailOrdinateur onRecherche={() => setRecherche(true)} />
       <EnTeteMobile onRecherche={() => setRecherche(true)} />
-      <main id="contenu" className="pb-28 lg:pb-12 lg:pl-64">
-        <div className="mx-auto w-full max-w-[1320px] px-4 pt-2 lg:px-8 lg:pt-8">{children}</div>
+      <main id="contenu" className="pb-28 lg:pb-12 lg:pl-[76px] min-[1100px]:pl-64">
+        <div className="mx-auto w-full max-w-[1320px] px-4 pt-2 lg:px-7 lg:pt-8">{children}</div>
       </main>
       <BarreMobile onAjouter={() => setAjouter(true)} onPlus={() => setPlus(true)} />
       <ActionsRapides ouverte={ajouter} onFermer={() => setAjouter(false)} />

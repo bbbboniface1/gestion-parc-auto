@@ -40,7 +40,7 @@ avec un coût de revient en FCFA ligne par ligne. C'est la place à prendre.
 ## 3. Ergonomie
 
 - **Wave** : parcours client simplifié à l'extrême, pensé aussi pour des utilisateurs peu à l'aise
-  avec l'écrit (agents qui aident, QR codes). → une action principale par écran, gros chiffres.
+  avec l'écrit (intermédiaires qui aident, QR codes). → une action principale par écran, gros chiffres.
 - **Tekion** : le mobile n'est pas une version réduite ; le travail sur le parc se fait au téléphone.
 - **PWA** : icônes 192 et 512 px obligatoires pour l'installation Chrome, variante « maskable »
   recommandée sur Android, 180 px pour iOS ; mise en cache de l'enveloppe de l'app pour le hors ligne.

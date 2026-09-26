@@ -1,7 +1,7 @@
 // Point d'entrée unique vers les données : l'interface appelle `rpc("vehicules_lister", {...})`
 // sans savoir si la réponse vient de Supabase ou de la démonstration locale.
 
-import { supabaseConfigure } from "@/lib/config";
+import { demoDisponible, supabaseConfigure } from "@/lib/config";
 import { versErreurApi } from "./erreurs";
 
 export type Mode = "supabase" | "demo";
@@ -10,7 +10,7 @@ const CLE_MODE = "parc-auto:mode";
 export function modeActuel(): Mode {
   if (typeof window === "undefined") return supabaseConfigure() ? "supabase" : "demo";
   if (!supabaseConfigure()) return "demo";
-  return localStorage.getItem(CLE_MODE) === "demo" ? "demo" : "supabase";
+  return demoDisponible() && localStorage.getItem(CLE_MODE) === "demo" ? "demo" : "supabase";
 }
 
 export function choisirMode(mode: Mode) {

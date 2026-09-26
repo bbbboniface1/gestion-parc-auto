@@ -18,9 +18,9 @@ export function useMedia(requete: string, parDefaut = false): boolean {
   );
 }
 
-/** ≥ 1024 px : rail de navigation, Kanban, feuilles en fenêtre centrée. */
+/** ≥ 56 rem (896 px, une demi-fenêtre sur un écran Full HD) : rail de navigation, Kanban, feuilles en fenêtre centrée. Même seuil que le point de rupture « lg » de Tailwind (app/globals.css). */
 export function useOrdinateur(): boolean {
-  return useMedia("(min-width: 1024px)");
+  return useMedia("(min-width: 56rem)");
 }
 
 function abonnerReseau(rappel: () => void) {

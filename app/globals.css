@@ -132,6 +132,12 @@
   color-scheme: dark;
 }
 
+/* « lg » = 56 rem (896 px) au lieu de 64 rem : une fenêtre de PC à moitié d'écran (≈ 950 px) doit déjà afficher la
+   navigation latérale et non celle d'un téléphone. Voir aussi useOrdinateur (lib/ecran.ts). */
+@theme {
+  --breakpoint-lg: 56rem;
+}
+
 @theme inline {
   --color-papier: var(--papier);
   --color-surface: var(--surface);
@@ -196,7 +202,7 @@
     font-feature-settings: "kern", "liga";
     -webkit-font-smoothing: antialiased;
   }
-  @media (min-width: 1024px) {
+  @media (min-width: 56rem) {
     body { font-size: 14px; }
   }
   :focus-visible {
