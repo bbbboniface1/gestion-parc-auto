@@ -43,8 +43,16 @@ ventes, échéances, encaissements). Rien n'est envoyé à un serveur.
 
 ```bash
 npm run typecheck   # types
-npm test            # 160 tests : montant en lettres, saisie, VIN, simulateur, PDF, Postgres
+npm run lint        # ESLint (règles React Compiler comprises)
+npm test            # ~195 tests : montant en lettres, saisie, VIN, simulateur, workflow, dépenses, PDF, Postgres
 npm run build       # export statique + service worker
+```
+
+Deux vérifications dans un vrai navigateur (Edge ou Chrome), sur le build de production — à lancer après `npm run build` :
+
+```bash
+npm run verifier:demo       # la démonstration démarre à froid puis à chaud (garde-fou : PGlite hors bundle)
+npm run verifier:workflow   # véhicule sans conteneur → conteneur → arrivée → dépenses cliquables
 ```
 
 ## Structure

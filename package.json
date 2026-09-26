@@ -16,6 +16,7 @@
     "test:db": "vitest run tests/db",
     "test:e2e": "playwright test",
     "verifier:demo": "node scripts/verifier-demo.mjs",
+    "verifier:workflow": "node scripts/verifier-workflow.mjs",
     "sql:bundle": "node scripts/assembler-sql.mjs",
     "verifier": "npm run typecheck && npm run lint && npm test && npm run build"
   },
