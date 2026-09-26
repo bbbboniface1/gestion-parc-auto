@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { EnvelopeSimpleOpen } from "@phosphor-icons/react";
 import { versErreurApi } from "@/lib/api/erreurs";
+import { supabaseConfigure } from "@/lib/config";
 import { CadreAccueil } from "@/components/coque/cadre-accueil";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ } from "@/components/ui/champ";
@@ -19,6 +20,7 @@ export default function PageInscription() {
   async function creer(e: React.FormEvent) {
     e.preventDefault();
     setErreur(null);
+    if (!supabaseConfigure()) { setErreur("La création de compte n'est pas disponible sans serveur : essayez la démonstration depuis la page de connexion."); return; }
     setEnvoi(true);
     try {
       const { supabase } = await import("@/lib/api/supabase");

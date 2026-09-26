@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { versErreurApi } from "@/lib/api/erreurs";
+import { supabaseConfigure } from "@/lib/config";
 import { CadreAccueil } from "@/components/coque/cadre-accueil";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ } from "@/components/ui/champ";
@@ -20,6 +21,7 @@ export default function PageMotDePasse() {
   const [erreur, setErreur] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!supabaseConfigure()) return; // aperçu sans serveur : rien à écouter
     let desabonner: (() => void) | undefined;
     void import("@/lib/api/supabase").then(({ supabase }) => {
       const { data } = supabase().auth.onAuthStateChange((evenement) => {
@@ -32,6 +34,7 @@ export default function PageMotDePasse() {
 
   async function demander(e: React.FormEvent) {
     e.preventDefault();
+    if (!supabaseConfigure()) { setErreur("La réinitialisation du mot de passe n'est pas disponible sans serveur (démonstration)."); return; }
     setEnvoi(true);
     setErreur(null);
     const { supabase } = await import("@/lib/api/supabase");
@@ -43,6 +46,7 @@ export default function PageMotDePasse() {
 
   async function changer(e: React.FormEvent) {
     e.preventDefault();
+    if (!supabaseConfigure()) { setErreur("Non disponible sans serveur (démonstration)."); return; }
     setEnvoi(true);
     setErreur(null);
     const { supabase } = await import("@/lib/api/supabase");

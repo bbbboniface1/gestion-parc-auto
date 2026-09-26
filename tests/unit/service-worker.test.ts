@@ -22,7 +22,7 @@ describe("service worker et développement", () => {
     const generateur = readFileSync(path.join(racine, "scripts", "generer-sw.mjs"), "utf8");
     expect(generateur).toMatch(/writeFile\(\s*path\.join\(sortie,\s*"sw\.js"\)/);
     expect(generateur).toContain("PRECACHE");
-    expect(readFileSync(path.join(racine, "package.json"), "utf8")).toContain("next build && node scripts/generer-sw.mjs");
+    expect(readFileSync(path.join(racine, "package.json"), "utf8")).toContain("node scripts/aplatir-rsc.mjs && node scripts/generer-sw.mjs");
   });
 
   it("le composant ne l'enregistre qu'en production et nettoie les anciens en développement", () => {

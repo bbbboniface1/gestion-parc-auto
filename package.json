@@ -7,7 +7,7 @@
     "predev": "node scripts/copier-ressources.mjs",
     "dev": "next dev",
     "prebuild": "node scripts/copier-ressources.mjs && node scripts/assembler-sql.mjs",
-    "build": "next build && node scripts/generer-sw.mjs",
+    "build": "next build && node scripts/aplatir-rsc.mjs && node scripts/generer-sw.mjs",
     "start": "serve out -l 3000",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -17,6 +17,7 @@
     "test:e2e": "playwright test",
     "verifier:demo": "node scripts/verifier-demo.mjs",
     "verifier:workflow": "node scripts/verifier-workflow.mjs",
+    "verifier:erreurs": "node scripts/verifier-erreurs.mjs",
     "sql:bundle": "node scripts/assembler-sql.mjs",
     "verifier": "npm run typecheck && npm run lint && npm test && npm run build"
   },
