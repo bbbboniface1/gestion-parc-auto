@@ -30,13 +30,13 @@ export function CarteEmbarquement({ v, uniteCompteur = "km", photo }: { v: Vehic
   const sansRepetition = (a: string | null | undefined, b: string | null | undefined) =>
     [a && b && b.toLowerCase().startsWith(a.toLowerCase()) ? null : a, b].filter(Boolean).join(" ");
   return (
-    <section aria-label="Identité du véhicule" className="apparition relative overflow-hidden rounded-[22px] bg-nuit text-sur-nuit shadow-[0_24px_48px_-20px_rgb(11_22_51/0.7)]">
+    <section aria-label="Identité du véhicule" className="apparition relative overflow-hidden rounded-[22px] bg-nuit text-sur-nuit shadow-flottante">
       {/* La photo en tête, l'identité posée dessus */}
       <div className={cn("relative", photo && "sm:min-h-[340px] lg:min-h-[400px]")}>
         {photo && (
           <div className="relative aspect-[16/10] sm:absolute sm:inset-0 sm:aspect-auto">
             <PhotoVehicule path={photo} alt={v.libelle} arrondi={false} className="absolute inset-0 size-full" />
-            <span aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-nuit to-nuit/0 sm:h-full sm:via-nuit/50" />
+            <span aria-hidden className="voile-photo absolute inset-x-0 bottom-0 h-1/2 sm:h-full" />
           </div>
         )}
         <div className={cn("relative flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:justify-between lg:p-7", photo && "-mt-14 sm:absolute sm:inset-x-0 sm:bottom-0 sm:mt-0")}>
@@ -51,8 +51,8 @@ export function CarteEmbarquement({ v, uniteCompteur = "km", photo }: { v: Vehic
             {v.vin && (
               <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-white/10 px-2.5 py-1 font-mono text-[14px] font-medium tracking-wider ring-1 ring-white/15 backdrop-blur">
                 {grouperVin(v.vin)}
-                {v.vin_cle_valide === true && <ShieldCheck className="size-4 text-[#7fd1a6]" aria-label="Clé de contrôle du VIN valide" />}
-                {v.vin_cle_valide === false && <ShieldWarning className="size-4 text-[#e7b25a]" aria-label="Clé de contrôle du VIN incorrecte : vérifiez la saisie" />}
+                {v.vin_cle_valide === true && <ShieldCheck className="size-4 text-nuit-gain" aria-label="Clé de contrôle du VIN valide" />}
+                {v.vin_cle_valide === false && <ShieldWarning className="size-4 text-nuit-ocre" aria-label="Clé de contrôle du VIN incorrecte : vérifiez la saisie" />}
               </p>
             )}
           </div>

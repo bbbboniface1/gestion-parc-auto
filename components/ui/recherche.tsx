@@ -26,7 +26,10 @@ export function BarreRecherche({ valeur, onChange, placeholder, libelle, classNa
   );
 }
 
-/** Puces de filtre : le choix actif est plein, chaque puce peut porter son nombre et sa couleur. */
+/**
+ * Puces de filtre : le choix actif est plein, chaque puce peut porter son nombre et sa couleur.
+ * Elles passent à la ligne plutôt que de défiler : sur téléphone, aucune n'est coupée au bord de l'écran.
+ */
 export function Puces<T extends string>({ valeur, onChange, options, libelle, className }: {
   valeur: T;
   onChange: (v: T) => void;
@@ -35,13 +38,13 @@ export function Puces<T extends string>({ valeur, onChange, options, libelle, cl
   className?: string;
 }) {
   return (
-    <div className={cn("sans-barre -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:px-0", className)} role="group" aria-label={libelle}>
+    <div className={cn("flex flex-wrap gap-2", className)} role="group" aria-label={libelle}>
       {options.map((o) => {
         const actif = valeur === o.valeur;
         return (
           <button key={o.valeur} type="button" aria-pressed={actif} onClick={() => onChange(o.valeur)}
-            className={cn("onde flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all",
-              actif ? "bg-nuit text-white shadow-[0_6px_16px_-6px_rgb(11_22_51/0.6)]" : "bg-surface text-encre-2 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
+            className={cn("onde flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+              actif ? "bg-nuit text-white shadow-puce" : "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
             {o.couleur && <span aria-hidden className="size-2 rounded-full" style={{ background: o.couleur }} />}
             {o.libelle}
             {o.nombre !== undefined && <span className={cn("chiffres rounded-full px-1.5 text-[12px]", actif ? "bg-white/15" : "bg-surface-2 text-encre-3")}>{o.nombre}</span>}

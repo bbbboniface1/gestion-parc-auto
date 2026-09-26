@@ -31,7 +31,7 @@ export function Feuille({ ouverte, onFermer, titre, description, pied, children,
     return (
       <Dialog.Root open={ouverte} onOpenChange={(o) => !o && onFermer()}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-50 bg-[rgb(23_23_26/0.45)]" />
+          <Dialog.Overlay className="fixed inset-0 z-50 bg-nuit/45" />
           <Dialog.Content
             className={cn(
               "fixed top-1/2 left-1/2 z-50 flex max-h-[88vh] w-[calc(100vw-48px)] -translate-x-1/2 -translate-y-1/2 flex-col carte shadow-flottante",
@@ -52,7 +52,7 @@ export function Feuille({ ouverte, onFermer, titre, description, pied, children,
   return (
     <Drawer.Root open={ouverte} onOpenChange={(o) => !o && onFermer()} repositionInputs={false}>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-50 bg-[rgb(23_23_26/0.45)]" />
+        <Drawer.Overlay className="fixed inset-0 z-50 bg-nuit/45" />
         <Drawer.Content
           className={cn(
             "fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-feuille border-t border-trait bg-surface outline-none",

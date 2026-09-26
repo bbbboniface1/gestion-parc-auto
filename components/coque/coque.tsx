@@ -31,7 +31,7 @@ function EtatReseau({ surNuit }: { surNuit?: boolean }) {
       role="status"
       className={cn(
         "inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-semibold",
-        surNuit ? "bg-white/10 text-[#ffc27a]" : "bg-ocre-voile text-ocre-texte",
+        surNuit ? "bg-white/10 text-nuit-ocre" : "bg-ocre-voile text-ocre-texte",
       )}
     >
       <CloudSlash size={14} weight="bold" aria-hidden />
@@ -65,12 +65,21 @@ function ActionsRapides({ ouverte, onFermer }: { ouverte: boolean; onFermer: () 
   );
 }
 
+/**
+ * Deux significations, deux apparences, jamais mélangées :
+ *  - action en attente : pastille pleine (bleue, rouge si urgente) ;
+ *  - statut à connaître : contour seul, couleur du texte secondaire.
+ */
+function classesBadge(c: Compteur, fond: "surface" | "nuit") {
+  if (c.genre === "statut") return fond === "nuit" ? "text-sur-nuit-2 ring-1 ring-inset ring-white/30" : "bg-surface text-encre-3 ring-1 ring-inset ring-trait-fort";
+  return c.alerte ? "bg-perte text-white" : "bg-primaire-plein text-white";
+}
+
 function Badge({ c, surNuit }: { c?: Compteur; surNuit?: boolean }) {
   if (!c) return null;
   return (
     <span title={c.sens} aria-label={c.sens}
-      className={cn("chiffres ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold",
-        c.alerte ? "bg-perte text-white shadow-[0_0_0_3px_rgb(220_38_38/0.2)]" : surNuit ? "bg-white/12 text-white" : "bg-surface-2 text-encre-2")}>
+      className={cn("chiffres ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[12px] font-bold", classesBadge(c, surNuit ? "nuit" : "surface"))}>
       {c.valeur}
     </span>
   );
@@ -135,7 +144,7 @@ function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () 
           style={actif ? { background: `color-mix(in srgb, ${e.couleur} 16%, var(--surface))`, color: `color-mix(in srgb, ${e.couleur} 85%, var(--pole-texte))` } : undefined}>
           <e.icone size={22} weight={actif ? "fill" : "duotone"} aria-hidden />
           {c && (
-            <span aria-label={c.sens} className={cn("chiffres absolute -top-1 right-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold ring-2 ring-surface", c.alerte ? "bg-perte text-white" : "bg-nuit text-white")}>{c.valeur}</span>
+            <span aria-label={c.sens} className={cn("chiffres absolute -top-1 right-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold outline-2 outline-surface", classesBadge(c, "surface"))}>{c.valeur}</span>
           )}
         </span>
         {libelle}
@@ -143,13 +152,13 @@ function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () 
     );
   };
   return (
-    <nav aria-label="Navigation principale" className="zone-sure-bas fixed inset-x-0 bottom-0 z-40 border-t border-trait/70 bg-surface/90 shadow-[0_-8px_24px_-12px_rgb(15_23_42/0.18)] backdrop-blur-xl lg:hidden">
+    <nav aria-label="Navigation principale" className="zone-sure-bas fixed inset-x-0 bottom-0 z-40 border-t border-trait/70 bg-surface/90 shadow-barre-bas backdrop-blur-xl lg:hidden">
       <div className="flex h-16 items-stretch">
         {lien(accueil, "Accueil")}
         {lien(parc, "Parc")}
         <div className="flex flex-1 items-center justify-center">
           <button type="button" onClick={onAjouter} aria-label="Ajouter : véhicule, vente, encaissement, dépense"
-            className="onde -mt-6 flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[#ff9a3d] to-[#f2541b] text-white shadow-[0_10px_24px_-6px_rgb(242_84_27/0.6)] ring-4 ring-papier transition-transform active:scale-95">
+            className="onde -mt-6 flex size-14 items-center justify-center rounded-full bg-accent-plein text-white shadow-flottante ring-4 ring-papier transition-transform active:scale-95">
             <Plus size={28} weight="bold" aria-hidden />
           </button>
         </div>
@@ -176,21 +185,21 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
     return (
       <Link key={e.href} href={e.href} aria-current={actif ? "page" : undefined} title={e.description} aria-label={e.libelle}
         className={cn("group onde relative flex h-12 items-center gap-3 rounded-xl px-2 text-[14px] font-medium transition-all max-rail:justify-center max-rail:px-0",
-          actif ? "bg-white/[0.11] text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]" : "text-sur-nuit-2 hover:bg-white/[0.06] hover:text-white")}>
+          actif ? "bg-white/[0.11] text-white ring-1 ring-inset ring-white/12" : "text-sur-nuit-2 hover:bg-white/[0.06] hover:text-white")}>
         <span className="grid size-8 shrink-0 place-items-center rounded-lg transition-transform group-hover:scale-110"
-          style={{ background: actif ? e.couleur : `color-mix(in srgb, ${e.couleur} 22%, transparent)`, color: actif ? "white" : `color-mix(in srgb, ${e.couleur} 55%, white)`, boxShadow: actif ? `0 6px 16px -6px ${e.couleur}` : undefined }}>
+          style={{ background: actif ? e.couleur : `color-mix(in srgb, ${e.couleur} 22%, transparent)`, color: actif ? "white" : `color-mix(in srgb, ${e.couleur} 55%, white)` }}>
           <e.icone size={18} weight={actif ? "fill" : "duotone"} aria-hidden />
         </span>
         <span className="truncate max-rail:hidden">{e.libelle}</span>
         <span className="contents max-rail:hidden"><Badge c={c} surNuit /></span>
         {c && (
-          <span aria-hidden className={cn("chiffres absolute top-0.5 right-1.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[9px] font-bold ring-2 ring-nuit rail:hidden", c.alerte ? "bg-perte text-white" : "bg-white/25 text-white")}>{c.valeur}</span>
+          <span aria-hidden className={cn("chiffres absolute top-0.5 right-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-nuit px-1 text-[10px] font-bold outline-2 outline-nuit rail:hidden", classesBadge(c, "nuit"))}>{c.valeur}</span>
         )}
       </Link>
     );
   };
   return (
-    <aside className="sans-barre fixed inset-y-0 left-0 z-30 hidden w-[76px] flex-col overflow-y-auto bg-gradient-to-b from-nuit to-nuit-2 px-2.5 py-5 text-sur-nuit lg:flex rail:w-64 rail:px-4">
+    <aside className="sans-barre fixed inset-y-0 left-0 z-30 hidden w-[76px] flex-col overflow-y-auto bg-nuit px-2.5 py-5 text-sur-nuit lg:flex rail:w-64 rail:px-4">
       <div className="mb-6 flex shrink-0 items-center justify-center gap-3 px-1 rail:justify-start [@media(max-height:700px)]:mb-3">
         <Logo className="size-9" />
         <span className="text-[17px] font-extrabold tracking-tight max-rail:hidden">Parc Auto</span>
@@ -199,7 +208,7 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
       <div className="relative">
         <button type="button" onClick={() => setMenuOrg((v) => !v)} aria-expanded={menuOrg} title={org.nom} aria-label={org.nom}
           className="onde flex w-full items-center gap-3 rounded-xl bg-white/[0.06] p-2.5 text-left ring-1 ring-white/10 transition-colors hover:bg-white/[0.1] max-rail:justify-center max-rail:p-1.5">
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#4a72ee] to-primaire-plein text-[13px] font-bold text-white">{initiales(org.nom)}</span>
+          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primaire-plein text-[13px] font-bold text-white">{initiales(org.nom)}</span>
           <span className="min-w-0 flex-1 max-rail:hidden">
             <span className="block truncate text-[14px] font-semibold">{org.nom}</span>
             <span className="block truncate text-[12px] text-sur-nuit-2">{ROLES[org.role]?.libelle}{etat.mode === "demo" ? " · démonstration" : ""}</span>
@@ -212,10 +221,10 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
               <button key={o.id} type="button" onClick={() => { choisirOrganisation(o.id); setMenuOrg(false); }}
                 className="flex h-10 w-full items-center justify-between rounded-lg px-2.5 text-left text-[13px] hover:bg-white/[0.08]">
                 <span className="truncate">{o.nom}</span>
-                {o.id === org.id && <Check size={16} weight="bold" className="text-[#7c9dff]" aria-hidden />}
+                {o.id === org.id && <Check size={16} weight="bold" className="text-nuit-primaire" aria-hidden />}
               </button>
             ))}
-            <button type="button" onClick={() => void deconnecter()} className="mt-1 flex h-10 w-full items-center gap-2 rounded-lg px-2.5 text-[13px] text-[#ff9b93] hover:bg-white/[0.08]">
+            <button type="button" onClick={() => void deconnecter()} className="mt-1 flex h-10 w-full items-center gap-2 rounded-lg px-2.5 text-[13px] text-nuit-perte hover:bg-white/[0.08]">
               <SignOut size={16} aria-hidden /> {etat.mode === "demo" ? "Quitter la démonstration" : "Se déconnecter"}
             </button>
           </div>

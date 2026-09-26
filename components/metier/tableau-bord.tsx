@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowDownRight, ArrowUpRight, CaretRight } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
@@ -17,7 +17,7 @@ interface Tranche {
 }
 
 /**
- * « Où est votre argent ? » : carte en dégradé bleu nuit. Le capital immobilisé en grand (compteur animé),
+ * « Où est votre argent ? » : carte bleu nuit. Le capital immobilisé en grand (compteur animé),
  * une barre découpée par étape du voyage, et le détail cliquable de chaque étape. En fond, la route
  * Houston → Cotonou → Bamako.
  */
@@ -31,18 +31,17 @@ export function HeroCapital({ tranches, disponibles }: { tranches: Tranche[]; di
 
   return (
     <section aria-labelledby="titre-capital"
-      className="apparition relative min-w-0 overflow-hidden rounded-[22px] bg-[radial-gradient(120%_120%_at_100%_0%,#2d5bff_0%,#16275a_45%,#0b1633_100%)] p-5 text-white shadow-[0_24px_48px_-20px_rgb(11_22_51/0.7)] lg:p-7">
+      className="apparition relative min-w-0 overflow-hidden rounded-[22px] bg-nuit p-5 text-white shadow-flottante lg:p-7">
       {/* La route, en filigrane */}
       <svg aria-hidden viewBox="0 0 600 220" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 size-full opacity-[0.18]">
         <path d="M20 190 C 150 170, 190 60, 320 90 S 520 40, 585 30" fill="none" stroke="white" strokeWidth="2" strokeDasharray="2 9" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
       </svg>
-      <div aria-hidden className="pointer-events-none absolute -top-24 -right-16 size-72 rounded-full bg-[#ff7a1a]/25 blur-3xl" />
 
       <div className="relative">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 id="titre-capital" className="etiquette text-[11px] text-white/70">{voitCouts ? "Où est votre argent ?" : "Où sont vos véhicules ?"}</h2>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-semibold ring-1 ring-white/15">
-            <span className="size-1.5 animate-pulse rounded-full bg-[#4ade80]" /> {pluriel(disponibles, "véhicule")} prêt{disponibles > 1 ? "s" : ""} à vendre
+            <span className="size-1.5 rounded-full bg-nuit-gain" /> {pluriel(disponibles, "véhicule")} prêt{disponibles > 1 ? "s" : ""} à vendre
           </span>
         </div>
         <p className="mt-3 flex flex-wrap items-baseline gap-x-3">
@@ -68,15 +67,15 @@ export function HeroCapital({ tranches, disponibles }: { tranches: Tranche[]; di
           <span>Houston</span><span>Cotonou</span><span>Bamako</span>
         </div>
 
-        <ul className="sans-barre -mx-5 mt-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0 lg:grid-cols-2 xl:grid-cols-4">
+        <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
           {presentes.map((t, i) => {
             const def = defEtape(t.etape);
             return (
-              <li key={t.etape} className="apparition w-32 shrink-0 sm:w-auto" style={decalage(i, 40)}>
+              <li key={t.etape} className="apparition min-w-0" style={decalage(i, 40)}>
                 <Link href={`/parc/?etape=${t.etape}`}
                   className={cn("flex h-full flex-col rounded-xl bg-white/[0.07] px-3 py-2.5 ring-1 ring-white/10 transition-all hover:-translate-y-0.5 hover:bg-white/[0.13]", t.nb === 0 && "opacity-50")}>
                   <span className="flex min-w-0 items-center gap-1.5 text-[12px] font-semibold text-white/85">
-                    <span className="size-2 shrink-0 rounded-full" style={{ background: def.couleur, boxShadow: `0 0 10px ${def.couleur}` }} />
+                    <span className="size-2 shrink-0 rounded-full" style={{ background: def.couleur }} />
                     <span className="truncate">{def.libelle}</span>
                   </span>
                   <span className="chiffres mt-1 text-[17px] leading-tight font-bold">{voitCouts ? formatCourt(t.montant ?? 0) : t.nb}</span>
@@ -91,9 +90,8 @@ export function HeroCapital({ tranches, disponibles }: { tranches: Tranche[]; di
   );
 }
 
-/** Mini-courbe (sparkline) avec aire en dégradé. */
+/** Mini-courbe (sparkline) avec aire légèrement teintée. */
 function Courbe({ valeurs, couleur }: { valeurs: number[]; couleur: string }) {
-  const id = useId();
   if (valeurs.length < 2) return null;
   const max = Math.max(...valeurs, 1);
   const min = Math.min(...valeurs, 0);
@@ -101,13 +99,7 @@ function Courbe({ valeurs, couleur }: { valeurs: number[]; couleur: string }) {
   const ligne = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
   return (
     <svg viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden className="h-9 w-full">
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={couleur} stopOpacity="0.28" />
-          <stop offset="1" stopColor={couleur} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={`${ligne} L100 32 L0 32 Z`} fill={`url(#${id})`} />
+      <path d={`${ligne} L100 32 L0 32 Z`} fill={couleur} fillOpacity={0.1} />
       <path d={ligne} fill="none" stroke={couleur} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
     </svg>
   );
@@ -200,10 +192,10 @@ export function GraphiqueVentes({ points }: { points: { mois: string; ca: number
             <button key={x.mois} type="button" onMouseEnter={() => setActif(k)} onFocus={() => setActif(k)} onClick={() => setActif(k)}
               aria-label={`${formatMoisCourt(x.mois)} : ${formatNombre(x.ca)} FCFA${x.marge !== null ? `, marge ${formatNombre(x.marge)} FCFA` : ""}, ${pluriel(x.nb, "vente")}`}
               className={cn("group relative flex h-full flex-1 items-end justify-center gap-[2px] rounded-lg transition-colors", k === i && "bg-primaire-voile/60")}>
-              <span className="w-full max-w-[18px] origin-bottom rounded-t-md bg-gradient-to-t from-primaire to-[#5b84ff] transition-opacity [animation:pousse_700ms_cubic-bezier(0.22,1,0.36,1)_both] group-hover:opacity-90"
+              <span className="w-full max-w-[18px] origin-bottom rounded-t-md bg-primaire transition-opacity [animation:pousse_700ms_cubic-bezier(0.22,1,0.36,1)_both] group-hover:opacity-90"
                 style={{ height: `${Math.max((x.ca / echelle) * 100, x.ca > 0 ? 1.5 : 0)}%`, animationDelay: `${k * 40}ms` }} />
               {voitMarge && (
-                <span className="w-full max-w-[18px] origin-bottom rounded-t-md bg-gradient-to-t from-[#f2541b] to-[#ffa65c] [animation:pousse_700ms_cubic-bezier(0.22,1,0.36,1)_both]"
+                <span className="w-full max-w-[18px] origin-bottom rounded-t-md bg-accent [animation:pousse_700ms_cubic-bezier(0.22,1,0.36,1)_both]"
                   style={{ height: `${Math.max(((x.marge ?? 0) / echelle) * 100, (x.marge ?? 0) > 0 ? 1.5 : 0)}%`, animationDelay: `${k * 40 + 120}ms` }} />
               )}
             </button>
@@ -244,16 +236,16 @@ export function VitrineParc({ vehicules }: { vehicules: Vehicule[] }) {
           Tout voir <CaretRight className="size-4" aria-hidden />
         </Link>
       </div>
-      <div className="sans-barre -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-3 lg:mx-0 lg:px-0">
+      <div data-defilement="horizontal" className="sans-barre -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-3 lg:mx-0 lg:px-0">
         {vehicules.map((v) => (
           <Link key={v.id} href={`/parc/vehicule/?id=${v.id}`} className="carte carte-lien group w-64 shrink-0 snap-start overflow-hidden">
             <div className="relative aspect-[4/3] overflow-hidden">
               <PhotoVehicule path={v.photo_principale_path} alt="" arrondi={false} className="size-full transition-transform duration-500 group-hover:scale-105" />
-              <span aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
+              <span aria-hidden className="voile-photo absolute inset-x-0 bottom-0 h-1/2" />
               {v.prix_affiche_xof !== null && (
                 <span className="chiffres absolute bottom-2.5 left-3 text-[18px] font-extrabold text-white drop-shadow">{formatCourt(v.prix_affiche_xof)} <span className="text-[12px] font-semibold text-white/80">FCFA</span></span>
               )}
-              <span className="absolute top-2.5 right-2.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-bold text-[#0b1633] shadow backdrop-blur">{v.jours_etape} j au parc</span>
+              <span className="absolute top-2.5 right-2.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-bold text-nuit shadow backdrop-blur">{v.jours_etape} j au parc</span>
             </div>
             <div className="p-3">
               <p className="truncate font-bold">{v.libelle}</p>

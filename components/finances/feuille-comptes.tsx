@@ -14,9 +14,9 @@ import { Champ, Interrupteur, Selection } from "@/components/ui/champ";
 import { ChampMontant } from "@/components/ui/champ-montant";
 
 const TYPES: Record<Compte["type"], { libelle: string; icone: Icon; couleur: string }> = {
-  caisse: { libelle: "Caisse (espèces)", icone: Money, couleur: "#16a34a" },
-  mobile_money: { libelle: "Mobile money", icone: DeviceMobile, couleur: "#ea580c" },
-  banque: { libelle: "Compte bancaire", icone: Bank, couleur: "#16275a" },
+  caisse: { libelle: "Caisse (espèces)", icone: Money, couleur: "var(--gain-plein)" },
+  mobile_money: { libelle: "Mobile money", icone: DeviceMobile, couleur: "var(--accent-plein)" },
+  banque: { libelle: "Compte bancaire", icone: Bank, couleur: "var(--nuit-2)" },
 };
 
 interface Brouillon { id: string | null; nom: string; type: Compte["type"]; soldeInitial: number | null; actif: boolean }

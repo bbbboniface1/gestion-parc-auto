@@ -22,6 +22,7 @@ import { FeuilleEncaisser } from "@/components/ventes/feuille-encaisser";
 import { FeuilleAnnulerVente } from "@/components/ventes/feuille-annuler-vente";
 import { FeuilleAnnulerPaiement } from "@/components/ventes/feuille-annuler-paiement";
 import { Bouton } from "@/components/ui/bouton";
+import { Avatar } from "@/components/ui/avatar";
 import { FilAriane } from "@/components/ui/fil-ariane";
 import { PanneauActions, type ActionVisible } from "@/components/ui/panneau-actions";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
@@ -30,10 +31,6 @@ import { useCompteursNavigation } from "@/lib/compteurs";
 import { useCompteur } from "@/lib/animation";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
 import { Montant, Tampon } from "@/components/ui/signature";
-
-function initiales(nom: string) {
-  return nom.split(/\s+/).filter(Boolean).slice(0, 2).map((m) => m[0]!.toUpperCase()).join("");
-}
 
 const LIBELLES_ECHEANCE: Record<string, string> = { payee: "Payée", partielle: "Partielle", en_retard: "En retard", a_venir: "À venir" };
 
@@ -107,8 +104,8 @@ function Fiche() {
 
   const actions: ActionVisible[] = [
     { cle: "encaisser", titre: "Encaisser un versement", detail: `Reste ${formatNombre(v.reste_xof)} FCFA · espèces, Orange Money, Wave…`, icone: HandCoins, couleur: "var(--primaire)", principale: true, onClick: () => setFeuille("encaisser"), masque: annulee || v.reste_xof === 0 || !peutEncaisser },
-    { cle: "facture", titre: "Télécharger la facture", detail: `PDF ${v.numero} · avec QR de vérification`, icone: FilePdf, couleur: "#dc2626", onClick: () => agir("facture", "telecharger") },
-    { cle: "whatsapp", titre: `Envoyer à ${prenom} sur WhatsApp`, detail: `Facture PDF + message · ${v.client.telephone ?? ""}`, icone: WhatsappLogo, couleur: "#25d366", onClick: () => envoyerWhatsApp(), masque: !v.client.telephone },
+    { cle: "facture", titre: "Télécharger la facture", detail: `PDF ${v.numero} · avec QR de vérification`, icone: FilePdf, couleur: "var(--perte)", onClick: () => agir("facture", "telecharger") },
+    { cle: "whatsapp", titre: `Envoyer à ${prenom} sur WhatsApp`, detail: `Facture PDF + message · ${v.client.telephone ?? ""}`, icone: WhatsappLogo, couleur: "var(--marque-whatsapp)", onClick: () => envoyerWhatsApp(), masque: !v.client.telephone },
     { cle: "imprimer", titre: "Imprimer la facture", detail: "Format A4, cachet et signature inclus", icone: Printer, couleur: "var(--encre-3)", onClick: () => agir("facture", "imprimer") },
     { cle: "relancer", titre: `Relancer ${prenom}`, detail: `Rappel amical : ${formatNombre(v.reste_xof)} FCFA à régler`, icone: BellRinging, couleur: "var(--ocre)", onClick: relancer, masque: annulee || v.reste_xof === 0 || !v.client.telephone },
     { cle: "livrer", titre: "Marquer comme livré", detail: "Le client a reçu le véhicule et les clés", icone: Key, couleur: "var(--etape-parc)", onClick: () => livrer.executerAsync({ p_org: org.id, p_vente_id: v.id, p_date: aujourdhui() }), masque: annulee || v.livree || !peutLivrer },
@@ -127,7 +124,7 @@ function Fiche() {
       <section className="carte apparition overflow-hidden lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <Link href={`/parc/vehicule/?id=${v.vehicule.id}`} className="group relative block aspect-[16/10] overflow-hidden lg:aspect-auto lg:min-h-[260px]">
           <PhotoVehicule path={v.vehicule.photo_principale_path} alt={v.vehicule.libelle} arrondi={false} className="absolute inset-0 size-full transition-transform duration-500 group-hover:scale-105" />
-          <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0b1633]/85 via-[#0b1633]/20 to-transparent" />
+          <span aria-hidden className="voile-photo absolute inset-0" />
           <span className="absolute inset-x-4 bottom-4 text-white">
             <span className="block text-[20px] leading-tight font-extrabold drop-shadow">{v.vehicule.libelle}</span>
             {v.vehicule.vin && <span className="mt-1 block font-mono text-[12px] text-white/80">{grouperVin(v.vehicule.vin)}</span>}
@@ -145,7 +142,7 @@ function Fiche() {
             </div>
           </div>
           <Link href={`/clients/fiche/?id=${v.client.id}`} className="group flex items-center gap-3 rounded-2xl bg-surface-2 p-3 transition-colors hover:bg-primaire-voile">
-            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#b388ff] to-[#7c3aed] text-[15px] font-bold text-white">{initiales(v.client.nom)}</span>
+            <Avatar nom={v.client.nom} taille={44} />
             <span className="min-w-0 flex-1">
               <span className="block truncate font-bold group-hover:text-primaire">{v.client.nom}</span>
               <span className="block truncate text-[13px] text-encre-3">{[v.client.telephone, v.client.ville].filter(Boolean).join(" · ") || "Client"}</span>
@@ -187,7 +184,7 @@ function Fiche() {
                   const mv = MODES_VISUELS[p.mode] ?? MODES_VISUELS.autre!;
                   return (
                     <li key={p.id} className={cn("apparition relative flex items-center gap-3", p.annule && "opacity-50")} style={{ animationDelay: `${i * 60}ms` }}>
-                      <span className="relative z-10 grid size-11 shrink-0 place-items-center rounded-full text-white ring-4 ring-surface" style={{ background: mv.couleur }}>
+                      <span className="relative z-10 grid size-11 shrink-0 place-items-center rounded-full ring-4 ring-surface" style={{ background: mv.couleur, color: mv.texte }}>
                         <mv.icone size={20} weight="fill" aria-hidden />
                       </span>
                       <div className="min-w-0 flex-1">
@@ -261,7 +258,7 @@ function Fiche() {
                 <a href={`tel:${v.client.telephone}`} className="onde flex h-12 items-center justify-center gap-2 rounded-2xl bg-primaire-voile font-semibold text-primaire transition-transform hover:-translate-y-0.5">
                   <Phone size={20} weight="fill" aria-hidden /> Appeler
                 </a>
-                <a href={lienWhatsApp(v.client.telephone, `Bonjour ${v.client.nom},`)} target="_blank" rel="noopener" className="onde flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#25d366] font-semibold text-[#062b14] shadow-[0_8px_18px_-8px_#25d366] transition-transform hover:-translate-y-0.5">
+                <a href={lienWhatsApp(v.client.telephone, `Bonjour ${v.client.nom},`)} target="_blank" rel="noopener" className="onde flex h-12 items-center justify-center gap-2 rounded-2xl bg-marque-whatsapp font-semibold text-sur-marque-whatsapp transition-transform hover:-translate-y-px">
                   <WhatsappLogo size={20} weight="fill" aria-hidden /> WhatsApp
                 </a>
               </div>
@@ -272,7 +269,7 @@ function Fiche() {
       </div>
 
       {!annulee && v.reste_xof > 0 && peutEncaisser && (
-        <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 border-t border-trait/70 bg-surface/90 px-4 py-3 shadow-[0_-8px_24px_-12px_rgb(15_23_42/0.18)] backdrop-blur-xl lg:hidden">
+        <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 border-t border-trait/70 bg-surface/90 px-4 py-3 shadow-barre-bas backdrop-blur-xl lg:hidden">
           <Bouton variante="primaire" pleineLargeur icone={<HandCoins size={20} weight="fill" />} onClick={() => setFeuille("encaisser")}>Encaisser · reste {formatCourt(v.reste_xof)} FCFA</Bouton>
         </div>
       )}

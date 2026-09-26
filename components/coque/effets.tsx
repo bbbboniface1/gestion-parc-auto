@@ -12,7 +12,7 @@ const APPARENCE: Record<Celebration["type"], { icone: Icon; couleur: string }> =
   vehicule: { icone: Car, couleur: "var(--etape-achete)" },
   simple: { icone: CheckCircle, couleur: "var(--gain)" },
 };
-const COULEURS_CONFETTI = ["#2457e5", "#ff7a1a", "#22c55e", "#0ea5e9", "#a855f7", "#f59e0b", "#6366f1", "#14b8a6"];
+const COULEURS_CONFETTI = ["var(--primaire)", "var(--accent)", "var(--gain)", "var(--ocre)", "var(--reserve)", "var(--acier)"];
 
 function mouvementReduit() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -75,7 +75,7 @@ export function EffetsGlobaux() {
 
   return (
     <div key={fete.cle} role="status" aria-live="polite" onClick={() => setFete(null)}
-      className="fixed inset-0 z-[70] grid place-items-center bg-[#0b1633]/25 backdrop-blur-[2px] [animation:apparition_200ms_both]">
+      className="fixed inset-0 z-[70] grid place-items-center bg-nuit/25 backdrop-blur-[2px] [animation:apparition_200ms_both]">
       <div className="relative">
         {!mouvementReduit() && morceaux.map((m) => (
           <span key={m.i} aria-hidden className="absolute top-1/2 left-1/2"
@@ -88,7 +88,7 @@ export function EffetsGlobaux() {
         <div className="relative flex w-[min(86vw,340px)] flex-col items-center rounded-[26px] bg-surface px-6 pt-8 pb-6 text-center shadow-flottante [animation:pose-tampon_520ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ rotate: "4deg" }}>
           <span className="relative grid size-20 place-items-center">
             <span aria-hidden className="absolute inset-0 rounded-full [animation:anneau_1200ms_ease-out_infinite]" style={{ background: couleur }} />
-            <span className="relative grid size-20 place-items-center rounded-full text-white shadow-lg" style={{ background: `linear-gradient(145deg, color-mix(in srgb, ${couleur} 75%, white), ${couleur})` }}>
+            <span className="relative grid size-20 place-items-center rounded-full text-white shadow-lg" style={{ background: couleur }}>
               <Icone size={40} weight="fill" aria-hidden />
             </span>
           </span>

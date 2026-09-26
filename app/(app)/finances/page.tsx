@@ -38,30 +38,28 @@ const PERIODES: { valeur: CodePeriode; libelle: string }[] = [
   { valeur: "trimestre", libelle: "3 mois" }, { valeur: "annee", libelle: "Cette année" },
 ];
 
-/** Apparence d'un compte : la couleur de l'opérateur quand on la reconnaît (Orange Money, Wave, Moov). */
-function apparenceCompte(c: Pick<Compte, "nom" | "type">): { degrade: string; icone: Icon; lueur: string } {
+/** Apparence d'un compte : la couleur de l'opérateur quand on la reconnaît (Orange Money, Wave, Moov), unie. */
+function apparenceCompte(c: Pick<Compte, "nom" | "type">): { fond: string; texte: string; icone: Icon } {
   const n = c.nom.toLowerCase();
-  if (n.includes("orange")) return { degrade: "linear-gradient(135deg,#ff9a3d,#ff6a00)", icone: DeviceMobile, lueur: "#ff7900" };
-  if (n.includes("wave")) return { degrade: "linear-gradient(135deg,#5ee0ff,#1596d9)", icone: DeviceMobile, lueur: "#1dc3f0" };
-  if (n.includes("moov")) return { degrade: "linear-gradient(135deg,#3b82f6,#0a4aa8)", icone: DeviceMobile, lueur: "#0a5cbf" };
-  if (c.type === "mobile_money") return { degrade: "linear-gradient(135deg,#a78bfa,#6d28d9)", icone: DeviceMobile, lueur: "#7c3aed" };
-  if (c.type === "banque") return { degrade: "linear-gradient(135deg,#2d4a8a,#0b1633)", icone: Bank, lueur: "#16275a" };
-  return { degrade: "linear-gradient(135deg,#34d399,#0f8a4f)", icone: Money, lueur: "#16a34a" };
+  if (n.includes("orange")) return { fond: "var(--marque-orange-money)", texte: "var(--nuit)", icone: DeviceMobile };
+  if (n.includes("wave")) return { fond: "var(--marque-wave)", texte: "var(--nuit)", icone: DeviceMobile };
+  if (n.includes("moov")) return { fond: "var(--marque-moov)", texte: "white", icone: DeviceMobile };
+  if (c.type === "mobile_money") return { fond: "var(--primaire-plein)", texte: "white", icone: DeviceMobile };
+  if (c.type === "banque") return { fond: "var(--nuit-2)", texte: "white", icone: Bank };
+  return { fond: "var(--gain-plein)", texte: "white", icone: Money };
 }
 
 function CarteCompte({ c, index }: { c: Tresorerie["comptes"][number]; index: number }) {
   const a = apparenceCompte(c);
   const solde = useCompteur(c.solde_xof ?? 0);
   return (
-    <div className="apparition relative overflow-hidden rounded-[20px] p-4 text-white transition-transform hover:-translate-y-1" style={{ background: a.degrade, boxShadow: `0 16px 32px -14px ${a.lueur}`, ...decalage(index) }}>
-      <div aria-hidden className="pointer-events-none absolute -top-10 -right-10 size-32 rounded-full bg-white/15" />
-      <div aria-hidden className="pointer-events-none absolute -right-4 -bottom-16 size-32 rounded-full bg-white/10" />
+    <div className="apparition relative overflow-hidden rounded-carte p-4 shadow-carte" style={{ background: a.fond, color: a.texte, ...decalage(index) }}>
       <div className="relative flex items-center justify-between gap-2">
         <span className="truncate text-[14px] font-bold">{c.nom}</span>
-        <a.icone size={22} weight="fill" className="shrink-0 opacity-90" aria-hidden />
+        <a.icone size={22} weight="fill" className="shrink-0" aria-hidden />
       </div>
-      <p className="chiffres relative mt-4 text-[26px] leading-none font-extrabold tracking-tight">{formatCourt(solde)} <span className="text-[13px] font-semibold opacity-80">FCFA</span></p>
-      <p className="relative mt-3 flex gap-3 text-[12px] font-semibold opacity-90">
+      <p className="chiffres relative mt-4 text-[26px] leading-none font-extrabold tracking-tight">{formatCourt(solde)} <span className="text-[13px] font-semibold">FCFA</span></p>
+      <p className="relative mt-3 flex gap-3 text-[12px] font-semibold">
         <span className="inline-flex items-center gap-0.5"><ArrowDownLeft size={13} weight="bold" aria-hidden />+{formatCourt(c.entrees_periode)}</span>
         <span className="inline-flex items-center gap-0.5"><ArrowUpRight size={13} weight="bold" aria-hidden />−{formatCourt(c.sorties_periode)}</span>
       </p>
@@ -234,7 +232,7 @@ function Finances() {
                       ) : <span className="text-[12px] text-encre-3">{formatCourt(c.encaisse_xof)} déjà reçus sur {formatCourt(c.montant_ttc)}</span>}
                       {c.client_telephone && (
                         <a href={lienWhatsApp(c.client_telephone, `Bonjour ${c.client_nom}, un rappel amical concernant votre facture ${c.numero} : il reste ${formatNombre(c.reste_xof)} FCFA à régler. Merci.`)}
-                          target="_blank" rel="noopener" className="onde inline-flex h-10 items-center gap-2 rounded-full bg-[#25d366] px-4 text-[13px] font-bold text-[#062b14] shadow-[0_8px_18px_-8px_#25d366] transition-transform hover:-translate-y-0.5">
+                          target="_blank" rel="noopener" className="onde inline-flex h-10 items-center gap-2 rounded-full bg-marque-whatsapp px-4 text-[13px] font-bold text-sur-marque-whatsapp transition-transform hover:-translate-y-px">
                           <WhatsappLogo size={18} weight="fill" aria-hidden /> Relancer sur WhatsApp
                         </a>
                       )}
@@ -277,7 +275,7 @@ function Finances() {
                           </div>
                           <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-surface-2">
                             <div className="h-full origin-left rounded-full [animation:remplit_900ms_both]"
-                              style={{ width: `${(Math.abs(l.marge_xof) / max) * 100}%`, background: l.marge_xof < 0 ? "var(--perte)" : "linear-gradient(90deg,#22c55e,#16a34a)", animationDelay: `${i * 50}ms` }} />
+                              style={{ width: `${(Math.abs(l.marge_xof) / max) * 100}%`, background: l.marge_xof < 0 ? "var(--perte)" : "var(--gain)", animationDelay: `${i * 50}ms` }} />
                           </div>
                           <p className="mt-1 text-[12px] text-encre-3">{formatDate(l.date_vente)} · vendu {formatCourt(l.montant_ht)} HT · revient {formatCourt(l.prix_revient_xof)} · {l.jours_stock} j en stock</p>
                         </Link>

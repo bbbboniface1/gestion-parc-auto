@@ -42,7 +42,7 @@ export function PaletteRecherche({ ouverte, onFermer, onAller }: { ouverte: bool
   return (
     <Dialog.Root open={ouverte} onOpenChange={(o) => !o && onFermer()}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-[rgb(23_23_26/0.45)]" />
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-nuit/45" />
         <Dialog.Content className="fixed inset-x-0 top-0 z-50 mx-auto w-full max-w-xl overflow-hidden border-trait bg-surface shadow-flottante lg:top-[12vh] lg:rounded-carte lg:border">
           <Dialog.Title className="sr-only">Recherche</Dialog.Title>
           <Dialog.Description className="sr-only">Rechercher un véhicule, un client ou un document</Dialog.Description>

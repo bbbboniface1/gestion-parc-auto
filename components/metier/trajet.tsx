@@ -77,7 +77,7 @@ export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
         </p>
       </div>
 
-      <div ref={piste} tabIndex={0} role="region" aria-label="Étapes du trajet" className="sans-barre -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
+      <div ref={piste} tabIndex={0} role="region" aria-label="Étapes du trajet" data-defilement="horizontal" className="sans-barre -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
         <div className="relative min-w-[500px] pt-14 pb-1">
           {/* Lieux */}
           <div aria-hidden className="absolute inset-x-0 top-0 h-4">
@@ -89,12 +89,12 @@ export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
           {/* Ligne de fond, puis ligne parcourue qui se trace */}
           <div aria-hidden className="absolute top-[69px] h-1.5 rounded-full bg-surface-2" style={{ left: `${pas / 2}%`, right: `${pas / 2}%` }} />
           <div aria-hidden className="absolute top-[69px] h-1.5 origin-left rounded-full [animation:remplit_1100ms_cubic-bezier(0.22,1,0.36,1)_both]"
-            style={{ left: `${pas / 2}%`, width: `${finLigne - pas / 2}%`, background: `linear-gradient(90deg, ${ETAPES[0]!.couleur}, ${courante.couleur})` }} />
+            style={{ left: `${pas / 2}%`, width: `${finLigne - pas / 2}%`, background: courante.couleur }} />
 
           {/* Le transport, au-dessus de l'étape en cours */}
           <div aria-hidden className="absolute top-3 -translate-x-1/2 [animation:apparition_500ms_700ms_both]" style={{ left: `${finLigne}%` }}>
-            <span className="grid size-10 place-items-center rounded-2xl text-white shadow-[0_10px_20px_-8px_rgb(15_23_42/0.5)] [animation:flotte_2.4s_ease-in-out_infinite]"
-              style={{ background: `linear-gradient(145deg, color-mix(in srgb, ${courante.couleur} 70%, white), ${courante.couleur})` }}>
+            <span className="grid size-10 place-items-center rounded-2xl text-white shadow-flottante [animation:flotte_2.4s_ease-in-out_infinite]"
+              style={{ background: courante.couleur }}>
               <Transport size={22} weight="fill" />
             </span>
           </div>

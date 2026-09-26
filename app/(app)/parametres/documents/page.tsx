@@ -167,7 +167,7 @@ export default function PageDocuments() {
               <button key={v} type="button" onClick={() => insererVariable(v)} className="h-8 rounded-[4px] border border-trait bg-surface-2/50 px-2 font-mono text-[12px] text-encre-2 hover:bg-surface-2">{`{${v}}`}</button>
             ))}
           </div>
-          <div className="rounded-carte bg-[#e7f7e1] p-3 text-[14px] text-[#17171a] dark:bg-[#1f3a24] dark:text-sur-nuit">
+          <div className="rounded-carte bg-gain-voile p-3 text-[14px] text-encre">
             <p className="etiquette mb-1 text-[11px] opacity-70">Aperçu</p>
             <p className="whitespace-pre-line">{remplirModele(modele || MODELE_PAR_DEFAUT, Object.fromEntries(VARIABLES_WHATSAPP))}</p>
           </div>

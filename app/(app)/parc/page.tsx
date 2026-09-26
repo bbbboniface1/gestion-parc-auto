@@ -17,7 +17,7 @@ import { EnTetePage } from "@/components/coque/coque";
 import { CarteGalerie, CarteKanban } from "@/components/metier/carte-vehicule";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
 import { PastillesConteneur } from "@/components/metier/pastille-conteneur";
-import { Bouton } from "@/components/ui/bouton";
+import { Bouton, classesBouton } from "@/components/ui/bouton";
 import { EtatErreur, EtatVide, Squelette } from "@/components/ui/etats";
 import { EtiquetteEtape, Montant, teintesEtape } from "@/components/ui/signature";
 
@@ -138,14 +138,14 @@ function Parc() {
                   <button key={valeur} type="button" aria-pressed={vue === valeur}
                     onClick={() => { setVue(valeur); localStorage.setItem("parc-auto:vue-parc", valeur); }}
                     className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold transition-all",
-                      vue === valeur ? "bg-nuit text-white shadow-[0_4px_10px_-4px_rgb(11_22_51/0.6)]" : "text-encre-3 hover:text-encre")}>
+                      vue === valeur ? "bg-nuit text-white shadow-puce" : "text-encre-3 hover:text-encre")}>
                     <Icone className="size-4" aria-hidden /> {libelle}
                   </button>
                 ))}
               </div>
             )}
             {peutModifier && (
-              <Link href="/parc/nouveau/" className="inline-flex h-11 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein px-4 text-[15px] font-semibold text-white shadow-bouton transition-all hover:from-[#3560e0] lg:h-10 lg:text-sm">
+              <Link href="/parc/nouveau/" className={classesBouton("primaire")}>
                 <Plus className="size-4" aria-hidden /> Ajouter un véhicule
               </Link>
             )}
@@ -166,25 +166,25 @@ function Parc() {
             </button>
           )}
         </label>
-        <div className="sans-barre -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0" role="group" aria-label="Statut commercial">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Statut commercial">
           {STATUTS.map((s) => (
             <button key={s.valeur} type="button" aria-pressed={statut === s.valeur} onClick={() => setStatut(s.valeur)}
-              className={cn("h-10 shrink-0 rounded-full px-4 text-[14px] font-semibold transition-all",
-                statut === s.valeur ? "bg-primaire-plein text-white shadow-bouton" : "bg-surface text-encre-2 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
+              className={cn("h-11 shrink-0 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+                statut === s.valeur ? "bg-primaire-plein text-white shadow-bouton" : "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
               {s.libelle}
             </button>
           ))}
           {(nbVerifier > 0 || statut === "a_verifier") && (
             <button type="button" aria-pressed={statut === "a_verifier"} onClick={() => setStatut(statut === "a_verifier" ? "tous" : "a_verifier")}
-              className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all",
-                statut === "a_verifier" ? "bg-ocre text-white shadow-[0_6px_14px_-6px_var(--ocre)]" : "bg-ocre-voile text-ocre-texte ring-1 ring-ocre/30 hover:ring-ocre/60")}>
+              className={cn("inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+                statut === "a_verifier" ? "bg-ocre text-nuit" : "bg-ocre-voile text-ocre-texte ring-1 ring-ocre/30 hover:ring-ocre/60")}>
               <Warning size={16} weight="fill" aria-hidden /> À vérifier <span className="chiffres text-[12px] font-bold">{nbVerifier}</span>
             </button>
           )}
           {(nbArchives > 0 || statut === "archives") && (
             <button type="button" aria-pressed={statut === "archives"} onClick={() => setStatut(statut === "archives" ? "tous" : "archives")}
-              className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all",
-                statut === "archives" ? "bg-nuit text-white shadow-[0_6px_16px_-6px_rgb(11_22_51/0.6)]" : "bg-surface text-encre-3 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
+              className={cn("inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+                statut === "archives" ? "bg-nuit text-white shadow-puce" : "bg-surface text-encre-3 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
               <Archive size={16} weight="duotone" aria-hidden /> Archivés <span className="chiffres text-[12px] font-bold">{nbArchives}</span>
             </button>
           )}
@@ -193,11 +193,11 @@ function Parc() {
 
       {/* Étapes du voyage : filtre coloré */}
       {data && data.length > 0 && vueEffective !== "colonnes" && (
-        <div className="apparition sans-barre -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:px-0" role="tablist" aria-label="Étapes" style={{ animationDelay: "120ms" }}>
+        <div className="apparition mb-6 grid grid-cols-3 gap-2 sm:flex sm:flex-wrap" role="tablist" aria-label="Étapes" style={{ animationDelay: "120ms" }}>
           <button type="button" role="tab" aria-selected={etapeActive === "toutes"} onClick={() => choisirEtape("toutes")}
-            className={cn("flex h-11 shrink-0 items-center gap-2 rounded-2xl px-4 text-[14px] font-semibold transition-all",
-              etapeActive === "toutes" ? "bg-nuit text-white shadow-[0_6px_16px_-6px_rgb(11_22_51/0.6)]" : "bg-surface text-encre-2 ring-1 ring-trait/70 hover:text-encre")}>
-            Toutes les étapes
+            className={cn("flex h-11 min-w-0 shrink-0 items-center justify-center gap-2 rounded-2xl px-3 text-[14px] font-semibold transition-all sm:justify-start sm:px-4",
+              etapeActive === "toutes" ? "bg-nuit text-white shadow-puce" : "bg-surface text-encre-2 ring-1 ring-trait/70 hover:text-encre")}>
+            <span className="truncate"><span className="sm:hidden">Toutes</span><span className="hidden sm:inline">Toutes les étapes</span></span>
             <span className={cn("chiffres rounded-full px-2 text-[12px]", etapeActive === "toutes" ? "bg-white/15" : "bg-surface-2 text-encre-3")}>{filtres.length}</span>
           </button>
           {ETAPES.map((e) => {
@@ -206,10 +206,10 @@ function Parc() {
             const t = teintesEtape(e.couleur);
             return (
               <button key={e.code} type="button" role="tab" aria-selected={actif} onClick={() => choisirEtape(e.code)}
-                className={cn("flex h-11 shrink-0 items-center gap-2 rounded-2xl px-3.5 text-[14px] font-semibold transition-all", n === 0 && !actif && "opacity-55")}
+                className={cn("flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-2xl px-3 text-[14px] font-semibold transition-all sm:px-4", n === 0 && !actif && "opacity-55")}
                 style={actif ? { background: t.fond, color: t.texte, boxShadow: `inset 0 0 0 2px ${e.couleur}` } : { background: "var(--surface)", color: "var(--encre-2)", boxShadow: "inset 0 0 0 1px color-mix(in srgb, var(--trait) 70%, transparent)" }}>
-                <span className="size-2.5 rounded-full" style={{ background: e.couleur }} />
-                {e.libelle}
+                <span className="size-2.5 shrink-0 rounded-full" style={{ background: e.couleur }} />
+                <span className="truncate">{e.libelle}</span>
                 <span className="chiffres text-[12px] font-bold">{n}</span>
               </button>
             );
@@ -228,7 +228,7 @@ function Parc() {
           action={peutModifier ? <Link href="/parc/nouveau/"><Bouton variante="primaire" icone={<Plus className="size-4" />}>Ajouter un véhicule</Bouton></Link> : undefined}
         />
       ) : vueEffective === "colonnes" ? (
-        <div className="-mx-8 overflow-x-auto px-8 pb-4">
+        <div data-defilement="horizontal" className="-mx-8 overflow-x-auto px-8 pb-4">
           <div className="grid min-w-[1500px] grid-cols-8 gap-3">
             {ETAPES.map((e) => {
               const liste = parEtape.get(e.code) ?? [];
@@ -295,7 +295,7 @@ function Parc() {
 function TableauVehicules({ vehicules, selection, basculer }: { vehicules: Vehicule[]; selection: Set<string>; basculer: (id: string) => void }) {
   const voitCouts = vehicules.some((v) => v.prix_revient_xof !== null);
   return (
-    <div className="carte apparition overflow-x-auto">
+    <div data-defilement="horizontal" className="carte apparition overflow-x-auto">
       <table className="w-full min-w-[960px] text-sm">
         <thead>
           <tr className="border-b border-trait bg-surface-2 text-left">

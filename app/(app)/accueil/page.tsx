@@ -11,6 +11,7 @@ import { EnTetePage } from "@/components/coque/coque";
 import { ListeActions } from "@/components/metier/liste-actions";
 import { GraphiqueVentes, HeroCapital, TuileIndicateur, VitrineParc } from "@/components/metier/tableau-bord";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
+import { classesBouton } from "@/components/ui/bouton";
 
 export default function PageAujourdhui() {
   const org = useOrg();
@@ -25,10 +26,10 @@ export default function PageAujourdhui() {
         sousTitre={`${org.nom} · l'essentiel de votre activité, en un coup d'œil`}
         actions={
           <>
-            <Link href="/outils/simulateur/" className="inline-flex h-11 items-center gap-2 rounded-controle border border-trait-fort bg-surface px-4 text-[15px] font-semibold shadow-[0_1px_2px_rgb(15_23_42/0.05)] transition-colors hover:bg-surface-2 lg:h-10 lg:text-sm">
+            <Link href="/outils/simulateur/" className={classesBouton("secondaire")}>
               <Calculator className="size-4 text-primaire" aria-hidden /> Simuler une enchère
             </Link>
-            <Link href="/parc/nouveau/" className="hidden h-10 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein px-4 text-sm font-semibold text-white shadow-bouton transition-all hover:from-[#3560e0] lg:inline-flex">
+            <Link href="/parc/nouveau/" className={classesBouton("primaire", "md", "hidden lg:inline-flex")}>
               <Plus className="size-4" aria-hidden /> Ajouter un véhicule
             </Link>
           </>

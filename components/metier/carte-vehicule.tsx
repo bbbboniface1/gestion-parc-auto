@@ -29,8 +29,8 @@ export function CarteGalerie({ v, cochee, basculer, index = 0 }: { v: Vehicule; 
       <Link href={`/parc/vehicule/?id=${v.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden">
           <PhotoVehicule path={v.photo_principale_path} alt="" arrondi={false} className="size-full transition-transform duration-500 ease-out group-hover:scale-[1.06]" />
-          <span aria-hidden className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#0b1633]/80 via-[#0b1633]/25 to-transparent" />
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/92 px-2.5 py-1 text-[12px] font-bold text-[#0b1633] shadow-sm backdrop-blur">
+          <span aria-hidden className="voile-photo absolute inset-x-0 bottom-0 h-2/3" />
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/92 px-2.5 py-1 text-[12px] font-bold text-nuit shadow-sm backdrop-blur">
             <span className="size-2 rounded-full" style={{ background: def.couleur }} />
             {def.libelle}
           </span>
@@ -41,7 +41,7 @@ export function CarteGalerie({ v, cochee, basculer, index = 0 }: { v: Vehicule; 
                 {formatCourt(prix)} <span className="text-[12px] font-semibold text-white/80">FCFA</span>
               </span>
             ) : <span className="text-[13px] font-semibold text-white/80">Prix à fixer</span>}
-            <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-bold backdrop-blur", v.jours_etape > 30 ? "bg-[#c2410c] text-white" : "bg-white/20 text-white")}>
+            <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-bold backdrop-blur", v.jours_etape > 30 ? "bg-accent-plein text-white" : "bg-white/20 text-white")}>
               {v.jours_etape} j
             </span>
           </div>

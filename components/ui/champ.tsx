@@ -3,7 +3,7 @@ import { CaretDown } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 
 const BASE =
-  "w-full rounded-controle border bg-surface text-encre placeholder:text-encre-3/70 shadow-[0_1px_2px_rgb(15_23_42/0.04)] transition-all " +
+  "w-full rounded-controle border bg-surface text-encre placeholder:text-encre-3/70 shadow-champ transition-all " +
   "focus:outline-none focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] " +
   "disabled:bg-surface-2 disabled:text-encre-3";
 

@@ -42,7 +42,7 @@ function Tuile({ a, index }: { a: ActionVisible; index: number }) {
   const classe = cn(
     "onde apparition group relative flex min-h-[68px] w-full items-center gap-3 overflow-hidden rounded-2xl p-3 text-left transition-all duration-200",
     a.principale
-      ? "bg-gradient-to-br from-[#3a6cf0] to-primaire-plein text-white shadow-bouton hover:-translate-y-0.5 hover:shadow-[0_14px_28px_-10px_rgb(36_87_229/0.7)]"
+      ? "bg-primaire-plein text-sur-primaire shadow-bouton hover:bg-primaire-plein-survol"
       : "carte carte-lien",
     a.danger && "hover:bg-perte-voile",
   );
@@ -59,7 +59,7 @@ function Tuile({ a, index }: { a: ActionVisible; index: number }) {
       )}
       <span className="min-w-0 flex-1">
         <span className={cn("block text-[14px] leading-tight font-bold", a.danger && !a.principale && "text-perte-texte")}>{a.titre}</span>
-        {a.detail && <span className={cn("mt-0.5 block truncate text-[12px]", a.principale ? "text-white/80" : "text-encre-3")}>{a.detail}</span>}
+        {a.detail && <span className={cn("mt-0.5 block truncate text-[12px]", a.principale ? "text-white/90" : "text-encre-3")}>{a.detail}</span>}
       </span>
     </>
   );

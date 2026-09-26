@@ -88,7 +88,7 @@ function Fiche() {
     <div>
       <FilAriane retour={{ href: "/expeditions/", libelle: "Expéditions", icone: Boat, couleur: "var(--etape-en-mer)", detail: compteurs.expeditions?.sens }} etapes={[e.reference]} />
 
-      <section className="apparition relative overflow-hidden rounded-[22px] bg-[radial-gradient(120%_140%_at_100%_0%,#0ea5e9_0%,#16275a_50%,#0b1633_100%)] p-5 text-white shadow-[0_24px_48px_-20px_rgb(11_22_51/0.7)] lg:p-7">
+      <section className="apparition relative overflow-hidden rounded-carte bg-nuit p-5 text-white shadow-flottante lg:p-7">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="etiquette text-[11px] text-white/70">{e.mode === "conteneur" ? "Conteneur" : "RoRo"}{e.numero_conteneur ? ` · ${e.numero_conteneur}` : ""}</p>
@@ -96,7 +96,7 @@ function Fiche() {
             <p className="mt-1 text-white/80">{[e.compagnie, e.navire].filter(Boolean).join(" · ") || "Compagnie à préciser"}</p>
           </div>
           <span className="inline-flex h-8 items-center gap-2 rounded-full bg-white/12 px-3.5 text-[13px] font-bold ring-1 ring-white/20">
-            <span className="size-2 rounded-full" style={{ background: st.couleur, boxShadow: `0 0 10px ${st.couleur}` }} />{st.libelle}
+            <span className="size-2 rounded-full" style={{ background: st.couleur }} />{st.libelle}
           </span>
         </div>
         <RouteMaritime v={e} sombre className="mt-6" />

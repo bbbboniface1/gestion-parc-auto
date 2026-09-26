@@ -63,7 +63,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
           <span className="absolute -right-1.5 -bottom-1.5 grid size-6 place-items-center rounded-full text-white ring-2 ring-surface" style={{ background: couleur }}><Ico size={13} weight="fill" aria-hidden /></span>
         </span>
       ) : (
-        <span className="grid size-[52px] shrink-0 place-items-center rounded-xl text-white" style={{ background: conteneur && st ? `linear-gradient(135deg, color-mix(in srgb, ${st.couleur} 65%, white), ${st.couleur})` : couleur }}>
+        <span className="grid size-[52px] shrink-0 place-items-center rounded-xl text-white" style={{ background: conteneur && st ? st.couleur : couleur }}>
           {conteneur ? <Boat size={24} weight="fill" aria-hidden /> : <Ico size={24} weight="fill" aria-hidden />}
         </span>
       )}

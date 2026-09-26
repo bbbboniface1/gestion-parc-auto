@@ -92,11 +92,11 @@ export function ListeDepenses({ liste, enEvidence, peutModifier }: { liste: Frai
             <button type="button" onClick={() => setQ("")} aria-label="Effacer la recherche" className="absolute top-1/2 right-2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-encre-3 hover:bg-surface-2"><X className="size-4" /></button>
           )}
         </label>
-        <div className="sans-barre -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0" role="group" aria-label="Type de dépense">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Type de dépense">
           {PORTEES.map((p) => (
             <button key={p.valeur} type="button" aria-pressed={portee === p.valeur} onClick={() => setPortee(p.valeur)}
               className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all",
-                portee === p.valeur ? "bg-primaire-plein text-white shadow-bouton" : "bg-surface text-encre-2 shadow-[0_1px_2px_rgb(15_23_42/0.06)] ring-1 ring-trait/70 hover:text-encre")}>
+                portee === p.valeur ? "bg-primaire-plein text-white shadow-bouton" : "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
               {p.valeur !== "toutes" && <p.icone size={16} weight="duotone" aria-hidden />}{p.libelle}
             </button>
           ))}

@@ -65,8 +65,7 @@ function Fiche() {
       <FilAriane retour={{ href: "/clients/", libelle: "Clients", icone: UsersThree, couleur: "var(--reserve)", detail: compteurs.clients?.sens }} etapes={[c.nom]} />
 
       {/* En-tête : la personne et comment la joindre */}
-      <section className="apparition relative overflow-hidden rounded-[22px] bg-[radial-gradient(120%_140%_at_0%_0%,#7c3aed_0%,#2457e5_55%,#0b1633_100%)] p-5 text-white shadow-[0_24px_48px_-20px_rgb(11_22_51/0.7)] lg:p-7">
-        <div aria-hidden className="pointer-events-none absolute -right-10 -bottom-20 size-72 rounded-full bg-white/10 blur-3xl" />
+      <section className="apparition relative overflow-hidden rounded-carte bg-nuit p-5 text-white shadow-flottante lg:p-7">
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <Avatar nom={c.nom} taille={72} className="ring-4 ring-white/20" />
@@ -85,7 +84,7 @@ function Fiche() {
               </a>
             )}
             {tel && (
-              <a href={lienWhatsApp(tel, `Bonjour ${c.nom},`)} target="_blank" rel="noopener" className="onde inline-flex h-11 items-center gap-2 rounded-full bg-[#25d366] px-4 font-semibold text-[#062b14] shadow-lg transition-transform hover:-translate-y-0.5">
+              <a href={lienWhatsApp(tel, `Bonjour ${c.nom},`)} target="_blank" rel="noopener" className="onde inline-flex h-11 items-center gap-2 rounded-full bg-marque-whatsapp px-4 font-semibold text-sur-marque-whatsapp transition-transform hover:-translate-y-px">
                 <WhatsappLogo size={19} weight="fill" aria-hidden /> WhatsApp
               </a>
             )}
@@ -192,7 +191,7 @@ function Fiche() {
             {nosCorrespondances.length > 0 && (
               <div className="mt-4">
                 <p className="mb-2 text-[13px] font-bold text-acier">Dans votre parc, ça pourrait lui plaire :</p>
-                <ul className="sans-barre -mx-4 flex gap-3 overflow-x-auto px-4 pb-1 lg:mx-0 lg:px-0">
+                <ul data-defilement="horizontal" className="sans-barre -mx-4 flex gap-3 overflow-x-auto px-4 pb-1 lg:mx-0 lg:px-0">
                   {nosCorrespondances.map((co) => (
                     <li key={co.vehicule.id} className="w-56 shrink-0">
                       <Link href={`/parc/vehicule/?id=${co.vehicule.id}`} className="carte carte-lien group block overflow-hidden">
@@ -218,7 +217,7 @@ function Fiche() {
             <h2 className="mb-3 text-[17px] font-bold">Coordonnées</h2>
             <ul className="flex flex-col gap-3 text-[14px]">
               {c.telephone && <li className="flex items-center gap-3"><Picto icone={Phone} couleur="var(--primaire)" taille="xs" /><span className="flex-1 text-encre-3">Téléphone</span><span className="font-semibold">{c.telephone}</span></li>}
-              {c.whatsapp && c.whatsapp !== c.telephone && <li className="flex items-center gap-3"><Picto icone={WhatsappLogo} couleur="#25d366" taille="xs" /><span className="flex-1 text-encre-3">WhatsApp</span><span className="font-semibold">{c.whatsapp}</span></li>}
+              {c.whatsapp && c.whatsapp !== c.telephone && <li className="flex items-center gap-3"><Picto icone={WhatsappLogo} couleur="var(--marque-whatsapp)" taille="xs" /><span className="flex-1 text-encre-3">WhatsApp</span><span className="font-semibold">{c.whatsapp}</span></li>}
               {c.adresse && <li className="flex items-center gap-3"><Picto icone={MapPin} couleur="var(--accent)" taille="xs" /><span className="flex-1 text-encre-3">Adresse</span><span className="text-right font-semibold">{c.adresse}</span></li>}
               {c.numero_piece && <li className="flex items-center gap-3"><Picto icone={IdentificationCard} couleur="var(--reserve)" taille="xs" /><span className="flex-1 text-encre-3">{c.type_piece ?? "Pièce"}</span><span className="font-mono text-[13px] font-semibold">{c.numero_piece}</span></li>}
             </ul>

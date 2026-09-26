@@ -6,7 +6,8 @@
 /*
  * Design v3 — couleur, profondeur, mouvement.
  *  - fond bleuté clair, cartes blanches arrondies (16 px) avec ombre douce qui se soulève au survol ;
- *  - barre latérale bleu nuit en dégradé ; bleu roi pour les actions, orange pour ce qui doit sauter aux yeux ;
+ *  - barre latérale bleu nuit (unie) ; bleu roi pour les actions, orange pour ce qui doit sauter aux yeux ;
+ *  - aucun dégradé décoratif, aucune couleur en dur : tout passe par les jetons ci-dessous (voir docs/CONVENTIONS_FRONT.md) ;
  *  - une couleur vive par étape du voyage (indigo → bleu → ciel → turquoise → ambre → orange → violet → vert) ;
  *  - badges en fond teinté et texte foncé : contraste ≥ 4,5:1 vérifié pour chaque couleur.
  */
@@ -24,9 +25,12 @@
   --primaire-fonce: #1a44bf;
   --primaire-plein: #2457e5;
   --primaire-voile: #e8eefd;
+  --primaire-plein-survol: #1d4bd1;
   --sur-primaire: #ffffff;
   --accent: #ff7a1a;
   --accent-voile: #fff0e4;
+  /* Orange plein sous un texte ou une icône blanche (contraste 4,5:1) : bouton « + », badges d'alerte sur photo. */
+  --accent-plein: #c2410c;
 
   --nuit: #0b1633;
   --nuit-2: #16275a;
@@ -34,6 +38,7 @@
   --sur-nuit-2: #b7c0d6;
 
   --gain: #16a34a;
+  --gain-plein: #15803d;
   --gain-texte: #0f7234;
   --gain-voile: #e3f5e9;
   --perte: #dc2626;
@@ -57,10 +62,39 @@
   --etape-atelier: #a855f7;
   --etape-parc: #22c55e;
 
+  /* Texte en couleur posé sur le bleu nuit (barre latérale, cartes héros) : identiques dans les deux thèmes. */
+  --nuit-primaire: #7c9dff;
+  --nuit-ocre: #ffc27a;
+  --nuit-perte: #ff9b93;
+  --nuit-gain: #7fd1a6;
+
+  /* Couleurs de marque d'opérateurs tiers : reconnaissables au premier coup d'œil, jamais utilisées pour autre chose. */
+  --marque-whatsapp: #25d366;
+  --sur-marque-whatsapp: #062b14;
+  --marque-orange-money: #ff7900;
+  --marque-wave: #1dc3f0;
+  --marque-moov: #0a5cbf;
+
+  /* Avatars (initiales) : 8 teintes pleines, texte blanc ≥ 5:1. La teinte est tirée du nom, sans autre signification. */
+  --avatar-1: #6d28d9;
+  --avatar-2: #1d4ed8;
+  --avatar-3: #0f766e;
+  --avatar-4: #b45309;
+  --avatar-5: #be185d;
+  --avatar-6: #15803d;
+  --avatar-7: #0369a1;
+  --avatar-8: #c2410c;
+
   --ombre-carte: 0 1px 2px rgb(15 23 42 / 0.04), 0 6px 20px -6px rgb(15 23 42 / 0.08);
   --ombre-survol: 0 2px 4px rgb(15 23 42 / 0.05), 0 18px 36px -12px rgb(15 23 42 / 0.18);
   --ombre-flottante: 0 12px 40px -8px rgb(15 23 42 / 0.25), 0 2px 6px rgb(15 23 42 / 0.06);
   --ombre-bouton: 0 1px 2px rgb(36 87 229 / 0.25), 0 6px 16px -4px rgb(36 87 229 / 0.45);
+  /* Champ, bouton secondaire, puce au repos : à peine décollés. */
+  --ombre-champ: 0 1px 2px rgb(15 23 42 / 0.05);
+  /* Puce ou onglet sélectionné (fond bleu nuit). */
+  --ombre-puce: 0 4px 12px -4px rgb(11 22 51 / 0.5);
+  /* Barre collée en bas de l'écran (navigation, action principale du téléphone). */
+  --ombre-barre-bas: 0 -8px 24px -12px rgb(15 23 42 / 0.18);
   --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--primaire);
 
   --pole-texte: #000;
@@ -80,6 +114,7 @@
     --primaire: #5b84ff;
     --primaire-fonce: #7c9dff;
     --primaire-plein: #2f54c4;
+    --primaire-plein-survol: #3a5fd0;
     --acier: #8fb0ff;
     --primaire-voile: #152246;
     --sur-primaire: #ffffff;
@@ -116,6 +151,7 @@
   --primaire: #5b84ff;
   --primaire-fonce: #7c9dff;
   --primaire-plein: #2f54c4;
+  --primaire-plein-survol: #3a5fd0;
   --acier: #8fb0ff;
   --primaire-voile: #152246;
   --sur-primaire: #ffffff;
@@ -158,10 +194,19 @@
   --color-primaire: var(--primaire);
   --color-primaire-fonce: var(--primaire-fonce);
   --color-primaire-plein: var(--primaire-plein);
+  --color-primaire-plein-survol: var(--primaire-plein-survol);
   --color-primaire-voile: var(--primaire-voile);
   --color-sur-primaire: var(--sur-primaire);
   --color-accent: var(--accent);
   --color-accent-voile: var(--accent-voile);
+  --color-accent-plein: var(--accent-plein);
+  --color-gain-plein: var(--gain-plein);
+  --color-nuit-primaire: var(--nuit-primaire);
+  --color-nuit-ocre: var(--nuit-ocre);
+  --color-nuit-perte: var(--nuit-perte);
+  --color-nuit-gain: var(--nuit-gain);
+  --color-marque-whatsapp: var(--marque-whatsapp);
+  --color-sur-marque-whatsapp: var(--sur-marque-whatsapp);
   --color-nuit: var(--nuit);
   --color-nuit-2: var(--nuit-2);
   --color-sur-nuit: var(--sur-nuit);
@@ -193,6 +238,9 @@
   --shadow-survol: var(--ombre-survol);
   --shadow-flottante: var(--ombre-flottante);
   --shadow-bouton: var(--ombre-bouton);
+  --shadow-champ: var(--ombre-champ);
+  --shadow-puce: var(--ombre-puce);
+  --shadow-barre-bas: var(--ombre-barre-bas);
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────────────────── */
@@ -255,6 +303,11 @@
   &:active {
     transform: translateY(0);
   }
+}
+/* Voile de lisibilité sous un texte posé sur une photo : le SEUL dégradé autorisé. Une photo a n'importe quelles couleurs ;
+   sans ce voile, un prix ou un titre blanc devient illisible sur une carrosserie claire. Toujours via cet utilitaire. */
+@utility voile-photo {
+  background: linear-gradient(to top, color-mix(in srgb, var(--nuit) 82%, transparent), color-mix(in srgb, var(--nuit) 30%, transparent) 55%, transparent);
 }
 /* Libellé de section : petites capitales espacées. */
 @utility etiquette {

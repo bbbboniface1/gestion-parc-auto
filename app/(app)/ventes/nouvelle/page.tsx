@@ -203,9 +203,9 @@ function NouvelleVente() {
                       const actif = modePaiement === m;
                       return (
                         <button key={m} type="button" aria-pressed={actif} onClick={() => setModePaiement(m)}
-                          className={cn("onde inline-flex h-11 items-center gap-2 rounded-full border px-3.5 text-[14px] font-semibold transition-all", actif ? "border-transparent text-white shadow-carte" : "border-trait-fort bg-surface text-encre-2 hover:text-encre")}
-                          style={actif ? { background: visuel.couleur } : undefined}>
-                          <visuel.icone size={18} weight="fill" style={actif ? undefined : { color: visuel.couleur }} aria-hidden />
+                          className={cn("onde inline-flex h-11 items-center gap-2 rounded-full border px-3.5 text-[14px] font-semibold transition-all", actif ? "border-transparent shadow-carte" : "border-trait-fort bg-surface text-encre-2 hover:text-encre")}
+                          style={actif ? { background: visuel.couleur, color: visuel.texte } : undefined}>
+                          <visuel.icone size={18} weight="fill" style={actif ? undefined : { color: `color-mix(in srgb, ${visuel.couleur} 80%, var(--pole-texte))` }} aria-hidden />
                           {MODES_PAIEMENT[m].libelle}
                         </button>
                       );
@@ -222,11 +222,11 @@ function NouvelleVente() {
 
         <aside className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-6 lg:col-span-5">
           <section className="carte apparition overflow-hidden" aria-label="Récapitulatif">
-            <div className="relative bg-gradient-to-br from-[#16275a] to-[#0b1633] text-white">
+            <div className="relative bg-nuit text-white">
               {vehicule ? (
                 <>
                   <PhotoVehicule path={vehicule.photo_principale_path} alt="" arrondi={false} className="aspect-[16/7] w-full opacity-70" />
-                  <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0b1633] via-[#0b1633]/40 to-transparent" />
+                  <span aria-hidden className="voile-photo absolute inset-0" />
                   <div className="absolute inset-x-4 bottom-3">
                     <p className="etiquette text-[11px] text-white/70">{vehicule.reference}</p>
                     <p className="truncate text-[19px] leading-tight font-extrabold">{vehicule.libelle}</p>

@@ -19,7 +19,7 @@ import { EnTetePage } from "@/components/coque/coque";
 import { Onglets } from "@/components/ui/onglets";
 import { Montant, Tampon } from "@/components/ui/signature";
 import { EtatErreur, EtatVide, SqueletteListe } from "@/components/ui/etats";
-import { Bouton } from "@/components/ui/bouton";
+import { Bouton, classesBouton } from "@/components/ui/bouton";
 import { Feuille } from "@/components/ui/feuille";
 import { BarreRecherche, Indicateur, Puces } from "@/components/ui/recherche";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
@@ -121,7 +121,7 @@ function Ventes() {
           <>
             {peutEncaisser && <Bouton icone={<HandCoins size={18} weight="duotone" className="text-primaire" />} onClick={() => setChoisirPourEncaisser(true)}>Encaisser un versement</Bouton>}
             {peutVendre && (
-              <Link href="/ventes/nouvelle/" className="onde inline-flex h-11 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein px-4 text-[15px] font-semibold text-white shadow-bouton transition-all hover:from-[#3560e0] lg:h-10 lg:text-sm">
+              <Link href="/ventes/nouvelle/" className={classesBouton("primaire")}>
                 <Plus size={18} weight="bold" aria-hidden /> Nouvelle vente
               </Link>
             )}
@@ -191,7 +191,7 @@ function Ventes() {
               const mv = MODES_VISUELS[p.mode] ?? MODES_VISUELS.autre!;
               return (
                 <li key={p.id} className={cn("flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-2", p.annule && "opacity-50")}>
-                  <span className="grid size-10 shrink-0 place-items-center rounded-full text-white" style={{ background: mv.couleur }}><mv.icone size={19} weight="fill" aria-hidden /></span>
+                  <span className="grid size-10 shrink-0 place-items-center rounded-full" style={{ background: mv.couleur, color: mv.texte }}><mv.icone size={19} weight="fill" aria-hidden /></span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-bold">{p.client_nom} <span className="font-mono text-[12px] font-medium text-encre-3">· {p.vente_numero}</span></p>
                     <p className="truncate text-[13px] text-encre-3">{MODES_PAIEMENT[p.mode]?.libelle} · {formatDate(p.date)}{p.reference ? ` · ${p.reference}` : ""}{p.annule ? " · annulé" : ""}</p>

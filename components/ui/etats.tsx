@@ -5,7 +5,7 @@ import type { ErreurApi } from "@/lib/api/erreurs";
 import { Bouton } from "./bouton";
 
 export function Squelette({ className }: { className?: string }) {
-  return <div aria-hidden className={cn("animate-pulse rounded-controle bg-[linear-gradient(90deg,var(--surface-2),var(--trait),var(--surface-2))] bg-[length:200%_100%]", className)} />;
+  return <div aria-hidden className={cn("animate-pulse rounded-controle bg-surface-2", className)} />;
 }
 
 /** Liste de squelettes : garde la forme de l'écran pendant le chargement (pas de toupie au centre). */

@@ -28,7 +28,7 @@ import { LigneDepense } from "@/components/finances/ligne-depense";
 import { couleurCategorie } from "@/lib/depenses";
 import { BandeauCoherence } from "@/components/metier/bandeau-coherence";
 import { RouteMaritime, STATUTS_EXPEDITION } from "@/components/expeditions/route-maritime";
-import { Bouton } from "@/components/ui/bouton";
+import { Bouton, classesBouton } from "@/components/ui/bouton";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
 import { EtiquetteEtape, Montant, Surtitre } from "@/components/ui/signature";
 import { FilAriane } from "@/components/ui/fil-ariane";
@@ -255,7 +255,7 @@ function Fiche() {
                 <>
                   <Link href={`/expeditions/fiche/?id=${v.expedition.id}`} className="onde group -m-1 flex items-center justify-between gap-3 rounded-2xl p-1">
                     <span className="flex min-w-0 items-center gap-3">
-                      <span className="grid size-11 shrink-0 place-items-center rounded-xl text-white" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${STATUTS_EXPEDITION[v.expedition.statut].couleur} 70%, white), ${STATUTS_EXPEDITION[v.expedition.statut].couleur})` }}><Boat size={24} weight="fill" aria-hidden /></span>
+                      <span className="grid size-11 shrink-0 place-items-center rounded-xl text-white" style={{ background: STATUTS_EXPEDITION[v.expedition.statut].couleur }}><Boat size={24} weight="fill" aria-hidden /></span>
                       <span className="min-w-0">
                         <span className="etiquette block text-[11px] text-encre-3">Voyage dans le conteneur</span>
                         <span className="flex flex-wrap items-center gap-x-2">
@@ -344,12 +344,12 @@ function Fiche() {
           <Bloc titre={`Photos · ${v.photos.length}`}
             action={modifier ? <Bouton variante="fantome" taille="sm" icone={<Camera className="size-4" />} chargement={envoiPhotos > 0} onClick={() => champPhoto.current?.click()}>Ajouter</Bouton> : undefined}>
             {v.photos.length > 0 ? (
-              <div className="sans-barre -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1">
+              <div data-defilement="horizontal" className="sans-barre -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1">
                 {v.photos.map((ph, k) => (
                   <button key={ph.id} type="button" onClick={() => setPhotoOuverte(k)} aria-label={`Agrandir la photo ${k + 1} sur ${v.photos.length}`}
                     className="group relative shrink-0 snap-start overflow-hidden rounded-controle transition-transform hover:-translate-y-0.5">
                     <PhotoVehicule path={ph.path} alt={v.libelle} className="aspect-[4/3] w-44 transition-transform duration-300 group-hover:scale-[1.04]" />
-                    {k === 0 && <span className="absolute top-1.5 left-1.5 rounded-full bg-[#c2410c] px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">Vitrine</span>}
+                    {k === 0 && <span className="absolute top-1.5 left-1.5 rounded-full bg-accent-plein px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">Vitrine</span>}
                   </button>
                 ))}
               </div>
@@ -406,14 +406,14 @@ function Fiche() {
 
       {/* Barre d'action mobile, au pouce */}
       {(vendre || (modifier && suivante) || v.vente) && (
-        <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex gap-2 border-t border-trait/70 bg-surface/90 px-4 py-3 shadow-[0_-8px_24px_-12px_rgb(15_23_42/0.18)] backdrop-blur-xl lg:hidden">
+        <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex gap-2 border-t border-trait/70 bg-surface/90 px-4 py-3 shadow-barre-bas backdrop-blur-xl lg:hidden">
           {modifier && suivante && (
             <Bouton className="h-auto min-h-11 flex-[1.5] py-1.5 text-center text-[14px] leading-tight whitespace-normal" icone={<ArrowFatLineRight size={18} weight="duotone" />} chargement={changerStatut.isPending} onClick={jouerProchaine}>
               {suivante.genre === "etape" ? `Passer à « ${defEtape(suivante.vers).libelle} »` : suivante.titre}
             </Bouton>
           )}
           {vendre ? (
-            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className="onde inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein text-[15px] font-semibold text-white shadow-bouton">
+            <Link href={`/ventes/nouvelle/?vehicule=${v.id}`} className={classesBouton("primaire", "md", "flex-1")}>
               <Invoice size={18} weight="fill" aria-hidden /> Vendre
             </Link>
           ) : v.vente ? (

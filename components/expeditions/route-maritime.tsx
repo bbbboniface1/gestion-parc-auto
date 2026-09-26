@@ -1,6 +1,5 @@
 "use client";
 
-import { useId } from "react";
 import { Anchor, Boat } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 import { formatDate, joursDepuis, lireDate } from "@/lib/format";
@@ -47,7 +46,6 @@ function libelleArrivee(v: Voyage): string {
  */
 export function RouteMaritime({ v, sombre, className }: { v: Voyage; sombre?: boolean; className?: string }) {
   const p = avancement(v);
-  const idMer = `mer-${useId().replace(/:/g, "")}`;
   const position = `${6 + p * 88}%`;
   const retard = v.statut === "en_mer" && libelleArrivee(v).startsWith("En retard");
   return (
@@ -56,21 +54,15 @@ export function RouteMaritime({ v, sombre, className }: { v: Voyage; sombre?: bo
         {/* La mer */}
         <svg aria-hidden viewBox="0 0 400 56" preserveAspectRatio="none" className="absolute inset-0 size-full">
           <path d="M22 38 Q 200 6 378 38" fill="none" stroke={sombre ? "rgb(255 255 255 / 0.25)" : "var(--trait-fort)"} strokeWidth="2" strokeDasharray="3 7" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-          <path d="M22 38 Q 200 6 378 38" fill="none" stroke={`url(#${idMer})`} strokeWidth="3" strokeLinecap="round" vectorEffect="non-scaling-stroke"
+          <path d="M22 38 Q 200 6 378 38" fill="none" stroke="var(--etape-en-mer)" strokeWidth="3" strokeLinecap="round" vectorEffect="non-scaling-stroke"
             pathLength={1} strokeDasharray={`${p} 1`} className="[animation:trace_1400ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ ["--longueur" as string]: 1 }} />
-          <defs>
-            <linearGradient id={idMer} x1="0" x2="1">
-              <stop offset="0" stopColor="#3b82f6" />
-              <stop offset="1" stopColor="#0ea5e9" />
-            </linearGradient>
-          </defs>
         </svg>
         {/* Les ports */}
         <span aria-hidden className={cn("absolute bottom-1 left-0 grid size-7 place-items-center rounded-full", sombre ? "bg-white/15 text-white" : "bg-acier-voile text-acier")}><Anchor size={15} weight="fill" /></span>
         <span aria-hidden className={cn("absolute right-0 bottom-1 grid size-7 place-items-center rounded-full", p >= 1 ? "bg-gain text-white" : sombre ? "bg-white/15 text-white" : "bg-surface-2 text-encre-3")}><Anchor size={15} weight="fill" /></span>
         {/* Le bateau */}
         <span aria-hidden className="absolute top-0 -translate-x-1/2 [animation:voyage_1400ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ left: position, ["--depart" as string]: "6%", ["--arrivee" as string]: position }}>
-          <span className={cn("grid size-9 place-items-center rounded-xl text-white shadow-[0_8px_18px_-6px_rgb(14_165_233/0.7)] [animation:flotte_2.6s_ease-in-out_infinite]", retard ? "bg-gradient-to-br from-[#fb923c] to-[#dc2626]" : "bg-gradient-to-br from-[#38bdf8] to-[#2457e5]")}>
+          <span className={cn("grid size-9 place-items-center rounded-xl text-white shadow-carte [animation:flotte_2.6s_ease-in-out_infinite]", retard ? "bg-perte" : "bg-primaire-plein")}>
             <Boat size={20} weight="fill" />
           </span>
         </span>
@@ -82,7 +74,7 @@ export function RouteMaritime({ v, sombre, className }: { v: Voyage; sombre?: bo
         </span>
         <span className="min-w-0 text-right">
           <span className={cn("block truncate font-bold", sombre ? "text-white" : "text-encre")}>{v.port_arrivee ?? "Arrivée"}</span>
-          <span className={cn(retard && "font-bold text-perte-texte", retard && sombre && "text-[#fca5a5]")}>{libelleArrivee(v)}</span>
+          <span className={cn(retard && "font-bold text-perte-texte", retard && sombre && "text-nuit-perte")}>{libelleArrivee(v)}</span>
         </span>
       </div>
     </div>
