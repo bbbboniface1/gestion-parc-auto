@@ -72,18 +72,32 @@ dans `<Suspense>`.
 - **Rangées de filtres et d'onglets** : elles passent à la ligne (`flex flex-wrap gap-2`), jamais coupées au bord de
   l'écran. Une rangée qui défile horizontalement n'est admise que pour un carrousel (photos, véhicules), un tableau
   ou une frise, et porte alors `data-defilement="horizontal"` ; `verifier:mise-en-page` refuse toutes les autres.
-## Mesures et hiérarchie (écran pilote : `app/(app)/accueil/page.tsx`)
+## Mesures et hiérarchie (écran pilote : `app/(app)/accueil/page.tsx`, appliqué à toutes les sections)
 
 - **Espacements** : multiples de 8 px, 4 px pour les ajustements fins. Écart entre sections d'une page `gap-6`
   (24) sur téléphone, `lg:gap-8` (32) ; entre cartes `gap-4` (16), `lg:gap-6` (24) ; intérieur d'une carte `p-4`
   (16), `lg:p-6` (24) ; carte héro `p-6`, `lg:p-8`. À l'intérieur : 4, 8, 12, 16, 24. Pas de `p-5`, `gap-5`, `p-7`
   (20 / 28 px) dans un écran repris.
 - **Tailles de texte** : 12 (méta, étiquettes), 14 (texte secondaire), 16 (texte), 18 (titre de section),
-  24 (valeur de second plan), 32 (valeur de premier plan, titre de page sur ordinateur), 40 et 56 (chiffre héro).
+  24 (valeur de second plan, titre de page sur téléphone), 32 (valeur de premier plan, titre de page sur ordinateur),
+  40 et 56 (chiffre héro). Seule exception : le chiffre d'une pastille posée sur une icône (10 px). Les champs de
+  saisie sont en 16 px sur téléphone (en dessous, iOS zoome à la saisie), 14 px sur ordinateur.
+- **Composants partagés alignés** : `Bouton` `sm` et `md` = 44 px sur téléphone, 40 px au-delà ; `Champ`,
+  `ChampMontant`, `Choix` = 44 px ; `Indicateur` = second plan (valeur 24 px) ; `Montant` `lg` = 24 px,
+  `xl` = 32 px, `heros` = 40/56 px ; tuiles d'icône `rounded-xl`. Rail de navigation : 80 px replié, 256 px déplié.
 - **Deux niveaux par écran** : un premier plan (carte héro `bg-heros` et au plus deux ou trois indicateurs
   `TuileIndicateur` : pictogramme, valeur 32 px, évolution, mini-courbe) et un second plan plus calme (valeurs
   24 px sans pictogramme, graphiques, listes). Rien n'est supprimé : on règle ce qui attire l'œil en premier.
   Entre 896 et 1279 px, la carte héro prend toute la largeur et les indicateurs se rangent dessous.
+- **Couleur de section** (navigation, fil d'Ariane, raccourci « Ajouter », `components/coque/navigation.ts`) :
+  Tableau de bord `primaire`, Parc `etape-achete` (le parc commence à l'achat), Ventes `gain`, Clients `reserve`,
+  Expéditions `etape-en-mer`, Finances `accent`, Simulateur `ocre`, Paramètres neutre (`encre-3`). Dans Paramètres,
+  toutes les sous-sections partagent la même teinte neutre : une couleur par sous-section ne portait aucun sens.
+- **Couleur d'une catégorie de frais** : table unique `COULEUR_CATEGORIE` (`lib/depenses.ts`), la même dans la liste
+  des dépenses, la fiche véhicule, le coût de revient et le simulateur. Un frais du voyage prend la couleur de l'étape
+  où il est payé ; une charge de structure (loyer, salaires…) est neutre.
+- **Sélection** : puce ou onglet actif = `bg-puce-active text-sur-puce-active` (bleu nuit en clair, pastille claire en
+  sombre). Barre flottante (sélection, « Modifications non enregistrées ») = `bg-heros`, visible dans les deux thèmes.
 - **Animations** : l'esprit reste (onde au toucher, apparition des blocs, confettis, tampon), l'intensité est basse :
   apparition 360 ms sur 4 px, arrivée de page 240 ms sans flou, carte cliquable soulevée de 1 px, onde à 12 %
   d'opacité, confettis resserrés, tampon posé depuis 130 %. Décalage entre éléments d'une liste : 30 à 60 ms.

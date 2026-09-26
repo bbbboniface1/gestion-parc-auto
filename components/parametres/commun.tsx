@@ -21,17 +21,24 @@ export interface SectionParametres {
   roles: Role[];
 }
 
+/**
+ * Une seule teinte, neutre, pour toutes les sections : une couleur par section ne portait aucun sens et
+ * empruntait celles des étapes du voyage. L'accent (`var(--primaire)`) est réservé à la vue d'ensemble,
+ * pour une section dont la préparation des factures est incomplète.
+ */
+export const TEINTE_SECTION = "var(--encre-3)";
+
 export const SECTIONS: SectionParametres[] = [
-  { cle: "entreprise", libelle: "Entreprise", description: "Nom, adresse, NIF, RCCM, logo, cachet et signature", icone: Buildings, couleur: "var(--primaire)", roles: ["proprietaire", "gerant"] },
-  { cle: "documents", libelle: "Documents et facturation", description: "Numérotation, TVA, mentions, modèle WhatsApp", icone: Invoice, couleur: "var(--gain)", roles: ["proprietaire", "gerant"] },
-  { cle: "devises", libelle: "Devises et taux", description: "Taux du dollar, parité de l'euro", icone: CurrencyDollar, couleur: "var(--accent)", roles: ["proprietaire", "gerant"] },
-  { cle: "douane", libelle: "Frais et douane", description: "Barème de dédouanement, hypothèses du simulateur", icone: Stamp, couleur: "var(--etape-douane)", roles: ["proprietaire", "gerant"] },
-  { cle: "logistique", libelle: "Logistique", description: "Ports, transitaires, compagnies, fournisseurs", icone: Anchor, couleur: "var(--etape-en-mer)", roles: ["proprietaire", "gerant"] },
-  { cle: "ventes", libelle: "Ventes et alertes", description: "Modes de paiement, alertes, confidentialité des coûts", icone: Storefront, couleur: "var(--reserve)", roles: ["proprietaire", "gerant"] },
-  { cle: "equipe", libelle: "Équipe", description: "Membres, rôles, invitations", icone: UsersThree, couleur: "var(--etape-achete)", roles: ["proprietaire", "gerant"] },
-  { cle: "preferences", libelle: "Préférences", description: "Thème, taille du texte sur cet appareil", icone: Palette, couleur: "var(--etape-atelier)", roles: ["proprietaire", "gerant", "vendeur", "comptable", "lecture"] },
-  { cle: "donnees", libelle: "Données", description: "Exports, sauvegarde, démonstration", icone: Database, couleur: "var(--etape-au-port)", roles: ["proprietaire", "gerant", "comptable"] },
-  { cle: "journal", libelle: "Journal", description: "Qui a fait quoi, et quand", icone: ClockCounterClockwise, couleur: "var(--encre-3)", roles: ["proprietaire", "gerant", "comptable"] },
+  { cle: "entreprise", libelle: "Entreprise", description: "Nom, adresse, NIF, RCCM, logo, cachet et signature", icone: Buildings, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant"] },
+  { cle: "documents", libelle: "Documents et facturation", description: "Numérotation, TVA, mentions, modèle WhatsApp", icone: Invoice, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant"] },
+  { cle: "devises", libelle: "Devises et taux", description: "Taux du dollar, parité de l'euro", icone: CurrencyDollar, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant"] },
+  { cle: "douane", libelle: "Frais et douane", description: "Barème de dédouanement, hypothèses du simulateur", icone: Stamp, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant"] },
+  { cle: "logistique", libelle: "Logistique", description: "Ports, transitaires, compagnies, fournisseurs", icone: Anchor, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant"] },
+  { cle: "ventes", libelle: "Ventes et alertes", description: "Modes de paiement, alertes, confidentialité des coûts", icone: Storefront, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant"] },
+  { cle: "equipe", libelle: "Équipe", description: "Membres, rôles, invitations", icone: UsersThree, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant"] },
+  { cle: "preferences", libelle: "Préférences", description: "Thème, taille du texte sur cet appareil", icone: Palette, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant", "vendeur", "comptable", "lecture"] },
+  { cle: "donnees", libelle: "Données", description: "Exports, sauvegarde, démonstration", icone: Database, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant", "comptable"] },
+  { cle: "journal", libelle: "Journal", description: "Qui a fait quoi, et quand", icone: ClockCounterClockwise, couleur: TEINTE_SECTION, roles: ["proprietaire", "gerant", "comptable"] },
 ];
 
 export function sectionsPour(role: Role): SectionParametres[] {
@@ -94,10 +101,10 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
   if (!sale) return null;
   return (
     <div role="region" aria-label="Modifications non enregistrées"
-      className="zone-sure-bas apparition fixed inset-x-4 bottom-20 z-40 rounded-2xl bg-nuit px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(76px+1.5rem)] rail:left-[calc(16rem+2rem)] lg:right-8">
+      className="zone-sure-bas apparition fixed inset-x-4 bottom-20 z-40 rounded-carte bg-heros px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(5rem+2rem)] rail:left-[calc(16rem+2rem)] lg:right-8">
       <div className="mx-auto flex max-w-[1280px] items-center gap-3">
-        <span className="flex flex-1 items-center gap-2.5 text-[14px] font-semibold">
-          <span aria-hidden className="relative flex size-2.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60" /><span className="relative inline-flex size-2.5 rounded-full bg-accent" /></span>
+        <span className="flex flex-1 items-center gap-2 text-[14px] font-semibold">
+          <span aria-hidden className="relative flex size-2"><span className="absolute inline-flex size-full animate-ping rounded-full bg-nuit-ocre opacity-60" /><span className="relative inline-flex size-2 rounded-full bg-nuit-ocre" /></span>
           Modifications non enregistrées
         </span>
         <Bouton variante="sur-nuit" taille="sm" onClick={onAnnuler}>Annuler</Bouton>
@@ -107,15 +114,16 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
   );
 }
 
-/** Bloc de réglages : titre et explication à gauche sur ordinateur, champs à droite. */
+/**
+ * Bloc de réglages : titre et explication à gauche sur ordinateur, champs à droite.
+ * Titre de section en 18 px, explication en 14 px : les champs restent au premier plan.
+ */
 export function Groupe({ titre, description, children }: { titre: string; description?: ReactNode; children: ReactNode }) {
   return (
-    <section className="carte apparition p-4 lg:p-6 xl:grid xl:grid-cols-[240px_1fr] xl:gap-10">
+    <section className="carte apparition p-4 lg:p-6 xl:grid xl:grid-cols-[240px_1fr] xl:gap-8">
       <div className="mb-4 xl:mb-0">
-        <h2 className="flex items-center gap-2.5 text-[16px] font-bold tracking-tight">
-          <span aria-hidden className="h-5 w-1 shrink-0 rounded-full bg-[var(--section,var(--primaire))]" />{titre}
-        </h2>
-        {description && <p className="mt-1.5 pl-[14px] text-[13px] leading-snug text-encre-3">{description}</p>}
+        <h2 className="text-[18px] leading-tight font-bold tracking-tight">{titre}</h2>
+        {description && <p className="mt-1 text-[14px] leading-snug text-encre-3">{description}</p>}
       </div>
       <div className="flex max-w-xl flex-col gap-4">{children}</div>
     </section>

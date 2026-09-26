@@ -14,6 +14,9 @@ export interface EntreeNavigation {
   compteur?: CleCompteur;
 }
 
+// Couleur de section : la même dans la navigation, le fil d'Ariane et le raccourci « Ajouter ». Le Parc prend l'indigo
+// de la première étape (le parc commence à l'achat), les Expéditions le bleu de l'étape « En mer » : la palette --etape-*
+// reste ainsi dans le domaine du voyage des véhicules. Paramètres est neutre.
 export const NAVIGATION_PRINCIPALE: EntreeNavigation[] = [
   { href: "/accueil/", libelle: "Tableau de bord", description: "Capital, ventes du mois, urgences", icone: Gauge, couleur: "var(--primaire)", actif: ["/accueil"], compteur: "accueil" },
   { href: "/parc/", libelle: "Parc", description: "Véhicules, de l'enchère au parc", icone: Car, couleur: "var(--etape-achete)", actif: ["/parc"], compteur: "parc" },

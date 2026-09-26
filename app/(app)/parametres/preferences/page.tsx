@@ -50,7 +50,7 @@ export default function PagePreferences() {
   return (
     <>
       <EnTeteSection cle="preferences" titre="Préférences" sousTitre="Ces réglages ne concernent que cet appareil." />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 lg:gap-6">
         <Groupe titre="Apparence" description="Le thème sombre repose les yeux le soir et économise la batterie des écrans OLED.">
           <Choix libelle="Thème" colonnes={3} valeur={theme} onChange={(v) => v && appliquerTheme(v)}
             options={[{ valeur: "systeme", libelle: "Automatique" }, { valeur: "light", libelle: "Clair" }, { valeur: "dark", libelle: "Sombre" }]} />

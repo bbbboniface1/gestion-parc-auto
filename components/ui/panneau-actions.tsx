@@ -40,7 +40,7 @@ function Tuile({ a, index }: { a: ActionVisible; index: number }) {
   }
   const couleur = a.danger ? "var(--perte)" : a.couleur;
   const classe = cn(
-    "onde apparition group relative flex min-h-[68px] w-full items-center gap-3 overflow-hidden rounded-2xl p-3 text-left transition-all duration-200",
+    "onde apparition group relative flex min-h-18 w-full items-center gap-3 overflow-hidden rounded-carte p-4 text-left transition-all duration-200",
     a.principale
       ? "bg-primaire-plein text-sur-primaire shadow-bouton hover:bg-primaire-plein-survol"
       : "carte carte-lien",
@@ -49,17 +49,17 @@ function Tuile({ a, index }: { a: ActionVisible; index: number }) {
   const contenu = (
     <>
       {etat === "cours" ? (
-        <span className="grid size-9 shrink-0 place-items-center"><CircleNotch size={22} className="animate-spin" aria-hidden /></span>
+        <span className="grid size-9 shrink-0 place-items-center"><CircleNotch size={20} className="animate-spin" aria-hidden /></span>
       ) : etat === "fait" ? (
-        <span className="grid size-9 shrink-0 place-items-center text-gain-texte [animation:apparition_300ms_both]"><CheckCircle size={26} weight="fill" aria-hidden /></span>
+        <span className="grid size-9 shrink-0 place-items-center text-gain-texte [animation:apparition_300ms_both]"><CheckCircle size={24} weight="fill" aria-hidden /></span>
       ) : a.principale ? (
-        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/15"><a.icone size={22} weight="fill" aria-hidden /></span>
+        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/15"><a.icone size={20} weight="fill" aria-hidden /></span>
       ) : (
-        <Picto icone={a.icone} couleur={couleur} taille="sm" className="group-hover:scale-105" />
+        <Picto icone={a.icone} couleur={couleur} taille="sm" className="group-hover:scale-[1.03]" />
       )}
       <span className="min-w-0 flex-1">
         <span className={cn("block text-[14px] leading-tight font-bold", a.danger && !a.principale && "text-perte-texte")}>{a.titre}</span>
-        {a.detail && <span className={cn("mt-0.5 block truncate text-[12px]", a.principale ? "text-white/90" : "text-encre-3")}>{a.detail}</span>}
+        {a.detail && <span className={cn("mt-1 block truncate text-[12px]", a.principale ? "text-white/90" : "text-encre-3")}>{a.detail}</span>}
       </span>
     </>
   );
@@ -79,8 +79,8 @@ export function PanneauActions({ titre, actions, className }: { titre?: string; 
   if (visibles.length === 0) return null;
   return (
     <section aria-label={titre ?? "Actions"} className={cn("@container", className)}>
-      {titre && <h2 className="mb-3 text-[17px] font-bold">{titre}</h2>}
-      <div className="grid grid-cols-1 gap-2.5 @md:grid-cols-2 @3xl:grid-cols-3">
+      {titre && <h2 className="mb-3 text-[18px] font-bold">{titre}</h2>}
+      <div className="grid grid-cols-1 gap-3 @md:grid-cols-2 @3xl:grid-cols-3">
         {visibles.map((a, i) => <Tuile key={a.cle} a={a} index={i} />)}
       </div>
     </section>

@@ -52,13 +52,13 @@ export function NouvelleProforma({ ouverte, onFermer }: { ouverte: boolean; onFe
           creer.executer({ p_org: org.id, p_data: { id, vehicule_id: vehicule.id, client_id: client.id, prix_xof: prix, date: aujourdhui() } });
         }}>Créer la proforma</Bouton>
       </>}>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-6">
         <div>
-          <p className="mb-1.5 text-[13px] font-medium text-encre-2">Véhicule</p>
+          <p className="mb-2 text-[14px] font-medium text-encre-2">Véhicule</p>
           <ChoixVehicule valeur={vehicule} onChoix={setVehicule} />
         </div>
         <div>
-          <p className="mb-1.5 text-[13px] font-medium text-encre-2">Client</p>
+          <p className="mb-2 text-[14px] font-medium text-encre-2">Client</p>
           <ChoixClient valeur={client} onChoix={setClient} />
         </div>
         <ChampMontant libelle="Prix proposé" valeur={prix} onChange={setPrix} devise="XOF" />

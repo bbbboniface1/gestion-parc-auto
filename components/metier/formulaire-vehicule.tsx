@@ -47,10 +47,10 @@ function depuisVehicule(v?: Vehicule): Brouillon {
 
 function Section({ titre, description, children }: { titre: string; description?: string; children: React.ReactNode }) {
   return (
-    <section className="carte p-4 lg:grid lg:grid-cols-[220px_1fr] lg:gap-8 lg:p-6">
+    <section className="carte p-4 lg:grid lg:grid-cols-[224px_1fr] lg:gap-8 lg:p-6">
       <div className="mb-4 lg:mb-0">
-        <h2 className="text-[17px] font-semibold tracking-tight">{titre}</h2>
-        {description && <p className="mt-1 text-[13px] text-encre-3">{description}</p>}
+        <h2 className="text-[18px] font-semibold tracking-tight">{titre}</h2>
+        {description && <p className="mt-1 text-[14px] text-encre-3">{description}</p>}
       </div>
       <div className="flex flex-col gap-4">{children}</div>
     </section>
@@ -160,7 +160,7 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
   const encheres = b.source === "copart" || b.source === "iaai" || b.source === "manheim";
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); envoyer(); }} className="flex flex-col gap-4 pb-28 lg:gap-5 lg:pb-8" noValidate>
+    <form onSubmit={(e) => { e.preventDefault(); envoyer(); }} className="flex flex-col gap-4 pb-28 lg:gap-6 lg:pb-8" noValidate>
       <Section titre="Identification" description="Saisissez le VIN : la marque, le modèle et l'année se remplissent seuls.">
         <div>
           <Champ
@@ -177,13 +177,13 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
             className="text-[16px] tracking-[0.12em] uppercase"
             suffixe={<span className={cn("chiffres pr-2 font-mono text-[12px]", vin.length === 17 ? "text-encre-2" : "text-encre-3")}>{vin.length}/17</span>}
           />
-          <div className="mt-1.5 min-h-5 text-[13px]" aria-live="polite">
+          <div className="mt-2 min-h-6 text-[14px]" aria-live="polite">
             {verif.etat === "cle_incorrecte" && (
-              <p className="flex items-center gap-1.5 text-ocre-texte"><Warning className="size-4" aria-hidden /> Clé de contrôle incorrecte (attendu « {verif.attendue} » en 9e position) : vérifiez la saisie. Les VIN hors Amérique du Nord peuvent ne pas en avoir.</p>
+              <p className="flex items-center gap-2 text-ocre-texte"><Warning className="size-4" aria-hidden /> Clé de contrôle incorrecte (attendu « {verif.attendue} » en 9e position) : vérifiez la saisie. Les VIN hors Amérique du Nord peuvent ne pas en avoir.</p>
             )}
-            {verif.etat === "valide" && decodage === "en_cours" && <p className="flex items-center gap-1.5 text-encre-3"><CircleNotch className="size-4 animate-spin" aria-hidden /> Recherche du véhicule…</p>}
-            {verif.etat === "valide" && decodage === "trouve" && <p className="flex items-center gap-1.5 text-gain-texte"><CheckCircle className="size-4" aria-hidden /> VIN valide · informations remplies depuis la base NHTSA, vérifiez-les.</p>}
-            {verif.etat === "valide" && decodage === "introuvable" && <p className="flex items-center gap-1.5 text-encre-3"><Scan className="size-4" aria-hidden /> VIN valide, mais inconnu de la base américaine : complétez à la main.</p>}
+            {verif.etat === "valide" && decodage === "en_cours" && <p className="flex items-center gap-2 text-encre-3"><CircleNotch className="size-4 animate-spin" aria-hidden /> Recherche du véhicule…</p>}
+            {verif.etat === "valide" && decodage === "trouve" && <p className="flex items-center gap-2 text-gain-texte"><CheckCircle className="size-4" aria-hidden /> VIN valide · informations remplies depuis la base NHTSA, vérifiez-les.</p>}
+            {verif.etat === "valide" && decodage === "introuvable" && <p className="flex items-center gap-2 text-encre-3"><Scan className="size-4" aria-hidden /> VIN valide, mais inconnu de la base américaine : complétez à la main.</p>}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -206,10 +206,10 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
           onChange={(e) => maj("kilometrage", e.target.value.replace(/[^\d\s]/g, ""))}
           aide={unite === "mi" && kilometrageSaisi ? `Soit ${formatNombre(Math.round(kilometrageSaisi * 1.609344))} km.` : "Les compteurs américains sont en miles : choisissez l'unité lue sur le tableau de bord."}
           suffixe={
-            <div className="flex rounded-[4px] border border-trait p-0.5" role="group" aria-label="Unité du compteur">
+            <div className="flex rounded-sm border border-trait p-0.5" role="group" aria-label="Unité du compteur">
               {(["km", "mi"] as const).map((u) => (
                 <button key={u} type="button" aria-pressed={unite === u} onClick={() => setUnite(u)}
-                  className={cn("h-8 rounded-[3px] px-2 font-mono text-[12px]", unite === u ? "bg-encre text-surface" : "text-encre-3")}>{u}</button>
+                  className={cn("h-8 rounded-xs px-2 font-mono text-[12px]", unite === u ? "bg-encre text-surface" : "text-encre-3")}>{u}</button>
               ))}
             </div>
           }
@@ -256,7 +256,7 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
           <ChampMontant libelle="Prix plancher" facultatif valeur={b.prix_plancher_xof} onChange={(v) => maj("prix_plancher_xof", v)} erreur={erreurs.plancher} />
         </div>
         {b.prix_achat && b.prix_affiche_xof && b.taux_achat ? (
-          <p className="text-[13px] text-encre-3">
+          <p className="text-[14px] text-encre-3">
             Achat seul : {formatFCFA(b.prix_achat * (b.devise_achat === "XOF" ? 1 : b.taux_achat))}. Le coût de revient complet se calcule avec les frais, sur la fiche.
           </p>
         ) : null}

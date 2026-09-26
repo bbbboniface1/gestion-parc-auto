@@ -5,9 +5,11 @@ import { Plus, Trash } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
+import { cn } from "@/lib/cn";
 import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { Groupe } from "@/components/parametres/commun";
 import { Bouton } from "@/components/ui/bouton";
+import { classesChamp } from "@/components/ui/champ";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
 
 interface Referentiel { id: string; type: string; libelle: string; actif: boolean; ordre: number }
@@ -29,10 +31,10 @@ function Liste({ type, titre, description, exemple, elements }: { type: string; 
     <Groupe titre={titre} description={description}>
       <ul className="flex flex-wrap gap-2">
         {elements.map((e) => (
-          <li key={e.id} className="inline-flex h-9 items-center gap-1 rounded-controle border border-trait bg-surface pl-3 text-[14px]">
+          <li key={e.id} className="inline-flex h-11 items-center gap-1 rounded-controle border border-trait bg-surface pl-3 text-[14px] lg:h-10">
             {e.libelle}
             <button type="button" aria-label={`Retirer ${e.libelle}`} onClick={() => supprimer.executer({ p_org: org.id, p_id: e.id })}
-              className="inline-flex size-8 items-center justify-center text-encre-3 hover:text-perte-texte"><Trash className="size-3.5" /></button>
+              className="inline-flex size-11 items-center justify-center rounded-controle text-encre-3 hover:text-perte-texte lg:size-10"><Trash className="size-4" /></button>
           </li>
         ))}
         {elements.length === 0 && <li className="text-[14px] text-encre-3">Aucun pour l&apos;instant.</li>}
@@ -45,7 +47,7 @@ function Liste({ type, titre, description, exemple, elements }: { type: string; 
         <label className="flex-1">
           <span className="sr-only">Ajouter à « {titre} »</span>
           <input value={saisie} onChange={(e) => setSaisie(e.target.value)} placeholder={exemple}
-            className="h-11 w-full rounded-controle border border-trait-fort bg-surface px-3 text-[15px] focus:border-primaire focus:outline-none lg:h-10 lg:text-sm" />
+            className={cn(classesChamp(), "h-11 px-3 text-[16px] lg:h-10 lg:text-[14px]")} />
         </label>
         <Bouton type="submit" icone={<Plus className="size-4" />} disabled={!saisie.trim()} chargement={ajouter.isPending}>Ajouter</Bouton>
       </form>
@@ -60,7 +62,7 @@ export default function PageLogistique() {
     <>
       <EnTeteSection cle="logistique" titre="Logistique" sousTitre="Les listes proposées lors de la saisie des expéditions et des frais." />
       {error && !data ? <EtatErreur erreur={error} onReessayer={() => void refetch()} /> : isPending || !data ? <Squelette className="h-96 rounded-carte" /> : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 lg:gap-6">
           {TYPES.map((t) => <Liste key={t.type} {...t} elements={data.filter((r) => r.type === t.type && r.actif).sort((a, b) => a.ordre - b.ordre)} />)}
         </div>
       )}

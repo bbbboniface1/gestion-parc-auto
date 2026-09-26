@@ -36,6 +36,9 @@
   --nuit-2: #16275a;
   /* Carte héro (premier plan) : bleu nuit en clair ; en sombre, un bleu plus lumineux que les cartes pour rester devant. */
   --heros: #0b1633;
+  /* Puce ou onglet sélectionné : bleu nuit en clair ; en sombre, pastille claire (le bleu nuit s'y confondait avec le fond). */
+  --puce-active: #0b1633;
+  --sur-puce-active: #ffffff;
   --sur-nuit: #f2f5fb;
   --sur-nuit-2: #b7c0d6;
 
@@ -90,7 +93,8 @@
   --ombre-carte: 0 1px 2px rgb(15 23 42 / 0.04), 0 6px 20px -6px rgb(15 23 42 / 0.08);
   --ombre-survol: 0 2px 4px rgb(15 23 42 / 0.05), 0 18px 36px -12px rgb(15 23 42 / 0.18);
   --ombre-flottante: 0 12px 40px -8px rgb(15 23 42 / 0.25), 0 2px 6px rgb(15 23 42 / 0.06);
-  --ombre-bouton: 0 1px 2px rgb(36 87 229 / 0.25), 0 6px 16px -4px rgb(36 87 229 / 0.45);
+  /* Ombre neutre (pas de lueur de la couleur du bouton). */
+  --ombre-bouton: 0 1px 2px rgb(15 23 42 / 0.12), 0 4px 12px -4px rgb(15 23 42 / 0.3);
   /* Champ, bouton secondaire, puce au repos : à peine décollés. */
   --ombre-champ: 0 1px 2px rgb(15 23 42 / 0.05);
   /* Puce ou onglet sélectionné (fond bleu nuit). */
@@ -125,6 +129,8 @@
     --nuit: #070c1c;
     --nuit-2: #121d40;
     --heros: #1b2c63;
+    --puce-active: #eef2fa;
+    --sur-puce-active: #0a1022;
     --gain-texte: #5ad48a;
     --gain-voile: #0f2a1b;
     --perte-texte: #ff8a80;
@@ -163,6 +169,8 @@
   --nuit: #070c1c;
   --nuit-2: #121d40;
   --heros: #1b2c63;
+  --puce-active: #eef2fa;
+  --sur-puce-active: #0a1022;
   --gain-texte: #5ad48a;
   --gain-voile: #0f2a1b;
   --perte-texte: #ff8a80;
@@ -214,6 +222,8 @@
   --color-nuit: var(--nuit);
   --color-nuit-2: var(--nuit-2);
   --color-heros: var(--heros);
+  --color-puce-active: var(--puce-active);
+  --color-sur-puce-active: var(--sur-puce-active);
   --color-sur-nuit: var(--sur-nuit);
   --color-sur-nuit-2: var(--sur-nuit-2);
   --color-gain: var(--gain);

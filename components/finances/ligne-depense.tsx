@@ -59,66 +59,66 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
     <>
       {vehicule ? (
         <span className="relative shrink-0">
-          <PhotoVehicule path={f.vehicule_photo} alt="" className="h-[52px] w-[72px] rounded-xl" />
-          <span className="absolute -right-1.5 -bottom-1.5 grid size-6 place-items-center rounded-full text-white ring-2 ring-surface" style={{ background: couleur }}><Ico size={13} weight="fill" aria-hidden /></span>
+          <PhotoVehicule path={f.vehicule_photo} alt="" className="h-12 w-16 rounded-xl" />
+          <span className="absolute -right-2 -bottom-2 grid size-6 place-items-center rounded-full text-white ring-2 ring-surface" style={{ background: `color-mix(in srgb, ${couleur} 80%, var(--nuit))` }}><Ico size={12} weight="fill" aria-hidden /></span>
         </span>
       ) : (
-        <span className="grid size-[52px] shrink-0 place-items-center rounded-xl text-white" style={{ background: conteneur && st ? st.couleur : couleur }}>
+        <span className="grid size-12 shrink-0 place-items-center rounded-xl text-white" style={{ background: `color-mix(in srgb, ${conteneur && st ? st.couleur : couleur} 80%, var(--nuit))` }}>
           {conteneur ? <Boat size={24} weight="fill" aria-hidden /> : <Ico size={24} weight="fill" aria-hidden />}
         </span>
       )}
       <span className="min-w-0 flex-1">
-        <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-          <span className="truncate text-[15px] font-bold group-hover:text-primaire">
+        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="truncate text-[16px] font-bold group-hover:text-primaire">
             {vehicule ? (f.vehicule_libelle ?? "Véhicule") : conteneur ? (f.expedition_reference ?? "Conteneur") : libelleCategorie(f.categorie)}
           </span>
           {vehicule && f.vehicule_reference && <span className="font-mono text-[12px] text-encre-3">{f.vehicule_reference}</span>}
           {conteneur && st && <span className="text-[12px] font-bold" style={{ color: `color-mix(in srgb, ${st.couleur} 62%, var(--pole-texte))` }}>{st.libelle}</span>}
         </span>
-        <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-encre-2">
+        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-encre-2">
           {(vehicule || conteneur) && (
-            <span className="inline-flex h-5 items-center gap-1 rounded-full px-2 text-[11px] font-bold" style={{ background: `color-mix(in srgb, ${couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 50%, var(--pole-texte))` }}>
+            <span className="inline-flex h-6 items-center gap-1 rounded-full px-2 text-[12px] font-bold" style={{ background: `color-mix(in srgb, ${couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 50%, var(--pole-texte))` }}>
               {libelleCategorie(f.categorie)}
             </span>
           )}
           {f.libelle && <span className="truncate">{f.libelle}</span>}
           {conteneur && f.expedition_nb_vehicules ? <span className="text-encre-3">réparti sur {pluriel(f.expedition_nb_vehicules, "véhicule")}</span> : null}
         </span>
-        <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12px] text-encre-3">
+        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-encre-3">
           <span className={SEP}>{formatDate(f.date)}</span>
           {f.fournisseur && <span className={SEP}>{f.fournisseur}</span>}
           {f.statut === "paye" && f.compte_nom && <span className={SEP}>{f.compte_nom}</span>}
-          {f.piece_path && <span className={cn("inline-flex items-center gap-0.5", SEP)}><Paperclip size={12} aria-hidden />justificatif</span>}
-          {f.statut === "a_payer" && <span className="inline-flex items-center gap-1 rounded-full bg-ocre-voile px-2 py-0.5 text-[11px] font-bold text-ocre-texte"><Clock size={12} weight="fill" aria-hidden />à payer</span>}
+          {f.piece_path && <span className={cn("inline-flex items-center gap-1", SEP)}><Paperclip size={12} aria-hidden />justificatif</span>}
+          {f.statut === "a_payer" && <span className="inline-flex h-6 items-center gap-1 rounded-full bg-ocre-voile px-2 text-[12px] font-bold text-ocre-texte"><Clock size={12} weight="fill" aria-hidden />à payer</span>}
         </span>
       </span>
       <span className="shrink-0 text-right">
         <Montant valeur={montant} devise={null} className="text-[16px]" />
-        {estPart && <span className="block text-[11px] text-encre-3">part de {formatNombre(f.montant_xof)}</span>}
-        {f.devise !== "XOF" && <span className="block text-[11px] text-encre-3">{formatDevise(f.montant, f.devise)} × {formatNombre(f.taux, f.taux % 1 ? 3 : 0)}</span>}
+        {estPart && <span className="block text-[12px] text-encre-3">part de {formatNombre(f.montant_xof)}</span>}
+        {f.devise !== "XOF" && <span className="block text-[12px] text-encre-3">{formatDevise(f.montant, f.devise)} × {formatNombre(f.taux, f.taux % 1 ? 3 : 0)}</span>}
       </span>
-      <CaretRight size={16} weight="bold" className="hidden shrink-0 text-encre-3 transition-transform group-hover:translate-x-0.5 group-hover:text-primaire @sm:block" aria-hidden />
+      <CaretRight size={16} weight="bold" className="hidden shrink-0 text-encre-3 transition-transform group-hover:translate-x-px group-hover:text-primaire @sm:block" aria-hidden />
     </>
   );
 
-  const classes = "group flex min-w-0 flex-1 basis-full items-center @md:basis-[240px] gap-3 rounded-2xl px-2 py-2 text-left";
+  const classes = "group flex min-w-0 flex-1 basis-full items-center @md:basis-60 gap-3 rounded-xl px-2 py-2 text-left";
 
   return (
-    <li ref={ligne} className={cn("@container flex flex-wrap items-center gap-x-1 gap-y-1 px-2 py-1.5 transition-colors hover:bg-surface-2/70", enEvidence && "bg-primaire-voile")}>
+    <li ref={ligne} className={cn("@container flex flex-wrap items-center gap-x-1 gap-y-1 px-2 py-2 transition-colors hover:bg-surface-2/70", enEvidence && "bg-primaire-voile")}>
       {lien ? (
         <Link href={lien} className={classes} aria-label={`${libelleCategorie(f.categorie)}, ${vehicule ? f.vehicule_libelle : conteneur ? f.expedition_reference : "dépense générale"} : ouvrir`}>{contenu}</Link>
       ) : (
         <button type="button" onClick={() => setDetail(true)} className={classes}>{contenu}</button>
       )}
       {peutModifier && (
-        <div className="ml-auto flex shrink-0 items-center gap-1 pr-1">
+        <div className="ml-auto flex shrink-0 items-center gap-2 pr-1">
           {f.statut === "a_payer" && (
-            <Bouton taille="sm" variante="secondaire" icone={<CheckCircle size={16} weight="duotone" className="text-gain-texte" />} chargement={marquerPaye.isPending}
+            <Bouton taille="sm" variante="secondaire" className="h-11 gap-2 px-4 text-[14px] lg:h-10" icone={<CheckCircle size={16} weight="duotone" className="text-gain-texte" />} chargement={marquerPaye.isPending}
               onClick={() => marquerPaye.executer({ p_org: org.id, p_data: { id: f.id, statut: "paye" } })}>Marquer payé</Bouton>
           )}
           <button type="button" aria-label="Supprimer cette dépense" title="Supprimer"
             onClick={() => { if (window.confirm("Supprimer cette dépense ?")) supprimer.executer({ p_org: org.id, p_id: f.id }); }}
-            className="onde inline-grid size-9 place-items-center rounded-full text-encre-3 hover:bg-perte-voile hover:text-perte-texte">
+            className="onde inline-grid size-11 place-items-center rounded-full text-encre-3 hover:bg-perte-voile hover:text-perte-texte lg:size-10">
             <Trash size={16} weight="duotone" aria-hidden />
           </button>
         </div>
@@ -134,7 +134,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
             )}
             <Bouton variante="secondaire" onClick={() => setDetail(false)}>Fermer</Bouton>
           </>}>
-          <p className="chiffres text-[30px] leading-tight font-extrabold tracking-tight">{formatNombre(f.montant_xof)} <span className="text-[14px] font-semibold text-encre-3">FCFA</span></p>
+          <p className="chiffres text-[32px] leading-tight font-extrabold tracking-tight">{formatNombre(f.montant_xof)} <span className="text-[14px] font-semibold text-encre-3">FCFA</span></p>
           <dl className="mt-4 text-[14px]">
             {([
               ["Description", f.libelle],
@@ -143,7 +143,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
               ["Compte", f.statut === "paye" ? f.compte_nom : null],
               ["Montant d'origine", f.devise !== "XOF" ? `${formatDevise(f.montant, f.devise)} × ${formatNombre(f.taux, f.taux % 1 ? 3 : 0)}` : null],
             ] as [string, string | null][]).filter(([, v]) => v).map(([t, v]) => (
-              <div key={t} className="flex justify-between gap-4 border-b border-trait py-2.5 last:border-b-0"><dt className="text-encre-3">{t}</dt><dd className="text-right font-medium">{v}</dd></div>
+              <div key={t} className="flex justify-between gap-4 border-b border-trait py-3 last:border-b-0"><dt className="text-encre-3">{t}</dt><dd className="text-right font-medium">{v}</dd></div>
             ))}
           </dl>
           {f.piece_path && (

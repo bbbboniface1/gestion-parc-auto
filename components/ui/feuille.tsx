@@ -41,7 +41,7 @@ export function Feuille({ ouverte, onFermer, titre, description, pied, children,
             )}
           >
             <EnTete titre={titre} description={description} onFermer={onFermer} Titre={Dialog.Title} Description={Dialog.Description} />
-            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">{children}</div>
+            <div className="min-h-0 flex-1 overflow-y-auto px-6 pt-4 pb-6">{children}</div>
             {pied && <div className="flex justify-end gap-2 border-t border-trait px-6 py-4">{pied}</div>}
           </Dialog.Content>
         </Dialog.Portal>
@@ -62,7 +62,8 @@ export function Feuille({ ouverte, onFermer, titre, description, pied, children,
           <div aria-hidden className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-trait-fort" />
           <EnTete titre={titre} description={description} onFermer={onFermer} Titre={Drawer.Title} Description={Drawer.Description} />
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-2 pb-4">{children}</div>
-          {pied && <div className="zone-sure-bas flex gap-2 border-t border-trait bg-surface px-4 pt-3 pb-3 [&>*]:flex-1">{pied}</div>}
+          {/* Pied : boutons de 44 px (Bouton, h-11) côte à côte, à parts égales. */}
+          {pied && <div className="zone-sure-bas flex gap-2 border-t border-trait bg-surface px-4 pt-3 pb-3 [&>*]:min-h-11 [&>*]:flex-1">{pied}</div>}
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
@@ -77,11 +78,11 @@ function EnTete({ titre, description, onFermer, Titre, Description }: {
   Description: typeof Dialog.Description;
 }) {
   return (
-    <div className="flex items-start justify-between gap-3 px-4 pt-3 pb-2 lg:px-6 lg:pt-5">
+    <div className="flex items-start justify-between gap-4 px-4 pt-3 pb-2 lg:px-6 lg:pt-6">
       <div className="min-w-0">
-        <Titre className="text-[19px] font-semibold tracking-tight text-encre lg:text-lg">{titre}</Titre>
+        <Titre className="text-[18px] leading-tight font-bold tracking-tight text-encre">{titre}</Titre>
         {description ? (
-          <Description className="mt-0.5 text-[13px] text-encre-3">{description}</Description>
+          <Description className="mt-1 text-[14px] text-encre-3">{description}</Description>
         ) : (
           <Description className="sr-only">{typeof titre === "string" ? titre : "Fenêtre"}</Description>
         )}
@@ -90,7 +91,7 @@ function EnTete({ titre, description, onFermer, Titre, Description }: {
         type="button"
         onClick={onFermer}
         aria-label="Fermer"
-        className="-mt-1 -mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-controle text-encre-3 hover:bg-surface-2 hover:text-encre lg:size-9"
+        className="-mt-2 -mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-controle text-encre-3 hover:bg-surface-2 hover:text-encre lg:size-10"
       >
         <X className="size-5" />
       </button>

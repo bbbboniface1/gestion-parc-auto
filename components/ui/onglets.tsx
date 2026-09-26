@@ -34,13 +34,13 @@ export function Onglets<T extends string>({ onglets, valeur, onChange, libelle, 
             onClick={() => onChange(o.valeur)}
             className={cn(
               "relative flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold whitespace-nowrap transition-all lg:h-10",
-              actif ? "bg-nuit text-sur-nuit shadow-puce" : "bg-surface text-encre-2 shadow-champ hover:text-encre",
+              actif ? "bg-puce-active text-sur-puce-active shadow-puce" : "bg-surface text-encre-2 shadow-champ hover:text-encre",
             )}
           >
             {o.couleur && <span aria-hidden className="size-2 rounded-full" style={{ background: o.couleur }} />}
             {o.libelle}
             {o.compteur !== undefined && o.compteur !== null && (
-              <span className={cn("chiffres rounded-full px-1.5 text-[12px]", actif ? "bg-white/15 text-sur-nuit" : "bg-surface-2 text-encre-3")}>{o.compteur}</span>
+              <span className={cn("chiffres rounded-full px-1.5 text-[12px]", actif ? "bg-sur-puce-active/15" : "bg-surface-2 text-encre-3")}>{o.compteur}</span>
             )}
           </button>
         );

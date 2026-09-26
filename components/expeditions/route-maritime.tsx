@@ -53,13 +53,13 @@ export function RouteMaritime({ v, sombre, className }: { v: Voyage; sombre?: bo
       <div className="relative h-14">
         {/* La mer */}
         <svg aria-hidden viewBox="0 0 400 56" preserveAspectRatio="none" className="absolute inset-0 size-full">
-          <path d="M22 38 Q 200 6 378 38" fill="none" stroke={sombre ? "rgb(255 255 255 / 0.25)" : "var(--trait-fort)"} strokeWidth="2" strokeDasharray="3 7" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          <path d="M22 38 Q 200 6 378 38" fill="none" stroke={sombre ? "white" : "var(--trait-fort)"} strokeOpacity={sombre ? 0.25 : undefined} strokeWidth="2" strokeDasharray="3 7" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
           <path d="M22 38 Q 200 6 378 38" fill="none" stroke="var(--etape-en-mer)" strokeWidth="3" strokeLinecap="round" vectorEffect="non-scaling-stroke"
             pathLength={1} strokeDasharray={`${p} 1`} className="[animation:trace_1400ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ ["--longueur" as string]: 1 }} />
         </svg>
         {/* Les ports */}
-        <span aria-hidden className={cn("absolute bottom-1 left-0 grid size-7 place-items-center rounded-full", sombre ? "bg-white/15 text-white" : "bg-acier-voile text-acier")}><Anchor size={15} weight="fill" /></span>
-        <span aria-hidden className={cn("absolute right-0 bottom-1 grid size-7 place-items-center rounded-full", p >= 1 ? "bg-gain text-white" : sombre ? "bg-white/15 text-white" : "bg-surface-2 text-encre-3")}><Anchor size={15} weight="fill" /></span>
+        <span aria-hidden className={cn("absolute bottom-1 left-0 grid size-7 place-items-center rounded-full", sombre ? "bg-white/15 text-white" : "bg-acier-voile text-acier")}><Anchor size={16} weight="fill" /></span>
+        <span aria-hidden className={cn("absolute right-0 bottom-1 grid size-7 place-items-center rounded-full", p >= 1 ? "bg-gain-plein text-white" : sombre ? "bg-white/15 text-white" : "bg-surface-2 text-encre-3")}><Anchor size={16} weight="fill" /></span>
         {/* Le bateau */}
         <span aria-hidden className="absolute top-0 -translate-x-1/2 [animation:voyage_1400ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ left: position, ["--depart" as string]: "6%", ["--arrivee" as string]: position }}>
           <span className={cn("grid size-9 place-items-center rounded-xl text-white shadow-carte [animation:flotte_2.6s_ease-in-out_infinite]", retard ? "bg-perte" : "bg-primaire-plein")}>

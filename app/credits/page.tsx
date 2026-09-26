@@ -11,9 +11,9 @@ interface Credit { fichier: string; titre: string; auteur: string; licence: stri
  */
 export default function PageCredits() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <main className="mx-auto max-w-3xl px-4 py-8 lg:py-12">
       <p className="etiquette text-[12px] text-encre-3">Mentions</p>
-      <h1 className="mt-1 text-[28px] font-semibold tracking-tight">Crédits photos</h1>
+      <h1 className="mt-1 text-[24px] leading-tight font-semibold tracking-tight lg:text-[32px]">Crédits photos</h1>
       <p className="mt-2 text-encre-2">
         Les véhicules de la démonstration sont illustrés par des photographies publiées sur{" "}
         <a className="underline underline-offset-4" href="https://commons.wikimedia.org">Wikimedia Commons</a> sous licence libre.
@@ -23,9 +23,9 @@ export default function PageCredits() {
         {(credits as Credit[]).map((c) => (
           <li key={c.fichier} className="flex items-center gap-4 py-3">
             {/* eslint-disable-next-line @next/next/no-img-element -- export statique */}
-            <img src={`/demo/vehicules/${c.fichier}`} alt="" width={96} height={64} loading="lazy" className="h-16 w-24 shrink-0 rounded-[4px] object-cover" />
+            <img src={`/demo/vehicules/${c.fichier}`} alt="" width={96} height={64} loading="lazy" className="h-16 w-24 shrink-0 rounded-lg object-cover" />
             <div className="min-w-0 flex-1 text-[14px]">
-              <a href={c.page} className="block truncate font-medium underline-offset-4 hover:underline">{c.titre}</a>
+              <a href={c.page} className="flex min-h-11 items-center font-medium underline-offset-4 hover:underline lg:min-h-10"><span className="truncate">{c.titre}</span></a>
               <p className="text-encre-3">{c.auteur || "Auteur indiqué sur la page du fichier"} · {c.licence}</p>
             </div>
           </li>

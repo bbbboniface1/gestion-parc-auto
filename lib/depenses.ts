@@ -2,14 +2,32 @@
 // Testées à part (tests/unit/depenses.test.ts) : l'écran ne fait que les afficher.
 
 import type { Frais } from "@/lib/api/types";
-import { CATEGORIES_FRAIS, libelleCategorie } from "@/lib/domaine";
+import { libelleCategorie } from "@/lib/domaine";
 
-const PALETTE = ["#6366f1", "#0ea5e9", "#f97316", "#14b8a6", "#a855f7", "#f59e0b", "#ec4899", "#22c55e", "#3b82f6", "#64748b"];
+/**
+ * Couleur d'une catégorie de frais, la même partout (liste des dépenses, fiche véhicule, coût de revient, simulateur).
+ * Un frais du voyage prend la couleur de l'étape où il est payé (enchère, route, mer, port, convoi, douane, atelier) :
+ * la palette --etape-* garde ainsi son sens. Les charges de structure (loyer, salaires…) et les frais sans étape
+ * (commission, divers) sont neutres.
+ */
+export const COULEUR_CATEGORIE: Readonly<Record<string, string>> = {
+  achat: "var(--etape-achete)",
+  frais_enchere: "var(--etape-achete)",
+  remorquage: "var(--etape-transport-usa)",
+  fret: "var(--etape-en-mer)",
+  assurance: "var(--etape-en-mer)",
+  port: "var(--etape-au-port)",
+  convoi: "var(--etape-convoi)",
+  douane: "var(--etape-douane)",
+  transitaire: "var(--etape-douane)",
+  atelier: "var(--etape-atelier)",
+  pieces: "var(--etape-atelier)",
+  carte_grise: "var(--etape-atelier)",
+};
+export const COULEUR_SANS_ETAPE = "var(--encre-3)";
 
-/** Une couleur stable par catégorie : la même dans la liste des dépenses, sur la fiche véhicule et dans le simulateur. */
 export function couleurCategorie(categorie: string): string {
-  const i = Object.keys(CATEGORIES_FRAIS).indexOf(categorie);
-  return PALETTE[(i < 0 ? PALETTE.length - 1 : i) % PALETTE.length]!;
+  return COULEUR_CATEGORIE[categorie] ?? COULEUR_SANS_ETAPE;
 }
 
 /**

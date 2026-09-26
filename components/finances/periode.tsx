@@ -31,7 +31,7 @@ export function SelecteurPeriode({ valeur, onChange }: { valeur: CodePeriode; on
     <div className="flex flex-wrap gap-2">
       {OPTIONS.map((o) => (
         <button key={o.valeur} type="button" aria-pressed={valeur === o.valeur} onClick={() => onChange(o.valeur)}
-          className={cn("h-9 shrink-0 rounded-controle border px-3 text-[14px]", valeur === o.valeur ? "border-encre bg-encre text-surface" : "border-trait-fort bg-surface text-encre-2")}>
+          className={cn("h-11 shrink-0 rounded-controle border px-3 text-[14px] lg:h-10", valeur === o.valeur ? "border-encre bg-encre text-surface" : "border-trait-fort bg-surface text-encre-2")}>
           {o.libelle}
         </button>
       ))}

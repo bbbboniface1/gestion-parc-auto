@@ -56,7 +56,7 @@ export function PaletteRecherche({ ouverte, onFermer, onAller }: { ouverte: bool
                 placeholder="VIN, lot, client, téléphone, n° de facture…"
                 className="h-14 flex-1 bg-transparent text-[16px] outline-none placeholder:text-encre-3"
               />
-              <button type="button" onClick={onFermer} className="text-[13px] text-encre-3 lg:hidden">Fermer</button>
+              <button type="button" onClick={onFermer} className="-mr-2 inline-flex h-11 shrink-0 items-center rounded-controle px-2 text-[14px] font-semibold text-encre-3 hover:bg-surface-2 lg:hidden">Fermer</button>
             </div>
             <Command.List className="max-h-[60vh] overflow-y-auto p-2">
               {q.length < 2 && <p className="px-3 py-6 text-center text-encre-3">Tapez au moins 2 caractères. Un bout de VIN suffit.</p>}
@@ -65,7 +65,7 @@ export function PaletteRecherche({ ouverte, onFermer, onAller }: { ouverte: bool
                 <Command.Group heading="Véhicules" className="[&_[cmdk-group-heading]]:etiquette [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[12px] [&_[cmdk-group-heading]]:text-encre-3">
                   {data.vehicules.map((v) => (
                     <Command.Item key={v.id} value={`v-${v.id}`} onSelect={() => onAller(`/parc/vehicule/?id=${v.id}`)}
-                      className="flex cursor-pointer items-center gap-3 rounded-controle px-3 py-2.5 data-[selected=true]:bg-surface-2">
+                      className="flex min-h-11 cursor-pointer items-center gap-3 rounded-controle px-3 py-2 data-[selected=true]:bg-surface-2">
                       <Car className="size-4 shrink-0 text-encre-3" aria-hidden />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate font-medium">{v.titre ?? `${v.marque ?? ""} ${v.modele ?? ""} ${v.annee ?? ""}`}</span>
@@ -80,10 +80,10 @@ export function PaletteRecherche({ ouverte, onFermer, onAller }: { ouverte: bool
                 <Command.Group heading="Clients" className="[&_[cmdk-group-heading]]:etiquette [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[12px] [&_[cmdk-group-heading]]:text-encre-3">
                   {data.clients.map((c) => (
                     <Command.Item key={c.id} value={`c-${c.id}`} onSelect={() => onAller(`/clients/fiche/?id=${c.id}`)}
-                      className="flex cursor-pointer items-center gap-3 rounded-controle px-3 py-2.5 data-[selected=true]:bg-surface-2">
+                      className="flex min-h-11 cursor-pointer items-center gap-3 rounded-controle px-3 py-2 data-[selected=true]:bg-surface-2">
                       <User className="size-4 shrink-0 text-encre-3" aria-hidden />
                       <span className="flex-1 truncate font-medium">{c.nom}</span>
-                      <span className="text-[13px] text-encre-3">{c.telephone}</span>
+                      <span className="text-[14px] text-encre-3">{c.telephone}</span>
                     </Command.Item>
                   ))}
                 </Command.Group>
@@ -92,9 +92,9 @@ export function PaletteRecherche({ ouverte, onFermer, onAller }: { ouverte: bool
                 <Command.Group heading="Documents" className="[&_[cmdk-group-heading]]:etiquette [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[12px] [&_[cmdk-group-heading]]:text-encre-3">
                   {data.documents.map((d) => (
                     <Command.Item key={d.id} value={`d-${d.id}`} onSelect={() => onAller(`/ventes/fiche/?id=${d.vente_id ?? d.id}`)}
-                      className="flex cursor-pointer items-center gap-3 rounded-controle px-3 py-2.5 data-[selected=true]:bg-surface-2">
+                      className="flex min-h-11 cursor-pointer items-center gap-3 rounded-controle px-3 py-2 data-[selected=true]:bg-surface-2">
                       <FileText className="size-4 shrink-0 text-encre-3" aria-hidden />
-                      <span className="font-mono text-[13px] font-medium">{d.numero}</span>
+                      <span className="font-mono text-[14px] font-medium">{d.numero}</span>
                       <span className="flex-1 truncate text-encre-2">{d.client}</span>
                     </Command.Item>
                   ))}

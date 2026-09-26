@@ -76,16 +76,16 @@ export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineE
       <div className="flex flex-col gap-4">
         <ChampMontant libelle="Montant" valeur={montant} onChange={setMontant} devise="XOF" autoFocus />
         {!venteAnnulee && !!reste && montant !== reste && (
-          <button type="button" onClick={() => setMontant(reste)} className="self-start text-[13px] font-medium text-primaire hover:underline">
+          <button type="button" onClick={() => setMontant(reste)} className="-my-2 inline-flex min-h-11 items-center self-start text-[14px] font-medium text-primaire hover:underline lg:min-h-10">
             Solder le reste ({formatFCFA(reste)})
           </button>
         )}
-        <fieldset className="flex flex-col gap-1.5">
-          <legend className="mb-1 text-[13px] font-medium text-encre-2">Mode</legend>
-          <div className="flex flex-wrap gap-1.5">
+        <fieldset className="flex flex-col gap-2">
+          <legend className="mb-2 text-[14px] font-medium text-encre-2">Mode</legend>
+          <div className="flex flex-wrap gap-2">
             {modesAutorises.map((m) => (
               <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}
-                className={cn("h-10 rounded-controle border px-3 text-[14px] font-medium", mode === m ? "border-primaire bg-primaire-voile text-encre" : "border-trait-fort text-encre-2 hover:bg-surface-2")}>
+                className={cn("h-11 rounded-controle border px-3 text-[14px] font-medium lg:h-10", mode === m ? "border-primaire bg-primaire-voile text-encre" : "border-trait-fort text-encre-2 hover:bg-surface-2")}>
                 {MODES_PAIEMENT[m].libelle}
               </button>
             ))}

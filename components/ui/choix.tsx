@@ -18,19 +18,19 @@ export function Choix<T extends string>({ libelle, options, valeur, onChange, fa
 }) {
   const nom = useId();
   return (
-    <fieldset className="flex min-w-0 flex-col gap-1.5">
-      <legend className="mb-1.5 text-[13px] font-medium text-encre-2">
+    <fieldset className="flex min-w-0 flex-col gap-2">
+      <legend className="mb-2 text-[14px] font-medium text-encre-2">
         {libelle}
         {facultatif && <span className="ml-1 font-normal text-encre-3">facultatif</span>}
       </legend>
-      <div className={cn("grid gap-1.5", !colonnes && "flex flex-wrap")} style={colonnes ? { gridTemplateColumns: `repeat(${colonnes}, minmax(0, 1fr))` } : undefined}>
+      <div className={cn("grid gap-2", !colonnes && "flex flex-wrap")} style={colonnes ? { gridTemplateColumns: `repeat(${colonnes}, minmax(0, 1fr))` } : undefined}>
         {options.map((o) => {
           const actif = o.valeur === valeur;
           return (
             <label key={o.valeur}
               className={cn(
-                "flex h-11 cursor-pointer items-center justify-center rounded-controle border px-3 text-[15px] font-medium transition-colors select-none has-[:focus-visible]:shadow-[var(--focus)] lg:h-10 lg:text-sm",
-                actif ? "border-primaire bg-primaire-voile text-primaire-fonce shadow-[0_0_0_1px_var(--primaire)]" : "border-trait-fort bg-surface text-encre-2 hover:border-primaire/50 hover:text-encre",
+                "flex h-11 cursor-pointer items-center justify-center rounded-controle border px-3 text-[14px] font-medium transition-colors select-none has-[:focus-visible]:shadow-[var(--focus)] lg:h-10",
+                actif ? "border-primaire bg-primaire-voile text-primaire-fonce ring-1 ring-primaire" : "border-trait-fort bg-surface text-encre-2 hover:border-primaire/50 hover:text-encre",
               )}>
               <input type="radio" name={nom} value={o.valeur} checked={actif} className="sr-only"
                 onChange={() => onChange(o.valeur)}

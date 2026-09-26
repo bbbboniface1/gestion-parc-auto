@@ -6,8 +6,8 @@ import { cn } from "@/lib/cn";
 const TAILLES = {
   xs: { boite: "size-7 rounded-lg", icone: 16 },
   sm: { boite: "size-9 rounded-xl", icone: 20 },
-  md: { boite: "size-11 rounded-2xl", icone: 24 },
-  lg: { boite: "size-14 rounded-[18px]", icone: 30 },
+  md: { boite: "size-11 rounded-xl", icone: 24 },
+  lg: { boite: "size-14 rounded-xl", icone: 32 },
 } as const;
 
 /**

@@ -37,10 +37,10 @@ export function GardeSession({ children }: { children: ReactNode }) {
 
   if (etat.statut === "erreur") {
     return (
-      <div className="grid min-h-dvh place-items-center bg-papier p-6">
-        <div className="max-w-sm carte p-6">
-          <p className="text-[17px] font-semibold">Ouverture impossible</p>
-          <p className="mt-1 text-encre-2">{etat.message}</p>
+      <div className="grid min-h-dvh place-items-center bg-papier p-4">
+        <div className="max-w-sm carte p-4 lg:p-6">
+          <p className="text-[18px] leading-tight font-semibold">Ouverture impossible</p>
+          <p className="mt-2 text-encre-2">{etat.message}</p>
           <div className="mt-4 flex gap-2">
             <Bouton variante="primaire" onClick={() => void recharger()}>Réessayer</Bouton>
             <Bouton variante="fantome" onClick={() => void deconnecter()}>Se déconnecter</Bouton>

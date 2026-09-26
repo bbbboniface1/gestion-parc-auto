@@ -126,37 +126,37 @@ function NouvelleVente() {
   return (
     <>
       <EnTetePage surtitre="Facturer" titre="Nouvelle vente" sousTitre="Le véhicule, le client, le prix : la facture est prête à envoyer sur WhatsApp." />
-      <div className="grid gap-5 pb-28 lg:grid-cols-12 lg:items-start lg:pb-8">
-        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7">
-          <EtapeVente numero={1} titre="Quel véhicule ?" fait={!!vehicule} couleur="var(--etape-achete)" icone={CarProfile}>
+      <div className="grid gap-4 pb-28 lg:grid-cols-12 lg:items-start lg:gap-6 lg:pb-8">
+        {/* Les trois étapes partagent la couleur de l'action principale ; la coche verte dit qu'une étape est faite. */}
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7 lg:gap-6">
+          <EtapeVente numero={1} titre="Quel véhicule ?" fait={!!vehicule} couleur="var(--primaire-plein)" icone={CarProfile}>
             <ChoixVehicule valeur={vehicule} onChoix={setVehicule} />
             {livraisonAlarriveee && vehicule && (
-              <p className="mt-3 flex items-start gap-2 rounded-xl bg-ocre-voile px-3 py-2 text-[13px] text-ocre-texte"><Warning size={16} weight="fill" className="mt-0.5 shrink-0" aria-hidden />Ce véhicule n&apos;est pas encore au parc : la facture indiquera une livraison à l&apos;arrivée.</p>
+              <p className="mt-3 flex items-start gap-2 rounded-xl bg-ocre-voile px-3 py-2 text-[14px] leading-5 text-ocre-texte"><span className="grid h-5 shrink-0 place-items-center"><Warning size={16} weight="fill" aria-hidden /></span>Ce véhicule n&apos;est pas encore au parc : la facture indiquera une livraison à l&apos;arrivée.</p>
             )}
           </EtapeVente>
 
-          <EtapeVente numero={2} titre="Pour quel client ?" fait={!!client} couleur="var(--reserve)" icone={UserCircle}>
+          <EtapeVente numero={2} titre="Pour quel client ?" fait={!!client} couleur="var(--primaire-plein)" icone={UserCircle}>
             <ChoixClient valeur={client} onChoix={setClient} />
           </EtapeVente>
 
-          <EtapeVente numero={3} titre="À quel prix, et comment ?" fait={valide} couleur="var(--accent)" icone={HandCoins}>
+          <EtapeVente numero={3} titre="À quel prix, et comment ?" fait={valide} couleur="var(--primaire-plein)" icone={HandCoins}>
             <div className="grid grid-cols-2 gap-3">
               <ChampMontant libelle="Prix de vente" valeur={prix} onChange={setPrix} devise="XOF" />
               <ChampMontant libelle="Remise" facultatif valeur={remise} onChange={setRemise} devise="XOF" />
             </div>
 
-            <fieldset className="mt-5">
-              <legend className="mb-2 text-[13px] font-medium text-encre-2">Le client paie…</legend>
+            <fieldset className="mt-4">
+              <legend className="mb-2 text-[14px] font-medium text-encre-2">Le client paie…</legend>
               <div className="grid grid-cols-2 gap-2">
                 {([
-                  ["comptant", "Comptant", "En une fois, aujourd'hui ou à la livraison", Money, "var(--gain)"],
-                  ["echelonne", "Échelonné", "Un acompte, puis des échéances", CalendarCheck, "var(--primaire)"],
-                ] as const).map(([valeur, titre, aide, Ico, couleur]) => (
+                  ["comptant", "Comptant", "En une fois, aujourd'hui ou à la livraison", Money],
+                  ["echelonne", "Échelonné", "Un acompte, puis des échéances", CalendarCheck],
+                ] as const).map(([valeur, titre, aide, Ico]) => (
                   <button key={valeur} type="button" aria-pressed={mode === valeur} onClick={() => setMode(valeur)}
-                    className={cn("onde flex flex-col items-start gap-2 rounded-2xl border p-3 text-left transition-all", mode === valeur ? "border-transparent shadow-carte ring-2" : "border-trait bg-surface hover:border-trait-fort")}
-                    style={mode === valeur ? { background: `color-mix(in srgb, ${couleur} 9%, var(--surface))`, boxShadow: `0 0 0 2px ${couleur}` } : undefined}>
-                    <span className="grid size-9 place-items-center rounded-xl text-white" style={{ background: couleur }}><Ico size={20} weight="fill" aria-hidden /></span>
-                    <span className="block text-[15px] font-bold">{titre}</span>
+                    className={cn("onde flex flex-col items-start gap-2 rounded-2xl border p-3 text-left transition-all", mode === valeur ? "border-transparent bg-primaire-voile shadow-carte ring-2 ring-primaire" : "border-trait bg-surface hover:border-trait-fort")}>
+                    <span className={cn("grid size-9 place-items-center rounded-xl", mode === valeur ? "bg-primaire-plein text-sur-primaire" : "bg-surface-2 text-encre-2")}><Ico size={20} weight="fill" aria-hidden /></span>
+                    <span className="block text-[16px] font-bold">{titre}</span>
                     <span className="block text-[12px] leading-snug text-encre-3">{aide}</span>
                   </button>
                 ))}
@@ -176,13 +176,13 @@ function NouvelleVente() {
                     <div key={i} className="flex items-center gap-2 border-b border-trait px-3 py-2 text-[14px] last:border-b-0">
                       <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primaire-voile text-[12px] font-bold text-primaire">{i + 1}</span>
                       <input type="date" value={e.date} onChange={(ev) => setEcheancesModifiees(echeancesFinales.map((x, j) => j === i ? { ...x, date: ev.target.value } : x))}
-                        className="h-9 rounded-controle border border-trait-fort bg-surface px-2 text-[13px]" />
+                        className="h-11 rounded-controle border border-trait-fort bg-surface px-2 lg:h-10" />
                       <input type="number" value={e.montant} onChange={(ev) => setEcheancesModifiees(echeancesFinales.map((x, j) => j === i ? { ...x, montant: Number(ev.target.value) || 0 } : x))}
-                        className="chiffres h-9 flex-1 rounded-controle border border-trait-fort bg-surface px-2 text-right text-[13px]" />
+                        className="chiffres h-11 min-w-0 flex-1 rounded-controle border border-trait-fort bg-surface px-2 text-right lg:h-10" />
                     </div>
                   ))}
                 </div>
-                <p className={cn("flex items-center gap-1.5 text-[13px]", sommeEcheances === ttc ? "font-semibold text-gain-texte" : "font-semibold text-perte-texte")}>
+                <p className={cn("flex items-center gap-2 text-[14px]", sommeEcheances === ttc ? "font-semibold text-gain-texte" : "font-semibold text-perte-texte")}>
                   {sommeEcheances === ttc ? <CheckCircle size={16} weight="fill" aria-hidden /> : <Warning size={16} weight="fill" aria-hidden />}
                   Acompte + échéances : {formatFCFA(sommeEcheances)} {sommeEcheances !== ttc && `(devrait faire ${formatFCFA(ttc)})`}
                 </p>
@@ -195,15 +195,15 @@ function NouvelleVente() {
 
             {acomptePrevu ? (
               <div className="apparition mt-4 flex flex-col gap-3 border-t border-trait pt-4">
-                <fieldset className="flex flex-col gap-1.5">
-                  <legend className="mb-1 text-[13px] font-medium text-encre-2">Payé par</legend>
+                <fieldset className="flex flex-col gap-2">
+                  <legend className="mb-2 text-[14px] font-medium text-encre-2">Payé par</legend>
                   <div className="flex flex-wrap gap-2">
                     {modesAutorises.map((m) => {
                       const visuel = MODES_VISUELS[m] ?? MODES_VISUELS.autre!;
                       const actif = modePaiement === m;
                       return (
                         <button key={m} type="button" aria-pressed={actif} onClick={() => setModePaiement(m)}
-                          className={cn("onde inline-flex h-11 items-center gap-2 rounded-full border px-3.5 text-[14px] font-semibold transition-all", actif ? "border-transparent shadow-carte" : "border-trait-fort bg-surface text-encre-2 hover:text-encre")}
+                          className={cn("onde inline-flex h-11 items-center gap-2 rounded-full border px-4 text-[14px] font-semibold transition-all lg:h-10", actif ? "border-transparent shadow-puce" : "border-trait-fort bg-surface text-encre-2 hover:text-encre")}
                           style={actif ? { background: visuel.couleur, color: visuel.texte } : undefined}>
                           <visuel.icone size={18} weight="fill" style={actif ? undefined : { color: `color-mix(in srgb, ${visuel.couleur} 80%, var(--pole-texte))` }} aria-hidden />
                           {MODES_PAIEMENT[m].libelle}
@@ -220,7 +220,7 @@ function NouvelleVente() {
           </EtapeVente>
         </div>
 
-        <aside className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-6 lg:col-span-5">
+        <aside className="flex min-w-0 flex-col gap-4 lg:sticky lg:top-6 lg:col-span-5">
           <section className="carte apparition overflow-hidden" aria-label="Récapitulatif">
             <div className="relative bg-nuit text-white">
               {vehicule ? (
@@ -228,17 +228,17 @@ function NouvelleVente() {
                   <PhotoVehicule path={vehicule.photo_principale_path} alt="" arrondi={false} className="aspect-[16/7] w-full opacity-70" />
                   <span aria-hidden className="voile-photo absolute inset-0" />
                   <div className="absolute inset-x-4 bottom-3">
-                    <p className="etiquette text-[11px] text-white/70">{vehicule.reference}</p>
-                    <p className="truncate text-[19px] leading-tight font-extrabold">{vehicule.libelle}</p>
+                    <p className="etiquette text-[12px] text-white/70">{vehicule.reference}</p>
+                    <p className="truncate text-[18px] leading-tight font-extrabold">{vehicule.libelle}</p>
                   </div>
                 </>
               ) : (
                 <div className="grid place-items-center px-4 py-6 text-center text-[14px] text-white/70 lg:py-10"><span>Le véhicule choisi apparaîtra ici.</span></div>
               )}
             </div>
-            <div className="p-4 lg:p-5">
+            <div className="p-4 lg:p-6">
               {client ? (
-                <p className="flex items-center gap-2.5 text-[14px]"><Avatar nom={client.nom} taille={32} /><span className="min-w-0"><span className="block truncate font-bold">{client.nom}</span>{client.telephone && <span className="block text-[12px] text-encre-3">{client.telephone}</span>}</span></p>
+                <p className="flex items-center gap-3 text-[14px]"><Avatar nom={client.nom} taille={32} /><span className="min-w-0"><span className="block truncate font-bold">{client.nom}</span>{client.telephone && <span className="block text-[12px] text-encre-3">{client.telephone}</span>}</span></p>
               ) : (
                 <p className="text-[14px] text-encre-3">Le client sera indiqué ici.</p>
               )}
@@ -249,10 +249,10 @@ function NouvelleVente() {
               ]} />
               <div className="mt-2 flex items-baseline justify-between gap-3 border-t border-trait pt-3">
                 <span className="text-[14px] font-semibold whitespace-nowrap text-encre-2">Total à payer</span>
-                <span className="chiffres text-[26px] leading-none font-extrabold tracking-tight whitespace-nowrap">{formatNombre(Math.round(totalAffiche))}<span className="ml-1 text-[13px] font-semibold text-encre-3">FCFA</span></span>
+                <span className="chiffres text-[24px] leading-none font-extrabold tracking-tight whitespace-nowrap">{formatNombre(Math.round(totalAffiche))}<span className="ml-1 text-[12px] font-semibold text-encre-3">FCFA</span></span>
               </div>
               {manque.length > 0 && (
-                <p className="mt-3 rounded-xl bg-surface-2 px-3 py-2 text-[13px] text-encre-2" role="status">Il manque : {manque.join(", ")}.</p>
+                <p className="mt-3 rounded-xl bg-surface-2 px-3 py-2 text-[14px] text-encre-2" role="status">Il manque : {manque.join(", ")}.</p>
               )}
             </div>
           </section>

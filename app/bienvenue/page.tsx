@@ -48,8 +48,8 @@ export default function PageBienvenue() {
   return (
     <CadreAccueil>
       <p className="etiquette text-[12px] text-encre-3">Première étape</p>
-      <h1 className="mt-1 text-[26px] font-semibold tracking-tight">Votre entreprise</h1>
-      <p className="mt-1 text-encre-2">Ces informations apparaîtront sur vos factures. Vous pourrez tout compléter plus tard (NIF, RCCM, logo, cachet).</p>
+      <h1 className="mt-1 text-[24px] leading-tight font-semibold tracking-tight lg:text-[32px]">Votre entreprise</h1>
+      <p className="mt-2 text-encre-2">Ces informations apparaîtront sur vos factures. Vous pourrez tout compléter plus tard (NIF, RCCM, logo, cachet).</p>
       <form onSubmit={creer} className="mt-6 flex flex-col gap-4">
         <Champ libelle="Nom commercial" placeholder="Sahel Auto Import" required value={nom} onChange={(e) => setNom(e.target.value)} autoFocus />
         <Champ libelle="Ville" required value={ville} onChange={(e) => setVille(e.target.value)} />

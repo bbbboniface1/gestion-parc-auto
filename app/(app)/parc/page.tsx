@@ -39,7 +39,7 @@ function lireVue(): Vue {
 
 function SqueletteGalerie() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" role="status" aria-label="Chargement">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4" role="status" aria-label="Chargement">
       {Array.from({ length: 8 }, (_, i) => (
         <div key={i} className="carte overflow-hidden">
           <Squelette className="aspect-[4/3] rounded-none" />
@@ -133,12 +133,12 @@ function Parc() {
         actions={
           <>
             {ordinateur && (
-              <div className="flex rounded-full bg-surface p-1 shadow-carte ring-1 ring-trait/70" role="group" aria-label="Affichage">
+              <div className="flex rounded-full bg-surface shadow-champ ring-1 ring-trait/70" role="group" aria-label="Affichage">
                 {([["galerie", "Galerie", SquaresFour], ["colonnes", "Colonnes", Kanban], ["liste", "Liste", Rows]] as const).map(([valeur, libelle, Icone]) => (
                   <button key={valeur} type="button" aria-pressed={vue === valeur}
                     onClick={() => { setVue(valeur); localStorage.setItem("parc-auto:vue-parc", valeur); }}
-                    className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold transition-all",
-                      vue === valeur ? "bg-nuit text-white shadow-puce" : "text-encre-3 hover:text-encre")}>
+                    className={cn("inline-flex h-10 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all",
+                      vue === valeur ? "bg-puce-active text-sur-puce-active shadow-puce" : "text-encre-3 hover:text-encre")}>
                     <Icone className="size-4" aria-hidden /> {libelle}
                   </button>
                 ))}
@@ -153,69 +153,72 @@ function Parc() {
         }
       />
 
-      {/* Recherche et statut */}
-      <div className="apparition mb-4 flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center" style={{ animationDelay: "60ms" }}>
-        <label className="relative flex-1 lg:max-w-md lg:min-w-[260px]">
-          <span className="sr-only">Rechercher dans le parc</span>
-          <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Modèle, VIN, lot, conteneur, client…"
-            className="h-12 w-full rounded-full border border-trait bg-surface pr-10 pl-11 text-[15px] shadow-carte transition-all placeholder:text-encre-3/70 focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] focus:outline-none lg:h-11 lg:text-sm" />
-          {q && (
-            <button type="button" onClick={() => setQ("")} aria-label="Effacer la recherche" className="absolute top-1/2 right-2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-encre-3 hover:bg-surface-2">
-              <X className="size-4" />
-            </button>
-          )}
-        </label>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Statut commercial">
-          {STATUTS.map((s) => (
-            <button key={s.valeur} type="button" aria-pressed={statut === s.valeur} onClick={() => setStatut(s.valeur)}
-              className={cn("h-11 shrink-0 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
-                statut === s.valeur ? "bg-primaire-plein text-white shadow-bouton" : "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
-              {s.libelle}
-            </button>
-          ))}
-          {(nbVerifier > 0 || statut === "a_verifier") && (
-            <button type="button" aria-pressed={statut === "a_verifier"} onClick={() => setStatut(statut === "a_verifier" ? "tous" : "a_verifier")}
-              className={cn("inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
-                statut === "a_verifier" ? "bg-ocre text-nuit" : "bg-ocre-voile text-ocre-texte ring-1 ring-ocre/30 hover:ring-ocre/60")}>
-              <Warning size={16} weight="fill" aria-hidden /> À vérifier <span className="chiffres text-[12px] font-bold">{nbVerifier}</span>
-            </button>
-          )}
-          {(nbArchives > 0 || statut === "archives") && (
-            <button type="button" aria-pressed={statut === "archives"} onClick={() => setStatut(statut === "archives" ? "tous" : "archives")}
-              className={cn("inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
-                statut === "archives" ? "bg-nuit text-white shadow-puce" : "bg-surface text-encre-3 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
-              <Archive size={16} weight="duotone" aria-hidden /> Archivés <span className="chiffres text-[12px] font-bold">{nbArchives}</span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Étapes du voyage : filtre coloré */}
-      {data && data.length > 0 && vueEffective !== "colonnes" && (
-        <div className="apparition mb-6 grid grid-cols-3 gap-2 sm:flex sm:flex-wrap" role="tablist" aria-label="Étapes" style={{ animationDelay: "120ms" }}>
-          <button type="button" role="tab" aria-selected={etapeActive === "toutes"} onClick={() => choisirEtape("toutes")}
-            className={cn("flex h-11 min-w-0 shrink-0 items-center justify-center gap-2 rounded-2xl px-3 text-[14px] font-semibold transition-all sm:justify-start sm:px-4",
-              etapeActive === "toutes" ? "bg-nuit text-white shadow-puce" : "bg-surface text-encre-2 ring-1 ring-trait/70 hover:text-encre")}>
-            <span className="truncate"><span className="sm:hidden">Toutes</span><span className="hidden sm:inline">Toutes les étapes</span></span>
-            <span className={cn("chiffres rounded-full px-2 text-[12px]", etapeActive === "toutes" ? "bg-white/15" : "bg-surface-2 text-encre-3")}>{filtres.length}</span>
-          </button>
-          {ETAPES.map((e) => {
-            const n = parEtape.get(e.code)?.length ?? 0;
-            const actif = etapeActive === e.code;
-            const t = teintesEtape(e.couleur);
-            return (
-              <button key={e.code} type="button" role="tab" aria-selected={actif} onClick={() => choisirEtape(e.code)}
-                className={cn("flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-2xl px-3 text-[14px] font-semibold transition-all sm:px-4", n === 0 && !actif && "opacity-55")}
-                style={actif ? { background: t.fond, color: t.texte, boxShadow: `inset 0 0 0 2px ${e.couleur}` } : { background: "var(--surface)", color: "var(--encre-2)", boxShadow: "inset 0 0 0 1px color-mix(in srgb, var(--trait) 70%, transparent)" }}>
-                <span className="size-2.5 shrink-0 rounded-full" style={{ background: e.couleur }} />
-                <span className="truncate">{e.libelle}</span>
-                <span className="chiffres text-[12px] font-bold">{n}</span>
+      {/* Filtres : recherche et statut, puis étapes du voyage. Serrés entre eux (16 px), détachés de la liste (24/32 px). */}
+      <div className="mb-6 flex flex-col gap-4 lg:mb-8">
+        <div className="apparition flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center" style={{ animationDelay: "60ms" }}>
+          <label className="relative flex-1 lg:max-w-md lg:min-w-64">
+            <span className="sr-only">Rechercher dans le parc</span>
+            <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Modèle, VIN, lot, conteneur, client…"
+              className="h-12 w-full rounded-full border border-trait bg-surface pr-12 pl-11 text-[16px] shadow-champ transition-all placeholder:text-encre-3/70 focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] focus:outline-none lg:h-10 lg:text-[14px]" />
+            {q && (
+              <button type="button" onClick={() => setQ("")} aria-label="Effacer la recherche" className="absolute top-1/2 right-0.5 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full text-encre-3 hover:bg-surface-2 lg:right-0 lg:size-10">
+                <X className="size-4" />
               </button>
-            );
-          })}
+            )}
+          </label>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Statut commercial">
+            {STATUTS.map((s) => (
+              <button key={s.valeur} type="button" aria-pressed={statut === s.valeur} onClick={() => setStatut(s.valeur)}
+                className={cn("h-11 shrink-0 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+                  statut === s.valeur ? "bg-puce-active text-sur-puce-active shadow-puce" : "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
+                {s.libelle}
+              </button>
+            ))}
+            {(nbVerifier > 0 || statut === "a_verifier") && (
+              <button type="button" aria-pressed={statut === "a_verifier"} onClick={() => setStatut(statut === "a_verifier" ? "tous" : "a_verifier")}
+                className={cn("inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+                  statut === "a_verifier" ? "bg-ocre text-nuit" : "bg-ocre-voile text-ocre-texte ring-1 ring-ocre/30 hover:ring-ocre/60")}>
+                <Warning size={16} weight="fill" aria-hidden /> À vérifier <span className="chiffres text-[12px] font-bold">{nbVerifier}</span>
+              </button>
+            )}
+            {(nbArchives > 0 || statut === "archives") && (
+              <button type="button" aria-pressed={statut === "archives"} onClick={() => setStatut(statut === "archives" ? "tous" : "archives")}
+                className={cn("inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+                  statut === "archives" ? "bg-puce-active text-sur-puce-active shadow-puce" : "bg-surface text-encre-3 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
+                <Archive size={16} weight="duotone" aria-hidden /> Archivés <span className="chiffres text-[12px] font-bold">{nbArchives}</span>
+              </button>
+            )}
+          </div>
         </div>
-      )}
+
+        {/* Étapes du voyage : filtre coloré (la palette des étapes parle ici de son vrai sujet). Puces qui passent à la ligne. */}
+        {data && data.length > 0 && vueEffective !== "colonnes" && (
+          <div className="apparition flex flex-wrap gap-2" role="tablist" aria-label="Étapes" style={{ animationDelay: "120ms" }}>
+            <button type="button" role="tab" aria-selected={etapeActive === "toutes"} onClick={() => choisirEtape("toutes")}
+              className={cn("flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+                etapeActive === "toutes" ? "bg-puce-active text-sur-puce-active shadow-puce" : "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
+              <span className="truncate"><span className="sm:hidden">Toutes</span><span className="hidden sm:inline">Toutes les étapes</span></span>
+              <span className={cn("chiffres rounded-full px-2 text-[12px]", etapeActive === "toutes" ? "bg-sur-puce-active/15" : "bg-surface-2 text-encre-3")}>{filtres.length}</span>
+            </button>
+            {ETAPES.map((e) => {
+              const n = parEtape.get(e.code)?.length ?? 0;
+              const actif = etapeActive === e.code;
+              const t = teintesEtape(e.couleur);
+              return (
+                <button key={e.code} type="button" role="tab" aria-selected={actif} onClick={() => choisirEtape(e.code)}
+                  className={cn("flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+                    !actif && "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre", n === 0 && !actif && "opacity-50")}
+                  style={actif ? { background: t.fond, color: t.texte, boxShadow: `inset 0 0 0 2px ${e.couleur}` } : undefined}>
+                  <span className="size-2 shrink-0 rounded-full" style={{ background: e.couleur }} />
+                  <span className="truncate">{e.libelle}</span>
+                  <span className="chiffres text-[12px] font-bold">{n}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {error && !data ? (
         <EtatErreur erreur={error} onReessayer={() => void refetch()} />
@@ -225,26 +228,26 @@ function Parc() {
         <EtatVide
           titre="Aucun véhicule pour l'instant"
           texte="Ajoutez votre premier véhicule : saisissez son VIN, la marque, le modèle et l'année se remplissent seuls."
-          action={peutModifier ? <Link href="/parc/nouveau/"><Bouton variante="primaire" icone={<Plus className="size-4" />}>Ajouter un véhicule</Bouton></Link> : undefined}
+          action={peutModifier ? <Link href="/parc/nouveau/" className={classesBouton("primaire")}><Plus className="size-4" aria-hidden /> Ajouter un véhicule</Link> : undefined}
         />
       ) : vueEffective === "colonnes" ? (
         <div data-defilement="horizontal" className="-mx-8 overflow-x-auto px-8 pb-4">
-          <div className="grid min-w-[1500px] grid-cols-8 gap-3">
+          <div className="grid min-w-[1500px] grid-cols-8 gap-4">
             {ETAPES.map((e) => {
               const liste = parEtape.get(e.code) ?? [];
               const capital = liste.reduce((s, v) => s + (v.prix_revient_xof ?? 0), 0);
               const suivante = etapeSuivante(e.code);
               const t = teintesEtape(e.couleur);
               return (
-                <section key={e.code} aria-label={`${e.libelle} : ${liste.length}`} className="flex min-h-[60vh] flex-col rounded-2xl p-2" style={{ background: `color-mix(in srgb, ${e.couleur} 7%, var(--papier))` }}>
+                <section key={e.code} aria-label={`${e.libelle} : ${liste.length}`} className="flex min-h-[60vh] flex-col rounded-carte p-2" style={{ background: `color-mix(in srgb, ${e.couleur} 7%, var(--papier))` }}>
                   <header className="mb-2 rounded-xl bg-surface px-3 py-2 shadow-carte">
                     <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-[13px] font-bold" style={{ color: t.texte }}>
-                        <span className="size-2.5 rounded-full" style={{ background: e.couleur }} />{e.libelle}
+                      <span className="flex items-center gap-2 text-[14px] font-bold" style={{ color: t.texte }}>
+                        <span className="size-2 rounded-full" style={{ background: e.couleur }} />{e.libelle}
                       </span>
                       <span className="chiffres rounded-full px-2 text-[12px] font-bold" style={{ background: t.fond, color: t.texte }}>{liste.length}</span>
                     </div>
-                    {liste.some((v) => v.prix_revient_xof !== null) && <p className="mt-0.5 text-[12px] text-encre-3">{formatCourt(capital)} FCFA</p>}
+                    {liste.some((v) => v.prix_revient_xof !== null) && <p className="mt-1 text-[12px] text-encre-3">{formatCourt(capital)} FCFA</p>}
                   </header>
                   <div className="flex flex-col gap-2">
                     {liste.map((v) => (
@@ -265,7 +268,7 @@ function Parc() {
       ) : vueEffective === "liste" ? (
         <TableauVehicules vehicules={visibles} selection={selection} basculer={basculer} />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
           {visibles.map((v, i) => (
             <CarteGalerie key={v.id} v={v} index={i} cochee={selection.has(v.id)} basculer={ordinateur && peutModifier ? () => basculer(v.id) : undefined} />
           ))}
@@ -273,13 +276,13 @@ function Parc() {
       )}
 
       {selection.size > 0 && peutModifier && (
-        <div className="zone-sure-bas fixed inset-x-4 bottom-20 z-40 rounded-2xl bg-nuit px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(76px+1.5rem)] rail:left-[calc(16rem+2rem)] lg:right-8">
+        <div className="zone-sure-bas fixed inset-x-4 bottom-20 z-40 rounded-carte bg-heros px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(5rem+2rem)] rail:left-[calc(16rem+2rem)] lg:right-8">
           <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-3">
             <span className="text-[14px] font-semibold">{selection.size} sélectionné{selection.size > 1 ? "s" : ""}</span>
             <label className="flex items-center gap-2 text-[14px]">
               <span className="text-sur-nuit-2">Passer à</span>
               <select defaultValue="" onChange={(e) => e.target.value && deplacer([...selection], e.target.value as Etape)}
-                className="h-9 rounded-lg border border-white/15 bg-nuit-2 px-2 text-[14px] text-sur-nuit">
+                className="h-11 rounded-controle border border-white/15 bg-nuit-2 px-3 text-[14px] text-sur-nuit lg:h-10">
                 <option value="" disabled>Choisir une étape</option>
                 {ETAPES.map((e) => <option key={e.code} value={e.code}>{e.libelle}</option>)}
               </select>
@@ -296,19 +299,23 @@ function TableauVehicules({ vehicules, selection, basculer }: { vehicules: Vehic
   const voitCouts = vehicules.some((v) => v.prix_revient_xof !== null);
   return (
     <div data-defilement="horizontal" className="carte apparition overflow-x-auto">
-      <table className="w-full min-w-[960px] text-sm">
+      <table className="w-full min-w-[960px] text-[14px]">
         <thead>
           <tr className="border-b border-trait bg-surface-2 text-left">
-            <th className="w-10 px-3 py-3"><span className="sr-only">Sélection</span></th>
+            <th className="w-12 px-1 py-3"><span className="sr-only">Sélection</span></th>
             {["Véhicule", "Étape", "Jours", ...(voitCouts ? ["Prix de revient", "Marge"] : []), "Prix affiché", "Client"].map((t, i) => (
-              <th key={t} scope="col" className={cn("etiquette px-3 py-3 text-[11px] text-encre-3", i >= 2 && "text-right", t === "Client" && "text-left")}>{t}</th>
+              <th key={t} scope="col" className={cn("etiquette px-3 py-3 text-[12px] text-encre-3", i >= 2 && "text-right", t === "Client" && "text-left")}>{t}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {vehicules.map((v) => (
             <tr key={v.id} className="border-b border-trait/70 transition-colors last:border-b-0 hover:bg-primaire-voile/40">
-              <td className="px-3 py-2"><input type="checkbox" checked={selection.has(v.id)} onChange={() => basculer(v.id)} aria-label={`Sélectionner ${v.libelle}`} className="size-4 accent-[var(--primaire)]" /></td>
+              <td className="px-1 py-2">
+                <label className="grid size-10 cursor-pointer place-items-center">
+                  <input type="checkbox" checked={selection.has(v.id)} onChange={() => basculer(v.id)} aria-label={`Sélectionner ${v.libelle}`} className="size-4 accent-[var(--primaire)]" />
+                </label>
+              </td>
               <td className="px-3 py-2">
                 <Link href={`/parc/vehicule/?id=${v.id}`} className="flex items-center gap-3">
                   <PhotoVehicule path={v.photo_principale_path} alt="" className="h-11 w-16 shrink-0 rounded-lg" />

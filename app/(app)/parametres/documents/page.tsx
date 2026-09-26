@@ -94,13 +94,13 @@ export default function PageDocuments() {
         sousTitre="Factures, proformas, reçus et avoirs."
         actions={<Bouton icone={<Eye className="size-4" />} chargement={apercu} onClick={() => void ouvrirApercu()}>Aperçu d&apos;une facture</Bouton>}
       />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 lg:gap-6">
         <Groupe titre="Numérotation" description="Numéros attribués par le serveur, sans trou ni doublon. Une vente annulée garde son numéro et reçoit un avoir.">
           <Champ libelle="Format" mono value={p.format_numero} onChange={(e) => maj("format_numero", e.target.value)} erreur={erreurFormat} />
-          <div className="flex flex-wrap gap-1.5" aria-label="Jetons disponibles">
+          <div className="flex flex-wrap gap-2" aria-label="Jetons disponibles">
             {JETONS_NUMERO.map((j) => (
               <button key={j} type="button" onClick={() => maj("format_numero", p.format_numero + j)}
-                className="h-8 rounded-[4px] border border-trait px-2 font-mono text-[12px] text-encre-2 hover:bg-surface-2">{j}</button>
+                className="h-11 rounded-controle border border-trait px-3 font-mono text-[12px] text-encre-2 hover:bg-surface-2 lg:h-10">{j}</button>
             ))}
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -143,17 +143,17 @@ export default function PageDocuments() {
           <Interrupteur libelle="Montant en toutes lettres" description="« Arrêtée la présente facture à la somme de : quatorze millions… »" actif={p.montant_en_lettres} onChange={(v) => maj("montant_en_lettres", v)} />
           <Interrupteur libelle="QR code de vérification" description="Le client scanne et vérifie que la facture existe vraiment et n'a pas été annulée." actif={p.qr_verification} onChange={(v) => maj("qr_verification", v)} />
           <fieldset>
-            <legend className="mb-2 text-[13px] font-medium text-encre-2">Couleur d&apos;accent</legend>
+            <legend className="mb-2 text-[14px] font-medium text-encre-2">Couleur d&apos;accent</legend>
             <div className="flex flex-wrap items-center gap-2">
               {COULEURS.map((c) => (
                 <button key={c} type="button" aria-label={`Couleur ${c}`} aria-pressed={p.couleur_documents.toUpperCase() === c}
                   onClick={() => maj("couleur_documents", c)}
-                  className={cn("size-9 rounded-controle border-2", p.couleur_documents.toUpperCase() === c ? "border-encre" : "border-transparent")}
+                  className={cn("size-11 rounded-controle border-2 lg:size-10", p.couleur_documents.toUpperCase() === c ? "border-encre" : "border-transparent")}
                   style={{ background: c }} />
               ))}
-              <label className="ml-1 flex items-center gap-2 text-[13px] text-encre-2">
+              <label className="ml-1 flex items-center gap-2 text-[14px] text-encre-2">
                 Autre
-                <input type="color" value={p.couleur_documents} onChange={(e) => maj("couleur_documents", e.target.value.toUpperCase())} className="h-9 w-12 cursor-pointer rounded-controle border border-trait" />
+                <input type="color" value={p.couleur_documents} onChange={(e) => maj("couleur_documents", e.target.value.toUpperCase())} className="h-11 w-12 cursor-pointer rounded-controle border border-trait lg:h-10" />
               </label>
             </div>
           </fieldset>
@@ -162,19 +162,19 @@ export default function PageDocuments() {
         <Groupe titre="Message WhatsApp" description="Envoyé avec la facture. Touchez une variable pour l'insérer à l'endroit du curseur.">
           <ZoneTexte ref={zoneMessage} libelle="Modèle" rows={4} value={modele} placeholder={MODELE_PAR_DEFAUT}
             onChange={(e) => maj("modele_message_whatsapp", e.target.value || null)} />
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {VARIABLES_WHATSAPP.map(([v]) => (
-              <button key={v} type="button" onClick={() => insererVariable(v)} className="h-8 rounded-[4px] border border-trait bg-surface-2/50 px-2 font-mono text-[12px] text-encre-2 hover:bg-surface-2">{`{${v}}`}</button>
+              <button key={v} type="button" onClick={() => insererVariable(v)} className="h-11 rounded-controle border border-trait bg-surface-2/50 px-3 font-mono text-[12px] text-encre-2 hover:bg-surface-2 lg:h-10">{`{${v}}`}</button>
             ))}
           </div>
-          <div className="rounded-carte bg-gain-voile p-3 text-[14px] text-encre">
-            <p className="etiquette mb-1 text-[11px] opacity-70">Aperçu</p>
+          <div className="rounded-controle bg-surface-2 px-4 py-3 text-[14px] text-encre">
+            <p className="etiquette mb-1 text-[12px] text-encre-3">Aperçu</p>
             <p className="whitespace-pre-line">{remplirModele(modele || MODELE_PAR_DEFAUT, Object.fromEntries(VARIABLES_WHATSAPP))}</p>
           </div>
           {!modele && <Bouton variante="fantome" taille="sm" className="self-start" onClick={() => maj("modele_message_whatsapp", MODELE_PAR_DEFAUT)}>Utiliser le modèle proposé</Bouton>}
         </Groupe>
       </div>
-      <p className="mt-3 text-[13px] text-encre-3">
+      <p className="mt-4 text-[14px] text-encre-3">
         Les factures déjà émises ne changent pas : elles gardent les informations du jour de leur émission. Montant de l&apos;exemple : {formatNombre(14_500_000)} FCFA.
       </p>
       <BarreEnregistrement sale={sale} enregistrement={enregistrement} onEnregistrer={enregistrer} onAnnuler={annuler} />

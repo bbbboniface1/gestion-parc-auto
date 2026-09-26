@@ -36,25 +36,30 @@ function Verifier() {
   }, [jeton, jetonValide]);
 
   return (
-    <div className="min-h-dvh bg-papier px-4 py-10">
+    // Page de confiance : une seule carte, sobre ; le verdict (pictogramme, titre) d'abord, les faits ensuite.
+    <div className="min-h-dvh bg-papier px-4 py-8 lg:py-12">
       <div className="mx-auto max-w-md">
         <p className="etiquette text-[12px] text-encre-3">Vérification de document</p>
-        {etat === "chargement" && <p className="mt-6 text-encre-2" role="status">Vérification en cours…</p>}
-        {etat === "erreur" && <p className="mt-6 text-encre-2">Vérification impossible pour le moment. Réessayez dans quelques instants.</p>}
+        {etat === "chargement" && <p className="mt-4 text-encre-2" role="status">Vérification en cours…</p>}
+        {etat === "erreur" && <p className="mt-4 text-encre-2">Vérification impossible pour le moment. Réessayez dans quelques instants.</p>}
         {etat === "introuvable" && (
-          <div className="mt-6 rounded-carte border border-perte/40 bg-surface p-6">
-            <ShieldSlash className="size-9 text-perte-texte" aria-hidden />
-            <h1 className="mt-3 text-[22px] font-semibold">Document inconnu</h1>
-            <p className="mt-1 text-encre-2">Aucun document ne correspond à ce code. Ce document n&apos;a pas été émis par ce système : méfiez-vous.</p>
+          <div className="mt-4 rounded-carte border border-perte/40 bg-surface p-4 shadow-carte lg:p-6">
+            <span className="grid size-12 place-items-center rounded-xl bg-perte-voile text-perte-texte">
+              <ShieldSlash className="size-6" aria-hidden />
+            </span>
+            <h1 className="mt-4 text-[24px] leading-tight font-semibold">Document inconnu</h1>
+            <p className="mt-2 text-encre-2">Aucun document ne correspond à ce code. Ce document n&apos;a pas été émis par ce système : méfiez-vous.</p>
           </div>
         )}
         {typeof etat === "object" && (
-          <div className="mt-6 carte p-6">
+          <div className="mt-4 carte p-4 lg:p-6">
             <div className="flex items-start justify-between gap-3">
-              <ShieldCheck className="size-9 text-gain-texte" aria-hidden />
+              <span className="grid size-12 place-items-center rounded-xl bg-gain-voile text-gain-texte">
+                <ShieldCheck className="size-6" aria-hidden />
+              </span>
               {etat.statut === "annulee" && <Tampon type="annule" grand />}
             </div>
-            <h1 className="mt-3 text-[22px] font-semibold">
+            <h1 className="mt-4 text-[24px] leading-tight font-semibold">
               {etat.statut === "annulee" ? "Document authentique, mais annulé" : "Document authentique"}
             </h1>
             <dl className="mt-4 divide-y divide-trait border-y border-trait">
@@ -64,13 +69,13 @@ function Verifier() {
                 ["Date", formatDateLongue(etat.date)],
                 ["Montant", <Montant key="m" valeur={etat.montant_ttc ?? etat.montant ?? null} />],
               ].map(([t, v]) => (
-                <div key={String(t)} className="flex items-center justify-between gap-4 py-3">
-                  <dt className="text-encre-3">{t}</dt>
-                  <dd className="text-right font-medium">{v}</dd>
+                <div key={String(t)} className="flex min-h-12 items-center justify-between gap-4 py-3">
+                  <dt className="text-[14px] text-encre-3">{t}</dt>
+                  <dd className="min-w-0 text-right font-medium break-words">{v}</dd>
                 </div>
               ))}
             </dl>
-            <p className="mt-4 text-[13px] text-encre-3">Comparez ces informations avec le document papier qu&apos;on vous présente.</p>
+            <p className="mt-4 text-[14px] text-encre-3">Comparez ces informations avec le document papier qu&apos;on vous présente.</p>
           </div>
         )}
       </div>

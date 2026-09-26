@@ -16,7 +16,7 @@ export default function PageVentesAlertes() {
   return (
     <>
       <EnTeteSection cle="ventes" titre="Ventes et alertes" />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 lg:gap-6">
         <Groupe titre="Modes de paiement" description="Seuls les modes cochés sont proposés à l'encaissement.">
           {modes.map((m) => (
             <Interrupteur key={m} libelle={MODES_PAIEMENT[m].libelle}

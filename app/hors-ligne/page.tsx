@@ -1,7 +1,7 @@
 "use client";
 
 import { CloudSlash } from "@phosphor-icons/react";
-import { Bouton } from "@/components/ui/bouton";
+import { Bouton, classesBouton } from "@/components/ui/bouton";
 
 // Page de secours du service worker : seulement si une page jamais ouverte est demandée sans réseau.
 export default function PageHorsLigne() {
@@ -14,10 +14,10 @@ export default function PageHorsLigne() {
           Cette page n&apos;a pas encore été ouverte sur cet appareil. Les écrans déjà consultés restent disponibles hors ligne,
           et vos saisies partiront dès le retour du réseau.
         </p>
-        <div className="mt-6 flex gap-2">
+        <div className="mt-6 flex flex-wrap gap-2">
           <Bouton variante="primaire" onClick={() => window.location.reload()}>Réessayer</Bouton>
           {/* Rechargement complet voulu : c'est la page de secours du service worker, hors du routeur. */}
-          <a href="/accueil/" className="inline-flex h-11 items-center rounded-controle border border-trait-fort bg-surface px-4 text-[15px] font-medium hover:bg-surface-2 lg:h-10 lg:text-sm">Tableau de bord</a>
+          <a href="/accueil/" className={classesBouton("secondaire")}>Tableau de bord</a>
         </div>
       </div>
     </div>

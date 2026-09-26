@@ -20,13 +20,13 @@ export function EtiquetteEtape({ etape, compacte, className }: { etape: Etape | 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full font-semibold leading-none whitespace-nowrap",
-        compacte ? "h-6 px-2.5 text-[12px]" : "h-7 px-3 text-[13px]",
+        "inline-flex items-center rounded-full font-semibold leading-none whitespace-nowrap",
+        compacte ? "h-6 gap-1 px-2 text-[12px]" : "h-7 gap-2 px-3 text-[14px]",
         className,
       )}
       style={{ color: t.texte, background: t.fond }}
     >
-      <span aria-hidden className="size-1.5 rounded-full" style={{ background: def.couleur }} />
+      <span aria-hidden className={cn("rounded-full", compacte ? "size-1.5" : "size-2")} style={{ background: def.couleur }} />
       {def.libelle}
     </span>
   );
@@ -63,8 +63,8 @@ export function Tampon({ type, detail, grand, className }: {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full font-semibold leading-none whitespace-nowrap",
-        grand ? "h-9 px-4 text-[15px]" : "h-6 px-2.5 text-[12px]",
+        "inline-flex items-center rounded-full font-semibold leading-none whitespace-nowrap",
+        grand ? "h-9 gap-2 px-4 text-[14px]" : "h-6 gap-1 px-2 text-[12px]",
         className,
       )}
       style={{ color: t.teinte, background: t.fond }}
@@ -93,11 +93,12 @@ export function Montant({ valeur, devise = "FCFA", court, taille = "md", signe, 
   const exact = `${formatNombre(Math.round(valeur))} ${devise ?? ""}`.trim();
   const affiche = court ? formatCourt(valeur) : formatNombre(Math.round(valeur));
   const tailles = {
-    sm: "text-[13px] font-semibold",
-    md: "text-[15px] font-semibold lg:text-sm",
-    lg: "text-[20px] font-bold tracking-tight",
-    xl: "text-[30px] leading-[1.1] font-extrabold tracking-tight",
-    heros: "text-[40px] leading-[1.05] font-extrabold tracking-tight lg:text-[46px]",
+    sm: "text-[12px] font-semibold",
+    md: "text-[16px] font-semibold lg:text-[14px]",
+    // Second plan (24 px), premier plan (32 px), chiffre héro (40 puis 56 px) : l'échelle de l'écran pilote.
+    lg: "text-[24px] leading-tight font-bold tracking-tight",
+    xl: "text-[32px] leading-none font-extrabold tracking-tight",
+    heros: "text-[40px] leading-none font-extrabold tracking-tight lg:text-[56px]",
   } as const;
   return (
     <span className={cn("chiffres whitespace-nowrap", tailles[taille], className)} title={court ? exact : undefined} aria-label={court ? exact : undefined}>
@@ -114,9 +115,9 @@ export function Montant({ valeur, devise = "FCFA", court, taille = "md", signe, 
 
 /** Surtitre : petites capitales espacées, pour les en-têtes de section et de colonne. */
 export function Surtitre({ children, className, as: Balise = "p" }: { children: ReactNode; className?: string; as?: "p" | "h2" | "h3" | "span" }) {
-  return <Balise className={cn("etiquette text-[11px] text-encre-3", className)}>{children}</Balise>;
+  return <Balise className={cn("etiquette text-[12px] text-encre-3", className)}>{children}</Balise>;
 }
 
 export function Code({ children, className }: { children: ReactNode; className?: string }) {
-  return <span className={cn("font-mono text-[13px] font-medium tracking-wide", className)}>{children}</span>;
+  return <span className={cn("font-mono text-[14px] font-medium tracking-wide", className)}>{children}</span>;
 }

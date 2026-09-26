@@ -37,8 +37,8 @@ export function AnneauPaiement({ encaisse, total, taille = 132, className }: { e
           strokeDasharray={tour} strokeDashoffset={tour * (1 - anime / 100)} />
       </svg>
       <div className="absolute inset-0 grid place-content-center text-center">
-        <span className="chiffres text-[26px] leading-none font-extrabold">{Math.round(anime)}<span className="text-[14px]"> %</span></span>
-        <span className="mt-0.5 text-[11px] font-semibold text-encre-3">encaissé</span>
+        <span className="chiffres text-[24px] leading-none font-extrabold">{Math.round(anime)}<span className="text-[14px]"> %</span></span>
+        <span className="mt-1 text-[12px] font-semibold text-encre-3">encaissé</span>
       </div>
     </div>
   );

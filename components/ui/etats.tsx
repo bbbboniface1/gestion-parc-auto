@@ -30,11 +30,11 @@ export function EtatVide({ titre, texte, action, illustration, className }: {
   titre: string; texte?: ReactNode; action?: ReactNode; illustration?: ReactNode; className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-start gap-3 rounded-carte border border-dashed border-trait-fort bg-surface/60 px-5 py-10 lg:items-center lg:text-center", className)}>
+    <div className={cn("flex flex-col items-start gap-4 rounded-carte border border-dashed border-trait-fort bg-surface/60 px-4 py-8 lg:items-center lg:px-6 lg:py-10 lg:text-center", className)}>
       {illustration}
       <div>
-        <p className="text-[17px] font-semibold text-encre">{titre}</p>
-        {texte && <p className="mt-1 max-w-md text-encre-2">{texte}</p>}
+        <p className="text-[18px] leading-tight font-semibold text-encre">{titre}</p>
+        {texte && <p className="mt-2 max-w-md text-encre-2">{texte}</p>}
       </div>
       {action}
     </div>
@@ -44,7 +44,7 @@ export function EtatVide({ titre, texte, action, illustration, className }: {
 export function EtatErreur({ erreur, onReessayer, className }: { erreur: ErreurApi | Error | null; onReessayer?: () => void; className?: string }) {
   const horsLigne = !!erreur && "horsLigne" in erreur && erreur.horsLigne;
   return (
-    <div role="alert" className={cn("flex flex-col items-start gap-3 carte px-5 py-6", className)}>
+    <div role="alert" className={cn("flex flex-col items-start gap-3 carte p-4 lg:p-6", className)}>
       <div className="flex items-center gap-2 text-encre">
         {horsLigne && <CloudSlash className="size-5 text-ocre-texte" aria-hidden />}
         <p className="font-semibold">{horsLigne ? "Pas de connexion" : "Impossible d'afficher ces données"}</p>

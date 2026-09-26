@@ -9,7 +9,8 @@ const APPARENCE: Record<Celebration["type"], { icone: Icon; couleur: string }> =
   encaissement: { icone: HandCoins, couleur: "var(--primaire)" },
   solde: { icone: SealCheck, couleur: "var(--gain)" },
   etape: { icone: Boat, couleur: "var(--etape-en-mer)" },
-  vehicule: { icone: Car, couleur: "var(--etape-achete)" },
+  // Un véhicule ajouté est un succès, pas une étape : même couleur que la confirmation simple.
+  vehicule: { icone: Car, couleur: "var(--gain)" },
   simple: { icone: CheckCircle, couleur: "var(--gain)" },
 };
 const COULEURS_CONFETTI = ["var(--primaire)", "var(--accent)", "var(--gain)", "var(--ocre)", "var(--reserve)", "var(--acier)"];
@@ -86,15 +87,15 @@ export function EffetsGlobaux() {
               animation: `confetti 1100ms cubic-bezier(0.16, 1, 0.3, 1) ${m.delai} both`,
             }} />
         ))}
-        <div className="relative flex w-[min(86vw,340px)] flex-col items-center rounded-[26px] bg-surface px-6 pt-8 pb-6 text-center shadow-flottante [animation:pose-tampon_520ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ rotate: "4deg" }}>
+        <div className="relative flex w-[min(86vw,340px)] flex-col items-center rounded-carte bg-surface px-6 pt-8 pb-6 text-center shadow-flottante [animation:pose-tampon_520ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ rotate: "4deg" }}>
           <span className="relative grid size-20 place-items-center">
             <span aria-hidden className="absolute inset-0 rounded-full [animation:anneau_1200ms_ease-out_infinite]" style={{ background: couleur }} />
-            <span className="relative grid size-20 place-items-center rounded-full text-white shadow-lg" style={{ background: couleur }}>
+            <span className="relative grid size-20 place-items-center rounded-full text-white shadow-carte" style={{ background: couleur }}>
               <Icone size={40} weight="fill" aria-hidden />
             </span>
           </span>
-          <p className="mt-5 text-[20px] leading-tight font-extrabold text-encre">{fete.titre}</p>
-          {fete.detail && <p className="mt-1.5 text-[14px] text-encre-3">{fete.detail}</p>}
+          <p className="mt-6 text-[24px] leading-tight font-extrabold text-encre">{fete.titre}</p>
+          {fete.detail && <p className="mt-2 text-[14px] text-encre-3">{fete.detail}</p>}
         </div>
       </div>
     </div>
