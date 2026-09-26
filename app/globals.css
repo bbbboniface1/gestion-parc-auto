@@ -244,6 +244,8 @@
 }
 @utility chiffres {
   font-variant-numeric: tabular-nums;
+  /* L'espace insécable de groupement (0,17 em) est étroit dans cette police : on l'élargit pour qu'un montant se lise 11 500 000 et non 11500000. */
+  word-spacing: 0.14em;
 }
 /* Entrée des blocs : glissement léger vers le haut (décalage par style animation-delay). */
 @utility apparition {

@@ -56,6 +56,8 @@ function Fiche() {
   const nosCorrespondances = (correspondances ?? []).filter((co) => nosDemandesId.has(co.demande.id));
   const tel = c.whatsapp || c.telephone;
   const actives = c.ventes.filter((v) => v.statut === "active");
+  // Le détail ne porte pas « derniere_vente » (seule la liste des clients l'a) : on la déduit des ventes actives.
+  const derniereVente = actives.map((v) => v.date_vente).sort().at(-1) ?? null;
   const prenom = c.nom.split(/\s+/)[0] ?? c.nom;
 
   return (
@@ -97,7 +99,7 @@ function Fiche() {
       </section>
 
       <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Indicateur index={0} libelle="Achats" valeur={actives.length} format={(x) => String(Math.round(x))} precision={c.derniere_vente ? `dernier le ${formatDate(c.derniere_vente)}` : "aucun pour l'instant"} icone={Invoice} couleur="var(--gain)" />
+        <Indicateur index={0} libelle="Achats" valeur={actives.length} format={(x) => String(Math.round(x))} precision={derniereVente ? `dernier le ${formatDate(derniereVente)}` : "aucun pour l'instant"} icone={Invoice} couleur="var(--gain)" />
         <Indicateur index={1} libelle="Total acheté" valeur={c.total_achats_xof} format={formatCourt} precision="FCFA" icone={Handshake} couleur="var(--primaire)" />
         <Indicateur index={2} libelle="Reste dû" valeur={c.reste_du_xof} format={formatCourt} precision={c.reste_du_xof > 0 ? "à encaisser" : "tout est réglé"} icone={CurrencyCircleDollar} couleur={c.reste_du_xof > 0 ? "var(--accent)" : "var(--gain)"} />
         <Indicateur index={3} libelle="Recherche" valeur={c.demandes.filter((d) => d.statut === "ouverte").length} format={(x) => String(Math.round(x))} precision={nosCorrespondances.length ? `${pluriel(nosCorrespondances.length, "véhicule")} correspond` : "demande ouverte"} icone={MagnifyingGlassPlus} couleur="var(--acier)" />

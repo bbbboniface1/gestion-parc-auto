@@ -78,7 +78,7 @@ export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
       </div>
 
       <div ref={piste} className="sans-barre -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-        <div className="relative min-w-[640px] pt-14 pb-1">
+        <div className="relative min-w-[500px] pt-14 pb-1">
           {/* Lieux */}
           <div aria-hidden className="absolute inset-x-0 top-0 h-4">
             {Object.entries(lieux).map(([i, lieu]) => (

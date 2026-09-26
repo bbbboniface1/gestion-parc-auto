@@ -1650,6 +1650,7 @@ begin
   return (to_jsonb(v_exp) - 'org_id' - 'created_by') || jsonb_build_object(
     'jours_avant_arrivee', case when v_exp.statut in ('preparation', 'en_mer') and v_exp.date_arrivee_prevue is not null
                                then v_exp.date_arrivee_prevue - current_date end,
+    'nb_vehicules', (select count(*) from public.vehicules v where v.org_id = p_org and v.expedition_id = p_id),
     'vehicules', coalesce((
       select jsonb_agg(jsonb_build_object(
                'id', v.id, 'reference', v.reference, 'libelle', concat_ws(' ', v.marque, v.modele, v.annee),

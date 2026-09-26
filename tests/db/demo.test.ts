@@ -86,6 +86,9 @@ describe("contenu de la démonstration", () => {
     expect(msc).toMatchObject({ statut: "en_mer", mode: "conteneur", port_depart: "Houston", port_arrivee: "Cotonou", nb_vehicules: 4 });
     const detail = await base.rpc("expedition_obtenir", { p_org: org, p_id: msc.id });
     expect(detail.frais.some((f: { devise: string }) => f.devise === "USD")).toBe(true);
+    // Le détail annonce le même nombre de véhicules que la liste (la fiche l'affiche en titre : « À bord · 4 »).
+    expect(detail.nb_vehicules).toBe(4);
+    expect(detail.vehicules).toHaveLength(detail.nb_vehicules);
     expect(exps.find((e: { compagnie: string }) => e.compagnie === "Grimaldi")).toMatchObject({ statut: "arrivee", mode: "roro", port_arrivee: "Dakar" });
     expect(exps.filter((e: { statut: string }) => e.statut === "cloturee").length).toBe(1);
   });

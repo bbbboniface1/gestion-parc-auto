@@ -64,7 +64,7 @@ function Contenu({ d: brut, vehicules }: { d: TableauDeBord; vehicules: Vehicule
   const incoherences: ActionAFaire[] = aVerifier(vehicules).map(({ vehicule, souci }) => ({
     type: "incoherence_conteneur", gravite: "moyenne", titre: vehicule.libelle, detail: souci.titre, entite: "vehicule", entite_id: vehicule.id, date: null,
   }));
-  const d: TableauDeBord = { ...brut, actions: [...brut.actions, ...incoherences].sort((a, b) => RANG_GRAVITE[a.gravite] - RANG_GRAVITE[b.gravite]) };
+  const d: TableauDeBord = { ...brut, actions: [...incoherences, ...brut.actions].sort((a, b) => RANG_GRAVITE[a.gravite] - RANG_GRAVITE[b.gravite]) };
   const i = d.indicateurs;
   const series = d.series.slice(-6);
   const ca = series.map((s) => s.ca);

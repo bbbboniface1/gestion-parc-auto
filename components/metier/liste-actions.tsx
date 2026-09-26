@@ -68,6 +68,9 @@ export function ListeActions({ actions, limite, className }: { actions: ActionAF
           </li>
         );
       })}
+      {limite && actions.length > limite && (
+        <li className="px-4 py-2.5 text-[13px] font-semibold text-encre-3">Et {actions.length - limite} autre{actions.length - limite > 1 ? "s" : ""} à traiter</li>
+      )}
     </ul>
   );
 }
