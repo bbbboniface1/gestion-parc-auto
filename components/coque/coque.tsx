@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useIsMutating } from "@tanstack/react-query";
-import { CaretUpDown, Car, Check, CloudSlash, HandCoins, Invoice, MagnifyingGlass, Plus, SignOut, SquaresFour, Wallet } from "@phosphor-icons/react";
+import { CaretUpDown, Car, Check, CloudSlash, GearSix, HandCoins, Invoice, MagnifyingGlass, Plus, SignOut, SquaresFour, Wallet } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 import { useEnLigne } from "@/lib/ecran";
 import { useSession } from "@/lib/session";
@@ -187,8 +187,8 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
     );
   };
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-gradient-to-b from-nuit to-nuit-2 px-4 py-5 text-sur-nuit lg:flex">
-      <div className="mb-6 flex items-center gap-3 px-1">
+    <aside className="sans-barre fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto bg-gradient-to-b from-nuit to-nuit-2 px-4 py-5 text-sur-nuit lg:flex">
+      <div className="mb-6 flex shrink-0 items-center gap-3 px-1 [@media(max-height:700px)]:mb-3">
         <Logo className="size-9" />
         <span className="text-[17px] font-extrabold tracking-tight">Parc Auto</span>
       </div>
@@ -230,7 +230,7 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
       <nav aria-label="Navigation principale" className="flex flex-col gap-1">
         {NAVIGATION_PRINCIPALE.map(lien)}
       </nav>
-      <div className="mt-auto flex flex-col gap-1">
+      <div className="mt-auto flex shrink-0 flex-col gap-1 pt-4">
         <div className="mb-2 px-1"><EtatReseau surNuit /></div>
         {NAVIGATION_SECONDAIRE.map(lien)}
       </div>
@@ -247,6 +247,10 @@ function EnTeteMobile({ onRecherche }: { onRecherche: () => void }) {
         <Logo className="size-8" />
         <span className="min-w-0 flex-1 truncate text-[15px] font-bold">{etat.org.nom}</span>
         <EtatReseau />
+        <Link href="/parametres/" aria-label="Paramètres" title="Paramètres"
+          className="onde grid size-10 shrink-0 place-items-center rounded-full bg-surface text-encre-2 shadow-carte ring-1 ring-trait/70">
+          <GearSix size={20} weight="duotone" aria-hidden />
+        </Link>
         <button type="button" onClick={onRecherche} className="onde inline-flex h-10 items-center gap-1.5 rounded-full bg-surface px-3.5 text-[13px] font-semibold text-encre-2 shadow-carte ring-1 ring-trait/70">
           <MagnifyingGlass size={17} weight="bold" aria-hidden /> Chercher
         </button>

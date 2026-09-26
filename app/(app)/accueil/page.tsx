@@ -9,6 +9,7 @@ import { useOrg } from "@/lib/session";
 import { formatCourt, formatJour, formatPourcent, pluriel } from "@/lib/format";
 import { EnTetePage } from "@/components/coque/coque";
 import { ListeActions } from "@/components/metier/liste-actions";
+import { CarteNouveautes } from "@/components/metier/nouveautes";
 import { GraphiqueVentes, HeroCapital, TuileIndicateur, VitrineParc } from "@/components/metier/tableau-bord";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
 
@@ -76,6 +77,7 @@ function Contenu({ d: brut, vehicules }: { d: TableauDeBord; vehicules: Vehicule
 
   return (
     <div className="flex flex-col gap-5 lg:gap-6">
+      <CarteNouveautes />
       <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">
         <div className="min-w-0 lg:col-span-7 xl:col-span-8">
           <HeroCapital tranches={i.capital_par_etape} disponibles={i.nb_au_parc_disponibles} />
