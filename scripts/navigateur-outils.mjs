@@ -22,7 +22,10 @@ function attendrePort(port, delai = 15_000) {
   });
 }
 
-/** Sert out/ (npm run build d'abord) et ouvre un navigateur à profil vide. `fermer()` nettoie tout. */
+/**
+ * Sert out/ (npm run build d'abord) et ouvre un navigateur à profil vide. `fermer()` nettoie tout.
+ * Le service worker est bloqué par défaut (SW=allow pour le laisser s'installer, comme chez un vrai utilisateur).
+ */
 export async function ouvrirApplication({ port = Number(process.env.PORT ?? 4173) } = {}) {
   const serveur = spawn(process.execPath, [path.join(racine, "node_modules", "serve", "build", "main.js"), "out", "-l", String(port)], { cwd: racine, stdio: "ignore" });
   let navigateur;
@@ -32,7 +35,7 @@ export async function ouvrirApplication({ port = Number(process.env.PORT ?? 4173
       try { navigateur = await chromium.launch(canal ? { channel: canal } : {}); break; } catch { /* essai suivant */ }
     }
     if (!navigateur) throw new Error("Aucun navigateur disponible (installez Edge/Chrome ou `npx playwright install chromium`).");
-    const contexte = await navigateur.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: "block" });
+    const contexte = await navigateur.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: process.env.SW === "allow" ? "allow" : "block" });
     const page = await contexte.newPage();
     return {
       page,
