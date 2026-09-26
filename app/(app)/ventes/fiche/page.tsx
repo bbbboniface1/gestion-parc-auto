@@ -13,7 +13,7 @@ import { useOrg } from "@/lib/session";
 import type { VenteDetail } from "@/lib/api/types-metier";
 import type { SnapshotDocument } from "@/lib/documents/depuis-vente";
 import { peut, MODES_PAIEMENT } from "@/lib/domaine";
-import { formatCourt, formatDate, formatDateLongue, aujourdhui } from "@/lib/format";
+import { formatCourt, formatDate, formatDateLongue, aujourdhui, formatNombre } from "@/lib/format";
 import { grouperVin } from "@/lib/vin";
 import { lienWhatsApp, remplirModele } from "@/lib/whatsapp";
 import { cn } from "@/lib/cn";
@@ -93,7 +93,7 @@ function Fiche() {
       const { nomFichier } = await import("@/lib/documents/generer");
       const fichier = new File([blob], nomFichier({ type: "facture", numero: v!.numero, client: v!.client }), { type: "application/pdf" });
       const message = remplirModele(reglages!.parametres.modele_message_whatsapp || "Bonjour {client}, voici votre facture {numero} : {montant}. Reste à payer : {reste}.", {
-        client: v!.client.nom, numero: v!.numero, montant: `${v!.montant_ttc.toLocaleString("fr-FR")} FCFA`, reste: `${v!.reste_xof.toLocaleString("fr-FR")} FCFA`,
+        client: v!.client.nom, numero: v!.numero, montant: `${formatNombre(v!.montant_ttc)} FCFA`, reste: `${formatNombre(v!.reste_xof)} FCFA`,
       });
       const partage = await partagerFichier(fichier, `Facture ${v!.numero}`, message);
       if (!partage) window.open(lienWhatsApp(v!.client.telephone, message), "_blank", "noopener");
@@ -101,16 +101,16 @@ function Fiche() {
   }
 
   function relancer() {
-    const message = `Bonjour ${v!.client.nom}, un rappel amical concernant votre facture ${v!.numero} (${v!.vehicule.libelle}) : il reste ${v!.reste_xof.toLocaleString("fr-FR")} FCFA à régler. Merci de votre confiance.`;
+    const message = `Bonjour ${v!.client.nom}, un rappel amical concernant votre facture ${v!.numero} (${v!.vehicule.libelle}) : il reste ${formatNombre(v!.reste_xof)} FCFA à régler. Merci de votre confiance.`;
     window.open(lienWhatsApp(v!.client.telephone, message), "_blank", "noopener");
   }
 
   const actions: ActionVisible[] = [
-    { cle: "encaisser", titre: "Encaisser un versement", detail: `Reste ${v.reste_xof.toLocaleString("fr-FR")} FCFA · espèces, Orange Money, Wave…`, icone: HandCoins, couleur: "var(--primaire)", principale: true, onClick: () => setFeuille("encaisser"), masque: annulee || v.reste_xof === 0 || !peutEncaisser },
+    { cle: "encaisser", titre: "Encaisser un versement", detail: `Reste ${formatNombre(v.reste_xof)} FCFA · espèces, Orange Money, Wave…`, icone: HandCoins, couleur: "var(--primaire)", principale: true, onClick: () => setFeuille("encaisser"), masque: annulee || v.reste_xof === 0 || !peutEncaisser },
     { cle: "facture", titre: "Télécharger la facture", detail: `PDF ${v.numero} · avec QR de vérification`, icone: FilePdf, couleur: "#dc2626", onClick: () => agir("facture", "telecharger") },
     { cle: "whatsapp", titre: `Envoyer à ${prenom} sur WhatsApp`, detail: `Facture PDF + message · ${v.client.telephone ?? ""}`, icone: WhatsappLogo, couleur: "#25d366", onClick: () => envoyerWhatsApp(), masque: !v.client.telephone },
     { cle: "imprimer", titre: "Imprimer la facture", detail: "Format A4, cachet et signature inclus", icone: Printer, couleur: "var(--encre-3)", onClick: () => agir("facture", "imprimer") },
-    { cle: "relancer", titre: `Relancer ${prenom}`, detail: `Rappel amical : ${v.reste_xof.toLocaleString("fr-FR")} FCFA à régler`, icone: BellRinging, couleur: "var(--ocre)", onClick: relancer, masque: annulee || v.reste_xof === 0 || !v.client.telephone },
+    { cle: "relancer", titre: `Relancer ${prenom}`, detail: `Rappel amical : ${formatNombre(v.reste_xof)} FCFA à régler`, icone: BellRinging, couleur: "var(--ocre)", onClick: relancer, masque: annulee || v.reste_xof === 0 || !v.client.telephone },
     { cle: "livrer", titre: "Marquer comme livré", detail: "Le client a reçu le véhicule et les clés", icone: Key, couleur: "var(--etape-parc)", onClick: () => livrer.executerAsync({ p_org: org.id, p_vente_id: v.id, p_date: aujourdhui() }), masque: annulee || v.livree || !peutLivrer },
     { cle: "avoir", titre: "Télécharger l'avoir", detail: v.numero_avoir ? `PDF ${v.numero_avoir}` : "Document d'annulation", icone: FileX, couleur: "var(--perte)", onClick: () => agir("avoir", "telecharger"), masque: !annulee },
     { cle: "annuler", titre: "Annuler la vente", detail: "Crée un avoir ; le véhicule redevient disponible", icone: XCircle, couleur: "var(--perte)", danger: true, onClick: () => setFeuille("annuler"), masque: annulee || !peutAnnuler },
@@ -156,7 +156,7 @@ function Fiche() {
             <AnneauPaiement encaisse={v.encaisse_xof} total={v.montant_ttc} taille={116} />
             <div className="min-w-0">
               {annulee ? (
-                <p className="text-[15px] font-semibold text-perte-texte">Vente annulée{v.a_rembourser_xof > 0 ? ` · ${v.a_rembourser_xof.toLocaleString("fr-FR")} FCFA à rembourser` : ""}</p>
+                <p className="text-[15px] font-semibold text-perte-texte">Vente annulée{v.a_rembourser_xof > 0 ? ` · ${formatNombre(v.a_rembourser_xof)} FCFA à rembourser` : ""}</p>
               ) : soldee ? (
                 <p className="text-[18px] font-extrabold text-gain-texte">Tout est payé</p>
               ) : (
@@ -166,7 +166,7 @@ function Fiche() {
                 </>
               )}
               <p className="mt-1 text-[13px] text-encre-3">
-                <span className="chiffres font-semibold text-encre">{v.encaisse_xof.toLocaleString("fr-FR")}</span> encaissés sur <span className="chiffres font-semibold text-encre">{v.montant_ttc.toLocaleString("fr-FR")}</span> FCFA
+                <span className="chiffres font-semibold text-encre">{formatNombre(v.encaisse_xof)}</span> encaissés sur <span className="chiffres font-semibold text-encre">{formatNombre(v.montant_ttc)}</span> FCFA
               </p>
             </div>
           </div>
@@ -240,19 +240,19 @@ function Fiche() {
           <section className="carte apparition p-4 lg:p-5">
             <h2 className="mb-2 text-[17px] font-bold">Montants</h2>
             <Registre lignes={[
-              ...(v.remise_xof ? [{ libelle: "Prix", valeur: v.prix_xof.toLocaleString("fr-FR") }, { libelle: "Remise", valeur: `− ${v.remise_xof.toLocaleString("fr-FR")}` }] : []),
-              ...(v.tva_taux > 0 ? [{ libelle: "Hors taxes", valeur: v.montant_ht.toLocaleString("fr-FR") }, { libelle: `TVA ${v.tva_taux}%`, valeur: v.montant_tva.toLocaleString("fr-FR") }] : []),
-              { libelle: "Total TTC", valeur: `${v.montant_ttc.toLocaleString("fr-FR")} FCFA`, fort: true },
-              { libelle: "Encaissé", valeur: `${v.encaisse_xof.toLocaleString("fr-FR")} FCFA` },
-              { libelle: "Reste", valeur: `${v.reste_xof.toLocaleString("fr-FR")} FCFA`, fort: v.reste_xof > 0 },
+              ...(v.remise_xof ? [{ libelle: "Prix", valeur: formatNombre(v.prix_xof) }, { libelle: "Remise", valeur: `− ${formatNombre(v.remise_xof)}` }] : []),
+              ...(v.tva_taux > 0 ? [{ libelle: "Hors taxes", valeur: formatNombre(v.montant_ht) }, { libelle: `TVA ${v.tva_taux}%`, valeur: formatNombre(v.montant_tva) }] : []),
+              { libelle: "Total TTC", valeur: `${formatNombre(v.montant_ttc)} FCFA`, fort: true },
+              { libelle: "Encaissé", valeur: `${formatNombre(v.encaisse_xof)} FCFA` },
+              { libelle: "Reste", valeur: `${formatNombre(v.reste_xof)} FCFA`, fort: v.reste_xof > 0 },
             ]} />
             {v.prix_revient_xof !== null && (
               <div className="mt-3 flex items-center justify-between rounded-xl bg-gain-voile px-3 py-2">
                 <span className="text-[13px] font-semibold text-gain-texte">Marge sur cette vente</span>
-                <span className={cn("chiffres font-extrabold", (v.marge_xof ?? 0) < 0 ? "text-perte-texte" : "text-gain-texte")}>{v.marge_xof?.toLocaleString("fr-FR")} {v.marge_pct !== null && <span className="text-[12px]">({v.marge_pct} %)</span>}</span>
+                <span className={cn("chiffres font-extrabold", (v.marge_xof ?? 0) < 0 ? "text-perte-texte" : "text-gain-texte")}>{formatNombre(v.marge_xof ?? 0)} {v.marge_pct !== null && <span className="text-[12px]">({v.marge_pct} %)</span>}</span>
               </div>
             )}
-            {annulee && v.a_rembourser_xof > 0 && peutEncaisser && <Bouton variante="secondaire" className="mt-4" onClick={() => setFeuille("rembourser")}>Rembourser {v.a_rembourser_xof.toLocaleString("fr-FR")} FCFA</Bouton>}
+            {annulee && v.a_rembourser_xof > 0 && peutEncaisser && <Bouton variante="secondaire" className="mt-4" onClick={() => setFeuille("rembourser")}>Rembourser {formatNombre(v.a_rembourser_xof)} FCFA</Bouton>}
           </section>
           {v.client.telephone && (
             <section className="carte apparition p-4 lg:p-5">

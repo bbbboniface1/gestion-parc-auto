@@ -33,8 +33,9 @@ export function NouvelleProforma({ ouverte, onFermer }: { ouverte: boolean; onFe
     if (vehicule && prix === null) setPrix(vehicule.prix_affiche_xof);
   });
 
-  const creer = useEcriture<{ id: string }>("proforma_creer", {
-    onSuccess: (p) => { toast.success("Proforma créée"); onFermer(); router.push(`/ventes/fiche/?id=${p?.id ?? ""}`); },
+  const creer = useEcriture("proforma_creer", {
+    // Une proforma n'a pas de fiche de vente : on revient à la liste des proformas, où l'on peut l'accepter, la convertir ou l'imprimer.
+    onSuccess: () => { toast.success("Proforma créée"); onFermer(); router.push("/ventes/?onglet=proformas"); },
     onError: (e) => toast.error(e.message),
   });
 

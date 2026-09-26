@@ -6,7 +6,7 @@ import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useParametres } from "@/lib/api/parametres";
 import { useOrg } from "@/lib/session";
 import { MODES_PAIEMENT, type ModePaiement } from "@/lib/domaine";
-import { aujourdhui, formatFCFA } from "@/lib/format";
+import { aujourdhui, formatFCFA, formatNombre } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
@@ -48,8 +48,8 @@ export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineE
   const ajouter = useEcriture("paiement_ajouter", {
     onSuccess: () => {
       if (venteAnnulee) toast.success("Remboursement enregistré");
-      else if (montant !== null && reste != null && montant >= reste) celebrer({ type: "solde", titre: "Vente soldée !", detail: `${montant.toLocaleString("fr-FR")} FCFA reçus : plus rien à encaisser.` });
-      else celebrer({ type: "encaissement", titre: "Versement enregistré", detail: `${(montant ?? 0).toLocaleString("fr-FR")} FCFA · ${MODES_PAIEMENT[mode]?.libelle ?? ""} · reçu prêt` });
+      else if (montant !== null && reste != null && montant >= reste) celebrer({ type: "solde", titre: "Vente soldée !", detail: `${formatNombre(montant)} FCFA reçus : plus rien à encaisser.` });
+      else celebrer({ type: "encaissement", titre: "Versement enregistré", detail: `${formatNombre(montant ?? 0)} FCFA · ${MODES_PAIEMENT[mode]?.libelle ?? ""} · reçu prêt` });
       onFermer();
     },
     onError: (e) => toast.error(e.message),

@@ -13,7 +13,7 @@ import { useOrg } from "@/lib/session";
 import type { Compte, LigneMarge, RapportMarges, Tresorerie } from "@/lib/api/types-metier";
 import type { Frais } from "@/lib/api/types";
 import { peut } from "@/lib/domaine";
-import { formatCourt, formatDate, formatPourcent, pluriel } from "@/lib/format";
+import { formatCourt, formatDate, formatPourcent, pluriel, formatNombre } from "@/lib/format";
 import { lienWhatsApp } from "@/lib/whatsapp";
 import { genererCSV, telechargerCSV } from "@/lib/csv";
 import { cn } from "@/lib/cn";
@@ -233,7 +233,7 @@ function Finances() {
                         <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-perte-voile px-2.5 text-[12px] font-bold text-perte-texte"><Timer size={14} weight="fill" aria-hidden />{pluriel(c.jours_retard, "jour")} de retard</span>
                       ) : <span className="text-[12px] text-encre-3">{formatCourt(c.encaisse_xof)} déjà reçus sur {formatCourt(c.montant_ttc)}</span>}
                       {c.client_telephone && (
-                        <a href={lienWhatsApp(c.client_telephone, `Bonjour ${c.client_nom}, un rappel amical concernant votre facture ${c.numero} : il reste ${c.reste_xof.toLocaleString("fr-FR")} FCFA à régler. Merci.`)}
+                        <a href={lienWhatsApp(c.client_telephone, `Bonjour ${c.client_nom}, un rappel amical concernant votre facture ${c.numero} : il reste ${formatNombre(c.reste_xof)} FCFA à régler. Merci.`)}
                           target="_blank" rel="noopener" className="onde inline-flex h-10 items-center gap-2 rounded-full bg-[#25d366] px-4 text-[13px] font-bold text-[#062b14] shadow-[0_8px_18px_-8px_#25d366] transition-transform hover:-translate-y-0.5">
                           <WhatsappLogo size={18} weight="fill" aria-hidden /> Relancer sur WhatsApp
                         </a>

@@ -3,8 +3,11 @@
 import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, CarProfile, CheckCircle, ClockCountdown, FileText, HandCoins, Invoice, Plus, Warning, XCircle } from "@phosphor-icons/react";
+import { ArrowRight, CarProfile, CheckCircle, ClockCountdown, FilePdf, FileText, HandCoins, Invoice, Plus, Warning, XCircle } from "@phosphor-icons/react";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
+import { rpc } from "@/lib/api/client";
+import type { ParametresDocument, ProformaPourDocument } from "@/lib/documents/depuis-vente";
+import { useParametres } from "@/lib/api/parametres";
 import { useOrg } from "@/lib/session";
 import type { PaiementVente, ProformaListe, VenteListe } from "@/lib/api/types-metier";
 import { MODES_PAIEMENT, peut } from "@/lib/domaine";
@@ -239,9 +242,23 @@ const STATUTS_PROFORMA: Record<string, { libelle: string; couleur: string }> = {
   annulee: { libelle: "Annulée", couleur: "var(--perte)" },
 };
 
+/** Récupère la proforma complète (client, véhicule, photographie de l'entreprise) et télécharge son PDF. */
+async function telechargerProforma(orgId: string, id: string, parametres: unknown) {
+  const [{ documentProforma, avecImages }, { genererPDF, telecharger, nomFichier }, { urlFichier }, proforma] = await Promise.all([
+    import("@/lib/documents/depuis-vente"),
+    import("@/lib/documents/generer"),
+    import("@/lib/stockage"),
+    rpc<ProformaPourDocument>("proforma_obtenir", { p_org: orgId, p_id: id }),
+  ]);
+  const d = documentProforma(proforma, parametres as ParametresDocument);
+  telecharger(await genererPDF(await avecImages(d, urlFichier)), nomFichier(d));
+}
+
 function LigneProforma({ p, peutAgir, index }: { p: ProformaListe; peutAgir: boolean; index: number }) {
   const org = useOrg();
   const router = useRouter();
+  const { data: reglages } = useParametres();
+  const [pdfEnCours, setPdfEnCours] = useState(false);
   const changerStatut = useEcriture("proforma_changer_statut", { onError: (e) => toast.error(e.message) });
   const convertir = useEcriture<{ id: string }>("proforma_convertir", {
     onSuccess: (v) => { celebrer({ type: "vente", titre: "Proforma convertie", detail: "La facture est créée." }); router.push(`/ventes/fiche/?id=${v.id}`); },
@@ -269,6 +286,15 @@ function LigneProforma({ p, peutAgir, index }: { p: ProformaListe; peutAgir: boo
         <Montant valeur={p.montant_ttc} devise={null} taille="lg" className="shrink-0" />
       </div>
       <div className="flex flex-wrap gap-2">
+        <Bouton taille="sm" icone={<FilePdf size={16} weight="duotone" className="text-perte-texte" />} chargement={pdfEnCours} disabled={!reglages}
+          onClick={async () => {
+            setPdfEnCours(true);
+            try { await telechargerProforma(org.id, p.id, reglages!.parametres); }
+            catch (e) { toast.error(e instanceof Error ? e.message : "Génération impossible"); }
+            finally { setPdfEnCours(false); }
+          }}>
+          Télécharger le PDF
+        </Bouton>
         {peutAgir && (p.statut_effectif === "emise" || p.statut_effectif === "acceptee") && (
           <Bouton taille="sm" variante="primaire" icone={<Invoice size={16} weight="fill" />} chargement={convertir.isPending} onClick={() => convertir.executer({ p_org: org.id, p_id: p.id })}>Convertir en facture</Bouton>
         )}
