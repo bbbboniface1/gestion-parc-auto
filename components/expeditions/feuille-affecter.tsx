@@ -44,7 +44,7 @@ export function FeuilleAffecter({ ouverte, onFermer, expeditionId, reference, st
         </Bouton>
       </>}>
       {mini && (
-        <p className="mb-4 rounded-xl bg-primaire-voile p-3 text-[14px] leading-snug text-encre-2">
+        <p className="mb-3 rounded-xl bg-primaire-voile px-3 py-2.5 text-[13px] leading-snug text-encre-2">
           {reference ?? "Ce conteneur"} est déjà « {statut === "en_mer" ? "en mer" : "arrivé au port"} » : un véhicule ajouté passe directement à « {defEtape(mini).libelle} ».
         </p>
       )}
@@ -52,8 +52,8 @@ export function FeuilleAffecter({ ouverte, onFermer, expeditionId, reference, st
         {disponibles.map((v) => {
           const cochee = selection.has(v.id);
           return (
-            <li key={v.id} className="border-b border-trait last:border-b-0">
-              <label className="flex min-h-11 cursor-pointer items-center gap-3 py-3">
+            <li key={v.id}>
+              <label className="flex items-center gap-3 border-b border-trait py-2.5 last:border-b-0">
                 <input type="checkbox" checked={cochee} className="size-5 accent-[var(--primaire)]"
                   onChange={() => setSelection((s) => { const n = new Set(s); if (n.has(v.id)) n.delete(v.id); else n.add(v.id); return n; })} />
                 <span className="min-w-0 flex-1">

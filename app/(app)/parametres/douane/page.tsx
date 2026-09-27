@@ -7,7 +7,6 @@ import { HYPOTHESES_PAR_DEFAUT } from "@/lib/simulateur";
 import { formatNombre } from "@/lib/format";
 import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { BarreEnregistrement, Groupe, useBrouillon } from "@/components/parametres/commun";
-import { classesBouton } from "@/components/ui/bouton";
 import { ChampNombre, Champ } from "@/components/ui/champ";
 import { EtatErreur, SqueletteListe } from "@/components/ui/etats";
 import { Registre } from "@/components/metier/registre";
@@ -46,11 +45,10 @@ export default function PageDouane() {
     <>
       <EnTeteSection cle="douane" titre="Frais et douane"
         sousTitre="Ces valeurs servent uniquement aux estimations : le coût réel est toujours le frais que vous saisissez."
-        actions={<Link href="/outils/simulateur/" className={classesBouton("secondaire")}><Calculator className="size-4" aria-hidden /> Ouvrir le simulateur</Link>} />
-      <div className="flex flex-col gap-4 lg:gap-6">
+        actions={<Link href="/outils/simulateur/" className="inline-flex h-10 items-center gap-2 rounded-controle border border-trait-fort bg-surface px-4 text-sm font-medium hover:bg-surface-2"><Calculator className="size-4" aria-hidden /> Ouvrir le simulateur</Link>} />
+      <div className="flex flex-col gap-4">
         <Groupe titre="Barème de dédouanement" description="Les taux publiés pour le Mali sont tous indiqués comme approximatifs : faites valider ces valeurs par votre transitaire.">
-          {/* Champs alignés sur le bas de leur cellule : un libellé sur deux lignes ne décale plus son voisin. */}
-          <div className="grid grid-cols-2 items-end gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <ChampNombre libelle="Droit de douane" valeur={b.droit_douane_pct ?? 0} onChange={(v) => majB("droit_douane_pct", v)} decimales={2} unite="% CAF" />
             <ChampNombre libelle="Redevance statistique" valeur={b.redevance_statistique_pct ?? 0} onChange={(v) => majB("redevance_statistique_pct", v)} decimales={2} unite="% CAF" />
             <ChampNombre libelle="Prélèvements communautaires" valeur={b.prelevement_communautaire_pct ?? 0} onChange={(v) => majB("prelevement_communautaire_pct", v)} decimales={2} unite="% CAF" />
@@ -70,7 +68,7 @@ export default function PageDouane() {
         </Groupe>
 
         <Groupe titre="Hypothèses du simulateur d'enchère" description="Vos tarifs habituels : le simulateur s'en sert pour calculer l'enchère maximale avant d'acheter.">
-          <div className="grid grid-cols-2 items-end gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <ChampNombre libelle="Frais d'enchère" valeur={h.frais_enchere_pct ?? HYPOTHESES_PAR_DEFAUT.fraisEncherePourcent} onChange={(v) => majH("frais_enchere_pct", v)} decimales={1} unite="%" />
             <ChampNombre libelle="Frais d'enchère fixes" valeur={h.frais_enchere_fixe_usd ?? HYPOTHESES_PAR_DEFAUT.fraisEnchereFixeUsd} onChange={(v) => majH("frais_enchere_fixe_usd", v)} unite="$" />
             <ChampNombre libelle="Remorquage" valeur={h.remorquage_usd ?? HYPOTHESES_PAR_DEFAUT.remorquageUsd} onChange={(v) => majH("remorquage_usd", v)} unite="$" />

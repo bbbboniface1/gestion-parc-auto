@@ -66,43 +66,35 @@ export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
   const finLigne = pas * indexActuel + pas / 2;
 
   return (
-    <section aria-label="Trajet du véhicule" className="carte apparition p-4 lg:p-6">
+    <section aria-label="Trajet du véhicule" className="carte apparition p-4 lg:p-5">
       <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-[18px] font-bold">Le trajet</h2>
-        <p className="text-[14px] text-encre-3">
+        <h2 className="text-[17px] font-bold">Le trajet</h2>
+        <p className="text-[13px] text-encre-3">
           {total > 0 && <span className="chiffres font-semibold text-encre">{total} jours depuis l&apos;achat</span>}
           {eta && indexActuel <= ORDRE_ETAPES.indexOf("en_mer") && (
-            <span className="ml-2 inline-flex h-6 items-center rounded-full bg-acier-voile px-2 text-[12px] font-semibold text-acier">Arrivée au port prévue le {formatDate(eta)}</span>
+            <span className="ml-2 rounded-full bg-acier-voile px-2 py-0.5 font-semibold text-acier">Arrivée au port prévue le {formatDate(eta)}</span>
           )}
         </p>
       </div>
 
-      <div ref={piste} tabIndex={0} role="region" aria-label="Étapes du trajet" data-defilement="horizontal" className="sans-barre -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-        {/* Sur ordinateur la piste tient dans sa carte (les libellés d'étape passent sur deux lignes) : pas de défilement. */}
-        <div className="relative min-w-[500px] pt-14 pb-1 lg:min-w-0">
-          {/* Lieux : départ calé à gauche, arrivée calée à droite, seul le port est centré sur son étape.
-              Largeurs bornées (30 / 26 / 30 %) pour que trois lieux longs ne se chevauchent jamais. */}
+      <div ref={piste} tabIndex={0} role="region" aria-label="Étapes du trajet" className="sans-barre -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
+        <div className="relative min-w-[500px] pt-14 pb-1">
+          {/* Lieux */}
           <div aria-hidden className="absolute inset-x-0 top-0 h-4">
-            {Object.entries(lieux).map(([i, lieu]) => {
-              const n = Number(i);
-              return (
-                <span key={i}
-                  className={cn("etiquette absolute truncate text-[12px] leading-4 whitespace-nowrap text-encre-3",
-                    n === 0 ? "left-0 max-w-[30%] text-left" : n === 7 ? "right-0 max-w-[30%] text-right" : "max-w-[26%] -translate-x-1/2 text-center")}
-                  style={n === 0 || n === 7 ? undefined : { left: `${pas * n + pas / 2}%` }}>{lieu}</span>
-              );
-            })}
+            {Object.entries(lieux).map(([i, lieu]) => (
+              <span key={i} className="etiquette absolute -translate-x-1/2 text-[10px] whitespace-nowrap text-encre-3" style={{ left: `${pas * Number(i) + pas / 2}%` }}>{lieu}</span>
+            ))}
           </div>
 
           {/* Ligne de fond, puis ligne parcourue qui se trace */}
-          <div aria-hidden className="absolute top-[68px] h-2 rounded-full bg-surface-2" style={{ left: `${pas / 2}%`, right: `${pas / 2}%` }} />
-          <div aria-hidden className="absolute top-[68px] h-2 origin-left rounded-full [animation:remplit_1100ms_cubic-bezier(0.22,1,0.36,1)_both]"
-            style={{ left: `${pas / 2}%`, width: `${finLigne - pas / 2}%`, background: courante.couleur }} />
+          <div aria-hidden className="absolute top-[69px] h-1.5 rounded-full bg-surface-2" style={{ left: `${pas / 2}%`, right: `${pas / 2}%` }} />
+          <div aria-hidden className="absolute top-[69px] h-1.5 origin-left rounded-full [animation:remplit_1100ms_cubic-bezier(0.22,1,0.36,1)_both]"
+            style={{ left: `${pas / 2}%`, width: `${finLigne - pas / 2}%`, background: `linear-gradient(90deg, ${ETAPES[0]!.couleur}, ${courante.couleur})` }} />
 
           {/* Le transport, au-dessus de l'étape en cours */}
           <div aria-hidden className="absolute top-3 -translate-x-1/2 [animation:apparition_500ms_700ms_both]" style={{ left: `${finLigne}%` }}>
-            <span className="grid size-10 place-items-center rounded-xl text-white shadow-flottante [animation:flotte_2.4s_ease-in-out_infinite]"
-              style={{ background: courante.couleur }}>
+            <span className="grid size-10 place-items-center rounded-2xl text-white shadow-[0_10px_20px_-8px_rgb(15_23_42/0.5)] [animation:flotte_2.4s_ease-in-out_infinite]"
+              style={{ background: `linear-gradient(145deg, color-mix(in srgb, ${courante.couleur} 70%, white), ${courante.couleur})` }}>
               <Transport size={22} weight="fill" />
             </span>
           </div>
@@ -117,15 +109,15 @@ export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
                     {etat === "courante" && <span aria-hidden className="absolute size-8 rounded-full [animation:anneau_1.8s_ease-out_infinite]" style={{ background: e.couleur }} />}
                     <span aria-hidden
                       className={cn("relative z-10 grid place-items-center rounded-full ring-4 ring-surface", etat === "courante" ? "size-8" : "size-6", etat === "future" && "bg-surface-2")}
-                      style={etat === "future" ? { boxShadow: "inset 0 0 0 2px var(--trait-fort)" } : { background: e.couleur, animation: `apparition 400ms ${i * 60}ms both` }}>
+                      style={etat === "future" ? { boxShadow: "inset 0 0 0 2px var(--trait-fort)" } : { background: e.couleur, animation: `apparition 400ms ${i * 90}ms both` }}>
                       {etat === "passee" && <Check size={13} weight="bold" className="text-white" />}
-                      {etat === "courante" && <span className="size-2 rounded-full bg-white" />}
+                      {etat === "courante" && <span className="size-2.5 rounded-full bg-white" />}
                     </span>
                   </span>
                   <span className={cn("mt-2 text-[12px] leading-tight", etat === "courante" ? "font-extrabold text-encre" : etat === "passee" ? "font-semibold text-encre-2" : "text-encre-3")}>
                     {e.libelle}
                   </span>
-                  <span className={cn("chiffres mt-1 h-4 text-[12px] leading-4", etat === "courante" ? "font-bold" : "text-encre-3")} style={etat === "courante" ? { color: `color-mix(in srgb, ${e.couleur} 65%, var(--pole-texte))` } : undefined}>
+                  <span className={cn("chiffres mt-0.5 h-4 text-[11px]", etat === "courante" ? "font-bold" : "text-encre-3")} style={etat === "courante" ? { color: `color-mix(in srgb, ${e.couleur} 65%, var(--pole-texte))` } : undefined}>
                     {j !== undefined ? `${j} j` : ""}
                   </span>
                   <span className="sr-only">{etat === "passee" ? "étape passée" : etat === "courante" ? "étape en cours" : "à venir"}</span>

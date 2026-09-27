@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { PencilSimple, Plus } from "@phosphor-icons/react";
+import { Bank, DeviceMobile, Money, PencilSimple, Plus, type Icon } from "@phosphor-icons/react";
 import { nouvelId, useEcriture } from "@/lib/api/requetes";
 import { useOrg } from "@/lib/session";
 import type { Compte } from "@/lib/api/types-metier";
@@ -12,12 +12,11 @@ import { Feuille } from "@/components/ui/feuille";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ, Interrupteur, Selection } from "@/components/ui/champ";
 import { ChampMontant } from "@/components/ui/champ-montant";
-import { apparenceCompte } from "./apparence-compte";
 
-const TYPES: Record<Compte["type"], { libelle: string }> = {
-  caisse: { libelle: "Caisse (espèces)" },
-  mobile_money: { libelle: "Mobile money" },
-  banque: { libelle: "Compte bancaire" },
+const TYPES: Record<Compte["type"], { libelle: string; icone: Icon; couleur: string }> = {
+  caisse: { libelle: "Caisse (espèces)", icone: Money, couleur: "#16a34a" },
+  mobile_money: { libelle: "Mobile money", icone: DeviceMobile, couleur: "#ea580c" },
+  banque: { libelle: "Compte bancaire", icone: Bank, couleur: "#16275a" },
 };
 
 interface Brouillon { id: string | null; nom: string; type: Compte["type"]; soldeInitial: number | null; actif: boolean }
@@ -43,7 +42,7 @@ function FormulaireCompte({ initial, onRetour }: { initial: Brouillon; onRetour:
       <Selection libelle="Type" value={type} onChange={(e) => setType(e.target.value as Compte["type"])} options={Object.entries(TYPES).map(([valeur, t]) => ({ valeur, libelle: t.libelle }))} />
       <ChampMontant libelle="Solde de départ" aide="Ce que contenait le compte avant d'utiliser l'application. Les mouvements s'y ajoutent ensuite." valeur={soldeInitial} onChange={setSoldeInitial} />
       {initial.id && <Interrupteur actif={actif} onChange={setActif} libelle="Compte utilisé" description="Désactivé, il disparaît des choix de paiement mais garde son historique." />}
-      <div className="flex justify-end gap-2 pt-2">
+      <div className="flex justify-end gap-2 pt-1">
         <Bouton variante="secondaire" onClick={onRetour}>Retour</Bouton>
         <Bouton variante="primaire" type="submit" disabled={!valide} chargement={enregistrer.isPending}>Enregistrer</Bouton>
       </div>
@@ -64,22 +63,16 @@ export function FeuilleComptes({ ouverte, onFermer, comptes }: { ouverte: boolea
         <div className="flex flex-col gap-2">
           {comptes.map((c) => {
             const t = TYPES[c.type];
-            const a = apparenceCompte(c);
             return (
               <button key={c.id} type="button" onClick={() => setEdition({ id: c.id, nom: c.nom, type: c.type, soldeInitial: c.solde_initial, actif: c.actif })}
-                className={cn(
-                  // Sur téléphone, le solde passe sous le nom : le nom (seule identité du compte) n'est plus coupé.
-                  "onde carte carte-lien group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 p-4 text-left sm:grid-cols-[auto_minmax(0,1fr)_auto_auto]",
-                  !c.actif && "opacity-60",
-                )}>
-                {/* Même couleur que la tuile du compte dans l'onglet Trésorerie (opérateur reconnu, sinon type). */}
-                <span className="col-start-1 row-span-2 row-start-1 grid size-11 place-items-center rounded-xl sm:row-span-1 sm:row-start-1" style={{ background: a.fond, color: a.texte }}><a.icone size={20} weight="fill" aria-hidden /></span>
-                <span className="col-start-2 row-start-1 min-w-0">
-                  <span className="block font-bold break-words group-hover:text-primaire">{c.nom}</span>
-                  <span className="block text-[14px] text-encre-3">{t.libelle}{!c.actif ? " · désactivé" : ""}</span>
+                className={cn("onde carte carte-lien group flex items-center gap-3 p-3 text-left", !c.actif && "opacity-60")}>
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl text-white" style={{ background: t.couleur }}><t.icone size={22} weight="fill" aria-hidden /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-bold group-hover:text-primaire">{c.nom}</span>
+                  <span className="block text-[13px] text-encre-3">{t.libelle}{!c.actif ? " · désactivé" : ""}</span>
                 </span>
-                <span className="chiffres col-start-2 row-start-2 text-[16px] font-bold whitespace-nowrap sm:col-start-3 sm:row-start-1 sm:text-right">{formatFCFA(c.solde_xof ?? 0)}</span>
-                <PencilSimple size={16} weight="duotone" className="col-start-3 row-span-2 row-start-1 shrink-0 text-encre-3 sm:col-start-4 sm:row-span-1 sm:row-start-1" aria-hidden />
+                <span className="chiffres shrink-0 text-right text-[15px] font-bold">{formatFCFA(c.solde_xof ?? 0)}</span>
+                <PencilSimple size={16} weight="duotone" className="shrink-0 text-encre-3" aria-hidden />
               </button>
             );
           })}

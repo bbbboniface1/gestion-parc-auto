@@ -9,11 +9,10 @@ const APPARENCE: Record<Celebration["type"], { icone: Icon; couleur: string }> =
   encaissement: { icone: HandCoins, couleur: "var(--primaire)" },
   solde: { icone: SealCheck, couleur: "var(--gain)" },
   etape: { icone: Boat, couleur: "var(--etape-en-mer)" },
-  // Un véhicule ajouté est un succès, pas une étape : même couleur que la confirmation simple.
-  vehicule: { icone: Car, couleur: "var(--gain)" },
+  vehicule: { icone: Car, couleur: "var(--etape-achete)" },
   simple: { icone: CheckCircle, couleur: "var(--gain)" },
 };
-const COULEURS_CONFETTI = ["var(--primaire)", "var(--accent)", "var(--gain)", "var(--ocre)", "var(--reserve)", "var(--acier)"];
+const COULEURS_CONFETTI = ["#2457e5", "#ff7a1a", "#22c55e", "#0ea5e9", "#a855f7", "#f59e0b", "#6366f1", "#14b8a6"];
 
 function mouvementReduit() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -59,25 +58,24 @@ export function EffetsGlobaux() {
   const a = APPARENCE[fete.type];
   const couleur = fete.couleur ?? a.couleur;
   const Icone = a.icone;
-  // Confettis sobres : moins nombreux, plus près du centre, plus petits.
-  const morceaux = Array.from({ length: 28 }, (_, i) => {
-    const angle = (i / 28) * Math.PI * 2 + (i % 3) * 0.3;
-    const distance = 90 + ((i * 37) % 70);
+  const morceaux = Array.from({ length: 46 }, (_, i) => {
+    const angle = (i / 46) * Math.PI * 2 + (i % 3) * 0.3;
+    const distance = 140 + ((i * 37) % 120);
     return {
       i,
       dx: `${Math.cos(angle) * distance}px`,
-      dy: `${Math.sin(angle) * distance - 24}px`,
-      rot: `${(i * 97) % 300}deg`,
+      dy: `${Math.sin(angle) * distance - 40}px`,
+      rot: `${(i * 97) % 540}deg`,
       couleur: COULEURS_CONFETTI[i % COULEURS_CONFETTI.length],
       forme: i % 3 === 0 ? "9999px" : "2px",
-      taille: 5 + (i % 3) * 2,
+      taille: 6 + (i % 4) * 2,
       delai: `${(i % 6) * 25}ms`,
     };
   });
 
   return (
     <div key={fete.cle} role="status" aria-live="polite" onClick={() => setFete(null)}
-      className="fixed inset-0 z-[70] grid place-items-center bg-nuit/25 backdrop-blur-[2px] [animation:apparition_200ms_both]">
+      className="fixed inset-0 z-[70] grid place-items-center bg-[#0b1633]/25 backdrop-blur-[2px] [animation:apparition_200ms_both]">
       <div className="relative">
         {!mouvementReduit() && morceaux.map((m) => (
           <span key={m.i} aria-hidden className="absolute top-1/2 left-1/2"
@@ -87,15 +85,15 @@ export function EffetsGlobaux() {
               animation: `confetti 1100ms cubic-bezier(0.16, 1, 0.3, 1) ${m.delai} both`,
             }} />
         ))}
-        <div className="relative flex w-[min(86vw,340px)] flex-col items-center rounded-carte bg-surface px-6 pt-8 pb-6 text-center shadow-flottante [animation:pose-tampon_520ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ rotate: "4deg" }}>
+        <div className="relative flex w-[min(86vw,340px)] flex-col items-center rounded-[26px] bg-surface px-6 pt-8 pb-6 text-center shadow-flottante [animation:pose-tampon_520ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ rotate: "4deg" }}>
           <span className="relative grid size-20 place-items-center">
             <span aria-hidden className="absolute inset-0 rounded-full [animation:anneau_1200ms_ease-out_infinite]" style={{ background: couleur }} />
-            <span className="relative grid size-20 place-items-center rounded-full text-white shadow-carte" style={{ background: couleur }}>
+            <span className="relative grid size-20 place-items-center rounded-full text-white shadow-lg" style={{ background: `linear-gradient(145deg, color-mix(in srgb, ${couleur} 75%, white), ${couleur})` }}>
               <Icone size={40} weight="fill" aria-hidden />
             </span>
           </span>
-          <p className="mt-6 text-[24px] leading-tight font-extrabold text-encre">{fete.titre}</p>
-          {fete.detail && <p className="mt-2 text-[14px] text-encre-3">{fete.detail}</p>}
+          <p className="mt-5 text-[20px] leading-tight font-extrabold text-encre">{fete.titre}</p>
+          {fete.detail && <p className="mt-1.5 text-[14px] text-encre-3">{fete.detail}</p>}
         </div>
       </div>
     </div>

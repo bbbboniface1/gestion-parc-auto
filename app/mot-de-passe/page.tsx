@@ -61,33 +61,28 @@ export default function PageMotDePasse() {
 
   return (
     <CadreAccueil>
-      {/* Même gabarit que la connexion : titre, texte à 8 px, formulaire à 24 px, champs et boutons de 44 px. */}
       {recuperation ? (
-        <>
-          <h1 className="text-[24px] leading-tight font-semibold tracking-tight lg:text-[32px]">Nouveau mot de passe</h1>
-          <form onSubmit={changer} className="mt-6 flex flex-col gap-4">
-            <Champ libelle="Mot de passe" type="password" autoComplete="new-password" value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} aide="10 caractères au moins." />
-            {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte-texte">{erreur}</p>}
-            <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={motDePasse.length < 10}>Enregistrer</Bouton>
-          </form>
-        </>
+        <form onSubmit={changer} className="flex flex-col gap-4">
+          <h1 className="text-[26px] font-semibold tracking-tight">Nouveau mot de passe</h1>
+          <Champ libelle="Mot de passe" type="password" autoComplete="new-password" value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} aide="10 caractères au moins." />
+          {erreur && <p role="alert" className="text-[14px] text-perte-texte">{erreur}</p>}
+          <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={motDePasse.length < 10}>Enregistrer</Bouton>
+        </form>
       ) : envoye ? (
         <div>
-          <h1 className="text-[24px] leading-tight font-semibold tracking-tight lg:text-[32px]">Lien envoyé</h1>
+          <h1 className="text-[26px] font-semibold tracking-tight">Lien envoyé</h1>
           <p className="mt-2 text-encre-2">Si un compte existe pour <strong className="text-encre">{email}</strong>, un lien de réinitialisation vient d&apos;être envoyé.</p>
-          <Link href="/connexion/" className="mt-4 inline-flex h-11 items-center font-medium text-primaire underline-offset-4 hover:underline lg:h-10">Retour à la connexion</Link>
+          <Link href="/connexion/" className="mt-6 inline-block font-medium text-primaire underline-offset-4 hover:underline">Retour à la connexion</Link>
         </div>
       ) : (
-        <>
-          <h1 className="text-[24px] leading-tight font-semibold tracking-tight lg:text-[32px]">Mot de passe oublié</h1>
-          <p className="mt-2 text-encre-2">Indiquez votre adresse : vous recevrez un lien pour en choisir un nouveau.</p>
-          <form onSubmit={demander} className="mt-6 flex flex-col gap-4">
-            <Champ libelle="Adresse e-mail" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            {erreur && <p role="alert" className="rounded-controle border border-perte/30 bg-perte-voile px-3 py-2 text-[14px] text-perte-texte">{erreur}</p>}
-            <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email}>Envoyer le lien</Bouton>
-            <Link href="/connexion/" className="inline-flex h-11 items-center self-start text-[14px] text-encre-2 underline-offset-4 hover:underline lg:h-10">Retour à la connexion</Link>
-          </form>
-        </>
+        <form onSubmit={demander} className="flex flex-col gap-4">
+          <h1 className="text-[26px] font-semibold tracking-tight">Mot de passe oublié</h1>
+          <p className="-mt-2 text-encre-2">Indiquez votre adresse : vous recevrez un lien pour en choisir un nouveau.</p>
+          <Champ libelle="Adresse e-mail" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          {erreur && <p role="alert" className="text-[14px] text-perte-texte">{erreur}</p>}
+          <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email}>Envoyer le lien</Bouton>
+          <Link href="/connexion/" className="text-[14px] text-encre-2 underline-offset-4 hover:underline">Retour à la connexion</Link>
+        </form>
       )}
     </CadreAccueil>
   );

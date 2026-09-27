@@ -57,7 +57,7 @@ export default function PageDonnees() {
   return (
     <>
       <EnTeteSection cle="donnees" titre="Données" sousTitre="Vos informations vous appartiennent : exportez-les à tout moment." />
-      <div className="flex flex-col gap-4 lg:gap-6">
+      <div className="flex flex-col gap-4">
         <Groupe titre="Exports Excel" description="Fichiers CSV qui s'ouvrent directement dans Excel, accents et virgules décimales compris.">
           {([["vehicules", "Tous les véhicules"], ["ventes", "Toutes les ventes"], ["clients", "Tous les clients"]] as const).map(([cle, libelle]) => (
             <Bouton key={cle} className="self-start" icone={<DownloadSimple className="size-4" />} chargement={en === cle} onClick={() => void exporter(cle)}>{libelle}</Bouton>

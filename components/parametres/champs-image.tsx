@@ -17,7 +17,7 @@ function Apercu({ path, alt, className }: { path: string | null; alt: string; cl
     <div className={cn("grid place-items-center overflow-hidden rounded-controle border border-trait", className)}
       style={{ backgroundImage: "linear-gradient(45deg, var(--surface-2) 25%, transparent 25%, transparent 75%, var(--surface-2) 75%), linear-gradient(45deg, var(--surface-2) 25%, transparent 25%, transparent 75%, var(--surface-2) 75%)", backgroundSize: "16px 16px", backgroundPosition: "0 0, 8px 8px" }}>
       {/* eslint-disable-next-line @next/next/no-img-element -- export statique, URL signées */}
-      {url ? <img src={url} alt={alt} className="max-h-full max-w-full object-contain p-2" /> : <span className="text-[12px] text-encre-3">Aucun</span>}
+      {url ? <img src={url} alt={alt} className="max-h-full max-w-full object-contain p-2" /> : <span className="text-[13px] text-encre-3">Aucun</span>}
     </div>
   );
 }
@@ -55,11 +55,10 @@ export function ChampImage({ libelle, aide, path, onChange, detourage, dossier =
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-[14px] font-medium text-encre-2">{libelle}</p>
-      {/* Petit téléphone : les boutons passent sous l'aperçu au lieu de sortir de la carte. */}
-      <div className="flex flex-wrap items-center gap-3">
+      <p className="text-[13px] font-medium text-encre-2">{libelle}</p>
+      <div className="flex items-center gap-3">
         <Apercu path={path} alt={libelle} className="h-24 w-36 shrink-0" />
-        <div className="flex min-w-0 flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-1.5">
           <Bouton taille="sm" icone={<ImageSquare className="size-4" />} chargement={envoi} onClick={() => champ.current?.click()}>
             {path ? "Remplacer" : "Choisir une image"}
           </Bouton>
@@ -71,7 +70,7 @@ export function ChampImage({ libelle, aide, path, onChange, detourage, dossier =
           )}
         </div>
       </div>
-      {aide && <p className="text-[12px] text-encre-3">{aide}</p>}
+      {aide && <p className="text-[13px] text-encre-3">{aide}</p>}
       <input ref={champ} type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-hidden
         onChange={(e) => { const f = e.target.files?.[0]; if (f) void envoyer(f, f.name); }} />
       {signature && <PaveSignature ouvert={pave} onFermer={() => setPave(false)} onValider={(b) => { setPave(false); void envoyer(b, "signature.png"); }} />}

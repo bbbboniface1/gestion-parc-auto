@@ -20,7 +20,7 @@ export default function PageEntreprise() {
   return (
     <>
       <EnTeteSection cle="entreprise" titre="Entreprise" sousTitre="Ces informations figurent sur chaque facture, reçu et proforma." />
-      <div className="flex flex-col gap-4 lg:gap-6">
+      <div className="flex flex-col gap-4">
         <Groupe titre="Identité" description="Le nom commercial s'affiche en grand ; la raison sociale apparaît dessous si elle diffère.">
           <Champ libelle="Nom commercial" value={p.nom_commercial} onChange={(e) => maj("nom_commercial", e.target.value)} erreur={!p.nom_commercial.trim() ? "Obligatoire." : null} />
           <Champ libelle="Raison sociale" facultatif placeholder="Sahel Auto Import SARL" {...texte("raison_sociale")} />
@@ -42,7 +42,7 @@ export default function PageEntreprise() {
             <Champ libelle="Pays" value={p.pays} onChange={(e) => maj("pays", e.target.value)} />
           </div>
           <div className="flex flex-col gap-2">
-            <p className="text-[14px] font-medium text-encre-2">Téléphones</p>
+            <p className="text-[13px] font-medium text-encre-2">Téléphones</p>
             {p.telephones.map((t, i) => (
               <div key={i} className="flex items-center gap-2">
                 <Champ aria-label={`Téléphone ${i + 1}`} type="tel" inputMode="tel" value={t} classeConteneur="flex-1"
@@ -60,9 +60,10 @@ export default function PageEntreprise() {
             )}
           </div>
           <Champ libelle="WhatsApp" type="tel" inputMode="tel" facultatif placeholder="+223 70 12 34 56" {...texte("whatsapp")} />
-          {/* Pleine largeur : une adresse e-mail complète ne tient pas dans une demi-colonne. */}
-          <Champ libelle="E-mail" type="email" facultatif {...texte("email")} />
-          <Champ libelle="Site web" facultatif placeholder="sahelauto.ml" {...texte("site_web")} />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Champ libelle="E-mail" type="email" facultatif {...texte("email")} />
+            <Champ libelle="Site web" facultatif placeholder="sahelauto.ml" {...texte("site_web")} />
+          </div>
         </Groupe>
 
         <Groupe titre="Logo, cachet et signature" description="Photographiez votre cachet sur une feuille blanche : le fond est retiré automatiquement.">

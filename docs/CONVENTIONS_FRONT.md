@@ -26,13 +26,11 @@ dans `<Suspense>`.
 ## Composants (ne pas en recréer)
 
 - Coque : `EnTetePage` (titre, surtitre, sousTitre, actions) dans `components/coque/coque.tsx`.
-- `components/ui/` : `Bouton` (et `classesBouton(variante, taille)` pour un `<Link>` qui doit ressembler à un bouton),
-  `BoutonIcone`, `Champ`, `ZoneTexte`, `Selection`, `Interrupteur`, `ChampMontant`
+- `components/ui/` : `Bouton`, `BoutonIcone`, `Champ`, `ZoneTexte`, `Selection`, `Interrupteur`, `ChampMontant`
   (FCFA/USD/EUR, « 8,5M »), `Choix` (segments), `Feuille` (bas d'écran sur téléphone, fenêtre sur ordinateur,
   `pied` = boutons), `MenuActions`, `Onglets`, `EtatVide`, `EtatErreur`, `Squelette`, `SqueletteListe`,
   `EtiquetteEtape`, `Tampon`, `Montant`, `Surtitre`, `Code`.
-- `components/metier/` : tableau de bord — `HeroCapital`, `TuileIndicateur` (premier plan), `ResumeMois`
-  (second plan), `GraphiqueVentes`, `VitrineParc` ; `Registre` (libellé … valeur), `CarteEmbarquement`, `Trajet`, `CoutRevient`,
+- `components/metier/` : `Registre` (libellé … valeur), `CarteEmbarquement`, `Trajet`, `CoutRevient`,
   `LigneVehicule`, `TamponCommercial`, `PhotoVehicule`, `FeuilleFrais`, `ChoixClient`, `ListeActions` + `lienEntite`.
 - Documents : `genererPDF(donnees)`, `telecharger`, `imprimer`, `nomFichier`, `urlVerification`
   (`lib/documents/generer.tsx`), types `DonneesDocument` (`lib/documents/types.ts`).
@@ -42,80 +40,17 @@ dans `<Suspense>`.
 
 ## Style
 
-- Jetons uniquement (`bg-surface`, `text-encre-2`, `border-trait`, `text-gain`, `text-perte`, `text-ocre`…), définis dans
-  `app/globals.css`. Aucune couleur en dur, aucun emoji, aucun dégradé. Le test `tests/unit/garde-couleurs.test.ts`
-  échoue sinon ; ses rares exceptions (PDF, logo, balises meta, canvas) sont listées avec leur raison.
-  - **Pleins sous du blanc** : `primaire-plein` (survol `primaire-plein-survol`), `accent-plein`, `gain-plein` ;
-    ils garantissent 4,5:1. Ne jamais poser du blanc sur `accent` ou `gain` (trop clairs).
-  - **Sur le bleu nuit** (barre latérale, cartes héros) : `text-nuit-primaire`, `text-nuit-ocre`, `text-nuit-perte`,
-    `text-nuit-gain` ; identiques dans les deux thèmes.
-  - **Marques tierces** : `marque-whatsapp` (+ `sur-marque-whatsapp`), `marque-orange-money`, `marque-wave`,
-    `marque-moov` — réservées à ces opérateurs. Les couleurs des moyens de paiement sont dans `MODES_VISUELS`
-    (`components/ventes/paiement-visuel.tsx`), avec la couleur du texte à poser dessus.
-  - **Avatars** : `--avatar-1` à `--avatar-8`, via le composant `Avatar` uniquement.
-  - **Palette `--etape-*`** : une couleur par étape du voyage d'un véhicule. Elle ne sert qu'à parler d'étapes.
-- **Dégradés** : un seul est admis, `voile-photo` (utilitaire de `globals.css`), sous un texte posé sur une photo.
-  Pas de fond de carte en dégradé, pas de tache floue décorative (`blur-3xl`), pas de lueur colorée (ombre de la
-  couleur de l'élément). Une carte héro est `bg-nuit` uni.
-- **Ombres** : jetons seulement — `shadow-carte`, `shadow-survol`, `shadow-flottante`, `shadow-bouton`,
-  `shadow-champ` (champ, puce au repos), `shadow-puce` (puce ou onglet actif), `shadow-barre-bas`.
+- Jetons uniquement (`bg-surface`, `text-encre-2`, `border-trait`, `text-laterite`, `text-gain`, `text-perte`,
+  `text-ocre`…). Aucune couleur en dur, aucun emoji, aucun dégradé.
 - Titres de section : `etiquette text-[12px] text-encre-3` (capitales condensées).
-- Cartes : utilitaire `carte` (fond `surface`, filet `trait`, `rounded-carte` = 16 px, `shadow-carte`) ;
-  `carte-lien` si elle est cliquable. Aucun autre rayon de carte (pas de `rounded-[22px]`).
-- **Badges de navigation** (`lib/compteurs.ts`) : un badge signale ce qui attend l'utilisateur, jamais un total
-  (« 23 véhicules » n'est pas une tâche). `genre: "action"` = pastille pleine (bleue, rouge si `alerte`) ;
-  `genre: "statut"` = contour seul, couleur secondaire (ex. conteneurs en mer). Ne jamais mélanger les deux styles.
+- Cartes : `rounded-carte border border-trait bg-surface`, pas d'ombre.
 - Montants alignés à droite, classe `chiffres`. Codes (n° de facture, VIN, référence) : `font-mono`.
-- Téléphone d'abord : cibles ≥ 44 px (`h-11` sur téléphone, `lg:h-10` au-delà — boutons, puces de filtre, onglets),
-  action principale dans une barre collée en bas (`fixed inset-x-0 bottom-16 … lg:static`, voir la fiche véhicule),
-  pas de défilement horizontal de page.
-- **Rangées de filtres et d'onglets** : elles passent à la ligne (`flex flex-wrap gap-2`), jamais coupées au bord de
-  l'écran. Une rangée qui défile horizontalement n'est admise que pour un carrousel (photos, véhicules), un tableau
-  ou une frise, et porte alors `data-defilement="horizontal"` ; `verifier:mise-en-page` refuse toutes les autres.
-## Mesures et hiérarchie (écran pilote : `app/(app)/accueil/page.tsx`, appliqué à toutes les sections)
-
-- **Espacements** : multiples de 8 px, 4 px pour les ajustements fins. Écart entre sections d'une page `gap-6`
-  (24) sur téléphone, `lg:gap-8` (32) ; entre cartes `gap-4` (16), `lg:gap-6` (24) ; intérieur d'une carte `p-4`
-  (16), `lg:p-6` (24) ; carte héro `p-6`, `lg:p-8`. À l'intérieur : 4, 8, 12, 16, 24. Pas de `p-5`, `gap-5`, `p-7`
-  (20 / 28 px) dans un écran repris.
-- **Tailles de texte** : 12 (méta, étiquettes), 14 (texte secondaire), 16 (texte), 18 (titre de section),
-  24 (valeur de second plan, titre de page sur téléphone), 32 (valeur de premier plan, titre de page sur ordinateur),
-  40 et 56 (chiffre héro). Seule exception : le chiffre d'une pastille posée sur une icône (10 px). Les champs de
-  saisie sont en 16 px sur téléphone (en dessous, iOS zoome à la saisie), 14 px sur ordinateur.
-- **Composants partagés alignés** : `Bouton` `sm` et `md` = 44 px sur téléphone, 40 px au-delà ; `Champ`,
-  `ChampMontant`, `Choix` = 44 px ; `Indicateur` = second plan (valeur 24 px) ; `Montant` `lg` = 24 px,
-  `xl` = 32 px, `heros` = 40/56 px ; tuiles d'icône `rounded-xl`. Rail de navigation : 80 px replié, 256 px déplié.
-- **Deux niveaux par écran** : un premier plan (carte héro `bg-heros` et au plus deux ou trois indicateurs
-  `TuileIndicateur` : pictogramme, valeur 32 px, évolution, mini-courbe) et un second plan plus calme (valeurs
-  24 px sans pictogramme, graphiques, listes). Rien n'est supprimé : on règle ce qui attire l'œil en premier.
-  Entre 896 et 1279 px, la carte héro prend toute la largeur et les indicateurs se rangent dessous.
-- **Couleur de section** (navigation, fil d'Ariane, raccourci « Ajouter », `components/coque/navigation.ts`) :
-  Tableau de bord `primaire`, Parc `etape-achete` (le parc commence à l'achat), Ventes `gain`, Clients `reserve`,
-  Expéditions `etape-en-mer`, Finances `accent`, Simulateur `ocre`, Paramètres neutre (`encre-3`). Dans Paramètres,
-  toutes les sous-sections partagent la même teinte neutre : une couleur par sous-section ne portait aucun sens.
-- **Couleur d'une catégorie de frais** : table unique `COULEUR_CATEGORIE` (`lib/depenses.ts`), la même dans la liste
-  des dépenses, la fiche véhicule, le coût de revient et le simulateur. Un frais du voyage prend la couleur de l'étape
-  où il est payé ; une charge de structure (loyer, salaires…) est neutre.
-- **Sélection** : puce ou onglet actif = `bg-puce-active text-sur-puce-active` (bleu nuit en clair, pastille claire en
-  sombre). Barre flottante (sélection, « Modifications non enregistrées ») = `bg-heros`, visible dans les deux thèmes.
-- **Fenêtres** (`Feuille`, palette de recherche) : fond `bg-feuille` (un cran au-dessus des cartes en sombre) sur un
-  voile `bg-voile-feuille`. Ne pas y remettre `bg-surface` ni `bg-nuit/45`.
-- **Contrôles** : tout contrôle (interrupteur, case, curseur) garde 3:1 avec son fond dans les deux thèmes, y compris
-  désactivé (bordure `encre-3`, pas `trait-fort`). Un nombre saisi s'affiche groupé par milliers hors saisie.
-- **Tampons de vente** : « Soldé » en `gain`, « Vendu · à livrer » en `acier` (il reste une action), « Annulée » en
-  `perte`. Une même couleur ne marque jamais deux états dont l'un demande une action et l'autre non.
-- **Libellés honnêtes** : un filtre ou un indicateur dit exactement ce qu'il compte (« Toutes », « Ventes actives »),
-  jamais un mot plus étroit que son contenu (« En cours » ne peut pas inclure des ventes soldées).
-- **Animations** : l'esprit reste (onde au toucher, apparition des blocs, confettis, tampon), l'intensité est basse :
-  apparition 360 ms sur 4 px, arrivée de page 240 ms sans flou, carte cliquable soulevée de 1 px, onde à 12 %
-  d'opacité, confettis resserrés, tampon posé depuis 130 %. Décalage entre éléments d'une liste : 30 à 60 ms.
-  Tout disparaît avec le réglage « animations réduites » de l'appareil.
-
+- Téléphone d'abord : cibles ≥ 44 px, action principale dans une barre collée en bas
+  (`fixed inset-x-0 bottom-16 … lg:static`, voir la fiche véhicule), pas de défilement horizontal de page.
 - Chaque écran a ses états : squelette pendant le chargement, `EtatVide` avec l'action utile, `EtatErreur`
   avec « Réessayer ».
 - Textes en français, vouvoiement, phrases courtes. Aucune mention d'un outil d'assistance dans le code.
 
 ## Vérification avant de rendre la main
 
-`npm run typecheck`, `npm run lint`, `npx vitest run tests/unit` : verts. Puis `npm run build`,
-`npm run verifier:mise-en-page` et `npm run verifier:accessibilite` (et `THEME=dark`).
+`npm run typecheck`, `npm run lint`, `npx vitest run tests/unit` : verts.

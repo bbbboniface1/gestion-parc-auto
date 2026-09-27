@@ -19,15 +19,15 @@ export function PastillesConteneur({ v, className }: { v: Source; className?: st
   if (!c && !souci) return null;
   const st = c ? STATUTS_EXPEDITION[c.statut] : null;
   return (
-    <span className={cn("flex flex-wrap items-center gap-2", className)}>
+    <span className={cn("flex flex-wrap items-center gap-1.5", className)}>
       {c && st && (
-        <span title={`${c.reference} · ${st.libelle}`} className="inline-flex h-6 shrink-0 items-center gap-1 rounded-full px-2 text-[12px] font-bold whitespace-nowrap"
+        <span title={`${c.reference} · ${st.libelle}`} className="inline-flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-bold"
           style={{ background: `color-mix(in srgb, ${st.couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${st.couleur} 62%, var(--pole-texte))` }}>
           <Boat size={13} weight="fill" aria-hidden />{c.reference}
         </span>
       )}
       {souci && (
-        <span title={souci.titre} className="inline-flex h-6 shrink-0 items-center gap-1 rounded-full bg-ocre-voile px-2 text-[12px] font-bold whitespace-nowrap text-ocre-texte">
+        <span title={souci.titre} className="inline-flex h-6 items-center gap-1 rounded-full bg-ocre-voile px-2 text-[11px] font-bold text-ocre-texte">
           <Warning size={13} weight="fill" aria-hidden />À vérifier
         </span>
       )}

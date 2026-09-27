@@ -74,20 +74,20 @@ export function ChampMontant({
               const v = lireMontant(texte);
               setTexte(v === null ? "" : formatNombre(v, Number.isInteger(v) ? 0 : 2));
             }}
-            className={cn(classesChamp(!!erreur), "chiffres h-11 pr-20 pl-3 text-[18px] font-semibold tracking-tight lg:h-10 lg:text-[16px]")}
+            className={cn(classesChamp(!!erreur), "chiffres h-12 pr-20 pl-3 text-lg font-semibold tracking-tight lg:h-11 lg:text-base")}
           />
-          <div className="absolute inset-y-0 right-0 flex items-center pr-1">
+          <div className="absolute inset-y-0 right-0 flex items-center pr-1.5">
             {suivante && onDevise ? (
               <button
                 type="button"
                 onClick={() => onDevise(suivante)}
-                className="etiquette relative h-9 min-w-14 rounded-controle border border-trait px-2 text-[12px] text-encre-2 before:absolute before:-inset-1 before:content-[''] hover:bg-surface-2 lg:h-8"
+                className="etiquette h-9 min-w-14 rounded-[4px] border border-trait px-2 text-[13px] text-encre-2 hover:bg-surface-2"
                 aria-label={`Devise : ${SYMBOLE_DEVISE[devise]}. Passer en ${SYMBOLE_DEVISE[suivante]}`}
               >
                 {SYMBOLE_DEVISE[devise]}
               </button>
             ) : (
-              <span className="etiquette px-2 text-[12px] text-encre-3">{SYMBOLE_DEVISE[devise]}</span>
+              <span className="etiquette px-2 text-[13px] text-encre-3">{SYMBOLE_DEVISE[devise]}</span>
             )}
           </div>
         </div>

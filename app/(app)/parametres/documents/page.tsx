@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState } from "react";
 import { Eye } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import type { Parametres } from "@/lib/api/parametres";
@@ -20,18 +20,9 @@ import { Code } from "@/components/ui/signature";
 const COULEURS = ["#B5461E", "#1B1D22", "#1F6F7A", "#1B7148", "#2F5A7A", "#7A3E5D"];
 const VARIABLES_WHATSAPP = [
   ["client", "Moussa Traoré"], ["numero", "FAC-2026-0047"], ["montant", "14 500 000 FCFA"],
-  ["reste", "7 500 000 FCFA"], ["vehicule", "Toyota RAV4 2018"], ["entreprise", "Sahel Auto Import"], ["document", "facture"],
+  ["reste", "7 500 000 FCFA"], ["vehicule", "Toyota RAV4 2018"], ["entreprise", "Sahel Auto Import"],
 ] as const;
 const MODELE_PAR_DEFAUT = "Bonjour {client}, voici votre facture {numero} pour le {vehicule} : {montant}. Reste à payer : {reste}. Merci de votre confiance, {entreprise}.";
-
-/**
- * Aperçu du message : une {variable} que l'envoi ne sait pas remplir reste telle quelle dans le texte (remplirModele) ;
- * on la fait ressortir en couleur de perte pour qu'elle soit corrigée avant l'envoi.
- */
-function apercuMessage(texte: string): ReactNode {
-  return texte.split(/(\{\w+\})/g).map((morceau, i) =>
-    i % 2 === 1 ? <mark key={i} className="rounded-sm bg-perte-voile px-0.5 font-semibold text-perte-texte">{morceau}</mark> : morceau);
-}
 
 /** Document d'exemple construit avec les réglages en cours (même non enregistrés). */
 function documentExemple(p: Parametres, logo: string | null, cachet: string | null, signature: string | null): DonneesDocument {
@@ -103,13 +94,13 @@ export default function PageDocuments() {
         sousTitre="Factures, proformas, reçus et avoirs."
         actions={<Bouton icone={<Eye className="size-4" />} chargement={apercu} onClick={() => void ouvrirApercu()}>Aperçu d&apos;une facture</Bouton>}
       />
-      <div className="flex flex-col gap-4 lg:gap-6">
+      <div className="flex flex-col gap-4">
         <Groupe titre="Numérotation" description="Numéros attribués par le serveur, sans trou ni doublon. Une vente annulée garde son numéro et reçoit un avoir.">
           <Champ libelle="Format" mono value={p.format_numero} onChange={(e) => maj("format_numero", e.target.value)} erreur={erreurFormat} />
-          <div className="flex flex-wrap gap-2" aria-label="Jetons disponibles">
+          <div className="flex flex-wrap gap-1.5" aria-label="Jetons disponibles">
             {JETONS_NUMERO.map((j) => (
               <button key={j} type="button" onClick={() => maj("format_numero", p.format_numero + j)}
-                className="h-11 rounded-controle border border-trait px-3 font-mono text-[12px] text-encre-2 hover:bg-surface-2 lg:h-10">{j}</button>
+                className="h-8 rounded-[4px] border border-trait px-2 font-mono text-[12px] text-encre-2 hover:bg-surface-2">{j}</button>
             ))}
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -152,18 +143,17 @@ export default function PageDocuments() {
           <Interrupteur libelle="Montant en toutes lettres" description="« Arrêtée la présente facture à la somme de : quatorze millions… »" actif={p.montant_en_lettres} onChange={(v) => maj("montant_en_lettres", v)} />
           <Interrupteur libelle="QR code de vérification" description="Le client scanne et vérifie que la facture existe vraiment et n'a pas été annulée." actif={p.qr_verification} onChange={(v) => maj("qr_verification", v)} />
           <fieldset>
-            <legend className="mb-2 text-[14px] font-medium text-encre-2">Couleur d&apos;accent</legend>
+            <legend className="mb-2 text-[13px] font-medium text-encre-2">Couleur d&apos;accent</legend>
             <div className="flex flex-wrap items-center gap-2">
               {COULEURS.map((c) => (
                 <button key={c} type="button" aria-label={`Couleur ${c}`} aria-pressed={p.couleur_documents.toUpperCase() === c}
                   onClick={() => maj("couleur_documents", c)}
-                  // Contour neutre sur chaque pastille : une couleur proche du fond de la carte (le noir en thème sombre) reste visible.
-                  className={cn("size-11 rounded-controle border-2 ring-1 ring-encre-3 lg:size-10", p.couleur_documents.toUpperCase() === c ? "border-encre" : "border-transparent")}
+                  className={cn("size-9 rounded-controle border-2", p.couleur_documents.toUpperCase() === c ? "border-encre" : "border-transparent")}
                   style={{ background: c }} />
               ))}
-              <label className="ml-1 flex items-center gap-2 text-[14px] text-encre-2">
+              <label className="ml-1 flex items-center gap-2 text-[13px] text-encre-2">
                 Autre
-                <input type="color" value={p.couleur_documents} onChange={(e) => maj("couleur_documents", e.target.value.toUpperCase())} className="h-11 w-12 cursor-pointer rounded-controle border border-trait lg:h-10" />
+                <input type="color" value={p.couleur_documents} onChange={(e) => maj("couleur_documents", e.target.value.toUpperCase())} className="h-9 w-12 cursor-pointer rounded-controle border border-trait" />
               </label>
             </div>
           </fieldset>
@@ -172,19 +162,19 @@ export default function PageDocuments() {
         <Groupe titre="Message WhatsApp" description="Envoyé avec la facture. Touchez une variable pour l'insérer à l'endroit du curseur.">
           <ZoneTexte ref={zoneMessage} libelle="Modèle" rows={4} value={modele} placeholder={MODELE_PAR_DEFAUT}
             onChange={(e) => maj("modele_message_whatsapp", e.target.value || null)} />
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {VARIABLES_WHATSAPP.map(([v]) => (
-              <button key={v} type="button" onClick={() => insererVariable(v)} className="h-11 rounded-controle border border-trait bg-surface-2/50 px-3 font-mono text-[12px] text-encre-2 hover:bg-surface-2 lg:h-10">{`{${v}}`}</button>
+              <button key={v} type="button" onClick={() => insererVariable(v)} className="h-8 rounded-[4px] border border-trait bg-surface-2/50 px-2 font-mono text-[12px] text-encre-2 hover:bg-surface-2">{`{${v}}`}</button>
             ))}
           </div>
-          <div className="rounded-controle bg-surface-2 px-4 py-3 text-[14px] text-encre">
-            <p className="etiquette mb-1 text-[12px] text-encre-3">Aperçu</p>
-            <p className="whitespace-pre-line">{apercuMessage(remplirModele(modele || MODELE_PAR_DEFAUT, Object.fromEntries(VARIABLES_WHATSAPP)))}</p>
+          <div className="rounded-carte bg-[#e7f7e1] p-3 text-[14px] text-[#17171a] dark:bg-[#1f3a24] dark:text-sur-nuit">
+            <p className="etiquette mb-1 text-[11px] opacity-70">Aperçu</p>
+            <p className="whitespace-pre-line">{remplirModele(modele || MODELE_PAR_DEFAUT, Object.fromEntries(VARIABLES_WHATSAPP))}</p>
           </div>
           {!modele && <Bouton variante="fantome" taille="sm" className="self-start" onClick={() => maj("modele_message_whatsapp", MODELE_PAR_DEFAUT)}>Utiliser le modèle proposé</Bouton>}
         </Groupe>
       </div>
-      <p className="mt-4 text-[14px] text-encre-3">
+      <p className="mt-3 text-[13px] text-encre-3">
         Les factures déjà émises ne changent pas : elles gardent les informations du jour de leur émission. Montant de l&apos;exemple : {formatNombre(14_500_000)} FCFA.
       </p>
       <BarreEnregistrement sale={sale} enregistrement={enregistrement} onEnregistrer={enregistrer} onAnnuler={annuler} />

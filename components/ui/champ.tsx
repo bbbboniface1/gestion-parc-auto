@@ -1,11 +1,10 @@
-import { forwardRef, useId, useState, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
+import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
 import { CaretDown } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
-import { formatNombre } from "@/lib/format";
 
 const BASE =
-  "w-full rounded-controle border bg-surface text-encre placeholder:text-encre-3/70 shadow-champ transition-all " +
-  "focus:outline-none focus:border-primaire focus:ring-4 focus:ring-primaire-voile " +
+  "w-full rounded-controle border bg-surface text-encre placeholder:text-encre-3/70 shadow-[0_1px_2px_rgb(15_23_42/0.04)] transition-all " +
+  "focus:outline-none focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] " +
   "disabled:bg-surface-2 disabled:text-encre-3";
 
 export function classesChamp(erreur?: boolean) {
@@ -26,16 +25,16 @@ export function Enveloppe({ libelle, aide, erreur, facultatif, className, childr
   const id = useId();
   const idAide = `${id}-aide`;
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div className={cn("flex flex-col gap-1.5", className)}>
       {libelle && (
-        <label htmlFor={id} className="text-[14px] font-medium text-encre-2">
+        <label htmlFor={id} className="text-[13px] font-medium text-encre-2">
           {libelle}
           {facultatif && <span className="ml-1 font-normal text-encre-3">facultatif</span>}
         </label>
       )}
       {children({ id, "aria-invalid": erreur ? true : undefined, "aria-describedby": aide || erreur ? idAide : undefined })}
       {(erreur || aide) && (
-        <p id={idAide} className={cn("text-[12px]", erreur ? "text-perte-texte" : "text-encre-3")} role={erreur ? "alert" : undefined}>
+        <p id={idAide} className={cn("text-[13px]", erreur ? "text-perte-texte" : "text-encre-3")} role={erreur ? "alert" : undefined}>
           {erreur || aide}
         </p>
       )}
@@ -65,7 +64,7 @@ export const Champ = forwardRef<HTMLInputElement, ProprietesChamp>(function Cham
             ref={ref}
             {...a11y}
             {...reste}
-            className={cn(classesChamp(!!erreur), "h-11 px-3 text-[16px] lg:h-10 lg:text-[14px]", mono && "font-mono tracking-wide", suffixe ? "pr-16" : undefined, className)}
+            className={cn(classesChamp(!!erreur), "h-11 px-3 text-[15px] lg:h-10 lg:text-sm", mono && "font-mono tracking-wide", suffixe ? "pr-16" : undefined, className)}
           />
           {suffixe && <div className="absolute inset-y-0 right-0 flex items-center pr-1">{suffixe}</div>}
         </div>
@@ -83,7 +82,7 @@ export const ZoneTexte = forwardRef<HTMLTextAreaElement, ProprietesZone>(functio
   return (
     <Enveloppe libelle={libelle} aide={aide} erreur={erreur} facultatif={facultatif}>
       {(a11y) => (
-        <textarea ref={ref} rows={rows} {...a11y} {...reste} className={cn(classesChamp(!!erreur), "px-3 py-3 text-[16px] lg:py-2 lg:text-[14px]", className)} />
+        <textarea ref={ref} rows={rows} {...a11y} {...reste} className={cn(classesChamp(!!erreur), "px-3 py-2.5 text-[15px] lg:text-sm", className)} />
       )}
     </Enveloppe>
   );
@@ -107,7 +106,7 @@ export const Selection = forwardRef<HTMLSelectElement, ProprietesSelection>(func
     <Enveloppe libelle={libelle} aide={aide} erreur={erreur} facultatif={facultatif}>
       {(a11y) => (
         <div className="relative">
-          <select ref={ref} {...a11y} {...reste} className={cn(classesChamp(!!erreur), "h-11 appearance-none pr-10 pl-3 text-[16px] lg:h-10 lg:text-[14px]", className)}>
+          <select ref={ref} {...a11y} {...reste} className={cn(classesChamp(!!erreur), "h-11 appearance-none pr-10 pl-3 text-[15px] lg:h-10 lg:text-sm", className)}>
             {vide !== undefined && <option value="">{vide}</option>}
             {options.map((o) => (
               <option key={o.valeur} value={o.valeur}>{o.libelle}</option>
@@ -125,10 +124,10 @@ export function Interrupteur({
 }: { actif: boolean; onChange: (v: boolean) => void; libelle: ReactNode; description?: ReactNode; disabled?: boolean }) {
   const id = useId();
   return (
-    <div className="flex items-center justify-between gap-4 py-1">
+    <div className="flex items-start justify-between gap-4 py-1">
       <div className="min-w-0">
-        <label htmlFor={id} className="block text-[16px] font-medium text-encre lg:text-[14px]">{libelle}</label>
-        {description && <p className="mt-1 text-[14px] text-encre-3 lg:text-[12px]">{description}</p>}
+        <label htmlFor={id} className="block text-[15px] font-medium text-encre lg:text-sm">{libelle}</label>
+        {description && <p className="mt-0.5 text-[13px] text-encre-3">{description}</p>}
       </div>
       <button
         id={id}
@@ -138,13 +137,11 @@ export function Interrupteur({
         disabled={disabled}
         onClick={() => onChange(!actif)}
         className={cn(
-          // Interrupteur de 28 px, cible tactile de 44 px par une zone invisible autour.
-          "relative h-7 w-12 shrink-0 rounded-full border transition-colors before:absolute before:-inset-2 before:content-[''] disabled:opacity-50",
-          actif ? "border-primaire bg-primaire" : "border-encre-3 bg-surface-2",
+          "relative mt-0.5 h-7 w-12 shrink-0 rounded-full border transition-colors disabled:opacity-50",
+          actif ? "border-primaire bg-primaire" : "border-trait-fort bg-surface-2",
         )}
       >
-        {/* Piste de 48 × 28 px (bordure comprise) : le curseur de 22 px va de 2 px à gauche à 2 px à droite. */}
-        <span className={cn("absolute top-0.5 left-0.5 size-[22px] rounded-full shadow-champ transition-transform", actif ? "translate-x-5 bg-surface" : "translate-x-0 bg-encre-3")} />
+        <span className={cn("absolute top-0.5 size-[22px] rounded-full bg-surface shadow-sm transition-transform", actif ? "translate-x-[22px]" : "translate-x-0.5")} />
       </button>
     </div>
   );
@@ -156,9 +153,6 @@ export function ChampNombre({ libelle, aide, erreur, valeur, onChange, unite, mi
   onChange: (v: number | null) => void; unite?: string; min?: number; max?: number; decimales?: number; className?: string;
 }) {
   const borner = (v: number) => Math.min(max ?? Infinity, Math.max(min ?? -Infinity, v));
-  // En saisie, le nombre brut (sans espaces) ; au repos, groupé par milliers comme partout ailleurs.
-  const [enSaisie, setEnSaisie] = useState(false);
-  const affiche = valeur === null ? "" : enSaisie ? String(valeur).replace(".", ",") : formatNombre(valeur, decimales);
   return (
     <Enveloppe libelle={libelle} aide={aide} erreur={erreur} className={className}>
       {(a11y) => (
@@ -167,16 +161,15 @@ export function ChampNombre({ libelle, aide, erreur, valeur, onChange, unite, mi
             {...a11y}
             type="text"
             inputMode={decimales ? "decimal" : "numeric"}
-            value={affiche}
-            onFocus={() => setEnSaisie(true)}
+            value={valeur === null ? "" : String(valeur).replace(".", ",")}
             onChange={(e) => {
               const brut = e.target.value.replace(",", ".").replace(/[^\d.]/g, "");
               onChange(brut === "" ? null : Number(decimales ? brut : brut.split(".")[0]));
             }}
-            onBlur={() => { setEnSaisie(false); if (valeur !== null) onChange(borner(Number(valeur.toFixed(decimales)))); }}
-            className={cn(classesChamp(!!erreur), "chiffres h-11 px-3 text-[16px] lg:h-10 lg:text-[14px]", unite ? "pr-16" : undefined)}
+            onBlur={() => { if (valeur !== null) onChange(borner(Number(valeur.toFixed(decimales)))); }}
+            className={cn(classesChamp(!!erreur), "chiffres h-11 px-3 text-[15px] lg:h-10 lg:text-sm", unite ? "pr-16" : undefined)}
           />
-          {unite && <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[14px] text-encre-3">{unite}</span>}
+          {unite && <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[13px] text-encre-3">{unite}</span>}
         </div>
       )}
     </Enveloppe>

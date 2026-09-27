@@ -50,8 +50,8 @@ function Connexion() {
 
   return (
     <CadreAccueil>
-      <h1 className="text-[24px] leading-tight font-semibold tracking-tight lg:text-[32px]">Connexion</h1>
-      <p className="mt-2 text-encre-2">{production ? "Accédez au parc de votre entreprise." : "Aucun serveur n'est configuré sur ce déploiement : seule la démonstration est disponible."}</p>
+      <h1 className="text-[26px] font-semibold tracking-tight">Connexion</h1>
+      <p className="mt-1 text-encre-2">{production ? "Accédez au parc de votre entreprise." : "Aucun serveur n'est configuré sur ce déploiement : seule la démonstration est disponible."}</p>
 
       {production && (
         <form onSubmit={seConnecter} className="mt-6 flex flex-col gap-4" noValidate>
@@ -61,9 +61,9 @@ function Connexion() {
           <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email || !motDePasse}>
             Se connecter
           </Bouton>
-          <div className="flex flex-wrap justify-between gap-x-4 text-[14px]">
-            <Link href="/mot-de-passe/" className="inline-flex h-11 items-center lg:h-10 text-encre-2 underline-offset-4 hover:underline">Mot de passe oublié</Link>
-            <Link href="/inscription/" className="inline-flex h-11 items-center lg:h-10 font-medium text-primaire underline-offset-4 hover:underline">Créer un compte</Link>
+          <div className="flex justify-between text-[14px]">
+            <Link href="/mot-de-passe/" className="text-encre-2 underline-offset-4 hover:underline">Mot de passe oublié</Link>
+            <Link href="/inscription/" className="font-medium text-primaire underline-offset-4 hover:underline">Créer un compte</Link>
           </div>
         </form>
       )}
@@ -71,7 +71,7 @@ function Connexion() {
       {avecDemo && (
       <div className={production ? "mt-8 border-t border-trait pt-6" : "mt-6"}>
         <p className="etiquette text-[12px] text-encre-3">Sans compte</p>
-        <p className="mt-2 text-[14px] text-encre-2">
+        <p className="mt-1 text-[14px] text-encre-2">
           Une entreprise fictive de Bamako, 24 véhicules, des ventes et des encaissements : tout fonctionne, directement dans votre navigateur.
         </p>
         <Bouton
@@ -88,7 +88,7 @@ function Connexion() {
         >
           Essayer la démonstration
         </Bouton>
-        {demo && <p className="mt-2 text-[12px] text-encre-3" role="status">Préparation de la base de démonstration (quelques secondes la première fois)…</p>}
+        {demo && <p className="mt-2 text-[13px] text-encre-3" role="status">Préparation de la base de démonstration (quelques secondes la première fois)…</p>}
       </div>
       )}
     </CadreAccueil>

@@ -48,8 +48,8 @@ export default function PageBienvenue() {
   return (
     <CadreAccueil>
       <p className="etiquette text-[12px] text-encre-3">Première étape</p>
-      <h1 className="mt-1 text-[24px] leading-tight font-semibold tracking-tight lg:text-[32px]">Votre entreprise</h1>
-      <p className="mt-2 text-encre-2">Ces informations apparaîtront sur vos factures. Vous pourrez tout compléter plus tard (NIF, RCCM, logo, cachet).</p>
+      <h1 className="mt-1 text-[26px] font-semibold tracking-tight">Votre entreprise</h1>
+      <p className="mt-1 text-encre-2">Ces informations apparaîtront sur vos factures. Vous pourrez tout compléter plus tard (NIF, RCCM, logo, cachet).</p>
       <form onSubmit={creer} className="mt-6 flex flex-col gap-4">
         <Champ libelle="Nom commercial" placeholder="Sahel Auto Import" required value={nom} onChange={(e) => setNom(e.target.value)} autoFocus />
         <Champ libelle="Ville" required value={ville} onChange={(e) => setVille(e.target.value)} />
@@ -64,8 +64,8 @@ export default function PageBienvenue() {
         <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={nom.trim().length < 2 || !taux}>
           Créer l&apos;entreprise
         </Bouton>
-        <p className="flex flex-wrap items-center gap-x-1 text-[14px] text-encre-2">
-          Vous avez reçu un code d&apos;invitation ? <Link href="/rejoindre/" className="inline-flex h-11 items-center font-medium text-primaire underline-offset-4 hover:underline lg:h-10">Rejoindre une entreprise</Link>
+        <p className="text-[14px] text-encre-2">
+          Vous avez reçu un code d&apos;invitation ? <Link href="/rejoindre/" className="font-medium text-primaire underline-offset-4 hover:underline">Rejoindre une entreprise</Link>
         </p>
       </form>
     </CadreAccueil>

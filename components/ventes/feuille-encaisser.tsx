@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft } from "@phosphor-icons/react";
 import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useParametres } from "@/lib/api/parametres";
 import { useOrg } from "@/lib/session";
@@ -18,20 +17,14 @@ import { useAuChangement } from "@/lib/reinitialiser";
 
 interface Compte { id: string; nom: string; actif: boolean }
 
-/**
- * Encaissement (ou remboursement, si `venteAnnulee`) sur une vente déjà identifiée.
- * `contexte` (client · n° de facture) rappelle la vente quand on l'a choisie dans une liste ;
- * `onChangerVente` permet alors d'y revenir sans fermer.
- */
-export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineEcheance, venteAnnulee, contexte, onChangerVente }: {
+/** Encaissement (ou remboursement, si `venteAnnulee`) sur une vente déjà identifiée. */
+export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineEcheance, venteAnnulee }: {
   ouverte: boolean;
   onFermer: () => void;
   venteId: string;
   reste?: number | null;
   prochaineEcheance?: number | null;
   venteAnnulee?: boolean;
-  contexte?: string;
-  onChangerVente?: () => void;
 }) {
   const org = useOrg();
   const { data: reglages } = useParametres();
@@ -66,12 +59,7 @@ export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineE
 
   return (
     <Feuille ouverte={ouverte} onFermer={onFermer} titre={venteAnnulee ? "Rembourser le client" : "Encaisser"}
-      description={!venteAnnulee && reste ? (
-        <>
-          {contexte && <span className="block truncate font-semibold text-encre-2">{contexte}</span>}
-          {`Reste à payer : ${formatFCFA(reste)}`}
-        </>
-      ) : undefined}
+      description={!venteAnnulee && reste ? `Reste à payer : ${formatFCFA(reste)}` : undefined}
       pied={<>
         <Bouton variante="secondaire" onClick={onFermer}>Annuler</Bouton>
         <Bouton variante="primaire" disabled={!valide} chargement={ajouter.isPending} onClick={() => {
@@ -86,23 +74,18 @@ export function FeuilleEncaisser({ ouverte, onFermer, venteId, reste, prochaineE
         }}>{venteAnnulee ? "Rembourser" : "Encaisser"}</Bouton>
       </>}>
       <div className="flex flex-col gap-4">
-        {onChangerVente && (
-          <button type="button" onClick={onChangerVente} className="onde -my-2 inline-flex min-h-11 items-center gap-2 self-start rounded-full text-[14px] font-medium text-primaire hover:underline lg:min-h-10">
-            <ArrowLeft size={16} weight="bold" aria-hidden />Changer de vente
-          </button>
-        )}
         <ChampMontant libelle="Montant" valeur={montant} onChange={setMontant} devise="XOF" autoFocus />
         {!venteAnnulee && !!reste && montant !== reste && (
-          <button type="button" onClick={() => setMontant(reste)} className="-my-2 inline-flex min-h-11 items-center self-start text-[14px] font-medium text-primaire hover:underline lg:min-h-10">
+          <button type="button" onClick={() => setMontant(reste)} className="self-start text-[13px] font-medium text-primaire hover:underline">
             Solder le reste ({formatFCFA(reste)})
           </button>
         )}
-        <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 text-[14px] font-medium text-encre-2">Mode</legend>
-          <div className="flex flex-wrap gap-2">
+        <fieldset className="flex flex-col gap-1.5">
+          <legend className="mb-1 text-[13px] font-medium text-encre-2">Mode</legend>
+          <div className="flex flex-wrap gap-1.5">
             {modesAutorises.map((m) => (
               <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}
-                className={cn("h-11 rounded-controle border px-3 text-[14px] font-medium lg:h-10", mode === m ? "border-primaire bg-primaire-voile text-encre" : "border-trait-fort text-encre-2 hover:bg-surface-2")}>
+                className={cn("h-10 rounded-controle border px-3 text-[14px] font-medium", mode === m ? "border-primaire bg-primaire-voile text-encre" : "border-trait-fort text-encre-2 hover:bg-surface-2")}>
                 {MODES_PAIEMENT[m].libelle}
               </button>
             ))}

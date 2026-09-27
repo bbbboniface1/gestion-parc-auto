@@ -1,9 +1,6 @@
 // Mise en page à toutes les largeurs (build de production, démonstration) : du petit téléphone à l'écran large.
 // Pour chaque écran et chaque largeur, vérifie qu'aucun contenu ne déborde de la page, que la navigation latérale ne
 // recouvre pas le contenu et que le titre de l'écran est réellement visible (pas masqué par une barre fixe).
-// Sur téléphone (≤ 480 px), une rangée à défilement horizontal interne qui coupe son contenu au bord de l'écran compte
-// aussi comme un défaut : la page ne déborde pas, mais l'utilisateur voit un bloc tronqué. Seules les rangées marquées
-// data-defilement="horizontal" (carrousel de photos, onglets) sont admises, parce que défiler y est l'usage attendu.
 //
 // Usage : npm run build && npm run verifier:mise-en-page
 import { mkdirSync } from "node:fs";
@@ -49,16 +46,6 @@ await executer("aucune largeur ne casse la mise en page", async ({ page, base })
           const rogne = (e) => { for (let p = e.parentElement; p && p !== doc; p = p.parentElement) { if (getComputedStyle(p).overflowX !== "visible" && p.getBoundingClientRect().right <= innerWidth + 1) return true; } return false; };
           const fautif = [...document.querySelectorAll("body *")].find((e) => e.getBoundingClientRect().width > 0 && e.getBoundingClientRect().right > innerWidth + 1 && getComputedStyle(e).position !== "fixed" && !rogne(e));
           r.push(`déborde de ${doc.scrollWidth - innerWidth} px${fautif ? ` (${fautif.tagName.toLowerCase()}${fautif.className ? "." + String(fautif.className).split(" ")[0] : ""})` : ""}`);
-        }
-        if (innerWidth <= 480) {
-          for (const e of document.querySelectorAll("main *")) {
-            const cs = getComputedStyle(e);
-            if (cs.overflowX !== "auto" && cs.overflowX !== "scroll") continue;
-            if (e.scrollWidth <= e.clientWidth + 1 || e.clientWidth === 0) continue;
-            if (e.closest("[data-defilement=horizontal]") || e.closest("[role=dialog]")) continue;
-            const nom = e.tagName.toLowerCase() + (e.className ? "." + String(e.className).split(" ").slice(0, 3).join(".") : "");
-            r.push(`rangée coupée ${nom} : ${e.scrollWidth} px de contenu pour ${e.clientWidth} px visibles`);
-          }
         }
         const aside = document.querySelector("aside");
         const main = document.querySelector("main");

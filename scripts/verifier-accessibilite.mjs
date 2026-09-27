@@ -11,9 +11,6 @@ const AxeBuilder = require("@axe-core/playwright").default ?? require("@axe-core
 const D = 20_000;
 
 await executer(`accessibilité (${process.env.THEME === "dark" ? "sombre" : "clair"})`, async ({ page, base }) => {
-  // L'audit mesure l'état au repos : sans cela, un bloc encore en fondu d'apparition est mesuré avec une couleur
-  // intermédiaire (contraste faussement insuffisant). Le réglage « animations réduites » de l'appareil les rend instantanées.
-  await page.emulateMedia({ reducedMotion: "reduce" });
   await entrerDansLaDemo(page, base);
 
   const lien = async (liste, motif) => {

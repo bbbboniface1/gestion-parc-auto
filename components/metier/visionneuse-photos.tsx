@@ -67,26 +67,26 @@ export function VisionneusePhotos({ ouverte, onFermer, photos, index, onIndex, v
         </>
       ) : undefined}>
       <div className="relative">
-        <PhotoVehicule path={photo.path} alt={`${libelle}, photo ${i + 1}`} className="aspect-[4/3] w-full rounded-carte" />
+        <PhotoVehicule path={photo.path} alt={`${libelle}, photo ${i + 1}`} className="aspect-[4/3] w-full rounded-2xl" />
         {i === 0 && (
-          <span className="absolute top-3 left-3 inline-flex h-7 items-center gap-1 rounded-full bg-accent-plein px-3 text-[12px] font-bold text-white"><Star size={14} weight="fill" aria-hidden />Vitrine</span>
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-[#c2410c] px-2.5 py-1 text-[12px] font-bold text-white shadow-sm"><Star size={13} weight="fill" aria-hidden />Vitrine</span>
         )}
         {total > 1 && (
           <>
             <button type="button" onClick={() => onIndex((i - 1 + total) % total)} aria-label="Photo précédente"
-              className="onde absolute top-1/2 left-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-nuit shadow-flottante backdrop-blur transition-transform hover:scale-[1.03]"><CaretLeft size={20} weight="bold" aria-hidden /></button>
+              className="onde absolute top-1/2 left-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-[#0b1633] shadow-lg backdrop-blur transition-transform hover:scale-105"><CaretLeft size={20} weight="bold" aria-hidden /></button>
             <button type="button" onClick={() => onIndex((i + 1) % total)} aria-label="Photo suivante"
-              className="onde absolute top-1/2 right-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-nuit shadow-flottante backdrop-blur transition-transform hover:scale-[1.03]"><CaretRight size={20} weight="bold" aria-hidden /></button>
+              className="onde absolute top-1/2 right-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-[#0b1633] shadow-lg backdrop-blur transition-transform hover:scale-105"><CaretRight size={20} weight="bold" aria-hidden /></button>
           </>
         )}
       </div>
       {total > 1 && (
-        <ul data-defilement="horizontal" className="sans-barre mt-3 flex gap-2 overflow-x-auto pb-1" aria-label="Toutes les photos">
+        <ul className="sans-barre mt-3 flex gap-2 overflow-x-auto pb-1" aria-label="Toutes les photos">
           {photos.map((p, k) => (
             <li key={p.id} className="shrink-0">
               <button type="button" onClick={() => onIndex(k)} aria-label={`Voir la photo ${k + 1}`} aria-current={k === i}
                 className={cn("block overflow-hidden rounded-xl transition-all", k === i ? "ring-2 ring-primaire ring-offset-2 ring-offset-surface" : "opacity-70 hover:opacity-100")}>
-                <PhotoVehicule path={p.path} alt="" className="h-14 w-18 rounded-xl" />
+                <PhotoVehicule path={p.path} alt="" className="h-14 w-[74px] rounded-xl" />
               </button>
             </li>
           ))}

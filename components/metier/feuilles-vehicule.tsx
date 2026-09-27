@@ -39,12 +39,12 @@ export function FeuilleEtape({ ouverte, onFermer, vehiculeId, actuelle, proposee
           Enregistrer
         </Bouton>
       </>}>
-      <fieldset className="flex flex-col gap-2">
-        <legend className="mb-2 text-[14px] font-medium text-encre-2">Nouvelle étape</legend>
+      <fieldset className="flex flex-col gap-1.5">
+        <legend className="mb-2 text-[13px] font-medium text-encre-2">Nouvelle étape</legend>
         {ETAPES.map((e) => (
           <label key={e.code} className={cn("flex h-12 cursor-pointer items-center gap-3 rounded-controle border px-3", etape === e.code ? "border-primaire bg-primaire-voile" : "border-trait")}>
             <input type="radio" name="etape" value={e.code} checked={etape === e.code} onChange={() => setEtape(e.code)} className="accent-[var(--primaire)]" />
-            <span aria-hidden className="h-6 w-1 rounded-full" style={{ background: e.couleur }} />
+            <span aria-hidden className="h-5 w-[3px] rounded-sm" style={{ background: e.couleur }} />
             <span className="flex-1 font-medium">{e.libelle}</span>
             {e.code === actuelle && <span className="text-[12px] text-encre-3">actuelle</span>}
           </label>
@@ -76,13 +76,13 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
 
   if (valeur) {
     return (
-      <div className="apparition flex items-center gap-3 rounded-carte bg-primaire-voile px-4 py-3 ring-2 ring-primaire/40">
+      <div className="apparition flex items-center gap-3 rounded-2xl bg-primaire-voile px-4 py-3 ring-2 ring-primaire/40">
         <Avatar nom={valeur.nom} taille={48} />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[18px] font-extrabold">{valeur.nom}</p>
-          <p className="truncate text-[14px] text-encre-2">{[valeur.telephone, valeur.ville].filter(Boolean).join(" · ")}</p>
+          <p className="truncate text-[17px] font-extrabold">{valeur.nom}</p>
+          <p className="truncate text-[13px] text-encre-2">{[valeur.telephone, valeur.ville].filter(Boolean).join(" · ")}</p>
         </div>
-        <button type="button" onClick={() => onChoix(null)} className="onde inline-flex h-11 shrink-0 items-center rounded-full bg-surface px-4 text-[14px] font-semibold text-primaire shadow-champ hover:bg-primaire-plein hover:text-sur-primaire lg:h-10">Changer</button>
+        <button type="button" onClick={() => onChoix(null)} className="onde inline-flex h-9 shrink-0 items-center rounded-full bg-surface px-3 text-[13px] font-semibold text-primaire shadow-carte hover:bg-primaire hover:text-white">Changer</button>
       </div>
     );
   }
@@ -107,16 +107,16 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
         <span className="sr-only">Rechercher un client</span>
         <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nom ou téléphone"
-          className="h-12 w-full rounded-full border border-trait bg-surface pr-4 pl-11 text-[16px] shadow-champ transition-all placeholder:text-encre-3/70 focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] focus:outline-none lg:h-10 lg:text-[14px]" />
+          className="h-12 w-full rounded-full border border-trait bg-surface pr-4 pl-11 text-[15px] shadow-carte transition-all placeholder:text-encre-3/70 focus:border-primaire focus:shadow-[0_0_0_4px_var(--primaire-voile)] focus:outline-none" />
       </label>
       <ul className="grid gap-1 @xl:grid-cols-2">
         {liste.map((c, i) => (
           <li key={c.id} className="apparition" style={{ animationDelay: `${i * 30}ms` }}>
-            <button type="button" onClick={() => onChoix(c)} className="onde group flex w-full items-center gap-3 rounded-controle p-2 text-left transition-colors hover:bg-surface-2">
+            <button type="button" onClick={() => onChoix(c)} className="onde group flex w-full items-center gap-3 rounded-2xl p-2 text-left transition-colors hover:bg-surface-2">
               <Avatar nom={c.nom} taille={40} />
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-bold group-hover:text-primaire">{c.nom}</span>
-                <span className="block truncate text-[14px] text-encre-3">{c.telephone ?? c.ville ?? "—"}</span>
+                <span className="block truncate text-[13px] text-encre-3">{c.telephone ?? c.ville ?? "—"}</span>
               </span>
             </button>
           </li>

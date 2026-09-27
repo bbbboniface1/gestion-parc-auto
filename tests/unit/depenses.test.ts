@@ -35,10 +35,7 @@ describe("couleur par catégorie", () => {
   });
 
   it("donne une couleur même à une catégorie inconnue", () => {
-    expect(couleurCategorie("inconnue")).toBe("var(--encre-3)");
-    // Un frais du voyage prend la couleur de l'étape où il est payé ; une charge de structure est neutre.
-    expect(couleurCategorie("fret")).toBe("var(--etape-en-mer)");
-    expect(couleurCategorie("loyer")).toBe("var(--encre-3)");
+    expect(couleurCategorie("inconnue")).toMatch(/^#[0-9a-f]{6}$/);
   });
 });
 

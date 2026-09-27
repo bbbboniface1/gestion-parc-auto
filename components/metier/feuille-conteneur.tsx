@@ -56,19 +56,18 @@ export function FeuilleConteneur({ ouverte, onFermer, vehiculeId, vehiculeLibell
                   <button type="button" disabled={ici || affecter.isPending}
                     onClick={() => affecter.executer({ p_org: org.id, p_vehicule_id: vehiculeId, p_expedition_id: e.id })}
                     className="onde carte carte-lien group flex w-full flex-col gap-3 p-4 text-left disabled:opacity-60">
-                    {/* En-tête qui passe à la ligne par blocs entiers : ni la référence ni l'état ne se coupent (360 px). */}
-                    <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-                        <span className="text-[16px] font-extrabold whitespace-nowrap group-hover:text-primaire">{e.reference}</span>
-                        <span className="inline-flex h-6 shrink-0 items-center gap-2 rounded-full px-2 text-[12px] font-bold whitespace-nowrap" style={{ background: `color-mix(in srgb, ${st.couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${st.couleur} 62%, var(--pole-texte))` }}>
-                          <span className="size-2 rounded-full" style={{ background: st.couleur }} />{st.libelle}
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span className="text-[16px] font-extrabold group-hover:text-primaire">{e.reference}</span>
+                        <span className="inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-bold" style={{ background: `color-mix(in srgb, ${st.couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${st.couleur} 62%, var(--pole-texte))` }}>
+                          <span className="size-1.5 rounded-full" style={{ background: st.couleur }} />{st.libelle}
                         </span>
                       </span>
-                      <span className="ml-auto shrink-0 text-[14px] font-semibold whitespace-nowrap text-encre-2">{pluriel(e.nb_vehicules, "véhicule")}</span>
+                      <span className="shrink-0 text-[13px] font-semibold text-encre-2">{pluriel(e.nb_vehicules, "véhicule")}</span>
                     </span>
-                    <span className="truncate text-[14px] text-encre-3">{[e.compagnie, e.navire, e.numero_conteneur].filter(Boolean).join(" · ") || "Compagnie à préciser"}</span>
+                    <span className="truncate text-[13px] text-encre-3">{[e.compagnie, e.navire, e.numero_conteneur].filter(Boolean).join(" · ") || "Compagnie à préciser"}</span>
                     <RouteMaritime v={e} />
-                    <span className="flex items-center justify-end gap-1 text-[14px] font-bold text-primaire">
+                    <span className="flex items-center justify-end gap-1 text-[13px] font-bold text-primaire">
                       {ici ? "Il est déjà dans ce conteneur" : <>Mettre dans {e.reference} <ArrowRight size={14} weight="bold" aria-hidden /></>}
                     </span>
                   </button>
