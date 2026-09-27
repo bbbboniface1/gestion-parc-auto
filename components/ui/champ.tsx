@@ -141,7 +141,7 @@ export function Interrupteur({
           actif ? "border-primaire bg-primaire" : "border-trait-fort bg-surface-2",
         )}
       >
-        <span className={cn("absolute top-0.5 size-[22px] rounded-full bg-surface shadow-sm transition-transform", actif ? "translate-x-[22px]" : "translate-x-0.5")} />
+        <span className={cn("absolute top-0.5 left-0.5 size-[22px] rounded-full bg-surface shadow-sm transition-transform", actif ? "translate-x-5" : "translate-x-0")} />
       </button>
     </div>
   );

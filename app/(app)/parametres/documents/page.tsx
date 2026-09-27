@@ -20,7 +20,7 @@ import { Code } from "@/components/ui/signature";
 const COULEURS = ["#B5461E", "#1B1D22", "#1F6F7A", "#1B7148", "#2F5A7A", "#7A3E5D"];
 const VARIABLES_WHATSAPP = [
   ["client", "Moussa Traoré"], ["numero", "FAC-2026-0047"], ["montant", "14 500 000 FCFA"],
-  ["reste", "7 500 000 FCFA"], ["vehicule", "Toyota RAV4 2018"], ["entreprise", "Sahel Auto Import"],
+  ["reste", "7 500 000 FCFA"], ["vehicule", "Toyota RAV4 2018"], ["entreprise", "Sahel Auto Import"], ["document", "facture"],
 ] as const;
 const MODELE_PAR_DEFAUT = "Bonjour {client}, voici votre facture {numero} pour le {vehicule} : {montant}. Reste à payer : {reste}. Merci de votre confiance, {entreprise}.";
 

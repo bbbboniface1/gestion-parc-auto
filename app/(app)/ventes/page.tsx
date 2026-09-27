@@ -130,7 +130,7 @@ function Ventes() {
 
       {actives.data && (
         <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <Indicateur index={0} libelle="Ventes en cours" valeur={a.length} format={(x) => String(Math.round(x))} precision={`${aEncaisser.length} à encaisser`} icone={Invoice} couleur="var(--gain)" />
+          <Indicateur index={0} libelle="Ventes actives" valeur={a.length} format={(x) => String(Math.round(x))} precision={`${aEncaisser.length} à encaisser`} icone={Invoice} couleur="var(--gain)" />
           <Indicateur index={1} libelle="Total facturé" valeur={totaux.facture} format={formatCourt} precision="FCFA, ventes actives" icone={FileText} couleur="var(--primaire)" />
           <Indicateur index={2} libelle="Déjà encaissé" valeur={totaux.encaisse} format={formatCourt} precision={totaux.facture ? `${Math.round((totaux.encaisse / totaux.facture) * 100)} % du facturé` : undefined} icone={CheckCircle} couleur="var(--etape-en-mer)" />
           <Indicateur index={3} libelle="Reste à encaisser" valeur={totaux.reste} format={formatCourt} precision={enRetard.length ? `${enRetard.length} en retard` : "aucun retard"} icone={ClockCountdown} couleur={enRetard.length ? "var(--perte)" : "var(--accent)"} alerte={enRetard.length > 0} />
@@ -149,7 +149,7 @@ function Ventes() {
           <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center">
             <BarreRecherche valeur={q} onChange={setQ} libelle="Rechercher une vente" placeholder="Client, numéro de facture, véhicule…" />
             <Puces valeur={filtre} onChange={setFiltre} libelle="Filtrer les ventes" options={[
-              { valeur: "toutes", libelle: "En cours" },
+              { valeur: "toutes", libelle: "Toutes" },
               { valeur: "a_encaisser", libelle: "À encaisser", nombre: aEncaisser.length, couleur: "var(--accent)" },
               { valeur: "soldees", libelle: "Soldées", couleur: "var(--gain)" },
               { valeur: "annulees", libelle: "Annulées", couleur: "var(--perte)" },

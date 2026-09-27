@@ -11,7 +11,7 @@ import { EtiquetteEtape } from "@/components/ui/signature";
 import { useAuChangement } from "@/lib/reinitialiser";
 
 interface ResultatsRecherche {
-  vehicules?: { id: string; titre?: string; marque?: string; modele?: string; annee?: number; vin?: string | null; reference?: string; etape?: string }[];
+  vehicules?: { id: string; libelle?: string; titre?: string; marque?: string; modele?: string; annee?: number; vin?: string | null; reference?: string; etape?: string }[];
   clients?: { id: string; nom: string; telephone?: string | null }[];
   documents?: { id: string; vente_id?: string; type?: string; numero: string; client?: string | null }[];
 }
@@ -68,7 +68,7 @@ export function PaletteRecherche({ ouverte, onFermer, onAller }: { ouverte: bool
                       className="flex cursor-pointer items-center gap-3 rounded-controle px-3 py-2.5 data-[selected=true]:bg-surface-2">
                       <Car className="size-4 shrink-0 text-encre-3" aria-hidden />
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate font-medium">{v.titre ?? `${v.marque ?? ""} ${v.modele ?? ""} ${v.annee ?? ""}`}</span>
+                        <span className="block truncate font-medium">{v.libelle || v.titre || [v.marque, v.modele, v.annee].filter(Boolean).join(" ") || v.reference}</span>
                         <span className="block truncate font-mono text-[12px] text-encre-3">{v.reference} · {grouperVin(v.vin)}</span>
                       </span>
                       {v.etape && <EtiquetteEtape etape={v.etape} compacte />}

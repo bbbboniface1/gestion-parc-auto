@@ -94,6 +94,7 @@ function Fiche() {
       const fichier = new File([blob], nomFichier({ type: "facture", numero: v!.numero, client: v!.client }), { type: "application/pdf" });
       const message = remplirModele(reglages!.parametres.modele_message_whatsapp || "Bonjour {client}, voici votre facture {numero} : {montant}. Reste à payer : {reste}.", {
         client: v!.client.nom, numero: v!.numero, montant: `${formatNombre(v!.montant_ttc)} FCFA`, reste: `${formatNombre(v!.reste_xof)} FCFA`,
+        document: "facture", vehicule: v!.vehicule.libelle, entreprise: reglages!.parametres.nom_commercial,
       });
       const partage = await partagerFichier(fichier, `Facture ${v!.numero}`, message);
       if (!partage) window.open(lienWhatsApp(v!.client.telephone, message), "_blank", "noopener");
