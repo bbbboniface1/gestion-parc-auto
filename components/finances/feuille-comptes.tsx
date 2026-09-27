@@ -73,13 +73,13 @@ export function FeuilleComptes({ ouverte, onFermer, comptes }: { ouverte: boolea
                   !c.actif && "opacity-60",
                 )}>
                 {/* Même couleur que la tuile du compte dans l'onglet Trésorerie (opérateur reconnu, sinon type). */}
-                <span className="col-start-1 row-span-2 row-start-1 grid size-11 place-items-center rounded-xl sm:row-span-1" style={{ background: a.fond, color: a.texte }}><a.icone size={20} weight="fill" aria-hidden /></span>
+                <span className="col-start-1 row-span-2 row-start-1 grid size-11 place-items-center rounded-xl sm:row-span-1 sm:row-start-1" style={{ background: a.fond, color: a.texte }}><a.icone size={20} weight="fill" aria-hidden /></span>
                 <span className="col-start-2 row-start-1 min-w-0">
                   <span className="block font-bold break-words group-hover:text-primaire">{c.nom}</span>
                   <span className="block text-[14px] text-encre-3">{t.libelle}{!c.actif ? " · désactivé" : ""}</span>
                 </span>
                 <span className="chiffres col-start-2 row-start-2 text-[16px] font-bold whitespace-nowrap sm:col-start-3 sm:row-start-1 sm:text-right">{formatFCFA(c.solde_xof ?? 0)}</span>
-                <PencilSimple size={16} weight="duotone" className="col-start-3 row-span-2 row-start-1 shrink-0 text-encre-3 sm:col-start-4 sm:row-span-1" aria-hidden />
+                <PencilSimple size={16} weight="duotone" className="col-start-3 row-span-2 row-start-1 shrink-0 text-encre-3 sm:col-start-4 sm:row-span-1 sm:row-start-1" aria-hidden />
               </button>
             );
           })}

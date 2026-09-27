@@ -46,7 +46,8 @@ function libelleArrivee(v: Voyage): string {
  */
 export function RouteMaritime({ v, sombre, className }: { v: Voyage; sombre?: boolean; className?: string }) {
   const p = avancement(v);
-  const position = `${6 + p * 88}%`;
+  // Arrivé : le bateau s'amarre juste avant l'ancre d'arrivée (qui passe au vert) au lieu de la recouvrir.
+  const position = p >= 1 ? "calc(100% - 52px)" : `${6 + p * 88}%`;
   const retard = v.statut === "en_mer" && libelleArrivee(v).startsWith("En retard");
   return (
     <div className={cn("relative", className)}>

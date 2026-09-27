@@ -65,17 +65,19 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
    *  - étroite (téléphone) : vignette, titre sur deux lignes au plus et montant sur la première rangée ; catégorie,
    *    référence et description dessous, sur la largeur du texte et du montant ; la méta (date · fournisseur…) en
    *    pied, sur toute la largeur, avec à droite la place des actions (posées par-dessus, hors du lien) ;
-   *  - large (@md) : vignette, trois lignes de texte, montant, chevron, puis les actions dans la même rangée.
+   *  - large (@2xl, 672 px) : vignette, trois lignes de texte, montant, chevron, puis les actions dans la même rangée.
+ *    Le seuil compte la place des actions posées à côté du lien (« Marquer payé » + corbeille, environ 200 px) :
+ *    plus bas, la colonne du texte tombait à quelques dizaines de pixels (fiche véhicule à 1100 px).
    */
   const contenu = (
     <>
       {vehicule ? (
-        <span className={cn("relative col-start-1 row-start-1 self-start @md:self-center", aDetails ? "row-span-2 @md:row-span-3" : "@md:row-span-2")}>
+        <span className={cn("relative col-start-1 row-start-1 self-start @2xl:self-center", aDetails ? "row-span-2 @2xl:row-span-3" : "@2xl:row-span-2")}>
           <PhotoVehicule path={f.vehicule_photo} alt="" className="h-12 w-16 rounded-xl" />
           <span className="absolute -right-2 -bottom-2 grid size-6 place-items-center rounded-full text-white ring-2 ring-surface" style={{ background: `color-mix(in srgb, ${couleur} 80%, var(--nuit))` }}><Ico size={12} weight="fill" aria-hidden /></span>
         </span>
       ) : (
-        <span className={cn("col-start-1 row-start-1 grid size-12 place-items-center self-start rounded-xl text-white @md:self-center", aDetails ? "row-span-2 @md:row-span-3" : "@md:row-span-2")}
+        <span className={cn("col-start-1 row-start-1 grid size-12 place-items-center self-start rounded-xl text-white @2xl:self-center", aDetails ? "row-span-2 @2xl:row-span-3" : "@2xl:row-span-2")}
           style={{ background: `color-mix(in srgb, ${conteneur && st ? st.couleur : couleur} 80%, var(--nuit))` }}>
           {conteneur ? <Boat size={24} weight="fill" aria-hidden /> : <Ico size={24} weight="fill" aria-hidden />}
         </span>
@@ -84,7 +86,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
         {vehicule ? (f.vehicule_libelle ?? "Véhicule") : conteneur ? (f.expedition_reference ?? "Conteneur") : libelleCategorie(f.categorie)}
       </span>
       {aDetails && (
-        <span className="col-span-2 col-start-2 row-start-2 flex min-w-0 flex-col gap-1 text-[14px] text-encre-2 @md:col-span-1">
+        <span className="col-span-2 col-start-2 row-start-2 flex min-w-0 flex-col gap-1 text-[14px] text-encre-2 @2xl:col-span-1 @2xl:col-start-2">
           {aCategorie && (
             <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <span className="inline-flex h-6 items-center gap-1 rounded-full px-2 text-[12px] font-bold" style={{ background: `color-mix(in srgb, ${couleur} 13%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 50%, var(--pole-texte))` }}>
@@ -99,7 +101,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
         </span>
       )}
       <span className={cn(
-        "col-span-3 col-start-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-encre-3 @md:col-span-1 @md:col-start-2 @md:min-h-0 @md:pr-0",
+        "col-span-3 col-start-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-encre-3 @2xl:col-span-1 @2xl:col-start-2 @2xl:min-h-0 @2xl:pr-0",
         aDetails ? "row-start-3" : "row-start-2",
         // Place réservée aux actions posées par-dessus : « Marquer payé » et corbeille (208 px), ou corbeille seule (48 px).
         peutModifier && (aPayer ? "min-h-11 pr-52" : "min-h-11 pr-12"),
@@ -110,16 +112,16 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
         {f.piece_path && <span className={cn("inline-flex items-center gap-1", SEP)}><Paperclip size={12} aria-hidden />justificatif</span>}
         {aPayer && <span className="inline-flex h-6 items-center gap-1 rounded-full bg-ocre-voile px-2 text-[12px] font-bold text-ocre-texte"><Clock size={12} weight="fill" aria-hidden />à payer</span>}
       </span>
-      <span className={cn("col-start-3 row-start-1 text-right @md:self-center", aDetails ? "@md:row-span-3" : "@md:row-span-2")}>
+      <span className={cn("col-start-3 row-start-1 text-right @2xl:self-center", aDetails ? "@2xl:row-span-3" : "@2xl:row-span-2")}>
         <Montant valeur={montant} devise={null} className="text-[16px]" />
         {estPart && <span className="block text-[12px] text-encre-3">part de {formatNombre(f.montant_xof)}</span>}
         {f.devise !== "XOF" && <span className="block text-[12px] whitespace-nowrap text-encre-3">{formatDevise(f.montant, f.devise)} × {formatNombre(f.taux, f.taux % 1 ? 3 : 0)}</span>}
       </span>
-      <CaretRight size={16} weight="bold" className={cn("col-start-4 row-start-1 hidden self-center text-encre-3 transition-transform group-hover:translate-x-px group-hover:text-primaire @md:block", aDetails ? "@md:row-span-3" : "@md:row-span-2")} aria-hidden />
+      <CaretRight size={16} weight="bold" className={cn("col-start-4 row-start-1 hidden self-center text-encre-3 transition-transform group-hover:translate-x-px group-hover:text-primaire @2xl:block", aDetails ? "@2xl:row-span-3" : "@2xl:row-span-2")} aria-hidden />
     </>
   );
 
-  const classes = "group grid min-w-0 flex-1 grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 rounded-xl px-2 py-2 text-left @md:grid-cols-[auto_minmax(0,1fr)_auto_auto] @md:items-center";
+  const classes = "group grid min-w-0 flex-1 grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 rounded-xl px-2 py-2 text-left @2xl:grid-cols-[auto_minmax(0,1fr)_auto_auto] @2xl:items-center";
 
   return (
     <li ref={ligne} className={cn("@container relative flex items-center gap-x-1 px-2 py-1 transition-colors hover:bg-surface-2/70", enEvidence && "bg-primaire-voile")}>
@@ -131,7 +133,7 @@ export function LigneDepense({ f, couleur, enEvidence, peutModifier, contexte = 
       {peutModifier && (
         // Étroit : posées en bas à droite, dans la place réservée au bout de la méta (bord de la ligne + rembourrage du lien).
         // Large : à la suite du lien, dans la même rangée.
-        <div className="absolute right-4 bottom-3 flex items-center gap-2 @md:static @md:shrink-0 @md:pr-1">
+        <div className="absolute right-4 bottom-3 flex items-center gap-2 @2xl:static @2xl:shrink-0 @2xl:pr-1">
           {aPayer && (
             <Bouton taille="sm" variante="secondaire" icone={<CheckCircle size={16} weight="duotone" className="shrink-0 text-gain-texte" />} chargement={marquerPaye.isPending}
               onClick={() => marquerPaye.executer({ p_org: org.id, p_data: { id: f.id, statut: "paye" } })}>Marquer payé</Bouton>

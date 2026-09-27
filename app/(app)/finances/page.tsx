@@ -91,7 +91,7 @@ function CarteCompte({ c, index }: { c: Tresorerie["comptes"][number]; index: nu
   const solde = useCompteur(c.solde_xof ?? 0);
   return (
     <div className="carte apparition grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 p-4 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-y-3 lg:p-6" style={decalage(index, 60)}>
-      <span className="col-start-1 row-span-2 row-start-1 grid size-10 place-items-center rounded-xl sm:row-span-1" style={{ background: a.fond, color: a.texte }}>
+      <span className="col-start-1 row-span-2 row-start-1 grid size-10 place-items-center rounded-xl sm:row-span-1 sm:row-start-1" style={{ background: a.fond, color: a.texte }}>
         <a.icone size={20} weight="fill" aria-hidden />
       </span>
       <span className="col-start-2 row-start-1 line-clamp-2 text-[14px] font-bold break-words">{c.nom}</span>
@@ -223,7 +223,7 @@ function Finances() {
                         <span className={cn("col-start-1 row-span-2 row-start-1 grid size-10 place-items-center rounded-full", entree ? "bg-gain-voile text-gain-texte" : "bg-perte-voile text-perte-texte")}>
                           {entree ? <ArrowDownLeft size={18} weight="bold" aria-label="Entrée" /> : <ArrowUpRight size={18} weight="bold" aria-label="Sortie" />}
                         </span>
-                        <p className={cn("col-span-2 col-start-2 row-start-1 line-clamp-2 font-semibold break-words group-hover:text-primaire lg:col-span-1 lg:pr-0", annulable && "pr-8")}>{m.libelle}</p>
+                        <p className={cn("col-span-2 col-start-2 row-start-1 line-clamp-2 font-semibold break-words group-hover:text-primaire lg:col-span-1 lg:pr-0 lg:col-start-2", annulable && "pr-8")}>{m.libelle}</p>
                         <p className="col-start-2 row-start-2 min-w-0 text-[12px] text-encre-3">
                           <span className="whitespace-nowrap">{formatDate(m.date)}{m.compte_nom ? " ·" : ""}</span>{m.compte_nom ? <> <span className="whitespace-nowrap">{m.compte_nom}</span></> : null}
                         </p>
@@ -245,7 +245,7 @@ function Finances() {
                             {annulable && idTransfert && (
                               // Téléphone : icône de 44 px dont la marge négative déborde sur l'espace réservé à droite du libellé (pr-8).
                               <button type="button" title="Annuler ce transfert" onClick={() => { if (window.confirm("Annuler ce transfert ? Les deux comptes retrouvent leur solde d'avant.")) annulerTransfert.executer({ p_org: org.id, p_id: idTransfert }); }}
-                                className="onde col-start-4 row-start-1 -ml-7 inline-flex size-11 items-center justify-center justify-self-end rounded-full text-[14px] font-semibold text-encre-3 hover:bg-perte-voile hover:text-perte-texte lg:row-span-2 lg:ml-0 lg:h-10 lg:w-auto lg:px-3">
+                                className="onde col-start-4 row-start-1 -ml-7 inline-flex size-11 items-center justify-center justify-self-end rounded-full text-[14px] font-semibold text-encre-3 hover:bg-perte-voile hover:text-perte-texte lg:row-span-2 lg:ml-0 lg:h-10 lg:w-auto lg:px-3 lg:row-start-1">
                                 <ArrowCounterClockwise size={18} weight="bold" className="shrink-0 lg:hidden" aria-hidden />
                                 <span className="max-lg:sr-only">Annuler</span>
                               </button>
