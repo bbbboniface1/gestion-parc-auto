@@ -1,6 +1,7 @@
-import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
+import { forwardRef, useId, useState, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
 import { CaretDown } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
+import { formatNombre } from "@/lib/format";
 
 const BASE =
   "w-full rounded-controle border bg-surface text-encre placeholder:text-encre-3/70 shadow-champ transition-all " +
@@ -139,10 +140,11 @@ export function Interrupteur({
         className={cn(
           // Interrupteur de 28 px, cible tactile de 44 px par une zone invisible autour.
           "relative h-7 w-12 shrink-0 rounded-full border transition-colors before:absolute before:-inset-2 before:content-[''] disabled:opacity-50",
-          actif ? "border-primaire bg-primaire" : "border-trait-fort bg-surface-2",
+          actif ? "border-primaire bg-primaire" : "border-encre-3 bg-surface-2",
         )}
       >
-        <span className={cn("absolute top-0.5 size-[22px] rounded-full bg-surface shadow-champ transition-transform", actif ? "translate-x-[22px]" : "translate-x-0.5")} />
+        {/* Piste de 48 × 28 px (bordure comprise) : le curseur de 22 px va de 2 px à gauche à 2 px à droite. */}
+        <span className={cn("absolute top-0.5 left-0.5 size-[22px] rounded-full shadow-champ transition-transform", actif ? "translate-x-5 bg-surface" : "translate-x-0 bg-encre-3")} />
       </button>
     </div>
   );
@@ -154,6 +156,9 @@ export function ChampNombre({ libelle, aide, erreur, valeur, onChange, unite, mi
   onChange: (v: number | null) => void; unite?: string; min?: number; max?: number; decimales?: number; className?: string;
 }) {
   const borner = (v: number) => Math.min(max ?? Infinity, Math.max(min ?? -Infinity, v));
+  // En saisie, le nombre brut (sans espaces) ; au repos, groupé par milliers comme partout ailleurs.
+  const [enSaisie, setEnSaisie] = useState(false);
+  const affiche = valeur === null ? "" : enSaisie ? String(valeur).replace(".", ",") : formatNombre(valeur, decimales);
   return (
     <Enveloppe libelle={libelle} aide={aide} erreur={erreur} className={className}>
       {(a11y) => (
@@ -162,12 +167,13 @@ export function ChampNombre({ libelle, aide, erreur, valeur, onChange, unite, mi
             {...a11y}
             type="text"
             inputMode={decimales ? "decimal" : "numeric"}
-            value={valeur === null ? "" : String(valeur).replace(".", ",")}
+            value={affiche}
+            onFocus={() => setEnSaisie(true)}
             onChange={(e) => {
               const brut = e.target.value.replace(",", ".").replace(/[^\d.]/g, "");
               onChange(brut === "" ? null : Number(decimales ? brut : brut.split(".")[0]));
             }}
-            onBlur={() => { if (valeur !== null) onChange(borner(Number(valeur.toFixed(decimales)))); }}
+            onBlur={() => { setEnSaisie(false); if (valeur !== null) onChange(borner(Number(valeur.toFixed(decimales)))); }}
             className={cn(classesChamp(!!erreur), "chiffres h-11 px-3 text-[16px] lg:h-10 lg:text-[14px]", unite ? "pr-16" : undefined)}
           />
           {unite && <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[14px] text-encre-3">{unite}</span>}

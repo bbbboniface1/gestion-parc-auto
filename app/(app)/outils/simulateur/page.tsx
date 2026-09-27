@@ -97,9 +97,21 @@ export default function PageSimulateur() {
   const detail = resultat && !resultat.impossible ? resultat.detail : null;
   // La marge, dernier segment de la barre : ce qui reste du prix de vente une fois tous les coûts payés.
   const base = detail && prixVente ? Math.max(prixVente, detail.totalXof) : 0;
+  // Chaque poste garde la couleur de l'étape où il se paie (couleurCategorie, la même partout : l'enchère comme ses
+  // frais sont « Acheté »). Quand deux postes voisins partagent une étape (enchère et frais d'enchère, fret et
+  // assurance, douane et transitaire), le second prend une nuance plus claire du même jeton : le regroupement se
+  // lit, et chaque segment de la barre reste distinct.
   const segments = detail
     ? [
-        ...detail.lignes.map((l) => ({ code: l.code, libelle: l.code === "achat" ? "Enchère" : libelleCategorie(l.code), montantXof: l.montantXof, montantUsd: l.montantUsd, couleur: l.code === "achat" ? "var(--primaire)" : couleurCategorie(l.code) })),
+        ...detail.lignes.map((l, i, lignes) => {
+          const couleur = couleurCategorie(l.code);
+          const precedente = i > 0 ? lignes[i - 1] : undefined;
+          const memeEtapeQueLePrecedent = precedente !== undefined && couleurCategorie(precedente.code) === couleur;
+          return {
+            code: l.code, libelle: l.code === "achat" ? "Enchère" : libelleCategorie(l.code), montantXof: l.montantXof, montantUsd: l.montantUsd,
+            couleur: memeEtapeQueLePrecedent ? `color-mix(in srgb, ${couleur} 55%, var(--surface))` : couleur,
+          };
+        }),
         ...(resultat && resultat.margeObtenueXof > 0 ? [{ code: "marge", libelle: "Votre marge", montantXof: resultat.margeObtenueXof, montantUsd: undefined, couleur: "var(--gain)" }] : []),
       ]
     : [];
@@ -143,7 +155,7 @@ export default function PageSimulateur() {
             )}
           </div>
           <p className="mt-6 rounded-xl bg-surface-2 p-3 text-[14px] leading-snug text-encre-2">
-            Les hypothèses de frais et le barème de douane se règlent dans <Link href={parametrage} className="font-semibold text-primaire hover:underline">Paramètres › Frais et douane</Link>.
+            Les hypothèses de frais et le barème de douane se règlent dans <Link href={parametrage} className="inline-flex min-h-11 items-center font-semibold text-primaire hover:underline lg:min-h-0">Paramètres › Frais et douane</Link>.
             {reglages?.parametres.bareme_douane?.mention ? ` ${reglages.parametres.bareme_douane.mention}.` : ""}
           </p>
         </section>
@@ -177,7 +189,8 @@ export default function PageSimulateur() {
                     <li key={s.code} className={cn("flex items-center gap-3 rounded-lg px-2 py-2 text-[14px]", s.code === "marge" && "bg-gain-voile font-bold")}>
                       <span aria-hidden className="size-3 shrink-0 rounded-sm" style={{ background: s.couleur }} />
                       <span className={cn("min-w-0 flex-1", s.code === "marge" && "text-gain-texte")}>
-                        <span className="block truncate">{s.libelle}</span>
+                        {/* Pas de troncature : à 360 px, le libellé passe à la ligne plutôt que de perdre sa fin. */}
+                        <span className="block break-words">{s.libelle}</span>
                         {s.montantUsd !== undefined && <span className="chiffres block text-[12px] font-normal text-encre-3">{formatNombre(s.montantUsd)} $</span>}
                       </span>
                       <span className="chiffres shrink-0 font-semibold">{formatFCFA(s.montantXof)}</span>

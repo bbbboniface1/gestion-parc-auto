@@ -126,7 +126,7 @@ function NouvelleVente() {
   return (
     <>
       <EnTetePage surtitre="Facturer" titre="Nouvelle vente" sousTitre="Le véhicule, le client, le prix : la facture est prête à envoyer sur WhatsApp." />
-      <div className="grid gap-4 pb-28 lg:grid-cols-12 lg:items-start lg:gap-6 lg:pb-8">
+      <div className="grid gap-4 pb-36 lg:grid-cols-12 lg:items-start lg:gap-6 lg:pb-8">
         {/* Les trois étapes partagent la couleur de l'action principale ; la coche verte dit qu'une étape est faite. */}
         <div className="flex min-w-0 flex-col gap-4 lg:col-span-7 lg:gap-6">
           <EtapeVente numero={1} titre="Quel véhicule ?" fait={!!vehicule} couleur="var(--primaire-plein)" icone={CarProfile}>
@@ -222,7 +222,8 @@ function NouvelleVente() {
 
         <aside className="flex min-w-0 flex-col gap-4 lg:sticky lg:top-6 lg:col-span-5">
           <section className="carte apparition overflow-hidden" aria-label="Récapitulatif">
-            <div className="relative bg-nuit text-white">
+            {/* Sur téléphone, l'étape 1 montre déjà la photo : le récapitulatif ne la répète pas. */}
+            <div className="relative bg-nuit text-white max-lg:hidden">
               {vehicule ? (
                 <>
                   <PhotoVehicule path={vehicule.photo_principale_path} alt="" arrondi={false} className="aspect-[16/7] w-full opacity-70" />
@@ -256,7 +257,12 @@ function NouvelleVente() {
               )}
             </div>
           </section>
-          <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex gap-2 border-t border-trait bg-surface/95 px-4 py-3 backdrop-blur lg:static lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+          <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex flex-wrap gap-2 border-t border-trait bg-surface/95 px-4 py-3 backdrop-blur lg:static lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+            {/* Téléphone : le récapitulatif est tout en bas ; la barre rappelle le total et ce qui manque. */}
+            <div className="flex basis-full items-baseline justify-between gap-x-3 gap-y-1 lg:hidden">
+              <p className="min-w-0 text-[12px] leading-snug text-encre-3">{manque.length > 0 ? `Il manque : ${manque.join(", ")}.` : "Total à payer"}</p>
+              <p className="chiffres shrink-0 text-[16px] font-extrabold whitespace-nowrap">{formatNombre(Math.round(totalAffiche))}<span className="ml-1 text-[12px] font-semibold text-encre-3">FCFA</span></p>
+            </div>
             <Bouton variante="secondaire" className="flex-1 lg:flex-none" onClick={() => router.back()}>Annuler</Bouton>
             <Bouton variante="primaire" taille="lg" className="flex-[2] lg:flex-1" icone={<Invoice size={20} weight="fill" />} disabled={!valide} chargement={creer.isPending} onClick={envoyer}>Enregistrer la vente</Bouton>
           </div>

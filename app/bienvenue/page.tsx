@@ -64,8 +64,8 @@ export default function PageBienvenue() {
         <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={nom.trim().length < 2 || !taux}>
           Créer l&apos;entreprise
         </Bouton>
-        <p className="text-[14px] text-encre-2">
-          Vous avez reçu un code d&apos;invitation ? <Link href="/rejoindre/" className="font-medium text-primaire underline-offset-4 hover:underline">Rejoindre une entreprise</Link>
+        <p className="flex flex-wrap items-center gap-x-1 text-[14px] text-encre-2">
+          Vous avez reçu un code d&apos;invitation ? <Link href="/rejoindre/" className="inline-flex h-11 items-center font-medium text-primaire underline-offset-4 hover:underline lg:h-10">Rejoindre une entreprise</Link>
         </p>
       </form>
     </CadreAccueil>

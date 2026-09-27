@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, CarProfile, CheckCircle, ClockCountdown, FilePdf, HandCoins, Invoice, Plus, Warning, XCircle } from "@phosphor-icons/react";
+import { ArrowRight, CarProfile, CheckCircle, ClockCountdown, FilePdf, HandCoins, Invoice, Plus, XCircle } from "@phosphor-icons/react";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import { rpc } from "@/lib/api/client";
 import type { ParametresDocument, ProformaPourDocument } from "@/lib/documents/depuis-vente";
@@ -26,7 +26,7 @@ import { PhotoVehicule } from "@/components/metier/photo-vehicule";
 import { TuileIndicateur } from "@/components/metier/tableau-bord";
 import { FeuilleEncaisser } from "@/components/ventes/feuille-encaisser";
 import { NouvelleProforma } from "@/components/ventes/nouvelle-proforma";
-import { MODES_VISUELS } from "@/components/ventes/paiement-visuel";
+import { BadgeRetard, MODES_VISUELS } from "@/components/ventes/paiement-visuel";
 import { toast } from "sonner";
 
 type Onglet = "ventes" | "proformas" | "encaissements";
@@ -54,7 +54,7 @@ function Encaissement({ v }: { v: VenteListe }) {
 function CarteVente({ v, index }: { v: VenteListe; index: number }) {
   return (
     <li className="apparition" style={decalage(Math.min(index, 10), 45)}>
-      <Link href={`/ventes/fiche/?id=${v.id}`} className="carte carte-lien group flex gap-4 overflow-hidden p-4">
+      <Link href={`/ventes/fiche/?id=${v.id}`} className="carte carte-lien group flex gap-4 overflow-hidden p-4 lg:p-6">
         <PhotoVehicule path={v.vehicule_photo} alt="" className="aspect-[4/3] w-28 shrink-0 rounded-xl sm:w-36" />
         <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
           <div className="min-w-0">
@@ -62,13 +62,12 @@ function CarteVente({ v, index }: { v: VenteListe; index: number }) {
               <span className="font-mono text-[12px] font-bold text-encre-2">{v.numero}</span>
               {v.statut === "annulee" && <Tampon type="annule" />}
               {v.statut === "active" && v.statut_paiement === "paye" && <Tampon type="solde" />}
-              {v.statut === "active" && v.reste_xof > 0 && v.retard_xof > 0 && (
-                <span className="inline-flex h-6 items-center gap-1 rounded-full bg-perte-voile px-2 text-[12px] font-bold text-perte-texte"><Warning size={13} weight="fill" aria-hidden /> En retard</span>
-              )}
+              {v.statut === "active" && v.reste_xof > 0 && v.retard_xof > 0 && <BadgeRetard />}
               {v.statut === "active" && !v.livree && <Tampon type="a_livrer" />}
             </div>
             <p className="mt-1 truncate text-[16px] font-bold group-hover:text-primaire">{v.client_nom}</p>
-            <p className="truncate text-[14px] text-encre-3">{v.vehicule_libelle} · {formatDate(v.date_vente)}</p>
+            {/* Seul le modèle peut être coupé, jamais la date. */}
+            <p className="flex min-w-0 gap-1 text-[14px] text-encre-3"><span className="truncate">{v.vehicule_libelle}</span><span className="shrink-0 whitespace-nowrap">· {formatDate(v.date_vente)}</span></p>
           </div>
           <Encaissement v={v} />
         </div>
@@ -136,8 +135,9 @@ function Ventes() {
         actions={
           <>
             {peutEncaisser && <Bouton icone={<HandCoins size={18} weight="duotone" className="text-primaire" />} onClick={() => setChoisirPourEncaisser(true)}>Encaisser un versement</Bouton>}
+            {/* Un seul bouton primaire par écran : sur l'onglet Proformas, c'est « Nouvelle proforma ». */}
             {peutVendre && (
-              <Link href="/ventes/nouvelle/" className={classesBouton("primaire")}>
+              <Link href="/ventes/nouvelle/" className={classesBouton(onglet === "proformas" ? "secondaire" : "primaire")}>
                 <Plus size={18} weight="bold" aria-hidden /> Nouvelle vente
               </Link>
             )}
@@ -156,7 +156,7 @@ function Ventes() {
                 couleur={enRetard.length ? "var(--perte)" : "var(--accent)"} icone={<ClockCountdown className="size-5" />} />
             </div>
             <div className="carte apparition grid min-w-0 content-center gap-4 p-4 sm:grid-cols-3 lg:col-span-7 lg:p-6 xl:col-span-8" style={decalage(1, 60)}>
-              <Mesure libelle="Ventes en cours" valeur={a.length} format={(x) => String(Math.round(x))} precision={`${aEncaisser.length} à encaisser`} />
+              <Mesure libelle="Ventes actives" valeur={a.length} format={(x) => String(Math.round(x))} precision={`${aEncaisser.length} à encaisser`} />
               <Mesure libelle="Total facturé" valeur={totaux.facture} format={formatCourt} precision="FCFA, ventes actives" />
               <Mesure libelle="Déjà encaissé" valeur={totaux.encaisse} format={formatCourt} precision={totaux.facture ? `${Math.round((totaux.encaisse / totaux.facture) * 100)} % du facturé` : undefined} />
             </div>
@@ -173,10 +173,11 @@ function Ventes() {
 
           {onglet === "ventes" && (
             <>
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+              {/* Recherche et puces côte à côte seulement à partir de 1280 px : en dessous, la recherche serait écrasée. */}
+              <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
                 <BarreRecherche valeur={q} onChange={setQ} libelle="Rechercher une vente" placeholder="Client, numéro de facture, véhicule…" />
                 <Puces valeur={filtre} onChange={setFiltre} libelle="Filtrer les ventes" options={[
-                  { valeur: "toutes", libelle: "En cours" },
+                  { valeur: "toutes", libelle: "Toutes" },
                   { valeur: "a_encaisser", libelle: "À encaisser", nombre: aEncaisser.length, couleur: "var(--accent)" },
                   { valeur: "soldees", libelle: "Soldées", couleur: "var(--gain)" },
                   { valeur: "annulees", libelle: "Annulées", couleur: "var(--perte)" },
@@ -195,9 +196,10 @@ function Ventes() {
 
           {onglet === "proformas" && (
             <>
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-[14px] text-encre-3">Une proforma engage un prix sans facturer.</p>
-                {peutVendre && <Bouton variante="primaire" icone={<Plus size={18} weight="bold" />} onClick={() => setNouvelleProforma(true)}>Nouvelle proforma</Bouton>}
+              {/* La rangée passe à la ligne : sur téléphone, le bouton descend sous la phrase au lieu d'être coupé. */}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="min-w-0 flex-1 basis-48 text-[14px] text-encre-3">Une proforma engage un prix sans facturer.</p>
+                {peutVendre && <Bouton variante="primaire" className="shrink-0" icone={<Plus size={18} weight="bold" />} onClick={() => setNouvelleProforma(true)}>Nouvelle proforma</Bouton>}
               </div>
               {proformas.error && !proformas.data ? <EtatErreur erreur={proformas.error} onReessayer={() => void proformas.refetch()} /> : proformas.isPending ? <SqueletteListe /> : !proformas.data?.length ? (
                 <EtatVide titre="Aucune proforma" texte="Une proforma engage un prix sans facturer : idéale pour un client qui hésite encore." />
@@ -219,9 +221,17 @@ function Ventes() {
                   return (
                     <li key={p.id} className={cn("flex items-center gap-3 px-4 py-3", p.annule && "opacity-50")}>
                       <span className="grid size-10 shrink-0 place-items-center rounded-full" style={{ background: mv.couleur, color: mv.texte }}><mv.icone size={20} weight="fill" aria-hidden /></span>
+                      {/* Seuls le nom du client et la référence de transaction peuvent être coupés ; le n° de facture,
+                       *  le mode et la date restent entiers. */}
                       <div className="min-w-0 flex-1">
-                        <p className="truncate font-bold">{p.client_nom} <span className="font-mono text-[12px] font-medium text-encre-3">· {p.vente_numero}</span></p>
-                        <p className="truncate text-[14px] text-encre-3">{MODES_PAIEMENT[p.mode]?.libelle} · {formatDate(p.date)}{p.reference ? ` · ${p.reference}` : ""}{p.annule ? " · annulé" : ""}</p>
+                        <p className="truncate font-bold">{p.client_nom}</p>
+                        <p className="flex flex-wrap gap-x-1 text-[14px] text-encre-3">
+                          <span className="font-mono text-[12px] leading-5 font-medium whitespace-nowrap">{p.vente_numero}</span>
+                          <span className="whitespace-nowrap">· {MODES_PAIEMENT[p.mode]?.libelle}</span>
+                          <span className="whitespace-nowrap">· {formatDate(p.date)}</span>
+                          {p.annule && <span className="whitespace-nowrap">· annulé</span>}
+                        </p>
+                        {p.reference && <p className="truncate font-mono text-[12px] text-encre-3">{p.reference}</p>}
                       </div>
                       <Montant valeur={p.montant_xof} devise={null} className={cn(p.annule ? "text-encre-3 line-through" : p.montant_xof < 0 ? "text-perte-texte" : "text-gain-texte")} />
                     </li>
@@ -241,7 +251,7 @@ function Ventes() {
                 <PhotoVehicule path={v.vehicule_photo} alt="" className="h-12 w-16 shrink-0 rounded-lg" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-bold">{v.client_nom}</span>
-                  <span className="block truncate text-[12px] text-encre-3">{v.numero} · {v.vehicule_libelle}</span>
+                  <span className="flex min-w-0 gap-1 text-[12px] text-encre-3"><span className="shrink-0 whitespace-nowrap">{v.numero}</span><span className="truncate">· {v.vehicule_libelle}</span></span>
                 </span>
                 <span className="shrink-0 text-right">
                   <span className="block text-[12px] text-encre-3">reste</span>
@@ -256,7 +266,8 @@ function Ventes() {
       </Feuille>
       {venteAEncaisser && (
         <FeuilleEncaisser ouverte onFermer={() => { setVenteAEncaisser(null); setChoisirPourEncaisser(false); }}
-          venteId={venteAEncaisser.id} reste={venteAEncaisser.reste_xof} prochaineEcheance={venteAEncaisser.prochaine_echeance_xof} />
+          venteId={venteAEncaisser.id} reste={venteAEncaisser.reste_xof} prochaineEcheance={venteAEncaisser.prochaine_echeance_xof}
+          contexte={`${venteAEncaisser.client_nom} · ${venteAEncaisser.numero}`} onChangerVente={() => setVenteAEncaisser(null)} />
       )}
       <NouvelleProforma ouverte={nouvelleProforma} onFermer={() => setNouvelleProforma(false)} />
     </>
@@ -295,7 +306,7 @@ function LigneProforma({ p, peutAgir, index }: { p: ProformaListe; peutAgir: boo
   });
   const st = STATUTS_PROFORMA[p.statut_effectif] ?? { libelle: p.statut_effectif, couleur: "var(--encre-3)" };
   return (
-    <li className="carte apparition flex flex-col gap-3 p-4" style={decalage(Math.min(index, 10), 45)}>
+    <li className="carte apparition flex flex-col gap-3 p-4 lg:p-6" style={decalage(Math.min(index, 10), 45)}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">

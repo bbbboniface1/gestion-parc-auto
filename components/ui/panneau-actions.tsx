@@ -59,7 +59,7 @@ function Tuile({ a, index }: { a: ActionVisible; index: number }) {
       )}
       <span className="min-w-0 flex-1">
         <span className={cn("block text-[14px] leading-tight font-bold", a.danger && !a.principale && "text-perte-texte")}>{a.titre}</span>
-        {a.detail && <span className={cn("mt-1 block truncate text-[12px]", a.principale ? "text-white/90" : "text-encre-3")}>{a.detail}</span>}
+        {a.detail && <span className={cn("mt-1 line-clamp-2 text-[12px] leading-snug", a.principale ? "text-white/90" : "text-encre-3")}>{a.detail}</span>}
       </span>
     </>
   );
@@ -80,7 +80,8 @@ export function PanneauActions({ titre, actions, className }: { titre?: string; 
   return (
     <section aria-label={titre ?? "Actions"} className={cn("@container", className)}>
       {titre && <h2 className="mb-3 text-[18px] font-bold">{titre}</h2>}
-      <div className="grid grid-cols-1 gap-3 @md:grid-cols-2 @3xl:grid-cols-3">
+      {/* Entre cartes : 16 px, 24 px quand le panneau est assez large pour trois colonnes. */}
+      <div className="grid grid-cols-1 gap-4 @md:grid-cols-2 @3xl:grid-cols-3 @3xl:gap-6">
         {visibles.map((a, i) => <Tuile key={a.cle} a={a} index={i} />)}
       </div>
     </section>

@@ -56,15 +56,16 @@ export function FeuilleClient({ ouverte, onFermer, client, onCree }: {
       </>}>
       <div className="flex flex-col gap-4">
         <Champ libelle="Nom complet" value={nom} onChange={(e) => setNom(e.target.value)} autoFocus />
-        <div className="grid grid-cols-2 gap-3">
+        {/* Rangées de deux champs alignées par le bas : un libellé qui passe sur deux lignes ne décale plus son voisin. */}
+        <div className="grid grid-cols-2 items-end gap-3">
           <Champ libelle="Téléphone" type="tel" inputMode="tel" placeholder="70 12 34 56" value={telephone} onChange={(e) => setTelephone(e.target.value)} />
           <Champ libelle="WhatsApp" facultatif type="tel" inputMode="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 items-end gap-3">
           <Champ libelle="Ville" facultatif value={ville} onChange={(e) => setVille(e.target.value)} />
           <Champ libelle="Adresse" facultatif value={adresse} onChange={(e) => setAdresse(e.target.value)} />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 items-end gap-3">
           <Selection libelle="Pièce d'identité" facultatif vide="Non précisé" value={typePiece} onChange={(e) => setTypePiece(e.target.value)} options={PIECES} />
           <Champ libelle="Numéro" facultatif mono value={numeroPiece} onChange={(e) => setNumeroPiece(e.target.value)} />
         </div>

@@ -35,7 +35,7 @@ export default function PageVentesAlertes() {
             aide="Taux de référence interne : les commissions ne sont pas encore calculées automatiquement." />
         </Groupe>
 
-        <Groupe titre="Alertes" description="Elles apparaissent dans « À faire » sur l'écran Aujourd'hui.">
+        <Groupe titre="Alertes" description="Elles apparaissent dans « À faire » sur le tableau de bord.">
           <ChampNombre libelle="Magasinage : alerter après" valeur={p.alerte_port_jours} onChange={(v) => maj("alerte_port_jours", v ?? 10)} min={1} max={365} unite="jours au port"
             aide="Au-delà de la franchise, le port facture chaque jour de stockage." />
           <ChampNombre libelle="Stock dormant : alerter après" valeur={p.alerte_stock_jours} onChange={(v) => maj("alerte_stock_jours", v ?? 60)} min={1} max={3650} unite="jours au parc" />

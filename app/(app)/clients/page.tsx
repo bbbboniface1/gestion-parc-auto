@@ -43,15 +43,17 @@ function CarteClient({ c, index }: { c: ClientListe; index: number }) {
           <span className="text-[12px] text-encre-3">reste dû</span>
         </span>
       </div>
-      <div className="flex flex-wrap items-center gap-2">
-        {c.nb_demandes_ouvertes > 0 && (
-          <span className="inline-flex h-7 items-center gap-1 rounded-full bg-acier-voile px-3 text-[12px] font-bold text-acier">
-            <MagnifyingGlassPlus size={14} weight="bold" aria-hidden /> Cherche {pluriel(c.nb_demandes_ouvertes, "véhicule")}
-          </span>
-        )}
-        {c.derniere_vente && <span className="text-[12px] text-encre-3">Dernier achat le {formatDate(c.derniere_vente)}</span>}
+      {/* La demande ouverte a sa propre ligne : le pied garde la même mise en page d'une carte à l'autre. */}
+      {c.nb_demandes_ouvertes > 0 && (
+        <span className="inline-flex h-7 items-center gap-1 self-start rounded-full bg-acier-voile px-3 text-[12px] font-bold text-acier">
+          <MagnifyingGlassPlus size={14} weight="bold" aria-hidden /> Cherche {pluriel(c.nb_demandes_ouvertes, "véhicule")}
+        </span>
+      )}
+      {/* Pied calé en bas de la carte (mt-auto) : les pieds s'alignent sur toute la rangée. */}
+      <div className="mt-auto flex items-center justify-between gap-2">
+        {c.derniere_vente && <span className="min-w-0 text-[12px] text-encre-3">Dernier achat le {formatDate(c.derniere_vente)}</span>}
         {tel && (
-          <span className="ml-auto flex gap-2">
+          <span className="ml-auto flex shrink-0 gap-2">
             <a href={`tel:${c.telephone ?? tel}`} aria-label={`Appeler ${c.nom}`} className="onde grid size-11 place-items-center rounded-full bg-primaire-voile text-primaire transition-transform hover:scale-[1.03] lg:size-10">
               <Phone size={20} weight="fill" aria-hidden />
             </a>
@@ -96,13 +98,15 @@ export default function PageClients() {
       <div className="flex flex-col gap-6 lg:gap-8">
         {data && (
           <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
-            <div className="grid min-w-0 grid-cols-2 gap-4 lg:col-span-8 lg:gap-6">
+            {/* Entre 896 et 1279 px, la carte de second plan passe sous les tuiles, sur toute la largeur ; au-delà, sa
+             *  seconde colonne prend la largeur de son contenu pour que le complément de la première tienne sur une ligne. */}
+            <div className="grid min-w-0 grid-cols-2 gap-4 lg:col-span-12 lg:gap-6 xl:col-span-8">
               <TuileIndicateur index={0} libelle="Reste dû" valeur={doivent.reduce((s, c) => s + c.reste_du_xof, 0)} complement={pluriel(doivent.length, "client")}
                 couleur="var(--accent)" icone={<CurrencyCircleDollar className="size-5" />} />
               <TuileIndicateur index={1} libelle="Demandes ouvertes" valeur={cherchent.reduce((s, c) => s + c.nb_demandes_ouvertes, 0)} format={(x) => String(Math.round(x))}
                 complement="véhicules recherchés" couleur="var(--acier)" icone={<MagnifyingGlassPlus className="size-5" />} />
             </div>
-            <div className="carte apparition grid min-w-0 grid-cols-2 gap-4 p-4 lg:col-span-4 lg:p-6" style={decalage(2, 60)}>
+            <div className="carte apparition grid min-w-0 grid-cols-2 gap-4 p-4 lg:col-span-12 lg:p-6 xl:col-span-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:content-center" style={decalage(2, 60)}>
               <div className="min-w-0">
                 <span className="block text-[14px] text-encre-3">Clients</span>
                 <span className="chiffres mt-1 block text-[24px] leading-tight font-bold text-encre">{tous.length}</span>

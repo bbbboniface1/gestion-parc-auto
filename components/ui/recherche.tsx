@@ -49,7 +49,7 @@ export function Puces<T extends string>({ valeur, onChange, options, libelle, cl
               actif ? "bg-puce-active text-sur-puce-active shadow-puce" : "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
             {o.couleur && <span aria-hidden className="size-2 rounded-full" style={{ background: o.couleur }} />}
             {o.libelle}
-            {o.nombre !== undefined && <span className={cn("chiffres rounded-full px-1.5 text-[12px]", actif ? "bg-sur-puce-active/15" : "bg-surface-2 text-encre-3")}>{o.nombre}</span>}
+            {o.nombre !== undefined && <span className={cn("chiffres inline-flex min-w-5 justify-center rounded-full px-2 text-[12px]", actif ? "bg-sur-puce-active/15" : "bg-surface-2 text-encre-3")}>{o.nombre}</span>}
           </button>
         );
       })}

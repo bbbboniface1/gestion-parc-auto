@@ -12,6 +12,7 @@ import { etape as defEtape, libelleCategorie, peut, type Etape } from "@/lib/dom
 import { etapeMinimale, incoherence, type Incoherence } from "@/lib/workflow";
 import { aujourdhui, formatCourt, formatDate, pluriel } from "@/lib/format";
 import { urlSuiviConteneur } from "@/lib/suivi-conteneur";
+import { cn } from "@/lib/cn";
 import { decalage } from "@/lib/animation";
 import { celebrer } from "@/lib/celebration";
 import { useCompteursNavigation } from "@/lib/compteurs";
@@ -105,15 +106,17 @@ function Fiche() {
         </div>
         <RouteMaritime v={e} sombre className="mt-6" />
         <dl className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {[
-            ["Connaissement (BL)", e.numero_bl],
-            ["Départ", e.date_depart ? formatDate(e.date_depart) : null],
-            ["Arrivée", e.date_arrivee_reelle ? formatDate(e.date_arrivee_reelle) : e.date_arrivee_prevue ? `${formatDate(e.date_arrivee_prevue)} (prévue)` : null],
-            ["À bord", pluriel(e.nb_vehicules, "véhicule")],
-          ].map(([libelle, valeur]) => (
+          {/* Police mono réservée au code (BL) ; les dates et le nombre de véhicules passent à la ligne plutôt que
+              de perdre « (prévue) », qui distingue une date prévue d'une date réelle. */}
+          {([
+            ["Connaissement (BL)", e.numero_bl, true],
+            ["Départ", e.date_depart ? formatDate(e.date_depart) : null, false],
+            ["Arrivée", e.date_arrivee_reelle ? formatDate(e.date_arrivee_reelle) : e.date_arrivee_prevue ? `${formatDate(e.date_arrivee_prevue)} (prévue)` : null, false],
+            ["À bord", pluriel(e.nb_vehicules, "véhicule"), false],
+          ] as const).map(([libelle, valeur, code]) => (
             <div key={libelle} className="min-w-0 rounded-xl bg-white/[0.07] px-3 py-2 ring-1 ring-white/10">
               <dt className="text-[12px] font-semibold text-white/70">{libelle}</dt>
-              <dd className="mt-1 truncate font-mono text-[14px] font-semibold">{valeur ?? "—"}</dd>
+              <dd className={cn("mt-1 text-[14px] font-semibold", code ? "font-mono break-all" : "chiffres break-words")}>{valeur ?? "—"}</dd>
             </div>
           ))}
         </dl>
@@ -144,7 +147,9 @@ function Fiche() {
               {peutGerer && e.statut !== "cloturee" && <Bouton variante="secondaire" icone={<Plus size={16} weight="bold" />} onClick={() => setFeuille("affecter")}>Ajouter un véhicule</Bouton>}
             </div>
             {e.vehicules.length === 0 ? <p className="py-2 text-encre-3">Aucun véhicule à bord pour l&apos;instant.</p> : (
-              <ul className="grid gap-4 sm:grid-cols-2">
+              // Deux cartes par ligne seulement quand la colonne est assez large : entre 1024 et 1279 px, la colonne
+              // lg:col-span-7 laisse trop peu de place au texte à côté de la photo.
+              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                 {e.vehicules.map((v, i) => (
                   <li key={v.id} className="apparition min-w-0" style={decalage(i, 50)}>
                     <Link href={`/parc/vehicule/?id=${v.id}`} className="carte carte-lien group flex items-center gap-3 overflow-hidden p-2">
@@ -152,7 +157,8 @@ function Fiche() {
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-bold group-hover:text-primaire">{v.libelle}</p>
                         <p className="truncate font-mono text-[12px] text-encre-3">{v.reference}{v.vin ? ` · …${v.vin.slice(-6)}` : ""}</p>
-                        <div className="mt-2 flex items-center justify-between gap-2">
+                        {/* flex-wrap : si la place manque, la part des frais passe sous l'étiquette au lieu de la recouvrir. */}
+                        <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                           <span className="flex min-w-0 flex-wrap items-center gap-2">
                             <EtiquetteEtape etape={v.etape as Etape} compacte />
                             {soucis.has(v.id) && <span title={soucis.get(v.id)?.titre} className="inline-flex h-6 items-center gap-1 rounded-full bg-ocre-voile px-2 text-[12px] font-bold text-ocre-texte"><Warning size={14} weight="fill" aria-hidden />À vérifier</span>}

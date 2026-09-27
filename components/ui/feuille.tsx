@@ -31,10 +31,10 @@ export function Feuille({ ouverte, onFermer, titre, description, pied, children,
     return (
       <Dialog.Root open={ouverte} onOpenChange={(o) => !o && onFermer()}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-50 bg-nuit/45" />
+          <Dialog.Overlay className="fixed inset-0 z-50 bg-voile-feuille" />
           <Dialog.Content
             className={cn(
-              "fixed top-1/2 left-1/2 z-50 flex max-h-[88vh] w-[calc(100vw-48px)] -translate-x-1/2 -translate-y-1/2 flex-col carte shadow-flottante",
+              "fixed top-1/2 left-1/2 z-50 flex max-h-[88vh] w-[calc(100vw-48px)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-carte border border-trait/70 bg-feuille shadow-flottante",
               largeur === "md" && "max-w-lg",
               largeur === "lg" && "max-w-2xl",
               largeur === "xl" && "max-w-4xl",
@@ -52,10 +52,10 @@ export function Feuille({ ouverte, onFermer, titre, description, pied, children,
   return (
     <Drawer.Root open={ouverte} onOpenChange={(o) => !o && onFermer()} repositionInputs={false}>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-50 bg-nuit/45" />
+        <Drawer.Overlay className="fixed inset-0 z-50 bg-voile-feuille" />
         <Drawer.Content
           className={cn(
-            "fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-feuille border-t border-trait bg-surface outline-none",
+            "fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-feuille border-t border-trait bg-feuille outline-none",
             pleinEcran ? "h-[96dvh]" : "max-h-[92dvh]",
           )}
         >
@@ -63,7 +63,7 @@ export function Feuille({ ouverte, onFermer, titre, description, pied, children,
           <EnTete titre={titre} description={description} onFermer={onFermer} Titre={Drawer.Title} Description={Drawer.Description} />
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-2 pb-4">{children}</div>
           {/* Pied : boutons de 44 px (Bouton, h-11) côte à côte, à parts égales. */}
-          {pied && <div className="zone-sure-bas flex gap-2 border-t border-trait bg-surface px-4 pt-3 pb-3 [&>*]:min-h-11 [&>*]:flex-1">{pied}</div>}
+          {pied && <div className="zone-sure-bas flex gap-2 border-t border-trait bg-feuille px-4 pt-3 pb-3 [&>*]:min-h-11 [&>*]:flex-1">{pied}</div>}
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>

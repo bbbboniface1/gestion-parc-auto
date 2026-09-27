@@ -70,8 +70,8 @@ export default function PageInscription() {
         <Bouton type="submit" variante="primaire" taille="lg" pleineLargeur chargement={envoi} disabled={!email || motDePasse.length < 10}>
           Créer mon compte
         </Bouton>
-        <p className="text-[14px] text-encre-2">
-          Déjà inscrit ? <Link href="/connexion/" className="font-medium text-primaire underline-offset-4 hover:underline">Se connecter</Link>
+        <p className="flex flex-wrap items-center gap-x-1 text-[14px] text-encre-2">
+          Déjà inscrit ? <Link href="/connexion/" className="inline-flex h-11 items-center font-medium text-primaire underline-offset-4 hover:underline lg:h-10">Se connecter</Link>
         </p>
       </form>
     </CadreAccueil>

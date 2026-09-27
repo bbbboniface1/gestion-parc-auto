@@ -29,7 +29,7 @@ export function Choix<T extends string>({ libelle, options, valeur, onChange, fa
           return (
             <label key={o.valeur}
               className={cn(
-                "flex h-11 cursor-pointer items-center justify-center rounded-controle border px-3 text-[14px] font-medium transition-colors select-none has-[:focus-visible]:shadow-[var(--focus)] lg:h-10",
+                "flex min-h-11 cursor-pointer items-center justify-center rounded-controle border px-2 py-2 text-center text-[14px] leading-tight font-medium transition-colors select-none has-[:focus-visible]:shadow-[var(--focus)] lg:min-h-10",
                 actif ? "border-primaire bg-primaire-voile text-primaire-fonce ring-1 ring-primaire" : "border-trait-fort bg-surface text-encre-2 hover:border-primaire/50 hover:text-encre",
               )}>
               <input type="radio" name={nom} value={o.valeur} checked={actif} className="sr-only"

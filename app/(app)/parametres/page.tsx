@@ -53,10 +53,10 @@ export default function PageParametres() {
             <Squelette className="h-28" />
           ) : (
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-              <AnneauPaiement encaisse={faits} total={controles.length} taille={120} />
+              <AnneauPaiement encaisse={faits} total={controles.length} taille={120} libelle="prêt" />
               <div className="min-w-0 flex-1">
                 <h2 id="titre-preparation" className="text-[24px] leading-tight font-extrabold tracking-tight">
-                  {restants.length === 0 ? "Vos factures sont complètes" : `Vos factures sont prêtes à ${Math.round((faits / controles.length) * 100)} %`}
+                  {restants.length === 0 ? "Vos factures sont complètes" : `Vos factures sont prêtes à ${Math.round((faits / controles.length) * 100)} %`}
                 </h2>
                 <p className="mt-1 text-[14px] text-encre-3">
                   {restants.length === 0 ? "Identité légale, cachet, signature et mentions : tout y est." : `Il reste ${restants.length} élément${restants.length > 1 ? "s" : ""} pour des factures crédibles devant un client ou la banque.`}
@@ -82,7 +82,9 @@ export default function PageParametres() {
         </section>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+      {/* Colonnes selon la place réelle (barre latérale et menu des paramètres déduits) : chaque carte garde au
+          moins 300 px, soit environ 180 px pour le texte, et le titre tient sur une ligne. */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,300px),1fr))] gap-4 lg:gap-6">
         {sections.map((s, i) => (
           <Link key={s.cle} href={`/parametres/${s.cle}/`} className="carte carte-lien onde apparition group flex items-center gap-4 p-4 lg:p-6" style={decalage(i, 40)}>
             <Picto icone={s.icone} couleur={aCompleter.has(s.cle) ? "var(--primaire)" : s.couleur} taille="md" className="group-hover:scale-[1.03]" />

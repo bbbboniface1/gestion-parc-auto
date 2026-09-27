@@ -60,10 +60,9 @@ export default function PageEntreprise() {
             )}
           </div>
           <Champ libelle="WhatsApp" type="tel" inputMode="tel" facultatif placeholder="+223 70 12 34 56" {...texte("whatsapp")} />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Champ libelle="E-mail" type="email" facultatif {...texte("email")} />
-            <Champ libelle="Site web" facultatif placeholder="sahelauto.ml" {...texte("site_web")} />
-          </div>
+          {/* Pleine largeur : une adresse e-mail complète ne tient pas dans une demi-colonne. */}
+          <Champ libelle="E-mail" type="email" facultatif {...texte("email")} />
+          <Champ libelle="Site web" facultatif placeholder="sahelauto.ml" {...texte("site_web")} />
         </Groupe>
 
         <Groupe titre="Logo, cachet et signature" description="Photographiez votre cachet sur une feuille blanche : le fond est retiré automatiquement.">

@@ -58,7 +58,7 @@ export default function PagePreferences() {
         <Groupe titre="Lisibilité" description="Agrandit tous les textes de l'application.">
           <Choix libelle="Taille du texte" colonnes={3} valeur={texte} onChange={(v) => v && appliquerTexte(v)}
             options={[{ valeur: "1", libelle: "Normale" }, { valeur: "1.125", libelle: "Grande" }, { valeur: "1.25", libelle: "Très grande" }]} />
-          <p className="rounded-controle bg-surface-2 px-3 py-2 text-encre-2">Aperçu : Toyota RAV4 2018 · 14 500 000 FCFA</p>
+          <p className="rounded-controle bg-surface-2 px-3 py-2 text-encre-2">Aperçu : Toyota RAV4 2018 · <span className="whitespace-nowrap">14 500 000 FCFA</span></p>
         </Groupe>
       </div>
     </>

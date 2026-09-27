@@ -38,7 +38,7 @@ export function MiniPiste({ etape, className }: { etape: Etape | string; classNa
   return (
     <span aria-hidden className={cn("flex h-1.5 gap-0.5", className)}>
       {ETAPES.map((e, k) => (
-        <span key={e.code} className="flex-1 rounded-full" style={{ background: k <= indice ? e.couleur : "var(--trait)" }} />
+        <span key={e.code} className="flex-1 rounded-full" style={{ background: k <= indice ? e.couleur : "var(--trait-fort)" }} />
       ))}
     </span>
   );
@@ -49,7 +49,7 @@ type TypeTampon = "reserve" | "vendu" | "a_livrer" | "solde" | "annule" | "broui
 const STATUTS: Record<TypeTampon, { texte: string; couleur: string; teinte: string; fond: string }> = {
   reserve: { texte: "Réservé", couleur: "var(--reserve)", teinte: "var(--reserve-texte)", fond: "var(--reserve-voile)" },
   vendu: { texte: "Vendu", couleur: "var(--gain)", teinte: "var(--gain-texte)", fond: "var(--gain-voile)" },
-  a_livrer: { texte: "Vendu · à livrer", couleur: "var(--gain)", teinte: "var(--gain-texte)", fond: "var(--gain-voile)" },
+  a_livrer: { texte: "Vendu · à livrer", couleur: "var(--acier)", teinte: "var(--acier)", fond: "var(--acier-voile)" },
   solde: { texte: "Soldé", couleur: "var(--gain)", teinte: "var(--gain-texte)", fond: "var(--gain-voile)" },
   annule: { texte: "Annulé", couleur: "var(--perte)", teinte: "var(--perte-texte)", fond: "var(--perte-voile)" },
   brouillon: { texte: "En attente", couleur: "var(--ocre)", teinte: "var(--ocre-texte)", fond: "var(--ocre-voile)" },
@@ -100,12 +100,21 @@ export function Montant({ valeur, devise = "FCFA", court, taille = "md", signe, 
     xl: "text-[32px] leading-none font-extrabold tracking-tight",
     heros: "text-[40px] leading-none font-extrabold tracking-tight lg:text-[56px]",
   } as const;
+  // Unité : taille fixe de l'échelle (12 / 14 / 16 / 18 / 24), la plus proche des anciens rapports en em, qui
+  // donnaient des tailles hors échelle (18,72 px, 10,92 px, 23,52 px…).
+  const unites = {
+    sm: "text-[12px]",
+    md: "text-[12px]",
+    lg: "text-[18px]",
+    xl: "text-[14px]",
+    heros: "text-[16px] lg:text-[24px]",
+  } as const;
   return (
     <span className={cn("chiffres whitespace-nowrap", tailles[taille], className)} title={court ? exact : undefined} aria-label={court ? exact : undefined}>
       {signe && valeur > 0 ? "+" : ""}
       {affiche}
       {devise && (
-        <span className={cn("ml-1 font-medium opacity-60", taille === "heros" || taille === "xl" ? "text-[0.42em]" : "text-[0.78em]", classeUnite)}>
+        <span className={cn("ml-1 font-medium opacity-60", unites[taille], classeUnite)}>
           {devise}
         </span>
       )}

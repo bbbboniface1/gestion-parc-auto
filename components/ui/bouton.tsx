@@ -20,7 +20,7 @@ const TAILLES: Record<Taille, string> = {
   lg: "h-12 px-6 text-[16px] gap-2",
 };
 
-const BASE = "onde inline-flex select-none items-center justify-center rounded-controle font-semibold whitespace-nowrap transition-all duration-150";
+const BASE = "onde inline-flex select-none items-center justify-center rounded-controle font-semibold whitespace-nowrap transition-all duration-150 [&>svg]:shrink-0";
 
 /** Classes d'un bouton, pour un lien (`<Link>`) qui doit avoir exactement l'apparence d'un `Bouton`. */
 export function classesBouton(variante: Variante = "secondaire", taille: Taille = "md", className?: string) {

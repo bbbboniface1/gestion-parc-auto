@@ -146,7 +146,7 @@ export function TuileIndicateur({ libelle, valeur, format = formatCourt, complem
         <span aria-hidden className="grid size-10 place-items-center rounded-xl" style={{ background: `color-mix(in srgb, ${couleur} 14%, var(--surface))`, color: `color-mix(in srgb, ${couleur} 85%, var(--pole-texte))` }}>{icone}</span>
         <Evolution valeur={evolution} />
       </div>
-      <p className="mt-4 text-[14px] font-medium text-encre-3">{libelle}</p>
+      <p className="mt-4 line-clamp-2 min-h-10 text-[14px] leading-5 font-medium text-encre-3 sm:min-h-0">{libelle}</p>
       <p className="chiffres mt-1 text-[32px] leading-none font-extrabold tracking-tight text-encre">{format(anime)}</p>
       {complement && <p className="mt-2 text-[12px] text-encre-3">{complement}</p>}
       {serie && <div className="mt-auto pt-4"><Courbe valeurs={serie} couleur={couleur} /></div>}

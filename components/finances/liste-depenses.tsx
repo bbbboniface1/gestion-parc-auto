@@ -65,17 +65,22 @@ export function ListeDepenses({ liste, enEvidence, peutModifier }: { liste: Frai
             <span key={cat} className={cn("h-full origin-left border-r-2 border-surface transition-opacity last:border-r-0 [animation:remplit_900ms_both]", categorie && categorie !== cat && "opacity-25")} style={{ width: `${(m / total) * 100}%`, background: couleurDe(cat) }} />
           ))}
         </div>
-        <ul className="mt-4 grid gap-x-4 gap-y-1 sm:grid-cols-2">
+        {/* Téléphone : deux colonnes compactes (libellé, puis montant et part dessous) au lieu d'une rangée par catégorie :
+            avec 14 catégories, la liste des dépenses commençait près de deux écrans plus bas. Au-delà, une rangée par
+            catégorie (le conteneur des valeurs s'efface avec `contents` et ses deux chiffres prennent leurs colonnes). */}
+        <ul className="mt-4 grid grid-cols-2 gap-x-2 gap-y-1 sm:gap-x-4">
           {parCategorie.map(([cat, m]) => {
             const actif = categorie === cat;
             return (
-              <li key={cat}>
+              <li key={cat} className="min-w-0">
                 <button type="button" aria-pressed={actif} onClick={() => setCategorie(actif ? null : cat)}
-                  className={cn("flex min-h-11 w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[14px] transition-colors hover:bg-surface-2 lg:min-h-10", actif && "bg-surface-2 ring-1 ring-trait-fort")}>
-                  <span className="size-3 shrink-0 rounded-sm" style={{ background: couleurDe(cat) }} />
-                  <span className="min-w-0 flex-1 truncate">{libelleCategorie(cat)}</span>
-                  <span className="chiffres font-bold">{formatCourt(m)}</span>
-                  <span className="chiffres w-10 text-right text-[12px] text-encre-3">{Math.round((m / total) * 100)} %</span>
+                  className={cn("grid min-h-11 w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 rounded-lg px-2 py-1 text-left text-[14px] transition-colors hover:bg-surface-2 sm:grid-cols-[auto_minmax(0,1fr)_auto_2.5rem] sm:py-2 lg:min-h-10", actif && "bg-surface-2 ring-1 ring-trait-fort")}>
+                  <span className="size-3 rounded-sm" style={{ background: couleurDe(cat) }} />
+                  <span className="truncate">{libelleCategorie(cat)}</span>
+                  <span className="col-start-2 flex items-baseline gap-2 sm:contents">
+                    <span className="chiffres font-bold">{formatCourt(m)}</span>
+                    <span className="chiffres text-right text-[12px] text-encre-3">{Math.round((m / total) * 100)} %</span>
+                  </span>
                 </button>
               </li>
             );

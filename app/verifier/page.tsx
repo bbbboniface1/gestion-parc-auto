@@ -2,9 +2,10 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ShieldCheck, ShieldSlash } from "@phosphor-icons/react";
+import { Shield, ShieldCheck, ShieldSlash } from "@phosphor-icons/react";
 import { rpc } from "@/lib/api/client";
 import { formatDateLongue } from "@/lib/format";
+import { Logo } from "@/components/coque/logo";
 import { Montant, Tampon, Code } from "@/components/ui/signature";
 
 interface Verification {
@@ -37,11 +38,31 @@ function Verifier() {
 
   return (
     // Page de confiance : une seule carte, sobre ; le verdict (pictogramme, titre) d'abord, les faits ensuite.
+    // La marque en tête dit qui certifie ; chargement et erreur occupent la même carte que le verdict, qui la remplace sans saut.
     <div className="min-h-dvh bg-papier px-4 py-8 lg:py-12">
       <div className="mx-auto max-w-md">
+        <div className="mb-4 flex items-center gap-2">
+          <Logo className="size-8" />
+          <span className="text-[16px] font-bold tracking-tight">Parc Auto</span>
+        </div>
         <p className="etiquette text-[12px] text-encre-3">Vérification de document</p>
-        {etat === "chargement" && <p className="mt-4 text-encre-2" role="status">Vérification en cours…</p>}
-        {etat === "erreur" && <p className="mt-4 text-encre-2">Vérification impossible pour le moment. Réessayez dans quelques instants.</p>}
+        {etat === "chargement" && (
+          <div className="mt-4 carte p-4 lg:p-6" role="status">
+            <span className="grid size-12 place-items-center rounded-xl bg-surface-2 text-encre-3">
+              <Shield className="size-6" aria-hidden />
+            </span>
+            <h1 className="mt-4 text-[24px] leading-tight font-semibold">Vérification en cours…</h1>
+          </div>
+        )}
+        {etat === "erreur" && (
+          <div className="mt-4 carte p-4 lg:p-6">
+            <span className="grid size-12 place-items-center rounded-xl bg-surface-2 text-encre-3">
+              <Shield className="size-6" aria-hidden />
+            </span>
+            <h1 className="mt-4 text-[24px] leading-tight font-semibold">Vérification impossible</h1>
+            <p className="mt-2 text-encre-2">Vérification impossible pour le moment. Réessayez dans quelques instants.</p>
+          </div>
+        )}
         {etat === "introuvable" && (
           <div className="mt-4 rounded-carte border border-perte/40 bg-surface p-4 shadow-carte lg:p-6">
             <span className="grid size-12 place-items-center rounded-xl bg-perte-voile text-perte-texte">

@@ -54,7 +54,15 @@ export function RouteMaritime({ v, sombre, className }: { v: Voyage; sombre?: bo
         {/* La mer */}
         <svg aria-hidden viewBox="0 0 400 56" preserveAspectRatio="none" className="absolute inset-0 size-full">
           <path d="M22 38 Q 200 6 378 38" fill="none" stroke={sombre ? "white" : "var(--trait-fort)"} strokeOpacity={sombre ? 0.25 : undefined} strokeWidth="2" strokeDasharray="3 7" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-          <path d="M22 38 Q 200 6 378 38" fill="none" stroke="var(--etape-en-mer)" strokeWidth="3" strokeLinecap="round" vectorEffect="non-scaling-stroke"
+          {/*
+            Le trajet effectué : un seul tiret de longueur p sur un chemin normalisé (pathLength = 1).
+            Pas de vector-effect="non-scaling-stroke" ici : combiné à pathLength dans un SVG étiré
+            (preserveAspectRatio="none"), le navigateur mesure alors les tirets à l'échelle de l'écran et le
+            trait plein ne s'arrête plus sous le bateau. Sans lui, le tiret se calcule dans le repère du
+            viewBox, où x avance linéairement avec p ; l'échelle verticale vaut 1 (56 px pour 56 unités),
+            l'épaisseur reste donc d'environ 3 px à toutes les largeurs.
+          */}
+          <path d="M22 38 Q 200 6 378 38" fill="none" stroke="var(--etape-en-mer)" strokeWidth="3" strokeLinecap="round"
             pathLength={1} strokeDasharray={`${p} 1`} className="[animation:trace_1400ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ ["--longueur" as string]: 1 }} />
         </svg>
         {/* Les ports */}

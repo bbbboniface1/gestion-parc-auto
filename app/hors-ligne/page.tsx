@@ -6,7 +6,7 @@ import { Bouton, classesBouton } from "@/components/ui/bouton";
 // Page de secours du service worker : seulement si une page jamais ouverte est demandée sans réseau.
 export default function PageHorsLigne() {
   return (
-    <div className="grid min-h-dvh place-items-center bg-papier p-6">
+    <div className="grid min-h-dvh place-items-center bg-papier px-4 py-6 lg:p-6">
       <div className="max-w-sm">
         <CloudSlash className="size-10 text-ocre-texte" aria-hidden />
         <h1 className="mt-4 text-[24px] font-semibold tracking-tight">Pas de connexion</h1>

@@ -78,12 +78,20 @@ export function Trajet({ etape, historique, depart, port, arrivee, eta }: {
       </div>
 
       <div ref={piste} tabIndex={0} role="region" aria-label="Étapes du trajet" data-defilement="horizontal" className="sans-barre -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-        <div className="relative min-w-[500px] pt-14 pb-1">
-          {/* Lieux */}
+        {/* Sur ordinateur la piste tient dans sa carte (les libellés d'étape passent sur deux lignes) : pas de défilement. */}
+        <div className="relative min-w-[500px] pt-14 pb-1 lg:min-w-0">
+          {/* Lieux : départ calé à gauche, arrivée calée à droite, seul le port est centré sur son étape.
+              Largeurs bornées (30 / 26 / 30 %) pour que trois lieux longs ne se chevauchent jamais. */}
           <div aria-hidden className="absolute inset-x-0 top-0 h-4">
-            {Object.entries(lieux).map(([i, lieu]) => (
-              <span key={i} className="etiquette absolute -translate-x-1/2 text-[12px] leading-4 whitespace-nowrap text-encre-3" style={{ left: `${pas * Number(i) + pas / 2}%` }}>{lieu}</span>
-            ))}
+            {Object.entries(lieux).map(([i, lieu]) => {
+              const n = Number(i);
+              return (
+                <span key={i}
+                  className={cn("etiquette absolute truncate text-[12px] leading-4 whitespace-nowrap text-encre-3",
+                    n === 0 ? "left-0 max-w-[30%] text-left" : n === 7 ? "right-0 max-w-[30%] text-right" : "max-w-[26%] -translate-x-1/2 text-center")}
+                  style={n === 0 || n === 7 ? undefined : { left: `${pas * n + pas / 2}%` }}>{lieu}</span>
+              );
+            })}
           </div>
 
           {/* Ligne de fond, puis ligne parcourue qui se trace */}

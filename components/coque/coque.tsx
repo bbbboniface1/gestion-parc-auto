@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useIsMutating } from "@tanstack/react-query";
@@ -44,14 +44,15 @@ const ACTIONS_RAPIDES = [
   // La palette --etape-* ne parle que des étapes du voyage : le véhicule prend la couleur de la section Parc.
   { href: "/parc/nouveau/", titre: "Véhicule", texte: "Acheté aux enchères ou localement", icone: Car, couleur: "var(--etape-achete)" },
   { href: "/ventes/nouvelle/", titre: "Vente", texte: "Facture, acompte, échéancier", icone: Invoice, couleur: "var(--gain)" },
-  { href: "/ventes/?encaisser=1", titre: "Encaissement", texte: "Versement d'un client", icone: HandCoins, couleur: "var(--primaire)" },
+  // L'encaissement relève des Ventes : même couleur que « Vente », l'icône et le texte les distinguent.
+  { href: "/ventes/?encaisser=1", titre: "Encaissement", texte: "Versement d'un client", icone: HandCoins, couleur: "var(--gain)" },
   { href: "/finances/?depense=1", titre: "Dépense", texte: "Frais d'un véhicule ou charge", icone: Wallet, couleur: "var(--accent)" },
 ];
 
 function ActionsRapides({ ouverte, onFermer }: { ouverte: boolean; onFermer: () => void }) {
   return (
     <Feuille ouverte={ouverte} onFermer={onFermer} titre="Ajouter">
-      <div className="grid grid-cols-2 gap-3 pb-2">
+      <div className="grid grid-cols-2 gap-4 pb-2">
         {ACTIONS_RAPIDES.map((a) => (
           <Link key={a.href} href={a.href} onClick={onFermer} className="carte carte-lien onde flex min-h-32 flex-col justify-between p-4">
             <Picto icone={a.icone} couleur={a.couleur} taille="md" />
@@ -94,12 +95,15 @@ function MenuPlus({ ouverte, onFermer }: { ouverte: boolean; onFermer: () => voi
   if (etat.statut !== "connecte") return null;
   return (
     <Feuille ouverte={ouverte} onFermer={onFermer} titre="Menu">
-      <nav className="grid grid-cols-2 gap-3" aria-label="Toutes les sections">
+      <nav className="grid grid-cols-2 gap-4" aria-label="Toutes les sections">
         {entrees.map((e, i) => {
           const c = e.compteur ? compteurs[e.compteur] : undefined;
+          const actif = estActif(chemin, e);
+          // Anneau de la section courante : sa couleur de section, foncée comme dans la barre du bas pour rester lisible.
+          const style = { animationDelay: `${i * 30}ms`, ...(actif ? { "--tw-ring-color": `color-mix(in srgb, ${e.couleur} 85%, var(--pole-texte))` } : {}) } as CSSProperties;
           return (
-            <Link key={e.href} href={e.href} onClick={onFermer} aria-current={estActif(chemin, e) ? "page" : undefined}
-              className="carte carte-lien onde apparition flex flex-col gap-2 p-4 aria-[current=page]:ring-2 aria-[current=page]:ring-primaire" style={{ animationDelay: `${i * 30}ms` }}>
+            <Link key={e.href} href={e.href} onClick={onFermer} aria-current={actif ? "page" : undefined}
+              className="carte carte-lien onde apparition flex flex-col gap-2 p-4 aria-[current=page]:ring-2" style={style}>
               <span className="flex items-start">
                 <Picto icone={e.icone} couleur={e.couleur} taille="sm" />
                 <Badge c={c} />
@@ -135,6 +139,7 @@ function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () 
   const chemin = usePathname();
   const compteurs = useCompteursNavigation();
   const [accueil, parc, ventes] = [NAVIGATION_PRINCIPALE[0]!, NAVIGATION_PRINCIPALE[1]!, NAVIGATION_PRINCIPALE[2]!];
+  const menuActif = ![accueil, parc, ventes].some((e) => estActif(chemin, e));
   const lien = (e: typeof accueil, libelle: string) => {
     const actif = estActif(chemin, e);
     const c = e.compteur ? compteurs[e.compteur] : undefined;
@@ -164,8 +169,9 @@ function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () 
           </button>
         </div>
         {lien(ventes, "Ventes")}
-        <button type="button" onClick={onPlus} className="onde flex flex-1 flex-col items-center justify-center gap-1 text-[12px] font-semibold text-encre-3">
-          <span className="grid h-8 w-12 place-items-center"><SquaresFour size={22} weight="duotone" aria-hidden /></span>
+        <button type="button" onClick={onPlus} aria-current={menuActif ? "page" : undefined}
+          className={cn("onde flex flex-1 flex-col items-center justify-center gap-1 text-[12px] font-semibold", menuActif ? "text-encre" : "text-encre-3")}>
+          <span className={cn("grid h-8 w-12 place-items-center rounded-full", menuActif && "bg-surface-2")}><SquaresFour size={22} weight={menuActif ? "fill" : "duotone"} aria-hidden /></span>
           Menu
         </button>
       </div>
@@ -209,10 +215,18 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
       <div className="relative">
         <button type="button" onClick={() => setMenuOrg((v) => !v)} aria-expanded={menuOrg} title={org.nom} aria-label={org.nom}
           className="onde flex w-full items-center gap-3 rounded-xl bg-white/[0.06] p-2 text-left ring-1 ring-white/10 transition-colors hover:bg-white/[0.1] max-rail:justify-center max-rail:p-1">
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primaire-plein text-[14px] font-bold text-white">{initiales(org.nom)}</span>
+          <span className="relative grid size-9 shrink-0 place-items-center rounded-lg bg-primaire-plein text-[14px] font-bold text-white">
+            {initiales(org.nom)}
+            {/* Rail replié : le mode démonstration reste signalé par un point ocre sur les initiales. */}
+            {etat.mode === "demo" && <span aria-hidden className="absolute -top-1 -right-1 size-2.5 rounded-full bg-nuit-ocre ring-2 ring-nuit rail:hidden" />}
+          </span>
           <span className="min-w-0 flex-1 max-rail:hidden">
             <span className="block truncate text-[14px] font-semibold">{org.nom}</span>
-            <span className="block truncate text-[12px] text-sur-nuit-2">{ROLES[org.role]?.libelle}{etat.mode === "demo" ? " · démonstration" : ""}</span>
+            <span className="block truncate text-[12px] text-sur-nuit-2">{ROLES[org.role]?.libelle}</span>
+            {/* Le mode sur sa propre ligne, en pastille : c'est le mot qui disparaissait quand la ligne était coupée. */}
+            {etat.mode === "demo" && (
+              <span className="mt-1 inline-flex h-5 items-center rounded-full bg-white/10 px-2 text-[12px] font-semibold text-nuit-ocre capitalize">démonstration</span>
+            )}
           </span>
           <CaretUpDown size={16} className="text-sur-nuit-2 max-rail:hidden" aria-hidden />
         </button>
@@ -264,8 +278,10 @@ function EnTeteMobile({ onRecherche }: { onRecherche: () => void }) {
           className="onde grid size-11 shrink-0 place-items-center rounded-full bg-surface text-encre-2 shadow-carte ring-1 ring-trait/70">
           <GearSix size={20} weight="duotone" aria-hidden />
         </Link>
-        <button type="button" onClick={onRecherche} className="onde inline-flex h-11 items-center gap-2 rounded-full bg-surface px-4 text-[14px] font-semibold text-encre-2 shadow-carte ring-1 ring-trait/70">
-          <MagnifyingGlass size={17} weight="bold" aria-hidden /> Chercher
+        {/* Sous 400 px : bouton rond à icône seule (le libellé reste lu par les lecteurs d'écran), pour laisser
+            la place au nom de l'entreprise. */}
+        <button type="button" onClick={onRecherche} className="onde inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-surface px-4 text-[14px] font-semibold text-encre-2 shadow-carte ring-1 ring-trait/70 max-[400px]:w-11 max-[400px]:justify-center max-[400px]:px-0">
+          <MagnifyingGlass size={17} weight="bold" aria-hidden /> <span className="max-[400px]:sr-only">Chercher</span>
         </button>
       </div>
     </header>

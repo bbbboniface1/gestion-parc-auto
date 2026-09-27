@@ -49,7 +49,8 @@ export function CoutRevient({ lignes, prixAffiche, prixPlancher, margeReelle, pr
           {estime > 0 && <p className="mt-1 text-[14px] text-encre-2">dont <span className="chiffres font-medium">{formatNombre(estime)}</span> FCFA estimés</p>}
         </div>
         {marge !== null && (
-          <div className="text-right">
+          // Téléphone : la marge passe sous le coût, alignée à gauche comme lui ; à droite seulement quand elle est à côté.
+          <div className="text-left sm:text-right">
             <p className="etiquette text-[12px] text-encre-3">{margeReelle !== undefined && margeReelle !== null ? "Marge réelle" : "Marge prévue"}</p>
             <p className={cn("chiffres mt-1 text-[32px] leading-none font-extrabold tracking-tight", perte ? "text-perte-texte" : "text-gain-texte")}>
               {perte ? "−" : "+"}{formatCourt(Math.abs(marge))}
@@ -72,7 +73,8 @@ export function CoutRevient({ lignes, prixAffiche, prixPlancher, margeReelle, pr
             <span key={`${l.categorie}-${i}`} className="h-full border-r border-surface last:border-r-0" style={{ width: `${(l.montant_xof / echelle) * 100}%`, ...fond(l) }} title={`${libelleCategorie(l.categorie)} : ${formatNombre(l.montant_xof)} FCFA`} />
           ))}
           {reference !== null && reference > total && (
-            <span className="flex h-full items-center justify-center bg-gain-voile" style={{ width: `${((reference - total) / echelle) * 100}%` }} />
+            // Segment de marge : fond teinté et contour en couleur de gain, lisible (≥ 3:1) sur la carte dans les deux thèmes.
+            <span className="flex h-full items-center justify-center bg-gain/25 ring-1 ring-gain ring-inset" style={{ width: `${((reference - total) / echelle) * 100}%` }} />
           )}
         </div>
         {reference !== null && <span aria-hidden className="absolute -top-1 -bottom-1 w-0.5 bg-encre" style={{ left: `calc(${(reference / echelle) * 100}% - 1px)` }} />}

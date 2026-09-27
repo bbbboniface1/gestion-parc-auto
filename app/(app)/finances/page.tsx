@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  ArrowDownLeft, ArrowUpRight, ArrowsLeftRight, CaretRight, Clock, CurrencyCircleDollar, DownloadSimple, Gear, Percent, Plus, Timer, WhatsappLogo,
+  ArrowCounterClockwise, ArrowDownLeft, ArrowUpRight, ArrowsLeftRight, CaretRight, Clock, CurrencyCircleDollar, DownloadSimple, Gear, Percent, Plus, Timer, WhatsappLogo,
 } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
@@ -42,7 +42,7 @@ const PERIODES: { valeur: CodePeriode; libelle: string }[] = [
 /*
  * Finances, en deux niveaux de lecture par onglet (docs/CONVENTIONS_FRONT.md, « Mesures et hiérarchie ») :
  *  - Trésorerie : premier plan = la carte héro du total disponible, avec les entrées et sorties de la période ;
- *    second plan = les comptes (couleur de l'opérateur, valeur en 24 px) et les mouvements.
+ *    second plan = les comptes (cartes neutres, couleur de l'opérateur sur la tuile d'icône, valeur en 24 px) et les mouvements.
  *  - Créances : premier plan = le total dû et la part en retard ; second plan = une carte par client.
  *  - Rentabilité : premier plan = la marge et son taux ; second plan = ventes, chiffre d'affaires, marge par vente.
  */
@@ -81,20 +81,26 @@ function HeroTresorerie({ totaux }: { totaux: Tresorerie["totaux"] }) {
   );
 }
 
-/** Second plan : un compte, à la couleur de son opérateur, solde en 24 px. */
+/**
+ * Second plan : un compte sur une carte neutre, solde en 24 px. La couleur de l'opérateur ne teinte que la tuile
+ * d'icône : trois aplats saturés attiraient l'œil avant la carte héro. Sur téléphone, une rangée compacte
+ * (tuile, nom et flux, solde à droite) ; au-delà, une carte verticale.
+ */
 function CarteCompte({ c, index }: { c: Tresorerie["comptes"][number]; index: number }) {
   const a = apparenceCompte(c);
   const solde = useCompteur(c.solde_xof ?? 0);
   return (
-    <div className="apparition min-w-0 overflow-hidden rounded-carte p-4 shadow-carte lg:p-6" style={{ background: a.fond, color: a.texte, ...decalage(index, 60) }}>
-      <div className="flex items-center justify-between gap-2">
-        <span className="truncate text-[14px] font-bold">{c.nom}</span>
-        <a.icone size={20} weight="fill" className="shrink-0" aria-hidden />
-      </div>
-      <p className="chiffres mt-4 text-[24px] leading-none font-bold tracking-tight">{formatCourt(solde)} <span className="text-[12px] font-semibold">FCFA</span></p>
-      <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[12px] font-semibold">
-        <span className="inline-flex items-center gap-1"><ArrowDownLeft size={12} weight="bold" aria-hidden />+{formatCourt(c.entrees_periode)}</span>
-        <span className="inline-flex items-center gap-1"><ArrowUpRight size={12} weight="bold" aria-hidden />−{formatCourt(c.sorties_periode)}</span>
+    <div className="carte apparition grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 p-4 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-y-3 lg:p-6" style={decalage(index, 60)}>
+      <span className="col-start-1 row-span-2 row-start-1 grid size-10 place-items-center rounded-xl sm:row-span-1" style={{ background: a.fond, color: a.texte }}>
+        <a.icone size={20} weight="fill" aria-hidden />
+      </span>
+      <span className="col-start-2 row-start-1 line-clamp-2 text-[14px] font-bold break-words">{c.nom}</span>
+      <p className="chiffres col-start-3 row-span-2 row-start-1 text-right text-[24px] leading-none font-bold tracking-tight whitespace-nowrap text-encre sm:col-span-2 sm:col-start-1 sm:row-span-1 sm:row-start-2 sm:text-left">
+        {formatCourt(solde)} <span className="text-[12px] font-semibold text-encre-3">FCFA</span>
+      </p>
+      <p className="col-start-2 row-start-2 flex flex-wrap gap-x-3 gap-y-1 text-[12px] font-semibold text-encre-2 sm:col-span-2 sm:col-start-1 sm:row-start-3">
+        <span className="inline-flex items-center gap-1"><ArrowDownLeft size={12} weight="bold" className="text-gain-texte" aria-hidden />+{formatCourt(c.entrees_periode)}</span>
+        <span className="inline-flex items-center gap-1"><ArrowUpRight size={12} weight="bold" className="text-perte-texte" aria-hidden />−{formatCourt(c.sorties_periode)}</span>
       </p>
     </div>
   );
@@ -159,22 +165,28 @@ function Finances() {
       <EnTetePage titre="Finances" sousTitre="Où est l'argent, ce qui sort, ce qu'on vous doit, ce que ça rapporte."
         actions={
           <>
-            <Bouton className="flex-1 sm:flex-none" icone={<ArrowsLeftRight size={18} weight="duotone" className="text-primaire" />} onClick={() => setTransfert(true)}><span>Transférer<span className="hidden sm:inline"> entre comptes</span></span></Bouton>
-            {peutModifier && <Bouton className="flex-[2] sm:flex-none" variante="primaire" icone={<Plus size={18} weight="bold" />} onClick={() => setNouvelleDepense(true)}>Ajouter une dépense</Bouton>}
+            {/* shrink-0 : dans un bouton qui se comprime (flex-1 à 360 px), l'icône garde ses 18 × 18 px. */}
+            <Bouton className="flex-1 sm:flex-none" icone={<ArrowsLeftRight size={18} weight="duotone" className="shrink-0 text-primaire" />} onClick={() => setTransfert(true)}><span className="min-w-0">Transférer<span className="hidden sm:inline"> entre comptes</span></span></Bouton>
+            {peutModifier && <Bouton className="flex-[2] sm:flex-none" variante="primaire" icone={<Plus size={18} weight="bold" className="shrink-0" />} onClick={() => setNouvelleDepense(true)}>Ajouter une dépense</Bouton>}
           </>
         } />
 
-      {/* Couleur de chaque onglet = celle de son sujet ailleurs dans l'application : les dépenses sont des sorties (perte),
-          les créances ont la couleur de la tuile « Créances clients » du tableau de bord (accent). */}
+      {/* Onglets sans pastille de couleur : quatre teintes ne portaient pas de sens stable (la couleur de Finances est
+          `accent`, portée par la navigation) ; l'onglet actif se lit par `bg-puce-active`.
+          Sur téléphone, les périodes forment un contrôle segmenté sur une seule rangée (4 colonnes, 44 px) au lieu de deux
+          rangées de puces : le premier plan remonte d'environ 50 px. */}
       <div className="mb-6 flex flex-col gap-4 lg:mb-8">
         <Onglets libelle="Section" valeur={onglet} onChange={(v) => { setOnglet(v); router.replace(`/finances/?onglet=${v}`, { scroll: false }); }}
           onglets={[
-            { valeur: "tresorerie", libelle: "Trésorerie", couleur: "var(--gain)" },
-            { valeur: "depenses", libelle: "Dépenses", couleur: "var(--perte)" },
-            { valeur: "creances", libelle: "Créances", couleur: "var(--accent)" },
-            { valeur: "rentabilite", libelle: "Rentabilité", couleur: "var(--primaire)" },
+            { valeur: "tresorerie", libelle: "Trésorerie" },
+            { valeur: "depenses", libelle: "Dépenses" },
+            { valeur: "creances", libelle: "Créances" },
+            { valeur: "rentabilite", libelle: "Rentabilité" },
           ]} />
-        {onglet !== "creances" && <Puces valeur={periode} onChange={setPeriode} libelle="Période" options={PERIODES} />}
+        {onglet !== "creances" && (
+          <Puces valeur={periode} onChange={setPeriode} libelle="Période" options={PERIODES}
+            className="max-sm:grid max-sm:grid-cols-4 max-sm:[&>button]:justify-center max-sm:[&>button]:px-2 max-sm:[&>button]:text-center max-sm:[&>button]:leading-tight max-sm:[&>button]:whitespace-normal" />
+        )}
       </div>
 
       {onglet === "tresorerie" && (
@@ -186,7 +198,8 @@ function Finances() {
                 <h2 id="titre-comptes" className="text-[18px] font-bold">Vos comptes</h2>
                 {peutModifier && <Bouton variante="fantome" icone={<Gear size={16} weight="duotone" />} onClick={() => setGererComptes(true)}>Gérer les comptes</Bouton>}
               </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4">
+              {/* Autant de colonnes que de comptes tant qu'elles font au moins 14 rem : ni colonne vide, ni carte orpheline sur 3 comptes. */}
+              <div className="grid gap-4 sm:grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] lg:gap-6">
                 {tresorerie.data.comptes.filter((c) => c.actif || (c.solde_xof ?? 0) !== 0).map((c, i) => <CarteCompte key={c.id} c={c} index={i} />)}
               </div>
             </section>
@@ -196,21 +209,30 @@ function Finances() {
                 <ul className="flex flex-col">
                   {tresorerie.data.mouvements.slice(0, 50).map((m, i) => {
                     const entree = m.montant_xof >= 0;
+                    const idTransfert = m.entite === "transfert" ? m.entite_id : null;
+                    const annulable = Boolean(idTransfert && peutModifier);
+                    /*
+                     * Une grille à 4 colonnes : pictogramme, texte, montant, fin de ligne (chevron ou « Annuler »).
+                     *  - Téléphone : le libellé sur deux lignes au plus, sur la largeur texte + montant ; dessous, « date · compte »
+                     *    à gauche et le montant à droite. « Annuler » devient une icône de 44 px posée sur la colonne de fin.
+                     *  - Ordinateur : une seule rangée ; la colonne de fin a une largeur fixe (5 rem), donc les montants finissent
+                     *    tous à la même abscisse, qu'il y ait un chevron ou « Annuler ».
+                     */
                     const corps = (
                       <>
-                        <span className={cn("grid size-10 shrink-0 place-items-center rounded-full", entree ? "bg-gain-voile text-gain-texte" : "bg-perte-voile text-perte-texte")}>
+                        <span className={cn("col-start-1 row-span-2 row-start-1 grid size-10 place-items-center rounded-full", entree ? "bg-gain-voile text-gain-texte" : "bg-perte-voile text-perte-texte")}>
                           {entree ? <ArrowDownLeft size={18} weight="bold" aria-label="Entrée" /> : <ArrowUpRight size={18} weight="bold" aria-label="Sortie" />}
                         </span>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate font-semibold group-hover:text-primaire">{m.libelle}</p>
-                          <p className="text-[12px] text-encre-3">{formatDate(m.date)}{m.compte_nom ? ` · ${m.compte_nom}` : ""}</p>
-                        </div>
-                        <Montant valeur={m.montant_xof} devise={null} signe className={entree ? "text-gain-texte" : "text-perte-texte"} />
-                        {(m.entite === "vente" || m.entite === "frais") && <CaretRight size={16} weight="bold" className="shrink-0 text-encre-3 transition-transform group-hover:translate-x-px group-hover:text-primaire" aria-hidden />}
+                        <p className={cn("col-span-2 col-start-2 row-start-1 line-clamp-2 font-semibold break-words group-hover:text-primaire lg:col-span-1 lg:pr-0", annulable && "pr-8")}>{m.libelle}</p>
+                        <p className="col-start-2 row-start-2 min-w-0 text-[12px] text-encre-3">
+                          <span className="whitespace-nowrap">{formatDate(m.date)}{m.compte_nom ? " ·" : ""}</span>{m.compte_nom ? <> <span className="whitespace-nowrap">{m.compte_nom}</span></> : null}
+                        </p>
+                        <Montant valeur={m.montant_xof} devise={null} signe className={cn("col-start-3 row-start-2 justify-self-end lg:row-span-2 lg:row-start-1", entree ? "text-gain-texte" : "text-perte-texte")} />
+                        {(m.entite === "vente" || m.entite === "frais") && <CaretRight size={16} weight="bold" className="col-start-4 row-span-2 row-start-1 justify-self-end text-encre-3 transition-transform group-hover:translate-x-px group-hover:text-primaire" aria-hidden />}
                       </>
                     );
-                    const idTransfert = m.entite === "transfert" ? m.entite_id : null;
-                    const cls = "group flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-surface-2";
+                    const grille = "grid w-full grid-cols-[2.5rem_minmax(0,1fr)_auto_1rem] items-center gap-x-3 gap-y-1 rounded-xl px-2 py-3 lg:grid-cols-[2.5rem_minmax(0,1fr)_auto_5rem]";
+                    const cls = cn("group text-left transition-colors hover:bg-surface-2", grille);
                     return (
                       <li key={i}>
                         {m.entite === "vente" && m.entite_id ? (
@@ -218,11 +240,15 @@ function Finances() {
                         ) : m.entite === "frais" && m.entite_id ? (
                           <button type="button" className={cls} onClick={() => { setFraisEnEvidence(m.entite_id); setPeriode("annee"); setOnglet("depenses"); router.replace("/finances/?onglet=depenses", { scroll: false }); }}>{corps}</button>
                         ) : (
-                          <div className="flex items-center gap-3 rounded-xl px-2 py-3">
+                          <div className={grille}>
                             {corps}
-                            {idTransfert && peutModifier && (
+                            {annulable && idTransfert && (
+                              // Téléphone : icône de 44 px dont la marge négative déborde sur l'espace réservé à droite du libellé (pr-8).
                               <button type="button" title="Annuler ce transfert" onClick={() => { if (window.confirm("Annuler ce transfert ? Les deux comptes retrouvent leur solde d'avant.")) annulerTransfert.executer({ p_org: org.id, p_id: idTransfert }); }}
-                                className="onde inline-flex h-11 shrink-0 items-center rounded-full px-3 text-[14px] font-semibold text-encre-3 hover:bg-perte-voile hover:text-perte-texte lg:h-10">Annuler</button>
+                                className="onde col-start-4 row-start-1 -ml-7 inline-flex size-11 items-center justify-center justify-self-end rounded-full text-[14px] font-semibold text-encre-3 hover:bg-perte-voile hover:text-perte-texte lg:row-span-2 lg:ml-0 lg:h-10 lg:w-auto lg:px-3">
+                                <ArrowCounterClockwise size={18} weight="bold" className="shrink-0 lg:hidden" aria-hidden />
+                                <span className="max-lg:sr-only">Annuler</span>
+                              </button>
                             )}
                           </div>
                         )}
@@ -266,7 +292,8 @@ function Finances() {
                       <div className="min-w-0 flex-1">
                         {/* Zone de toucher de 48 px autour du nom, sans changer la mise en page (marges négatives). */}
                         <Link href={`/ventes/fiche/?id=${c.vente_id}`} className="relative -my-3 block truncate py-3 text-[16px] font-bold hover:text-primaire">{c.client_nom}</Link>
-                        <p className="truncate text-[14px] text-encre-3">{c.vehicule_libelle} · {c.numero}</p>
+                        {/* Deux lignes au plus : le numéro de facture (insécable) n'est plus coupé par le montant « reste dû ». */}
+                        <p className="line-clamp-2 text-[14px] text-encre-3">{c.vehicule_libelle} · <span className="font-mono text-[12px] whitespace-nowrap">{c.numero}</span></p>
                       </div>
                       <div className="shrink-0 text-right">
                         <p className="chiffres text-[24px] leading-tight font-extrabold text-ocre-texte">{formatCourt(c.reste_xof)}</p>
@@ -323,7 +350,11 @@ function Finances() {
                       <li key={l.vente_id} className="apparition" style={decalage(Math.min(i, 12), 40)}>
                         <Link href={`/ventes/fiche/?id=${l.vente_id}`} className="group block rounded-xl px-2 py-2 transition-colors hover:bg-surface-2">
                           <div className="flex items-baseline justify-between gap-3">
-                            <span className="min-w-0 truncate font-semibold group-hover:text-primaire">{l.vehicule_libelle} <span className="font-normal text-encre-3">· {l.client_nom}</span></span>
+                            {/* Téléphone : le client passe sur une 2e ligne au lieu d'être coupé après deux lettres. */}
+                            <span className="min-w-0 font-semibold group-hover:text-primaire sm:truncate">
+                              <span className="block truncate sm:inline">{l.vehicule_libelle}</span>{" "}
+                              <span className="block truncate text-[14px] font-normal text-encre-3 sm:inline"><span className="max-sm:hidden">· </span>{l.client_nom}</span>
+                            </span>
                             <span className={cn("chiffres shrink-0 font-extrabold", l.marge_xof < 0 ? "text-perte-texte" : "text-gain-texte")}>
                               {l.marge_xof >= 0 ? "+" : ""}{formatCourt(l.marge_xof)} <span className="text-[12px] font-semibold text-encre-3">{l.marge_pct !== null ? formatPourcent(l.marge_pct, 0) : ""}</span>
                             </span>
@@ -332,7 +363,13 @@ function Finances() {
                             <div className="h-full origin-left rounded-full [animation:remplit_900ms_both]"
                               style={{ width: `${(Math.abs(l.marge_xof) / max) * 100}%`, background: l.marge_xof < 0 ? "var(--perte)" : "var(--gain)", animationDelay: `${i * 50}ms` }} />
                           </div>
-                          <p className="mt-1 text-[12px] text-encre-3">{formatDate(l.date_vente)} · vendu {formatCourt(l.montant_ht)} HT · revient {formatCourt(l.prix_revient_xof)} · {l.jours_stock} j en stock</p>
+                          {/* Segments insécables : « 28 j en stock » ne se coupe plus au milieu ; aucune ligne ne commence par « · ». */}
+                          <p className="mt-1 text-[12px] text-encre-3">
+                            <span className="whitespace-nowrap">{formatDate(l.date_vente)} ·</span>{" "}
+                            <span className="whitespace-nowrap">vendu {formatCourt(l.montant_ht)} HT ·</span>{" "}
+                            <span className="whitespace-nowrap">revient {formatCourt(l.prix_revient_xof)} ·</span>{" "}
+                            <span className="whitespace-nowrap">{l.jours_stock} j en stock</span>
+                          </p>
                         </Link>
                       </li>
                     ));

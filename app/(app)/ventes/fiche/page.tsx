@@ -26,7 +26,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { FilAriane } from "@/components/ui/fil-ariane";
 import { PanneauActions, type ActionVisible } from "@/components/ui/panneau-actions";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
-import { AnneauPaiement, MODES_VISUELS } from "@/components/ventes/paiement-visuel";
+import { AnneauPaiement, BadgeRetard, MODES_VISUELS } from "@/components/ventes/paiement-visuel";
 import { useCompteursNavigation } from "@/lib/compteurs";
 import { useCompteur } from "@/lib/animation";
 import { EtatErreur, Squelette } from "@/components/ui/etats";
@@ -73,6 +73,8 @@ function Fiche() {
 
   const annulee = v.statut === "annulee";
   const soldee = !annulee && v.reste_xof === 0;
+  // Même condition que la liste : le retard reste au premier plan, en rouge, de la liste à la fiche.
+  const enRetard = !annulee && v.reste_xof > 0 && v.retard_xof > 0;
   const peutEncaisser = peut(org.role, "encaisser");
   const peutAnnuler = peut(org.role, "annulerVente");
   const peutLivrer = peut(org.role, "vendre");
@@ -91,6 +93,7 @@ function Fiche() {
       const fichier = new File([blob], nomFichier({ type: "facture", numero: v!.numero, client: v!.client }), { type: "application/pdf" });
       const message = remplirModele(reglages!.parametres.modele_message_whatsapp || "Bonjour {client}, voici votre facture {numero} : {montant}. Reste à payer : {reste}.", {
         client: v!.client.nom, numero: v!.numero, montant: `${formatNombre(v!.montant_ttc)} FCFA`, reste: `${formatNombre(v!.reste_xof)} FCFA`,
+        document: "facture", vehicule: v!.vehicule.libelle, entreprise: reglages!.parametres.nom_commercial,
       });
       const partage = await partagerFichier(fichier, `Facture ${v!.numero}`, message);
       if (!partage) window.open(lienWhatsApp(v!.client.telephone, message), "_blank", "noopener");
@@ -141,6 +144,7 @@ function Fiche() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {annulee ? <Tampon type="annule" grand /> : soldee ? <Tampon type="solde" grand /> : null}
+                {enRetard && <BadgeRetard grand />}
                 {!annulee && !v.livree && <Tampon type="a_livrer" grand />}
               </div>
             </div>
@@ -153,7 +157,7 @@ function Fiche() {
               <UserCircle size={24} weight="duotone" className="text-encre-3" aria-hidden />
             </Link>
             <div className="flex items-center gap-4 lg:gap-6">
-              <AnneauPaiement encaisse={v.encaisse_xof} total={v.montant_ttc} taille={112} />
+              <AnneauPaiement encaisse={v.encaisse_xof} total={v.montant_ttc} enRetard={enRetard} taille={112} />
               <div className="min-w-0">
                 {annulee ? (
                   <p className="text-[16px] font-semibold text-perte-texte">Vente annulée{v.a_rembourser_xof > 0 ? ` · ${formatNombre(v.a_rembourser_xof)} FCFA à rembourser` : ""}</p>
@@ -162,7 +166,7 @@ function Fiche() {
                 ) : (
                   <>
                     <p className="text-[14px] font-semibold text-encre-3">Reste à encaisser</p>
-                    <p className="chiffres mt-1 text-[32px] leading-none font-extrabold tracking-tight text-ocre-texte">{formatCourt(reste)}<span className="ml-1 text-[14px] font-semibold">FCFA</span></p>
+                    <p className={cn("chiffres mt-1 text-[32px] leading-none font-extrabold tracking-tight", enRetard ? "text-perte-texte" : "text-ocre-texte")}>{formatCourt(reste)}<span className="ml-1 text-[14px] font-semibold">FCFA</span></p>
                   </>
                 )}
                 <p className="mt-2 text-[14px] text-encre-3">
@@ -191,7 +195,8 @@ function Fiche() {
                           <mv.icone size={20} weight="fill" aria-hidden />
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-bold">{MODES_PAIEMENT[p.mode]?.libelle}<span className="font-medium text-encre-3"> · {formatDate(p.date)}</span></p>
+                          {/* Seul le mode de paiement peut être coupé, jamais la date. */}
+                          <p className="flex min-w-0 gap-1 font-bold"><span className="truncate">{MODES_PAIEMENT[p.mode]?.libelle}</span><span className="shrink-0 font-medium whitespace-nowrap text-encre-3">· {formatDate(p.date)}</span></p>
                           <p className="truncate font-mono text-[12px] text-encre-3">{p.numero_recu}{p.reference ? ` · ${p.reference}` : ""}{p.annule ? " · annulé" : ""}</p>
                         </div>
                         <Montant valeur={p.montant_xof} devise={null} className={cn("shrink-0", p.montant_xof < 0 ? "text-perte-texte" : "text-gain-texte")} />
@@ -247,9 +252,11 @@ function Fiche() {
                 { libelle: "Reste", valeur: `${formatNombre(v.reste_xof)} FCFA`, fort: v.reste_xof > 0 },
               ]} />
               {v.prix_revient_xof !== null && (
-                <div className="mt-3 flex items-center justify-between rounded-xl bg-gain-voile px-3 py-2">
+                // Libellé et valeur passent à la ligne comme un tout : la valeur n'est jamais coupée, le pourcentage
+                // s'écrit à la française (virgule, espace insécable avant %).
+                <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-xl bg-gain-voile px-3 py-2">
                   <span className="text-[14px] font-semibold text-gain-texte">Marge sur cette vente</span>
-                  <span className={cn("chiffres font-extrabold", (v.marge_xof ?? 0) < 0 ? "text-perte-texte" : "text-gain-texte")}>{formatNombre(v.marge_xof ?? 0)} {v.marge_pct !== null && <span className="text-[12px]">({v.marge_pct} %)</span>}</span>
+                  <span className={cn("chiffres font-extrabold whitespace-nowrap", (v.marge_xof ?? 0) < 0 ? "text-perte-texte" : "text-gain-texte")}>{formatNombre(v.marge_xof ?? 0)} {v.marge_pct !== null && <span className="text-[12px]">({formatNombre(v.marge_pct, Number.isInteger(v.marge_pct) ? 0 : 1)}{" "}%)</span>}</span>
                 </div>
               )}
               {annulee && v.a_rembourser_xof > 0 && peutEncaisser && <Bouton variante="secondaire" className="mt-4" onClick={() => setFeuille("rembourser")}>Rembourser {formatNombre(v.a_rembourser_xof)} FCFA</Bouton>}

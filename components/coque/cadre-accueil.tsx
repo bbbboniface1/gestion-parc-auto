@@ -16,13 +16,15 @@ import { Logo } from "./logo";
 export function CadreAccueil({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-dvh bg-papier lg:grid lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]">
-      <aside className="relative overflow-hidden bg-nuit text-white">
-        <div className="zone-sure-haut relative px-4 pt-6 pb-6 lg:flex lg:h-full lg:flex-col lg:px-12 lg:py-12">
+      {/* bg-heros : identique au bleu nuit en clair ; en sombre, assez lumineux pour se détacher du fond de page. */}
+      <aside className="relative overflow-hidden bg-heros text-white">
+        {/* 24 px en haut, ou la hauteur de l'encoche si elle est plus grande. */}
+        <div className="relative px-4 pt-[max(24px,env(safe-area-inset-top))] pb-6 lg:flex lg:h-full lg:flex-col lg:px-12 lg:py-12">
           <div className="flex items-center gap-3">
             <Logo className="size-10" />
             <span className="text-[18px] font-extrabold tracking-tight">Parc Auto</span>
           </div>
-          <h2 className="mt-4 max-w-lg text-[18px] leading-tight font-extrabold tracking-tight lg:mt-12 lg:text-[32px]">
+          <h2 className="mt-4 max-w-lg text-[18px] leading-tight font-extrabold tracking-tight lg:mt-12 lg:text-[24px]">
             De l&apos;enchère à Houston à la clé remise à Bamako.
           </h2>
           <p className="mt-2 max-w-md text-[14px] text-white/75 lg:mt-4 lg:text-[16px]">
@@ -39,6 +41,10 @@ export function CadreAccueil({ children }: { children: ReactNode }) {
                 <span className="absolute top-3 left-3 inline-flex h-7 items-center gap-2 rounded-full bg-white/95 px-3 text-[12px] font-bold text-nuit">
                   <span className="size-2 rounded-full bg-[var(--etape-en-mer)]" /> En mer
                 </span>
+                {/* Sur la photo, à côté de l'étape : ne recouvre jamais le titre ni le kilométrage. */}
+                <span className="absolute top-3 right-3 inline-flex h-7 items-center gap-2 rounded-full bg-[var(--etape-en-mer)] px-3 text-[12px] font-bold text-nuit">
+                  <Boat size={16} weight="fill" /> Cotonou dans 5 jours
+                </span>
                 <span className="chiffres absolute bottom-3 left-3 text-[18px] font-extrabold text-white">9,2 M <span className="text-[12px] font-semibold opacity-80">FCFA</span></span>
               </div>
               <div className="p-4">
@@ -50,7 +56,8 @@ export function CadreAccueil({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            <div className="apparition absolute top-6 right-0 w-56 rotate-1 rounded-carte bg-white/10 p-4 ring-1 ring-white/20" style={{ animationDelay: "180ms" }}>
+            {/* Opaque, et seulement quand la place suffit : sous xl, elle glisserait sur la photo du véhicule. */}
+            <div className="apparition absolute top-6 right-0 hidden w-56 rotate-1 rounded-carte bg-nuit-2 p-4 xl:block ring-1 ring-white/20" style={{ animationDelay: "180ms" }}>
               <p className="text-[12px] font-semibold text-white/70">Où est votre argent ?</p>
               <p className="chiffres mt-1 text-[24px] leading-none font-extrabold">124 M <span className="text-[12px] font-semibold text-white/70">FCFA</span></p>
               <span className="mt-3 flex h-2 gap-0.5 overflow-hidden rounded-full">
@@ -65,10 +72,6 @@ export function CadreAccueil({ children }: { children: ReactNode }) {
                 <span className="block text-[14px] font-extrabold">Vente enregistrée</span>
                 <span className="block text-[12px] text-encre-3">FAC-2026-0011 · envoyée sur WhatsApp</span>
               </span>
-            </div>
-
-            <div className="apparition absolute bottom-24 left-6 flex h-8 items-center gap-2 rounded-full bg-[var(--etape-en-mer)] px-3 text-[12px] font-bold text-nuit shadow-flottante" style={{ animationDelay: "300ms" }}>
-              <Boat size={16} weight="fill" /> Cotonou dans 5 jours
             </div>
           </div>
 

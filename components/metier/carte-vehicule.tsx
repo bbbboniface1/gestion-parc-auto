@@ -25,8 +25,9 @@ export function CarteGalerie({ v, cochee, basculer, index = 0 }: { v: Vehicule; 
   const prix = v.vente?.montant_ttc ?? v.prix_affiche_xof;
   const marge = v.marge_xof;
   return (
-    <article className={cn("carte carte-lien apparition group relative overflow-hidden", cochee && "ring-2 ring-primaire")} style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}>
-      <Link href={`/parc/vehicule/?id=${v.id}`} className="block">
+    // Carte, lien et corps en colonne pleine hauteur : le pied (VIN, marge) se cale en bas, aligné d'une carte à l'autre de la rangée.
+    <article className={cn("carte carte-lien apparition group relative flex h-full flex-col overflow-hidden", cochee && "ring-2 ring-primaire")} style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}>
+      <Link href={`/parc/vehicule/?id=${v.id}`} className="flex flex-1 flex-col">
         <div className="relative aspect-[4/3] overflow-hidden">
           <PhotoVehicule path={v.photo_principale_path} alt="" arrondi={false} className="size-full transition-transform duration-500 ease-out group-hover:scale-[1.03]" />
           <span aria-hidden className="voile-photo absolute inset-x-0 bottom-0 h-2/3" />
@@ -46,14 +47,14 @@ export function CarteGalerie({ v, cochee, basculer, index = 0 }: { v: Vehicule; 
             </span>
           </div>
         </div>
-        <div className="p-4">
+        <div className="flex flex-1 flex-col p-4">
           <p className="truncate text-[16px] font-bold text-encre">{v.libelle}</p>
           <p className="mt-1 truncate text-[12px] text-encre-3">
             {[v.couleur, v.kilometrage_km ? `${formatNombre(v.kilometrage_km)} km` : null, v.reference].filter(Boolean).join(" · ")}
           </p>
           <MiniPiste etape={v.etape} className="mt-3" />
           <PastillesConteneur v={v} className="mt-2 empty:hidden" />
-          <div className="mt-3 flex items-center justify-between gap-2 text-[12px]">
+          <div className="mt-auto flex items-center justify-between gap-2 pt-3 text-[12px]">
             <span className="truncate font-mono text-encre-3">{v.vin ? finDeVin(v.vin) : v.lot_numero ? `Lot ${v.lot_numero}` : ""}</span>
             {marge !== null && (
               <span className={cn("chiffres inline-flex h-6 shrink-0 items-center rounded-full px-2 font-bold", marge >= 0 ? "bg-gain-voile text-gain-texte" : "bg-perte-voile text-perte-texte")}>
@@ -110,7 +111,8 @@ export function CarteKanban({ v, cochee, basculer, avancer }: { v: Vehicule; coc
       <Link href={`/parc/vehicule/?id=${v.id}`} className="block">
         <PhotoVehicule path={v.photo_principale_path} alt="" arrondi={false} className="aspect-[16/10] w-full" />
         <div className="p-3">
-          <p className="truncate text-[14px] leading-tight font-bold">{v.libelle}</p>
+          {/* Deux lignes plutôt qu'une coupe : l'année, en fin de nom, est ce qui distingue deux modèles. */}
+          <p className="line-clamp-2 text-[14px] leading-tight font-bold">{v.libelle}</p>
           <p className="mt-1 truncate font-mono text-[12px] text-encre-3">{v.reference}{v.vin ? ` · ${finDeVin(v.vin)}` : ""}</p>
           <div className="mt-2 flex items-center justify-between gap-2">
             <span className={cn("inline-flex h-6 items-center rounded-full px-2 text-[12px] font-bold", v.jours_etape > 30 ? "bg-ocre-voile text-ocre-texte" : "bg-surface-2 text-encre-3")}>{v.jours_etape} j</span>

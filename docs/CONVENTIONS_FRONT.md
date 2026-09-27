@@ -98,6 +98,14 @@ dans `<Suspense>`.
   où il est payé ; une charge de structure (loyer, salaires…) est neutre.
 - **Sélection** : puce ou onglet actif = `bg-puce-active text-sur-puce-active` (bleu nuit en clair, pastille claire en
   sombre). Barre flottante (sélection, « Modifications non enregistrées ») = `bg-heros`, visible dans les deux thèmes.
+- **Fenêtres** (`Feuille`, palette de recherche) : fond `bg-feuille` (un cran au-dessus des cartes en sombre) sur un
+  voile `bg-voile-feuille`. Ne pas y remettre `bg-surface` ni `bg-nuit/45`.
+- **Contrôles** : tout contrôle (interrupteur, case, curseur) garde 3:1 avec son fond dans les deux thèmes, y compris
+  désactivé (bordure `encre-3`, pas `trait-fort`). Un nombre saisi s'affiche groupé par milliers hors saisie.
+- **Tampons de vente** : « Soldé » en `gain`, « Vendu · à livrer » en `acier` (il reste une action), « Annulée » en
+  `perte`. Une même couleur ne marque jamais deux états dont l'un demande une action et l'autre non.
+- **Libellés honnêtes** : un filtre ou un indicateur dit exactement ce qu'il compte (« Toutes », « Ventes actives »),
+  jamais un mot plus étroit que son contenu (« En cours » ne peut pas inclure des ventes soldées).
 - **Animations** : l'esprit reste (onde au toucher, apparition des blocs, confettis, tampon), l'intensité est basse :
   apparition 360 ms sur 4 px, arrivée de page 240 ms sans flou, carte cliquable soulevée de 1 px, onde à 12 %
   d'opacité, confettis resserrés, tampon posé depuis 130 %. Décalage entre éléments d'une liste : 30 à 60 ms.

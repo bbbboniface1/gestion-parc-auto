@@ -40,7 +40,7 @@ export function Onglets<T extends string>({ onglets, valeur, onChange, libelle, 
             {o.couleur && <span aria-hidden className="size-2 rounded-full" style={{ background: o.couleur }} />}
             {o.libelle}
             {o.compteur !== undefined && o.compteur !== null && (
-              <span className={cn("chiffres rounded-full px-1.5 text-[12px]", actif ? "bg-sur-puce-active/15" : "bg-surface-2 text-encre-3")}>{o.compteur}</span>
+              <span className={cn("chiffres inline-flex min-w-5 justify-center rounded-full px-2 text-[12px]", actif ? "bg-sur-puce-active/15" : "bg-surface-2 text-encre-3")}>{o.compteur}</span>
             )}
           </button>
         );

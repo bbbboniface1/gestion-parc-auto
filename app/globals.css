@@ -39,6 +39,9 @@
   /* Puce ou onglet sélectionné : bleu nuit en clair ; en sombre, pastille claire (le bleu nuit s'y confondait avec le fond). */
   --puce-active: #0b1633;
   --sur-puce-active: #ffffff;
+  /* Fenêtre (feuille, palette de recherche) : un cran au-dessus des cartes, sur un voile qui assombrit vraiment. */
+  --feuille: #ffffff;
+  --voile-feuille: rgb(11 22 51 / 0.45);
   --sur-nuit: #f2f5fb;
   --sur-nuit-2: #b7c0d6;
 
@@ -131,6 +134,8 @@
     --heros: #1b2c63;
     --puce-active: #eef2fa;
     --sur-puce-active: #0a1022;
+    --feuille: #1a2544;
+    --voile-feuille: rgb(0 0 0 / 0.62);
     --gain-texte: #5ad48a;
     --gain-voile: #0f2a1b;
     --perte-texte: #ff8a80;
@@ -171,6 +176,8 @@
   --heros: #1b2c63;
   --puce-active: #eef2fa;
   --sur-puce-active: #0a1022;
+  --feuille: #1a2544;
+  --voile-feuille: rgb(0 0 0 / 0.62);
   --gain-texte: #5ad48a;
   --gain-voile: #0f2a1b;
   --perte-texte: #ff8a80;
@@ -224,6 +231,8 @@
   --color-heros: var(--heros);
   --color-puce-active: var(--puce-active);
   --color-sur-puce-active: var(--sur-puce-active);
+  --color-feuille: var(--feuille);
+  --color-voile-feuille: var(--voile-feuille);
   --color-sur-nuit: var(--sur-nuit);
   --color-sur-nuit-2: var(--sur-nuit-2);
   --color-gain: var(--gain);

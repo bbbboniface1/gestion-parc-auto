@@ -4,16 +4,14 @@ import { useEffect, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "@/lib/session";
 import { Bouton } from "@/components/ui/bouton";
+import { Logo } from "./logo";
 
-/** Écran de démarrage : la silhouette du billet, pendant que la session et les données se chargent. */
+/** Écran de démarrage : le logo qui respire, pendant que la session et les données se chargent. */
 export function EcranDemarrage({ message = "Ouverture…" }: { message?: string }) {
   return (
     <div className="grid min-h-dvh place-items-center bg-papier" role="status" aria-live="polite">
       <div className="flex flex-col items-center gap-4">
-        <div className="relative h-14 w-24 animate-pulse rounded-lg bg-primaire">
-          <span className="absolute -top-2 left-[62%] size-4 rounded-full bg-papier" />
-          <span className="absolute -bottom-2 left-[62%] size-4 rounded-full bg-papier" />
-        </div>
+        <Logo className="size-14 animate-pulse" />
         <p className="text-encre-3">{message}</p>
       </div>
     </div>

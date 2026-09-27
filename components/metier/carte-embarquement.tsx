@@ -9,11 +9,12 @@ import { cn } from "@/lib/cn";
 import { TamponCommercial } from "./carte-vehicule";
 import { PhotoVehicule } from "./photo-vehicule";
 
-function Case({ libelle, children }: { libelle: string; children: ReactNode }) {
+/** Case du talon. `code` : chasse fixe (numéro de lot, de conteneur) ; sinon police de texte, sur deux lignes au besoin. */
+function Case({ libelle, code, children }: { libelle: string; code?: boolean; children: ReactNode }) {
   return (
     <div className="min-w-0">
       <dt className="etiquette text-[12px] text-sur-nuit-2">{libelle}</dt>
-      <dd className="mt-1 truncate font-mono text-[14px] font-medium text-sur-nuit">{children || "—"}</dd>
+      <dd className={cn("mt-1 text-[14px] font-medium text-sur-nuit", code ? "truncate font-mono" : "line-clamp-2 break-words")}>{children || "—"}</dd>
     </div>
   );
 }
@@ -72,9 +73,9 @@ export function CarteEmbarquement({ v, uniteCompteur = "km", photo }: { v: Vehic
       </div>
 
       <dl className="grid grid-cols-2 gap-x-4 gap-y-4 px-6 pt-2 pb-6 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-6 lg:px-8 lg:pb-8">
-        <Case libelle="Lot">{v.lot_numero}</Case>
+        <Case libelle="Lot" code>{v.lot_numero}</Case>
         <Case libelle="Achat">{sansRepetition(SOURCES[v.source ?? ""] ?? null, v.lieu_achat)}</Case>
-        <Case libelle="Conteneur">{e?.numero_conteneur ?? (e?.mode === "roro" ? "RoRo" : null)}</Case>
+        <Case libelle="Conteneur" code>{e?.numero_conteneur ?? (e?.mode === "roro" ? "RoRo" : null)}</Case>
         <Case libelle="Navire">{sansRepetition(e?.compagnie, e?.navire)}</Case>
         <Case libelle="Ports">{e ? [e.port_depart, e.port_arrivee].filter(Boolean).join(" → ") : null}</Case>
       </dl>

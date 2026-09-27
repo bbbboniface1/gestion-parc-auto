@@ -36,10 +36,11 @@ function CarteExpedition({ e, index }: { e: ExpeditionListe; index: number }) {
                 <span className="size-2 rounded-full" style={{ background: st.couleur }} />{st.libelle}
               </span>
             </div>
-            <p className="mt-1 truncate text-[14px] text-encre-3">
+            <p className="mt-1 line-clamp-2 text-[14px] text-encre-3">
               {[e.mode === "conteneur" ? "Conteneur" : "RoRo", e.compagnie, e.navire].filter(Boolean).join(" · ")}
-              {e.numero_conteneur && <span className="font-mono"> · {e.numero_conteneur}</span>}
             </p>
+            {/* Le numéro de conteneur sert à suivre le conteneur chez la compagnie : sur sa propre ligne, jamais tronqué. */}
+            {e.numero_conteneur && <p className="mt-1 font-mono text-[12px] break-all text-encre-2">{e.numero_conteneur}</p>}
           </div>
           {e.frais_xof !== null && (
             <span className="shrink-0 text-right">

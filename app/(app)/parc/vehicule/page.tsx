@@ -299,13 +299,14 @@ function Fiche() {
                     )}
                   </>
                 ) : (
+                  // Téléphone : le texte prend toute la ligne à côté de la tuile (base de 100 % − 64 px, puis il s'étire), le bouton passe dessous, aligné sur le texte.
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-surface-2 text-encre-3"><Boat size={24} weight="duotone" aria-hidden /></span>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 grow basis-[calc(100%-4rem)] sm:basis-0">
                       <p className="text-[16px] font-bold">Pas encore de conteneur</p>
                       <p className="text-[14px] text-encre-3">Dès qu&apos;il est dans un conteneur, ses dates de mer et son arrivée se suivent toutes seules.</p>
                     </div>
-                    {modifier && !souci && suivante?.genre !== "choisir_conteneur" && <Bouton variante="secondaire" taille="sm" icone={<Boat size={16} weight="duotone" />} onClick={() => setFeuille("conteneur")}>Choisir</Bouton>}
+                    {modifier && !souci && suivante?.genre !== "choisir_conteneur" && <Bouton className="ml-14 sm:ml-0" variante="secondaire" taille="sm" icone={<Boat size={16} weight="duotone" />} onClick={() => setFeuille("conteneur")}>Choisir</Bouton>}
                   </div>
                 )}
               </section>
@@ -403,7 +404,7 @@ function Fiche() {
               <ol className="-my-1">
                 {v.etapes.map((e) => (
                   <li key={e.id} className="flex items-start gap-3 border-b border-trait py-3 last:border-b-0">
-                    <span className="chiffres w-20 shrink-0 text-[12px] leading-6 text-encre-3">{formatDate(e.date)}</span>
+                    <span className="chiffres w-24 shrink-0 text-[12px] leading-6 whitespace-nowrap text-encre-3">{formatDate(e.date)}</span>
                     <div className="min-w-0 flex-1">
                       <EtiquetteEtape etape={e.etape} compacte />
                       {e.note && <p className="mt-1 text-[14px] text-encre-2">{e.note}</p>}
@@ -424,8 +425,10 @@ function Fiche() {
       {(vendre || (modifier && suivante) || v.vente) && (
         <div className="zone-sure-bas fixed inset-x-0 bottom-16 z-30 flex gap-2 border-t border-trait/70 bg-surface/90 px-4 py-3 shadow-barre-bas backdrop-blur-xl lg:hidden">
           {modifier && suivante && (
-            <Bouton className="h-auto min-h-11 flex-[1.5] py-2 text-center text-[14px] leading-tight whitespace-normal" icone={<ArrowFatLineRight size={18} weight="duotone" />} chargement={changerStatut.isPending} onClick={jouerProchaine}>
-              {suivante.genre === "etape" ? `Passer à « ${defEtape(suivante.vers).libelle} »` : suivante.titre}
+            // Deux tiers de la barre pour l'action longue (« EXP-0003 est arrivé à Cotonou ») : deux lignes au plus.
+            // Espaces insécables dans les guillemets : le « » » ne reste jamais seul à la ligne.
+            <Bouton className="h-auto min-h-11 flex-[2] py-2 text-center text-[14px] leading-tight whitespace-normal" icone={<ArrowFatLineRight size={18} weight="duotone" />} chargement={changerStatut.isPending} onClick={jouerProchaine}>
+              {suivante.genre === "etape" ? `Passer à «\u00a0${defEtape(suivante.vers).libelle}\u00a0»` : suivante.titre}
             </Bouton>
           )}
           {vendre ? (

@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Archive, Kanban, MagnifyingGlass, Plus, Rows, SquaresFour, Warning, X } from "@phosphor-icons/react";
+import { Archive, CaretDown, Kanban, MagnifyingGlass, Plus, Rows, SquaresFour, Warning, X } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useEcriture, useLecture } from "@/lib/api/requetes";
 import type { Vehicule } from "@/lib/api/types";
@@ -19,6 +19,7 @@ import { PhotoVehicule } from "@/components/metier/photo-vehicule";
 import { PastillesConteneur } from "@/components/metier/pastille-conteneur";
 import { Bouton, classesBouton } from "@/components/ui/bouton";
 import { EtatErreur, EtatVide, Squelette } from "@/components/ui/etats";
+import { Feuille } from "@/components/ui/feuille";
 import { EtiquetteEtape, Montant, teintesEtape } from "@/components/ui/signature";
 
 type FiltreStatut = "tous" | "disponible" | "reserve" | "vendu" | "a_verifier" | "archives";
@@ -66,6 +67,8 @@ function Parc() {
   const [vue, setVue] = useState<Vue>(lireVue);
   const [q, setQ] = useState("");
   const [selection, setSelection] = useState<Set<string>>(new Set());
+  // Téléphone : les huit étapes vivent dans une feuille, pour que la liste commence dans le premier écran.
+  const [feuilleEtapes, setFeuilleEtapes] = useState(false);
 
   const { data, error, isPending, refetch } = useLecture<Vehicule[]>("vehicules_lister", { p_org: org.id, p_filtres: {} });
   // Les véhicules archivés ne sont plus au parc : on les retrouve ici, dans un filtre à part, pour les remettre au parc.
@@ -98,6 +101,7 @@ function Parc() {
   }, [filtres]);
 
   const visibles = etapeActive === "toutes" ? filtres : parEtape.get(etapeActive) ?? [];
+  const etapeChoisie = etapeActive === "toutes" ? null : defEtape(etapeActive);
   const vueEffective: Vue = ordinateur ? vue : "galerie";
   const nbVerifier = useMemo(() => aVerifier(data ?? []).length, [data]);
   const nbArchives = archives.data?.length ?? 0;
@@ -110,6 +114,41 @@ function Parc() {
     if (e === "toutes") p.delete("etape");
     else p.set("etape", e);
     router.replace(`${chemin}${p.size ? `?${p}` : ""}`, { scroll: false });
+  }
+
+  /** Les puces d'étape (toutes + les huit étapes). Dans la feuille du téléphone, un choix referme la feuille. */
+  function pucesEtapes(dansFeuille: boolean) {
+    const choisir = (e: Etape | "toutes") => {
+      choisirEtape(e);
+      if (dansFeuille) setFeuilleEtapes(false);
+    };
+    return (
+      <>
+        <button type="button" role="tab" aria-selected={etapeActive === "toutes"} onClick={() => choisir("toutes")}
+          className={cn("flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+            etapeActive === "toutes" ? "bg-puce-active text-sur-puce-active shadow-puce" : "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
+          <span className="truncate"><span className="sm:hidden">Toutes</span><span className="hidden sm:inline">Toutes les étapes</span></span>
+          <span className={cn("chiffres rounded-full px-2 text-[12px]", etapeActive === "toutes" ? "bg-sur-puce-active/15" : "bg-surface-2 text-encre-3")}>{filtres.length}</span>
+        </button>
+        {ETAPES.map((e) => {
+          const n = parEtape.get(e.code)?.length ?? 0;
+          const actif = etapeActive === e.code;
+          const t = teintesEtape(e.couleur);
+          return (
+            <button key={e.code} type="button" role="tab" aria-selected={actif} onClick={() => choisir(e.code)}
+              className={cn("flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
+                !actif && n > 0 && "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre",
+                // Étape vide : onglet actif mais calme. Pointillés et encre-3 (AA), jamais d'opacité qui ferait tomber le contraste.
+                !actif && n === 0 && "border border-dashed border-trait-fort bg-surface text-encre-3 hover:text-encre")}
+              style={actif ? { background: t.fond, color: t.texte, boxShadow: `inset 0 0 0 2px ${e.couleur}` } : undefined}>
+              <span className="size-2 shrink-0 rounded-full" style={{ background: e.couleur }} />
+              <span className="truncate">{e.libelle}</span>
+              <span className="chiffres text-[12px] font-bold">{n}</span>
+            </button>
+          );
+        })}
+      </>
+    );
   }
 
   function basculer(id: string) {
@@ -156,7 +195,7 @@ function Parc() {
       {/* Filtres : recherche et statut, puis étapes du voyage. Serrés entre eux (16 px), détachés de la liste (24/32 px). */}
       <div className="mb-6 flex flex-col gap-4 lg:mb-8">
         <div className="apparition flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center" style={{ animationDelay: "60ms" }}>
-          <label className="relative flex-1 lg:max-w-md lg:min-w-64">
+          <label className="relative flex-1 lg:max-w-md lg:min-w-80">
             <span className="sr-only">Rechercher dans le parc</span>
             <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-encre-3" aria-hidden />
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Modèle, VIN, lot, conteneur, client…"
@@ -192,32 +231,30 @@ function Parc() {
           </div>
         </div>
 
-        {/* Étapes du voyage : filtre coloré (la palette des étapes parle ici de son vrai sujet). Puces qui passent à la ligne. */}
-        {data && data.length > 0 && vueEffective !== "colonnes" && (
+        {/* Étapes du voyage : filtre coloré (la palette des étapes parle ici de son vrai sujet).
+            Ordinateur : puces qui passent à la ligne. Téléphone : une seule puce qui ouvre la feuille des étapes. */}
+        {data && data.length > 0 && vueEffective !== "colonnes" && (ordinateur ? (
           <div className="apparition flex flex-wrap gap-2" role="tablist" aria-label="Étapes" style={{ animationDelay: "120ms" }}>
-            <button type="button" role="tab" aria-selected={etapeActive === "toutes"} onClick={() => choisirEtape("toutes")}
-              className={cn("flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
-                etapeActive === "toutes" ? "bg-puce-active text-sur-puce-active shadow-puce" : "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre")}>
-              <span className="truncate"><span className="sm:hidden">Toutes</span><span className="hidden sm:inline">Toutes les étapes</span></span>
-              <span className={cn("chiffres rounded-full px-2 text-[12px]", etapeActive === "toutes" ? "bg-sur-puce-active/15" : "bg-surface-2 text-encre-3")}>{filtres.length}</span>
-            </button>
-            {ETAPES.map((e) => {
-              const n = parEtape.get(e.code)?.length ?? 0;
-              const actif = etapeActive === e.code;
-              const t = teintesEtape(e.couleur);
-              return (
-                <button key={e.code} type="button" role="tab" aria-selected={actif} onClick={() => choisirEtape(e.code)}
-                  className={cn("flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all lg:h-10",
-                    !actif && "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70 hover:text-encre", n === 0 && !actif && "opacity-50")}
-                  style={actif ? { background: t.fond, color: t.texte, boxShadow: `inset 0 0 0 2px ${e.couleur}` } : undefined}>
-                  <span className="size-2 shrink-0 rounded-full" style={{ background: e.couleur }} />
-                  <span className="truncate">{e.libelle}</span>
-                  <span className="chiffres text-[12px] font-bold">{n}</span>
-                </button>
-              );
-            })}
+            {pucesEtapes(false)}
           </div>
-        )}
+        ) : (
+          <div className="apparition flex" style={{ animationDelay: "120ms" }}>
+            <button type="button" aria-haspopup="dialog" aria-expanded={feuilleEtapes} onClick={() => setFeuilleEtapes(true)}
+              className={cn("flex h-11 min-w-0 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all",
+                !etapeChoisie && "bg-surface text-encre-2 shadow-champ ring-1 ring-trait/70")}
+              style={etapeChoisie ? { background: teintesEtape(etapeChoisie.couleur).fond, color: teintesEtape(etapeChoisie.couleur).texte, boxShadow: `inset 0 0 0 2px ${etapeChoisie.couleur}` } : undefined}>
+              {etapeChoisie && <span className="size-2 shrink-0 rounded-full" style={{ background: etapeChoisie.couleur }} />}
+              <span className="truncate">Étape : {etapeChoisie ? etapeChoisie.libelle : "Toutes"}</span>
+              <span className="chiffres text-[12px] font-bold">{visibles.length}</span>
+              <CaretDown size={16} weight="bold" aria-hidden className="shrink-0" />
+            </button>
+            <Feuille ouverte={feuilleEtapes} onFermer={() => setFeuilleEtapes(false)} titre="Étape du voyage">
+              <div className="flex flex-wrap gap-2" role="tablist" aria-label="Étapes">
+                {pucesEtapes(true)}
+              </div>
+            </Feuille>
+          </div>
+        ))}
       </div>
 
       {error && !data ? (
@@ -304,7 +341,7 @@ function TableauVehicules({ vehicules, selection, basculer }: { vehicules: Vehic
           <tr className="border-b border-trait bg-surface-2 text-left">
             <th className="w-12 px-1 py-3"><span className="sr-only">Sélection</span></th>
             {["Véhicule", "Étape", "Jours", ...(voitCouts ? ["Prix de revient", "Marge"] : []), "Prix affiché", "Client"].map((t, i) => (
-              <th key={t} scope="col" className={cn("etiquette px-3 py-3 text-[12px] text-encre-3", i >= 2 && "text-right", t === "Client" && "text-left")}>{t}</th>
+              <th key={t} scope="col" className={cn("etiquette px-3 py-3 text-[12px] whitespace-nowrap text-encre-3", i >= 2 && "text-right", t === "Client" && "text-left", t === "Étape" && "min-w-40")}>{t}</th>
             ))}
           </tr>
         </thead>
@@ -321,7 +358,7 @@ function TableauVehicules({ vehicules, selection, basculer }: { vehicules: Vehic
                   <PhotoVehicule path={v.photo_principale_path} alt="" className="h-11 w-16 shrink-0 rounded-lg" />
                   <span className="min-w-0">
                     <span className="block font-bold hover:text-primaire">{v.libelle}</span>
-                    <span className="block font-mono text-[12px] text-encre-3">{v.reference}{v.vin ? ` · ${v.vin}` : ""}</span>
+                    <span className="block font-mono text-[12px] whitespace-nowrap text-encre-3">{v.reference}{v.vin ? ` · ${v.vin}` : ""}</span>
                   </span>
                 </Link>
               </td>

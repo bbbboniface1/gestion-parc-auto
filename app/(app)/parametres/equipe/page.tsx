@@ -47,7 +47,13 @@ export default function PageEquipe() {
               <li key={m.user_id} className={cn("flex flex-col gap-3 border-b border-trait px-4 py-3 last:border-b-0 sm:flex-row sm:items-center", !m.actif && "opacity-60")}>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold">{m.nom_affiche || m.email}{m.moi && <span className="ml-2 text-[12px] font-normal text-encre-3">vous</span>}</p>
-                  <p className="truncate text-[14px] text-encre-3">{[m.email, m.telephone].filter(Boolean).join(" · ")}{!m.actif ? " · désactivé" : ""}</p>
+                  {/* Le téléphone n'est jamais coupé : sur téléphone, il passe à la ligne sous l'e-mail. */}
+                  <p className="flex flex-wrap gap-x-2 text-[14px] text-encre-3">
+                    {m.email && <span className="min-w-0 [overflow-wrap:anywhere]">{m.email}</span>}
+                    {m.email && m.telephone && <span aria-hidden>·</span>}
+                    {m.telephone && <span className="chiffres whitespace-nowrap">{m.telephone}</span>}
+                    {!m.actif && <span>· désactivé</span>}
+                  </p>
                 </div>
                 {proprietaire && !m.moi && m.role !== "proprietaire" ? (
                   <div className="flex items-center gap-2">

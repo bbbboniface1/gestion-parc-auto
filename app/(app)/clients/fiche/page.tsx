@@ -70,7 +70,9 @@ function Fiche() {
        *  2. second plan, plus calme — son historique (achats, total acheté), ses listes et ses coordonnées. */}
       <div className="flex flex-col gap-6 lg:gap-8">
         <section className="apparition relative overflow-hidden rounded-carte bg-heros p-6 text-white shadow-flottante lg:p-8">
-          <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          {/* En rangée dès 640 px, sauf entre 896 et 1279 px où la barre latérale réduit la place : l'identité
+           *  passe alors au-dessus des actions, comme sur l'écran pilote. */}
+          <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between lg:flex-col lg:items-start xl:flex-row xl:items-center">
             <div className="flex min-w-0 items-center gap-4">
               <Avatar nom={c.nom} taille={72} className="ring-4 ring-white/20" />
               <div className="min-w-0">
@@ -81,19 +83,21 @@ function Fiche() {
                 </p>
               </div>
             </div>
+            {/* Sur téléphone, chaque action s'étire pour remplir sa ligne : deux actions qui tiennent ensemble se
+             *  partagent la ligne, sinon chacune prend toute la largeur (plus d'escalier de largeurs inégales). */}
             <div className="flex flex-wrap gap-2">
               {c.telephone && (
-                <a href={`tel:${c.telephone}`} className="onde inline-flex h-11 items-center gap-2 rounded-full bg-white px-4 font-semibold text-nuit transition-transform hover:-translate-y-px lg:h-10">
+                <a href={`tel:${c.telephone}`} className="onde inline-flex h-11 flex-auto items-center justify-center gap-2 sm:flex-none rounded-full bg-white px-4 font-semibold text-nuit transition-transform hover:-translate-y-px lg:h-10">
                   <Phone size={18} weight="fill" className="text-primaire" aria-hidden /> Appeler {prenom}
                 </a>
               )}
               {tel && (
-                <a href={lienWhatsApp(tel, `Bonjour ${c.nom},`)} target="_blank" rel="noopener" className="onde inline-flex h-11 items-center gap-2 rounded-full bg-marque-whatsapp px-4 font-semibold text-sur-marque-whatsapp transition-transform hover:-translate-y-px lg:h-10">
+                <a href={lienWhatsApp(tel, `Bonjour ${c.nom},`)} target="_blank" rel="noopener" className="onde inline-flex h-11 flex-auto items-center justify-center gap-2 sm:flex-none rounded-full bg-marque-whatsapp px-4 font-semibold text-sur-marque-whatsapp transition-transform hover:-translate-y-px lg:h-10">
                   <WhatsappLogo size={18} weight="fill" aria-hidden /> WhatsApp
                 </a>
               )}
               {peutModifier && (
-                <button type="button" onClick={() => setFeuille("modifier")} className="onde inline-flex h-11 items-center gap-2 rounded-full bg-white/10 px-4 font-semibold text-white ring-1 ring-white/25 transition-colors hover:bg-white/20 lg:h-10">
+                <button type="button" onClick={() => setFeuille("modifier")} className="onde inline-flex h-11 flex-auto items-center justify-center gap-2 sm:flex-none rounded-full bg-white/10 px-4 font-semibold text-white ring-1 ring-white/25 transition-colors hover:bg-white/20 lg:h-10">
                   <PencilSimple size={18} weight="duotone" aria-hidden /> Modifier la fiche
                 </button>
               )}
@@ -102,14 +106,16 @@ function Fiche() {
         </section>
 
         <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
-          <div className="grid min-w-0 grid-cols-2 gap-4 lg:col-span-8 lg:gap-6">
+          {/* Entre 896 et 1279 px, la carte de second plan passe sous les tuiles, sur toute la largeur ; au-delà, sa
+           *  seconde colonne prend la largeur de son contenu pour que la date du dernier achat tienne sur une ligne. */}
+          <div className="grid min-w-0 grid-cols-2 gap-4 lg:col-span-12 lg:gap-6 xl:col-span-8">
             <TuileIndicateur index={1} libelle="Reste dû" valeur={c.reste_du_xof} complement={c.reste_du_xof > 0 ? "à encaisser" : "tout est réglé"}
               couleur={c.reste_du_xof > 0 ? "var(--accent)" : "var(--gain)"} icone={<CurrencyCircleDollar className="size-5" />} />
             <TuileIndicateur index={2} libelle="Recherche" valeur={c.demandes.filter((d) => d.statut === "ouverte").length} format={(x) => String(Math.round(x))}
               complement={nosCorrespondances.length ? `${pluriel(nosCorrespondances.length, "véhicule")} correspond` : "demande ouverte"}
               couleur="var(--acier)" icone={<MagnifyingGlassPlus className="size-5" />} />
           </div>
-          <div className="carte apparition grid min-w-0 grid-cols-2 gap-4 p-4 lg:col-span-4 lg:p-6" style={decalage(3, 60)}>
+          <div className="carte apparition grid min-w-0 grid-cols-2 gap-4 p-4 lg:col-span-12 lg:p-6 xl:col-span-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:content-center" style={decalage(3, 60)}>
             <div className="min-w-0">
               <span className="block text-[14px] text-encre-3">Achats</span>
               <span className="chiffres mt-1 block text-[24px] leading-tight font-bold text-encre">{actives.length}</span>
@@ -137,10 +143,11 @@ function Fiche() {
                           <Picto icone={Invoice} couleur={v.statut === "annulee" ? "var(--perte)" : part >= 1 ? "var(--gain)" : "var(--accent)"} taille="sm" />
                           <div className="min-w-0 flex-1">
                             <p className="flex flex-wrap items-center gap-2">
-                              <span className="truncate font-bold group-hover:text-primaire">{v.vehicule_libelle}</span>
+                              <span className="line-clamp-2 font-bold group-hover:text-primaire">{v.vehicule_libelle}</span>
                               {v.statut === "annulee" && <Tampon type="annule" />}
                             </p>
-                            <p className="truncate font-mono text-[12px] text-encre-3">{v.numero} · {formatDate(v.date_vente)}</p>
+                            {/* Numéro et date insécables : sur un écran étroit, la date passe à la ligne au lieu d'être coupée. */}
+                            <p className="font-mono text-[12px] text-encre-3"><span className="whitespace-nowrap">{v.numero}</span> · <span className="whitespace-nowrap">{formatDate(v.date_vente)}</span></p>
                             {v.statut === "active" && (
                               <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-2">
                                 <div className="h-full origin-left rounded-full [animation:remplit_900ms_both]" style={{ width: `${part * 100}%`, background: part >= 1 ? "var(--gain)" : v.retard_xof > 0 ? "var(--perte)" : "var(--accent)" }} />
@@ -171,8 +178,8 @@ function Fiche() {
                       <Link href={p.vente_id ? `/ventes/fiche/?id=${p.vente_id}` : `/parc/vehicule/?id=${p.vehicule_id}`} className="group flex items-center gap-3 rounded-xl p-3 transition-colors hover:bg-surface-2">
                         <Picto icone={Invoice} couleur="var(--encre-3)" taille="sm" />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-bold group-hover:text-primaire">{p.vehicule_libelle ?? p.vehicule_reference ?? "Véhicule"}</p>
-                          <p className="truncate font-mono text-[12px] text-encre-3">{p.numero} · valable jusqu&apos;au {formatDate(p.valide_jusqu_au)}</p>
+                          <p className="line-clamp-2 font-bold group-hover:text-primaire">{p.vehicule_libelle ?? p.vehicule_reference ?? "Véhicule"}</p>
+                          <p className="font-mono text-[12px] text-encre-3"><span className="whitespace-nowrap">{p.numero}</span> · valable jusqu&apos;au <span className="whitespace-nowrap">{formatDate(p.valide_jusqu_au)}</span></p>
                         </div>
                         <div className="shrink-0 text-right">
                           <Montant valeur={p.montant_ttc} devise={null} court />

@@ -209,7 +209,9 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
             <div className="flex rounded-sm border border-trait p-0.5" role="group" aria-label="Unité du compteur">
               {(["km", "mi"] as const).map((u) => (
                 <button key={u} type="button" aria-pressed={unite === u} onClick={() => setUnite(u)}
-                  className={cn("h-8 rounded-xs px-2 font-mono text-[12px]", unite === u ? "bg-encre text-surface" : "text-encre-3")}>{u}</button>
+                  // Dessin de 32 px, zone d'appui de 44 × 44 px sur téléphone : un appui manqué fausserait le compteur d'un facteur 1,6.
+                  className={cn("relative h-8 min-w-11 rounded-xs px-2 font-mono text-[12px] before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-[''] lg:min-w-0 lg:before:hidden",
+                    unite === u ? "bg-encre text-surface" : "text-encre-3")}>{u}</button>
               ))}
             </div>
           }
@@ -270,7 +272,8 @@ export function FormulaireVehicule({ vehicule }: { vehicule?: Vehicule }) {
       )}
 
       <Section titre="Administratif">
-        <div className="grid grid-cols-2 gap-3">
+        {/* Une colonne sur téléphone : « Immatriculation facultatif » ne tient pas dans une demi-largeur. */}
+        <div className="grid gap-3 sm:grid-cols-2">
           <Champ libelle="Immatriculation" facultatif mono value={b.immatriculation} onChange={(e) => maj("immatriculation", e.target.value.toUpperCase())} placeholder="AB-1234-MD" />
           <Selection libelle="Carte grise" value={b.carte_grise} onChange={(e) => maj("carte_grise", e.target.value)}
             options={[{ valeur: "a_faire", libelle: "À faire" }, { valeur: "en_cours", libelle: "En cours" }, { valeur: "obtenue", libelle: "Obtenue" }]} />

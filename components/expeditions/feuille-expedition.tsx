@@ -67,18 +67,20 @@ export function FeuilleExpedition({ ouverte, onFermer, expedition, onCree }: {
         <Champ libelle="Référence" facultatif mono value={reference} onChange={(e) => setReference(e.target.value)} aide="Laissez vide pour une référence automatique." />
         {mode === "conteneur" && <Champ libelle="Numéro de conteneur" facultatif mono value={numeroConteneur} onChange={(e) => setNumeroConteneur(e.target.value.toUpperCase())} placeholder="MSCU4471203" />}
         <Champ libelle="Numéro de connaissement (BL)" facultatif mono value={numeroBl} onChange={(e) => setNumeroBl(e.target.value)} />
-        <div className="grid grid-cols-2 gap-3">
+        {/* Paires de champs alignées sur le bas : sur téléphone étroit, un libellé peut passer sur deux lignes
+            sans que son voisin le fasse, les champs restent pourtant à la même hauteur. */}
+        <div className="grid grid-cols-2 items-end gap-3">
           <Selection libelle="Compagnie" facultatif vide="Choisir…" value={compagnie} onChange={(e) => setCompagnie(e.target.value)}
             options={compagnies.length ? compagnies.map((c) => ({ valeur: c.libelle, libelle: c.libelle })) : [{ valeur: "MSC", libelle: "MSC" }, { valeur: "Maersk", libelle: "Maersk" }, { valeur: "CMA CGM", libelle: "CMA CGM" }, { valeur: "Grimaldi", libelle: "Grimaldi" }]} />
           <Champ libelle="Navire" facultatif value={navire} onChange={(e) => setNavire(e.target.value)} />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 items-end gap-3">
           <Selection libelle="Port de départ" facultatif vide="Choisir…" value={portDepart} onChange={(e) => setPortDepart(e.target.value)}
             options={ports.filter((p) => p.type === "port_depart").map((p) => ({ valeur: p.libelle, libelle: p.libelle }))} />
           <Selection libelle="Port d'arrivée" facultatif vide="Choisir…" value={portArrivee} onChange={(e) => setPortArrivee(e.target.value)}
             options={ports.filter((p) => p.type === "port_arrivee").map((p) => ({ valeur: p.libelle, libelle: p.libelle }))} />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 items-end gap-3">
           <Champ libelle="Date de départ" facultatif type="date" value={dateDepart} onChange={(e) => setDateDepart(e.target.value)} />
           <Champ libelle="Arrivée prévue" facultatif type="date" value={dateArriveePrevue} onChange={(e) => setDateArriveePrevue(e.target.value)} />
         </div>

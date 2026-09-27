@@ -67,15 +67,19 @@ export function FeuilleComptes({ ouverte, onFermer, comptes }: { ouverte: boolea
             const a = apparenceCompte(c);
             return (
               <button key={c.id} type="button" onClick={() => setEdition({ id: c.id, nom: c.nom, type: c.type, soldeInitial: c.solde_initial, actif: c.actif })}
-                className={cn("onde carte carte-lien group flex items-center gap-3 p-4 text-left", !c.actif && "opacity-60")}>
-                {/* Même couleur que la carte du compte dans l'onglet Trésorerie (opérateur reconnu, sinon type). */}
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl" style={{ background: a.fond, color: a.texte }}><a.icone size={20} weight="fill" aria-hidden /></span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-bold group-hover:text-primaire">{c.nom}</span>
+                className={cn(
+                  // Sur téléphone, le solde passe sous le nom : le nom (seule identité du compte) n'est plus coupé.
+                  "onde carte carte-lien group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 p-4 text-left sm:grid-cols-[auto_minmax(0,1fr)_auto_auto]",
+                  !c.actif && "opacity-60",
+                )}>
+                {/* Même couleur que la tuile du compte dans l'onglet Trésorerie (opérateur reconnu, sinon type). */}
+                <span className="col-start-1 row-span-2 row-start-1 grid size-11 place-items-center rounded-xl sm:row-span-1" style={{ background: a.fond, color: a.texte }}><a.icone size={20} weight="fill" aria-hidden /></span>
+                <span className="col-start-2 row-start-1 min-w-0">
+                  <span className="block font-bold break-words group-hover:text-primaire">{c.nom}</span>
                   <span className="block text-[14px] text-encre-3">{t.libelle}{!c.actif ? " · désactivé" : ""}</span>
                 </span>
-                <span className="chiffres shrink-0 text-right text-[16px] font-bold">{formatFCFA(c.solde_xof ?? 0)}</span>
-                <PencilSimple size={16} weight="duotone" className="shrink-0 text-encre-3" aria-hidden />
+                <span className="chiffres col-start-2 row-start-2 text-[16px] font-bold whitespace-nowrap sm:col-start-3 sm:row-start-1 sm:text-right">{formatFCFA(c.solde_xof ?? 0)}</span>
+                <PencilSimple size={16} weight="duotone" className="col-start-3 row-span-2 row-start-1 shrink-0 text-encre-3 sm:col-start-4 sm:row-span-1" aria-hidden />
               </button>
             );
           })}

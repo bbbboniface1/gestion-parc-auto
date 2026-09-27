@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Eye } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import type { Parametres } from "@/lib/api/parametres";
@@ -20,9 +20,18 @@ import { Code } from "@/components/ui/signature";
 const COULEURS = ["#B5461E", "#1B1D22", "#1F6F7A", "#1B7148", "#2F5A7A", "#7A3E5D"];
 const VARIABLES_WHATSAPP = [
   ["client", "Moussa Traoré"], ["numero", "FAC-2026-0047"], ["montant", "14 500 000 FCFA"],
-  ["reste", "7 500 000 FCFA"], ["vehicule", "Toyota RAV4 2018"], ["entreprise", "Sahel Auto Import"],
+  ["reste", "7 500 000 FCFA"], ["vehicule", "Toyota RAV4 2018"], ["entreprise", "Sahel Auto Import"], ["document", "facture"],
 ] as const;
 const MODELE_PAR_DEFAUT = "Bonjour {client}, voici votre facture {numero} pour le {vehicule} : {montant}. Reste à payer : {reste}. Merci de votre confiance, {entreprise}.";
+
+/**
+ * Aperçu du message : une {variable} que l'envoi ne sait pas remplir reste telle quelle dans le texte (remplirModele) ;
+ * on la fait ressortir en couleur de perte pour qu'elle soit corrigée avant l'envoi.
+ */
+function apercuMessage(texte: string): ReactNode {
+  return texte.split(/(\{\w+\})/g).map((morceau, i) =>
+    i % 2 === 1 ? <mark key={i} className="rounded-sm bg-perte-voile px-0.5 font-semibold text-perte-texte">{morceau}</mark> : morceau);
+}
 
 /** Document d'exemple construit avec les réglages en cours (même non enregistrés). */
 function documentExemple(p: Parametres, logo: string | null, cachet: string | null, signature: string | null): DonneesDocument {
@@ -148,7 +157,8 @@ export default function PageDocuments() {
               {COULEURS.map((c) => (
                 <button key={c} type="button" aria-label={`Couleur ${c}`} aria-pressed={p.couleur_documents.toUpperCase() === c}
                   onClick={() => maj("couleur_documents", c)}
-                  className={cn("size-11 rounded-controle border-2 lg:size-10", p.couleur_documents.toUpperCase() === c ? "border-encre" : "border-transparent")}
+                  // Contour neutre sur chaque pastille : une couleur proche du fond de la carte (le noir en thème sombre) reste visible.
+                  className={cn("size-11 rounded-controle border-2 ring-1 ring-encre-3 lg:size-10", p.couleur_documents.toUpperCase() === c ? "border-encre" : "border-transparent")}
                   style={{ background: c }} />
               ))}
               <label className="ml-1 flex items-center gap-2 text-[14px] text-encre-2">
@@ -169,7 +179,7 @@ export default function PageDocuments() {
           </div>
           <div className="rounded-controle bg-surface-2 px-4 py-3 text-[14px] text-encre">
             <p className="etiquette mb-1 text-[12px] text-encre-3">Aperçu</p>
-            <p className="whitespace-pre-line">{remplirModele(modele || MODELE_PAR_DEFAUT, Object.fromEntries(VARIABLES_WHATSAPP))}</p>
+            <p className="whitespace-pre-line">{apercuMessage(remplirModele(modele || MODELE_PAR_DEFAUT, Object.fromEntries(VARIABLES_WHATSAPP)))}</p>
           </div>
           {!modele && <Bouton variante="fantome" taille="sm" className="self-start" onClick={() => maj("modele_message_whatsapp", MODELE_PAR_DEFAUT)}>Utiliser le modèle proposé</Bouton>}
         </Groupe>

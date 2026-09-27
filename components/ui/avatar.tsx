@@ -13,7 +13,7 @@ export function Avatar({ nom, taille = 44, className }: { nom: string; taille?: 
   const fond = TEINTES[h % TEINTES.length]!;
   return (
     <span aria-hidden className={cn("grid shrink-0 place-items-center rounded-full font-bold text-white", className)}
-      style={{ width: taille, height: taille, fontSize: taille * 0.36, background: fond }}>
+      style={{ width: taille, height: taille, fontSize: taille >= 72 ? 24 : taille >= 48 ? 18 : taille >= 40 ? 16 : taille >= 32 ? 14 : 12, background: fond }}>
       {initiales(nom)}
     </span>
   );

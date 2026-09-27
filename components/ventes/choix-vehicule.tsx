@@ -10,12 +10,16 @@ import { cn } from "@/lib/cn";
 import { EtiquetteEtape, Montant } from "@/components/ui/signature";
 import { PhotoVehicule } from "@/components/metier/photo-vehicule";
 
-/** Recherche parmi les véhicules non vendus (en vente, réservés y compris) pour démarrer une vente ou une proforma. */
-export function ChoixVehicule({ valeur, onChoix }: { valeur: Vehicule | null; onChoix: (v: Vehicule | null) => void }) {
+/**
+ * Recherche parmi les véhicules non vendus (en vente, réservés y compris) pour démarrer une vente ou une proforma.
+ * `limite` : nombre de véhicules proposés avant recherche ; plus court dans une fenêtre, pour que les champs
+ * suivants (client, prix) restent visibles sans défiler.
+ */
+export function ChoixVehicule({ valeur, onChoix, limite = 8 }: { valeur: Vehicule | null; onChoix: (v: Vehicule | null) => void; limite?: number }) {
   const org = useOrg();
   const [q, setQ] = useState("");
   const { data } = useLecture<Vehicule[]>("vehicules_lister", { p_org: org.id, p_filtres: { q: q.trim() || undefined } });
-  const liste = (data ?? []).filter((v) => v.statut_commercial !== "vendu").slice(0, 8);
+  const liste = (data ?? []).filter((v) => v.statut_commercial !== "vendu").slice(0, limite);
 
   if (valeur) {
     return (

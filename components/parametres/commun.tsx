@@ -100,17 +100,26 @@ export function BarreEnregistrement({ sale, enregistrement, onEnregistrer, onAnn
   }, [sale]);
   if (!sale) return null;
   return (
-    <div role="region" aria-label="Modifications non enregistrées"
-      className="zone-sure-bas apparition fixed inset-x-4 bottom-20 z-40 rounded-carte bg-heros px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(5rem+2rem)] rail:left-[calc(16rem+2rem)] lg:right-8">
-      <div className="mx-auto flex max-w-[1280px] items-center gap-3">
-        <span className="flex flex-1 items-center gap-2 text-[14px] font-semibold">
-          <span aria-hidden className="relative flex size-2"><span className="absolute inline-flex size-full animate-ping rounded-full bg-nuit-ocre opacity-60" /><span className="relative inline-flex size-2 rounded-full bg-nuit-ocre" /></span>
-          Modifications non enregistrées
-        </span>
-        <Bouton variante="sur-nuit" taille="sm" onClick={onAnnuler}>Annuler</Bouton>
-        <Bouton variante="primaire" taille="sm" chargement={enregistrement} onClick={onEnregistrer}>Enregistrer</Bouton>
+    <>
+      {/* Place réservée dans le flux : la barre fixe ne recouvre jamais le bas de la dernière carte, même tout en bas
+          de la page (elle s'ajoute au padding de <main>, prévu pour la seule barre de navigation). */}
+      <div aria-hidden className="h-24 sm:h-16" />
+      <div role="region" aria-label="Modifications non enregistrées"
+        className="zone-sure-bas apparition fixed inset-x-4 bottom-20 z-40 rounded-carte bg-heros px-4 py-3 text-sur-nuit shadow-flottante lg:bottom-6 lg:left-[calc(5rem+2rem)] rail:left-[calc(16rem+2rem)] lg:right-8">
+        {/* Téléphone : le message sur sa propre ligne, les boutons dessous à droite ; il ne se casse plus mot par mot. */}
+        <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-3 gap-y-2">
+          <span className="flex basis-full items-center gap-2 text-[14px] font-semibold sm:flex-1 sm:basis-auto">
+            {/* Le point pulse trois fois pour attirer l'œil, puis reste fixe ; aucune pulsation si l'on a demandé moins d'animations. */}
+            <span aria-hidden className="relative flex size-2"><span className="absolute inline-flex size-full animate-ping rounded-full bg-nuit-ocre opacity-60 [animation-iteration-count:3] motion-reduce:hidden" /><span className="relative inline-flex size-2 rounded-full bg-nuit-ocre" /></span>
+            Modifications non enregistrées
+          </span>
+          <span className="ml-auto flex gap-3">
+            <Bouton variante="sur-nuit" taille="sm" onClick={onAnnuler}>Annuler</Bouton>
+            <Bouton variante="primaire" taille="sm" chargement={enregistrement} onClick={onEnregistrer}>Enregistrer</Bouton>
+          </span>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

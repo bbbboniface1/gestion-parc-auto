@@ -41,21 +41,31 @@ export function NouvelleProforma({ ouverte, onFermer }: { ouverte: boolean; onFe
 
   const valide = !!vehicule && !!client && !!prix && prix > 0;
   const jours = reglages?.parametres.validite_proforma_jours ?? 15;
+  // Même message que la page Nouvelle vente : le bouton grisé dit pourquoi il l'est.
+  const manque = [!vehicule && "le véhicule", !client && "le client", !(prix && prix > 0) && "le prix"].filter((x): x is string => !!x);
 
   return (
     <Feuille ouverte={ouverte} onFermer={onFermer} titre="Nouvelle proforma" pleinEcran
       description={`Valable ${jours} jours par défaut.`}
-      pied={<>
-        <Bouton variante="secondaire" onClick={onFermer}>Annuler</Bouton>
-        <Bouton variante="primaire" disabled={!valide} chargement={creer.isPending} onClick={() => {
-          if (!vehicule || !client || prix === null) return;
-          creer.executer({ p_org: org.id, p_data: { id, vehicule_id: vehicule.id, client_id: client.id, prix_xof: prix, date: aujourdhui() } });
-        }}>Créer la proforma</Bouton>
-      </>}>
+      pied={
+        // Téléphone : le message au-dessus des boutons ; ordinateur : à gauche, boutons à droite.
+        <div className="flex w-full flex-col gap-2 lg:flex-row lg:items-center lg:gap-4">
+          {manque.length > 0 && (
+            <p className="min-w-0 text-[14px] text-encre-2 lg:flex-1" role="status">Il manque : {manque.join(", ")}.</p>
+          )}
+          <div className="flex gap-2 max-lg:[&>*]:flex-1 lg:ml-auto">
+            <Bouton variante="secondaire" onClick={onFermer}>Annuler</Bouton>
+            <Bouton variante="primaire" disabled={!valide} chargement={creer.isPending} onClick={() => {
+              if (!vehicule || !client || prix === null) return;
+              creer.executer({ p_org: org.id, p_data: { id, vehicule_id: vehicule.id, client_id: client.id, prix_xof: prix, date: aujourdhui() } });
+            }}>Créer la proforma</Bouton>
+          </div>
+        </div>
+      }>
       <div className="flex flex-col gap-6">
         <div>
           <p className="mb-2 text-[14px] font-medium text-encre-2">Véhicule</p>
-          <ChoixVehicule valeur={vehicule} onChoix={setVehicule} />
+          <ChoixVehicule valeur={vehicule} onChoix={setVehicule} limite={4} />
         </div>
         <div>
           <p className="mb-2 text-[14px] font-medium text-encre-2">Client</p>
