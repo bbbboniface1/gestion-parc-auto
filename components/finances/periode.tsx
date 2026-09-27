@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/cn";
-
 export interface Periode { du: string; au: string; }
 export type CodePeriode = "mois" | "mois_precedent" | "trimestre" | "annee";
 
@@ -19,22 +17,4 @@ export function periodePour(code: CodePeriode): Periode {
     case "trimestre": return { du: iso(new Date(n.getFullYear(), n.getMonth() - 2, 1)), au: iso(n) };
     case "annee": return { du: iso(new Date(n.getFullYear(), 0, 1)), au: iso(n) };
   }
-}
-
-const OPTIONS: { valeur: CodePeriode; libelle: string }[] = [
-  { valeur: "mois", libelle: "Ce mois" }, { valeur: "mois_precedent", libelle: "Mois dernier" },
-  { valeur: "trimestre", libelle: "3 mois" }, { valeur: "annee", libelle: "Cette année" },
-];
-
-export function SelecteurPeriode({ valeur, onChange }: { valeur: CodePeriode; onChange: (c: CodePeriode) => void }) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {OPTIONS.map((o) => (
-        <button key={o.valeur} type="button" aria-pressed={valeur === o.valeur} onClick={() => onChange(o.valeur)}
-          className={cn("h-11 shrink-0 rounded-controle border px-3 text-[14px] lg:h-10", valeur === o.valeur ? "border-encre bg-encre text-surface" : "border-trait-fort bg-surface text-encre-2")}>
-          {o.libelle}
-        </button>
-      ))}
-    </div>
-  );
 }
