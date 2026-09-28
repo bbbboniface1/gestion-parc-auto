@@ -35,7 +35,10 @@ await executer("le workflow véhicule ↔ conteneur ↔ dépenses", async ({ pag
   await page.getByRole("button", { name: /Le véhicule part en convoi/ }).first().waitFor({ timeout: D });
   console.log("✓ à l'arrivée du conteneur, la prochaine action du véhicule devient « part en convoi »");
 
-  // 4. L'expédition raconte la même histoire, sans incohérence
+  // 4. L'expédition raconte la même histoire, sans incohérence.
+  // La démonstration enregistre ses écritures en différé (lib/demo/moteur.ts) : un vrai utilisateur est prévenu s'il
+  // recharge trop tôt, Playwright non. On laisse passer la fenêtre d'enregistrement avant de recharger la page.
+  await page.waitForTimeout(5_000);
   await page.goto(`${base}/expeditions/`, { waitUntil: "domcontentloaded" });
   await page.getByRole("link", { name: /EXP-0003/ }).first().click();
   await page.getByText("Arrivée au port").first().waitFor({ timeout: D });
