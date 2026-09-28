@@ -118,6 +118,7 @@ function Fiche() {
   const p = reglages?.parametres;
   const modifier = peut(org.role, "modifierVehicule");
   const saisirFrais = peut(org.role, "saisirFrais");
+  const documents = peut(org.role, "documents");
   const vendre = peut(org.role, "vendre") && v.statut_commercial !== "vendu" && !v.archive;
   const workflow = { etape: v.etape, archive: v.archive, statut_commercial: v.statut_commercial, expedition: v.expedition };
   const suivante = prochaineAction(workflow);
@@ -176,7 +177,7 @@ function Fiche() {
     { cle: "suivante", titre: suivante?.titre ?? "Étape suivante", detail: suivante ? `${suivante.detail}` : undefined, icone: iconeProchaine, couleur: couleurProchaine, onClick: jouerProchaine, masque: !modifier || !suivante },
     { cle: "frais", titre: "Ajouter un frais", detail: "Fret, douane, atelier : compté dans le coût", icone: CurrencyCircleDollar, couleur: "var(--accent)", onClick: () => setFeuille("frais"), masque: !saisirFrais },
     { cle: "photos", titre: "Ajouter des photos", detail: `${pluriel(v.photos.length, "photo")} · appareil ou galerie`, icone: Camera, couleur: "var(--etape-en-mer)", onClick: () => champPhoto.current?.click(), masque: !modifier },
-    { cle: "document", titre: "Ajouter un document", detail: `${pluriel(v.documents.length, "document")} · BL, titre, douane`, icone: FolderSimplePlus, couleur: "var(--etape-achete)", onClick: () => setFeuille("document"), masque: !modifier },
+    { cle: "document", titre: "Ajouter un document", detail: `${pluriel(v.documents.length, "document")} · BL, titre, douane`, icone: FolderSimplePlus, couleur: "var(--etape-achete)", onClick: () => setFeuille("document"), masque: !documents },
     { cle: "reserver", titre: "Réserver pour un client", detail: "Bloque la vente jusqu'à une date", icone: BookmarkSimple, couleur: "var(--reserve)", onClick: () => setFeuille("reserver"), masque: !vendre || v.statut_commercial !== "disponible" },
     { cle: "liberer", titre: "Lever la réservation", detail: v.reserve_client_nom ? `Réservé pour ${v.reserve_client_nom}` : undefined, icone: XCircle, couleur: "var(--reserve)", onClick: () => liberer.executerAsync({ p_org: org.id, p_id: v.id }), masque: !vendre || v.statut_commercial !== "reserve" },
     { cle: "modifier", titre: "Modifier la fiche", detail: "VIN, prix, kilométrage, notes", icone: PencilSimple, couleur: "var(--primaire)", href: `/parc/modifier/?id=${v.id}`, masque: !modifier },
@@ -310,7 +311,7 @@ function Fiche() {
           )}
 
           <Bloc titre={`Documents · ${v.documents.length}`}
-            action={modifier ? <Bouton variante="fantome" taille="sm" icone={<Plus className="size-4" />} onClick={() => setFeuille("document")}>Ajouter</Bouton> : undefined}>
+            action={documents ? <Bouton variante="fantome" taille="sm" icone={<Plus className="size-4" />} onClick={() => setFeuille("document")}>Ajouter</Bouton> : undefined}>
             {v.documents.length > 0 ? (
               <ul className="-my-1">
                 {v.documents.map((d) => (
@@ -323,7 +324,7 @@ function Fiche() {
                         <span className="block text-[13px] text-encre-3">{TYPES_DOCUMENT.find((t) => t.valeur === d.type)?.libelle ?? d.type} · {formatDate(d.created_at)}</span>
                       </span>
                     </button>
-                    {modifier && (
+                    {documents && (
                       <button type="button" aria-label={`Supprimer ${d.nom}`} title="Supprimer"
                         onClick={() => { if (window.confirm(`Supprimer « ${d.nom} » ?`)) supprimerDocument.executer({ p_org: org.id, p_id: d.id }); }}
                         className="onde inline-grid size-9 shrink-0 place-items-center rounded-full text-encre-3 hover:bg-perte-voile hover:text-perte-texte"><Trash size={16} weight="duotone" aria-hidden /></button>

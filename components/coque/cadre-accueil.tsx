@@ -36,6 +36,9 @@ export function CadreAccueil({ children }: { children: ReactNode }) {
                 <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[12px] font-bold">
                   <span className="size-2 rounded-full bg-[#0ea5e9]" /> En mer
                 </span>
+                <span className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-[#0ea5e9] px-2.5 py-1 text-[12px] font-bold text-white shadow-[0_10px_24px_-8px_#0ea5e9] [animation:apparition_700ms_1200ms_both]">
+                  <Boat size={14} weight="fill" /> Cotonou dans 5 jours
+                </span>
                 <span className="absolute bottom-3 left-3 text-[20px] font-extrabold text-white">9,2 M <span className="text-[12px] font-semibold opacity-80">FCFA</span></span>
               </div>
               <div className="p-4">
@@ -64,9 +67,6 @@ export function CadreAccueil({ children }: { children: ReactNode }) {
               </span>
             </div>
 
-            <div className="absolute bottom-24 left-6 flex items-center gap-2 rounded-full bg-[#0ea5e9] px-3 py-1.5 text-[12px] font-bold shadow-[0_10px_24px_-8px_#0ea5e9] [animation:apparition_700ms_1200ms_both]">
-              <Boat size={16} weight="fill" /> Cotonou dans 5 jours
-            </div>
           </div>
 
           <p className="mt-auto hidden pt-8 text-[12px] text-white/60 lg:block">

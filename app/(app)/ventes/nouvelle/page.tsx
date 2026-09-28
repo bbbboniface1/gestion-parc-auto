@@ -7,7 +7,8 @@ import { nouvelId, useEcriture, useLecture } from "@/lib/api/requetes";
 import { useParametres } from "@/lib/api/parametres";
 import { useOrg } from "@/lib/session";
 import type { Vehicule } from "@/lib/api/types";
-import { MODES_PAIEMENT, type ModePaiement } from "@/lib/domaine";
+import { MODES_PAIEMENT, peut, type ModePaiement } from "@/lib/domaine";
+import { EtatVide } from "@/components/ui/etats";
 import { aujourdhui, formatFCFA, formatNombre } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import { CalendarCheck, CarProfile, CheckCircle, HandCoins, Invoice, Money, UserCircle, Warning } from "@phosphor-icons/react";
@@ -267,6 +268,15 @@ function NouvelleVente() {
 }
 
 export default function PageNouvelleVente() {
+  const org = useOrg();
+  if (!peut(org.role, "vendre")) {
+    return (
+      <>
+        <EnTetePage titre="Nouvelle vente" />
+        <EtatVide titre="Action réservée" texte="Seuls le propriétaire, le gérant et les vendeurs enregistrent des ventes." />
+      </>
+    );
+  }
   return (
     <Suspense>
       <NouvelleVente />

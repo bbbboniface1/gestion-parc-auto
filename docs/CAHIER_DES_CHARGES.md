@@ -136,6 +136,8 @@ montants FCFA arrondis à l'unité. Horodatages en `timestamptz`.
   portée par le véhicule est figée. Le reste du frais est réparti entre les véhicules **non vendus** du conteneur, y compris
   ceux ajoutés plus tard ; un frais saisi après la vente ne touche que les non vendus. Annuler la vente libère ses parts.
   Corriger le montant ou la répartition d'un frais recalcule tout, parts figées comprises ; le supprimer supprime ses parts.
+  Si tous les véhicules du conteneur sont vendus, un nouveau frais est réparti entre tous, vendus compris, et ces parts
+  sont figées aussitôt (migration 0006).
 - Frais payé sans compte précisé : imputé au compte par défaut (caisse, sinon premier compte actif), comme un encaissement.
 - Trésorerie : l'achat du véhicule (`prix_achat`) **n'est pas** un mouvement de compte (décision du 28/09/2026). Il est affiché à part (« Achats de véhicules ») et n'entre pas dans les sorties.
 - `prix_revient_xof = achat_xof + Σ frais directs + Σ parts d'expédition`

@@ -78,6 +78,7 @@ function Fiche() {
   const soldee = !annulee && v.reste_xof === 0;
   const peutEncaisser = peut(org.role, "encaisser");
   const peutAnnuler = peut(org.role, "annulerVente");
+  const peutAnnulerPaiement = peut(org.role, "annulerPaiement");
   const peutLivrer = peut(org.role, "vendre");
   const prenom = v.client.nom.split(/\s+/)[0] ?? v.client.nom;
 
@@ -187,7 +188,7 @@ function Fiche() {
                 {v.paiements.map((p, i) => {
                   const mv = MODES_VISUELS[p.mode] ?? MODES_VISUELS.autre!;
                   return (
-                    <li key={p.id} className={cn("apparition relative flex items-center gap-3", p.annule && "opacity-50")} style={{ animationDelay: `${i * 60}ms` }}>
+                    <li key={p.id} className={cn("apparition relative flex flex-wrap items-center gap-x-3 gap-y-2", p.annule && "opacity-50")} style={{ animationDelay: `${i * 60}ms` }}>
                       <span className="relative z-10 grid size-11 shrink-0 place-items-center rounded-full text-white ring-4 ring-surface" style={{ background: mv.couleur }}>
                         <mv.icone size={20} weight="fill" aria-hidden />
                       </span>
@@ -197,11 +198,11 @@ function Fiche() {
                       </div>
                       <Montant valeur={p.montant_xof} devise={null} className={cn("shrink-0", p.montant_xof < 0 ? "text-perte-texte" : "text-gain-texte")} />
                       {!p.annule && (
-                        <div className="flex shrink-0 gap-1.5">
+                        <div className="flex w-full shrink-0 justify-end gap-1.5 sm:w-auto">
                           <button type="button" onClick={() => void agir("recu", "telecharger", p.id)} className="onde inline-flex h-9 items-center gap-1 rounded-full bg-surface-2 px-3 text-[12px] font-semibold text-encre-2 hover:bg-primaire-voile hover:text-primaire">
                             <FilePdf size={16} weight="duotone" aria-hidden /> Reçu
                           </button>
-                          {peutAnnuler && (
+                          {peutAnnulerPaiement && (
                             <button type="button" onClick={() => setAnnulerPaiement(p.id)} aria-label={`Annuler le versement ${p.numero_recu}`} className="onde inline-flex h-9 items-center gap-1 rounded-full px-2.5 text-[12px] font-semibold text-encre-3 hover:bg-perte-voile hover:text-perte-texte">
                               <XCircle size={16} weight="duotone" aria-hidden /> Annuler
                             </button>

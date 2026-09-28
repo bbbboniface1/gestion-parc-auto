@@ -175,6 +175,25 @@ describe("coût de revient", () => {
     expect(port.montant_xof).toBe(900);
   });
 
+  it("conteneur entièrement vendu : un nouveau frais est réparti entre tous, vendus compris, et figé", async () => {
+    const e = await preparer("Conteneur vendu", 0);
+    const creer = async (modele: string) =>
+      (await base.rpc("vehicule_enregistrer", { p_org: e.org, p_data: { marque: "Kia", modele, prix_achat: 4000000, devise_achat: "XOF" } })).id as string;
+    const [a, b] = [await creer("A"), await creer("B")];
+    const exp = await base.rpc("expedition_enregistrer", { p_org: e.org, p_data: { mode: "conteneur" } });
+    await base.rpc("expedition_affecter", { p_org: e.org, p_id: exp.id, p_vehicule_ids: [a, b] });
+    for (const v of [a, b]) await base.rpc("vente_creer", { p_org: e.org, p_data: { vehicule_id: v, client_id: e.client, prix_xof: 9000000 } });
+    const part = async (id: string) => (await base.rpc("vehicule_obtenir", { p_org: e.org, p_id: id })).frais_expedition_xof as number;
+
+    await base.rpc("frais_enregistrer", { p_org: e.org, p_data: { expedition_id: exp.id, categorie: "port", montant: 1001, repartition: "egale" } });
+    expect([await part(a), await part(b)]).toEqual([500, 501]);
+
+    // Un véhicule ajouté ensuite ne reprend pas ce frais.
+    const c = await creer("C");
+    await base.rpc("vehicule_expedition_affecter", { p_org: e.org, p_vehicule_id: c, p_expedition_id: exp.id });
+    expect([await part(a), await part(b), await part(c)]).toEqual([500, 501, 0]);
+  });
+
   it("un frais payé sans compte va sur la caisse ; « marquer payé » aussi", async () => {
     const e = await preparer("Compte par défaut", 0);
     const [caisse] = await base.rpc("comptes_lister", { p_org: e.org });

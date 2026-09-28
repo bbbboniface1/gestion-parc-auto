@@ -6,6 +6,7 @@ import { useLecture } from "@/lib/api/requetes";
 import type { ActionAFaire, TableauDeBord, Vehicule } from "@/lib/api/types";
 import { aVerifier } from "@/lib/workflow";
 import { useOrg } from "@/lib/session";
+import { peut } from "@/lib/domaine";
 import { formatCourt, formatJour, formatPourcent, pluriel } from "@/lib/format";
 import { EnTetePage } from "@/components/coque/coque";
 import { ListeActions } from "@/components/metier/liste-actions";
@@ -28,9 +29,9 @@ export default function PageAujourdhui() {
             <Link href="/outils/simulateur/" className="inline-flex h-11 items-center gap-2 rounded-controle border border-trait-fort bg-surface px-4 text-[15px] font-semibold shadow-[0_1px_2px_rgb(15_23_42/0.05)] transition-colors hover:bg-surface-2 lg:h-10 lg:text-sm">
               <Calculator className="size-4 text-primaire" aria-hidden /> Simuler une enchère
             </Link>
-            <Link href="/parc/nouveau/" className="hidden h-10 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein px-4 text-sm font-semibold text-white shadow-bouton transition-all hover:from-[#3560e0] lg:inline-flex">
+            {peut(org.role, "modifierVehicule") && <Link href="/parc/nouveau/" className="hidden h-10 items-center gap-2 rounded-controle bg-gradient-to-b from-[#3a6cf0] to-primaire-plein px-4 text-sm font-semibold text-white shadow-bouton transition-all hover:from-[#3560e0] lg:inline-flex">
               <Plus className="size-4" aria-hidden /> Ajouter un véhicule
-            </Link>
+            </Link>}
           </>
         }
       />
@@ -44,7 +45,7 @@ export default function PageAujourdhui() {
           <Squelette className="h-72 rounded-[22px] lg:col-span-8" />
         </div>
       ) : (
-        <Contenu d={data} vehicules={parc.data ?? []} />
+        <Contenu d={data} vehicules={parc.data ?? []} finances={peut(org.role, "voirTresorerie")} />
       )}
     </>
   );
@@ -59,7 +60,7 @@ function evolution(serie: number[]): number | null {
 
 const RANG_GRAVITE = { haute: 0, moyenne: 1, info: 2 } as const;
 
-function Contenu({ d: brut, vehicules }: { d: TableauDeBord; vehicules: Vehicule[] }) {
+function Contenu({ d: brut, vehicules, finances }: { d: TableauDeBord; vehicules: Vehicule[]; finances: boolean }) {
   // Les véhicules dont l'étape contredit leur conteneur rejoignent la liste « À faire », avec leur correction en une ligne.
   const incoherences: ActionAFaire[] = aVerifier(vehicules).map(({ vehicule, souci }) => ({
     type: "incoherence_conteneur", gravite: "moyenne", titre: vehicule.libelle, detail: souci.titre, entite: "vehicule", entite_id: vehicule.id, date: null,
@@ -84,16 +85,16 @@ function Contenu({ d: brut, vehicules }: { d: TableauDeBord; vehicules: Vehicule
           <TuileIndicateur index={1} libelle="Ventes du mois" valeur={i.ventes_mois.nb} format={(v) => String(Math.round(v))}
             evolution={evolution(nbs)} serie={nbs} couleur="var(--primaire)" icone={<Receipt className="size-5" />} lien="/ventes/" />
           <TuileIndicateur index={2} libelle="Chiffre d'affaires" valeur={i.ventes_mois.ca} complement="FCFA ce mois"
-            evolution={evolution(ca)} serie={ca} couleur="var(--etape-en-mer)" icone={<TrendUp className="size-5" />} lien="/finances/?onglet=rentabilite" />
+            evolution={evolution(ca)} serie={ca} couleur="var(--etape-en-mer)" icone={<TrendUp className="size-5" />} lien={finances ? "/finances/?onglet=rentabilite" : undefined} />
           {i.ventes_mois.marge !== null ? (
             <TuileIndicateur index={3} libelle="Marge du mois" valeur={i.ventes_mois.marge} complement={tauxMarge !== null ? `${formatPourcent(tauxMarge, 0)} du chiffre d'affaires` : undefined}
-              evolution={evolution(marges)} serie={marges} couleur="var(--gain)" icone={<CurrencyCircleDollar className="size-5" />} lien="/finances/?onglet=rentabilite" />
+              evolution={evolution(marges)} serie={marges} couleur="var(--gain)" icone={<CurrencyCircleDollar className="size-5" />} lien={finances ? "/finances/?onglet=rentabilite" : undefined} />
           ) : (
             <TuileIndicateur index={3} libelle="Encaissé ce mois" valeur={i.encaisse_mois} couleur="var(--gain)" icone={<CurrencyCircleDollar className="size-5" />} />
           )}
           <TuileIndicateur index={4} libelle="Créances clients" valeur={i.creances_total}
             complement={i.a_payer_fournisseurs !== null ? `${formatCourt(i.a_payer_fournisseurs)} à payer aux fournisseurs` : "reste à encaisser"}
-            couleur="var(--accent)" icone={<HandCoins className="size-5" />} lien="/finances/?onglet=creances" />
+            couleur="var(--accent)" icone={<HandCoins className="size-5" />} lien={finances ? "/finances/?onglet=creances" : undefined} />
         </div>
       </div>
 

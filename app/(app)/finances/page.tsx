@@ -75,6 +75,7 @@ function Finances() {
   const params = useSearchParams();
   const peutVoir = peut(org.role, "voirTresorerie");
   const peutModifier = peut(org.role, "saisirFrais");
+  const peutComptes = peut(org.role, "gererComptes");
 
   const [onglet, setOnglet] = useState<Onglet>((params.get("onglet") as Onglet) ?? "tresorerie");
   const [fraisEnEvidence, setFraisEnEvidence] = useState<string | null>(params.get("frais"));
@@ -90,7 +91,7 @@ function Finances() {
   const comptes = useLecture<Compte[]>("comptes_lister", { p_org: org.id }, { enabled: peutVoir && (transfert || gererComptes) });
   const annulerTransfert = useEcriture("transfert_supprimer", { onSuccess: () => toast.success("Transfert annulé"), onError: (e) => toast.error(e.message) });
 
-  if (!peutVoir) return <EtatVide titre="Accès réservé" texte="Seuls le propriétaire, le gérant et le comptable consultent les finances." />;
+  if (!peutVoir) return <EtatVide titre="Accès réservé" texte="Les finances sont réservées au propriétaire, au gérant, au comptable et au rôle lecture seule." />;
 
   const exporterRentabilite = () => {
     if (!marges.data) return;
@@ -116,7 +117,7 @@ function Finances() {
       <EnTetePage titre="Finances" sousTitre="Où est l'argent, ce qui sort, ce qu'on vous doit, ce que ça rapporte."
         actions={
           <>
-            <Bouton className="flex-1 sm:flex-none" icone={<ArrowsLeftRight size={18} weight="duotone" className="text-primaire" />} onClick={() => setTransfert(true)}><span>Transférer<span className="hidden sm:inline"> entre comptes</span></span></Bouton>
+            {peutComptes && <Bouton className="flex-1 sm:flex-none" icone={<ArrowsLeftRight size={18} weight="duotone" className="text-primaire" />} onClick={() => setTransfert(true)}><span>Transférer<span className="hidden sm:inline"> entre comptes</span></span></Bouton>}
             {peutModifier && <Bouton className="flex-[2] sm:flex-none" variante="primaire" icone={<Plus size={18} weight="bold" />} onClick={() => setNouvelleDepense(true)}>Ajouter une dépense</Bouton>}
           </>
         } />
@@ -136,7 +137,7 @@ function Finances() {
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-[17px] font-bold">Vos comptes</h2>
-              {peutModifier && <Bouton variante="fantome" taille="sm" icone={<Gear size={16} weight="duotone" />} onClick={() => setGererComptes(true)}>Gérer les comptes</Bouton>}
+              {peutComptes && <Bouton variante="fantome" taille="sm" icone={<Gear size={16} weight="duotone" />} onClick={() => setGererComptes(true)}>Gérer les comptes</Bouton>}
             </div>
             <div className="-mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {tresorerie.data.comptes.filter((c) => c.actif || (c.solde_xof ?? 0) !== 0).map((c, i) => <CarteCompte key={c.id} c={c} index={i} />)}
@@ -177,7 +178,7 @@ function Finances() {
                         ) : (
                           <div className="flex items-center gap-3 rounded-xl px-2 py-2.5">
                             {corps}
-                            {idTransfert && peutModifier && (
+                            {idTransfert && peutComptes && (
                               <button type="button" title="Annuler ce transfert" onClick={() => { if (window.confirm("Annuler ce transfert ? Les deux comptes retrouvent leur solde d'avant.")) annulerTransfert.executer({ p_org: org.id, p_id: idTransfert }); }}
                                 className="onde inline-flex h-8 shrink-0 items-center rounded-full px-3 text-[12px] font-semibold text-encre-3 hover:bg-perte-voile hover:text-perte-texte">Annuler</button>
                             )}

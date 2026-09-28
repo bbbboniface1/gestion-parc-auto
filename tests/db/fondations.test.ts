@@ -160,6 +160,39 @@ describe("verrouillage des accès", () => {
     const suppr = await base.sql("delete from storage.objects returning name");
     expect(suppr).toEqual([]);
   });
+
+  it("stockage : l'écriture suit les rôles de l'API (logo, photos, documents)", async () => {
+    const e = await entrepriseAvecEquipe(base, "Stockage par rôle", ["gerant", "vendeur", "comptable"]);
+    const v = "00000000-0000-4000-8000-000000000001";
+    const chemins = { logo: `${e.org}/entreprise/logo.png`, photo: `${e.org}/vehicules/${v}/p.jpg`, document: `${e.org}/vehicules/${v}/documents/bl.pdf` };
+    const peutEcrire = async (uid: string, chemin: string) => {
+      await base.commeUtilisateur(uid);
+      try {
+        await base.sql("insert into storage.objects (bucket_id, name) values ('parc-auto', $1)", [chemin]);
+      } catch {
+        return false;
+      }
+      await base.commeAdmin();
+      await base.sql("delete from storage.objects where name = $1", [chemin]);
+      return true;
+    };
+    const attendu: Record<string, [boolean, boolean, boolean]> = {
+      proprietaire: [true, true, true], gerant: [true, true, true], vendeur: [false, false, false], comptable: [false, false, true],
+    };
+    for (const [role, [logo, photo, document]] of Object.entries(attendu)) {
+      const uid = e.membres[role]!;
+      expect([await peutEcrire(uid, chemins.logo), await peutEcrire(uid, chemins.photo), await peutEcrire(uid, chemins.document)], role)
+        .toEqual([logo, photo, document]);
+    }
+
+    // Un vendeur ne peut pas supprimer le logo déposé par le propriétaire.
+    await base.commeUtilisateur(e.membres.proprietaire!);
+    await base.sql("insert into storage.objects (bucket_id, name) values ('parc-auto', $1)", [chemins.logo]);
+    await base.commeUtilisateur(e.membres.vendeur!);
+    expect(await base.sql("delete from storage.objects where name = $1 returning name", [chemins.logo])).toEqual([]);
+    await base.commeAdmin();
+    await base.sql("delete from storage.objects where name = $1", [chemins.logo]);
+  });
 });
 
 describe("fichier généré pour la démo", () => {

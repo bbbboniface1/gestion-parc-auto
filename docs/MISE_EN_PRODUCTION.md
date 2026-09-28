@@ -8,7 +8,7 @@ hébergement statique. Comptez une heure la première fois.
 1. Créez un projet sur [supabase.com](https://supabase.com) (région la plus proche des utilisateurs, mot de passe de base
    solide, conservé dans un gestionnaire de mots de passe).
 2. **SQL Editor** : exécutez, dans cet ordre, `supabase/migrations/0001_schema.sql`, `0002_prive.sql`, `0003_api.sql`,
-   `0004_stockage.sql`, `0005_parts_figees_compte_defaut.sql`. Chaque fichier doit se terminer sans erreur.
+   `0004_stockage.sql`, `0005_parts_figees_compte_defaut.sql`, `0006_frais_conteneur_vendu.sql`, `0007_stockage_par_role.sql`. Chaque fichier doit se terminer sans erreur.
    - N'exécutez **jamais** `supabase/tests/bouchon_supabase.sql` ni `supabase/demo/` : ils servent aux tests et à la
      démonstration, pas à la production.
 3. **Authentication › Providers** : activez « Email ». Pour un lancement rapide, vous pouvez désactiver la confirmation

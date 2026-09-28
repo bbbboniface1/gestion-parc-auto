@@ -7,6 +7,7 @@ import { useOrg } from "@/lib/session";
 import { cn } from "@/lib/cn";
 import { sectionsPour } from "@/components/parametres/commun";
 import { FilAriane } from "@/components/ui/fil-ariane";
+import { EtatVide } from "@/components/ui/etats";
 
 export default function ParametresLayout({ children }: { children: React.ReactNode }) {
   const org = useOrg();
@@ -14,6 +15,8 @@ export default function ParametresLayout({ children }: { children: React.ReactNo
   const sections = sectionsPour(org.role);
   const accueil = chemin === "/parametres" || chemin === "/parametres/";
   const courante = sections.find((s) => chemin.startsWith(`/parametres/${s.cle}`));
+  // Section ouverte par son adresse sans en avoir le droit : on ne montre pas un formulaire que le serveur refusera.
+  const interdite = !accueil && !courante;
 
   return (
     <div className="lg:grid lg:grid-cols-[220px_1fr] lg:gap-10">
@@ -49,7 +52,7 @@ export default function ParametresLayout({ children }: { children: React.ReactNo
             <FilAriane retour={{ href: "/parametres/", libelle: "Paramètres", icone: GearSix, couleur: "var(--encre-3)", detail: "Toutes les sections" }} />
           </div>
         )}
-        {children}
+        {interdite ? <EtatVide titre="Accès réservé" texte="Votre rôle ne permet pas de consulter cette section des paramètres." /> : children}
       </div>
     </div>
   );

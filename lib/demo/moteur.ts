@@ -138,6 +138,10 @@ async function ouvrir(): Promise<PGlite> {
   if (!orgId) {
     const r = await db.query<{ id: string }>("select public.demo_initialiser($1, $2) as id", [UTILISATEUR_DEMO, EMAIL_DEMO]);
     orgId = r.rows[0]!.id;
+    // Enregistrement forcé, une seule fois : sans lui, une page rechargée dans les secondes qui suivent recrée une
+    // démonstration neuve (autres identifiants) et un lien ouvert entre-temps mène à « Véhicule introuvable ».
+    // db.syncToFs() n'attend pas la fin de l'écriture en mode relaxé : on passe par le système de fichiers, qui l'attend.
+    await (db as unknown as { fs?: { syncToFs(relaxe?: boolean): Promise<void> } }).fs?.syncToFs(false);
   }
   localStorage.setItem(CLE_ORG, orgId);
   void supprimerAnciennesBases(version);

@@ -8,13 +8,13 @@ import { CaretUpDown, Car, Check, CloudSlash, GearSix, HandCoins, Invoice, Magni
 import { cn } from "@/lib/cn";
 import { useEnLigne } from "@/lib/ecran";
 import { useSession } from "@/lib/session";
-import { ROLES } from "@/lib/domaine";
+import { peut, ROLES, type PERMISSIONS, type Role } from "@/lib/domaine";
 import { Feuille } from "@/components/ui/feuille";
 import { Picto } from "@/components/ui/picto";
 import { useCompteursNavigation, type Compteur } from "@/lib/compteurs";
 import { EffetsGlobaux } from "./effets";
 import { Logo } from "./logo";
-import { NAVIGATION_PRINCIPALE, NAVIGATION_SECONDAIRE, estActif } from "./navigation";
+import { NAVIGATION_PRINCIPALE, NAVIGATION_SECONDAIRE, entreesPour, estActif } from "./navigation";
 import { PaletteRecherche } from "./palette-recherche";
 
 function initiales(nom: string) {
@@ -40,18 +40,25 @@ function EtatReseau({ surNuit }: { surNuit?: boolean }) {
   );
 }
 
-const ACTIONS_RAPIDES = [
-  { href: "/parc/nouveau/", titre: "Véhicule", texte: "Acheté aux enchères ou localement", icone: Car, couleur: "var(--etape-achete)" },
-  { href: "/ventes/nouvelle/", titre: "Vente", texte: "Facture, acompte, échéancier", icone: Invoice, couleur: "var(--gain)" },
-  { href: "/ventes/?encaisser=1", titre: "Encaissement", texte: "Versement d'un client", icone: HandCoins, couleur: "var(--primaire)" },
-  { href: "/finances/?depense=1", titre: "Dépense", texte: "Frais d'un véhicule ou charge", icone: Wallet, couleur: "var(--accent)" },
+const ACTIONS_RAPIDES: { href: string; titre: string; texte: string; icone: typeof Car; couleur: string; permission: keyof typeof PERMISSIONS }[] = [
+  { href: "/parc/nouveau/", titre: "Véhicule", texte: "Acheté aux enchères ou localement", icone: Car, couleur: "var(--etape-achete)", permission: "modifierVehicule" },
+  { href: "/ventes/nouvelle/", titre: "Vente", texte: "Facture, acompte, échéancier", icone: Invoice, couleur: "var(--gain)", permission: "vendre" },
+  { href: "/ventes/?encaisser=1", titre: "Encaissement", texte: "Versement d'un client", icone: HandCoins, couleur: "var(--primaire)", permission: "encaisser" },
+  { href: "/finances/?depense=1", titre: "Dépense", texte: "Frais d'un véhicule ou charge", icone: Wallet, couleur: "var(--accent)", permission: "saisirFrais" },
 ];
 
+/** Actions du bouton « + » que ce rôle a le droit de faire. */
+function actionsPour(role: Role | undefined) {
+  return ACTIONS_RAPIDES.filter((a) => peut(role, a.permission));
+}
+
 function ActionsRapides({ ouverte, onFermer }: { ouverte: boolean; onFermer: () => void }) {
+  const { etat } = useSession();
+  const actions = actionsPour(etat.statut === "connecte" ? etat.org?.role : undefined);
   return (
     <Feuille ouverte={ouverte} onFermer={onFermer} titre="Ajouter">
       <div className="grid grid-cols-2 gap-3 pb-2">
-        {ACTIONS_RAPIDES.map((a) => (
+        {actions.map((a) => (
           <Link key={a.href} href={a.href} onClick={onFermer} className="carte carte-lien onde flex min-h-32 flex-col justify-between p-4">
             <Picto icone={a.icone} couleur={a.couleur} taille="md" />
             <span>
@@ -80,8 +87,8 @@ function MenuPlus({ ouverte, onFermer }: { ouverte: boolean; onFermer: () => voi
   const { etat, choisirOrganisation, deconnecter } = useSession();
   const chemin = usePathname();
   const compteurs = useCompteursNavigation();
-  const entrees = [...NAVIGATION_PRINCIPALE, ...NAVIGATION_SECONDAIRE];
-  if (etat.statut !== "connecte") return null;
+  if (etat.statut !== "connecte" || !etat.org) return null;
+  const entrees = entreesPour([...NAVIGATION_PRINCIPALE, ...NAVIGATION_SECONDAIRE], etat.org.role);
   return (
     <Feuille ouverte={ouverte} onFermer={onFermer} titre="Menu">
       <nav className="grid grid-cols-2 gap-2.5" aria-label="Toutes les sections">
@@ -122,7 +129,9 @@ function MenuPlus({ ouverte, onFermer }: { ouverte: boolean; onFermer: () => voi
 }
 
 function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () => void }) {
+  const { etat } = useSession();
   const chemin = usePathname();
+  const peutAjouter = actionsPour(etat.statut === "connecte" ? etat.org?.role : undefined).length > 0;
   const compteurs = useCompteursNavigation();
   const [accueil, parc, ventes] = [NAVIGATION_PRINCIPALE[0]!, NAVIGATION_PRINCIPALE[1]!, NAVIGATION_PRINCIPALE[2]!];
   const lien = (e: typeof accueil, libelle: string) => {
@@ -147,12 +156,12 @@ function BarreMobile({ onAjouter, onPlus }: { onAjouter: () => void; onPlus: () 
       <div className="flex h-16 items-stretch">
         {lien(accueil, "Accueil")}
         {lien(parc, "Parc")}
-        <div className="flex flex-1 items-center justify-center">
+        {peutAjouter && <div className="flex flex-1 items-center justify-center">
           <button type="button" onClick={onAjouter} aria-label="Ajouter : véhicule, vente, encaissement, dépense"
             className="onde -mt-6 flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[#ff9a3d] to-[#f2541b] text-white shadow-[0_10px_24px_-6px_rgb(242_84_27/0.6)] ring-4 ring-papier transition-transform active:scale-95">
             <Plus size={28} weight="bold" aria-hidden />
           </button>
-        </div>
+        </div>}
         {lien(ventes, "Ventes")}
         <button type="button" onClick={onPlus} className="onde flex flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold text-encre-3">
           <span className="grid h-8 w-12 place-items-center"><SquaresFour size={22} weight="duotone" aria-hidden /></span>
@@ -231,11 +240,11 @@ function RailOrdinateur({ onRecherche }: { onRecherche: () => void }) {
 
       <p className="etiquette mt-7 mb-2 px-2 text-[10px] text-sur-nuit-2/70 max-rail:hidden">Gestion</p>
       <nav aria-label="Navigation principale" className="flex flex-col gap-1 max-rail:mt-5">
-        {NAVIGATION_PRINCIPALE.map(lien)}
+        {entreesPour(NAVIGATION_PRINCIPALE, org.role).map(lien)}
       </nav>
       <div className="mt-auto flex shrink-0 flex-col gap-1 pt-4">
         <div className="mb-2 px-1"><EtatReseau surNuit /></div>
-        {NAVIGATION_SECONDAIRE.map(lien)}
+        {entreesPour(NAVIGATION_SECONDAIRE, org.role).map(lien)}
       </div>
     </aside>
   );

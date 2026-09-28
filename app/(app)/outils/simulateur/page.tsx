@@ -7,7 +7,8 @@ import { useParametres } from "@/lib/api/parametres";
 import type { BaremeDouane } from "@/lib/estimation";
 import { coutPourEnchere, enchereMaximale, HYPOTHESES_PAR_DEFAUT, type HypothesesSimulateur } from "@/lib/simulateur";
 import { formatCourt, formatFCFA, formatNombre, formatPourcent } from "@/lib/format";
-import { libelleCategorie } from "@/lib/domaine";
+import { libelleCategorie, peut } from "@/lib/domaine";
+import { useOrg } from "@/lib/session";
 import { useCompteur, decalage } from "@/lib/animation";
 import { cn } from "@/lib/cn";
 import { EnTetePage } from "@/components/coque/coque";
@@ -81,6 +82,7 @@ function EnchereHero({ enchereUsd, tauxUsd, coutTotal, margeXof, margePct, sensi
 
 export default function PageSimulateur() {
   const { data: reglages, isPending } = useParametres();
+  const peutAjouter = peut(useOrg().role, "modifierVehicule");
   const [prixVente, setPrixVente] = useState<number | null>(14_500_000);
   const [typeMarge, setTypeMarge] = useState<"montant" | "pourcent">("pourcent");
   const [margeValeur, setMargeValeur] = useState<number | null>(15);
@@ -181,14 +183,14 @@ export default function PageSimulateur() {
                 </ul>
               </section>
 
-              <Link href="/parc/nouveau/" className="onde carte carte-lien group apparition flex items-center gap-3 p-4" style={decalage(3)}>
+              {peutAjouter && <Link href="/parc/nouveau/" className="onde carte carte-lien group apparition flex items-center gap-3 p-4" style={decalage(3)}>
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#ff9a3d] to-[#ff6a00] text-white shadow-[0_8px_16px_-8px_#ff7a1a]"><Gavel size={22} weight="fill" aria-hidden /></span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-bold group-hover:text-primaire">Vous avez gagné l&apos;enchère ?</span>
                   <span className="block text-[13px] text-encre-3">Ajoutez le véhicule au parc : le prix de revient se calcule tout seul.</span>
                 </span>
                 <ArrowRight size={18} weight="bold" className="shrink-0 text-encre-3 transition-transform group-hover:translate-x-0.5 group-hover:text-primaire" aria-hidden />
-              </Link>
+              </Link>}
             </>
           )}
         </div>
