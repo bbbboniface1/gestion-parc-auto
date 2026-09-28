@@ -46,7 +46,7 @@ export default function PageEntreprise() {
             <p className="text-[13px] font-medium text-encre-2">Téléphones</p>
             {p.telephones.map((t, i) => (
               <div key={i} className="flex items-start gap-2">
-                <ChampTelephone className="flex-1" valeur={t}
+                <ChampTelephone className="min-w-0 flex-1" valeur={t}
                   onChange={(v) => maj("telephones", p.telephones.map((x, j) => (j === i ? v : x)))} />
                 <button type="button" aria-label={`Retirer le téléphone ${i + 1}`} onClick={() => maj("telephones", p.telephones.filter((_, j) => j !== i))}
                   className="inline-flex size-11 items-center justify-center rounded-controle text-encre-3 hover:bg-surface-2 lg:size-10">
