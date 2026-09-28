@@ -1,5 +1,7 @@
 "use client";
 
+import { ChampTelephone } from "@/components/ui/champ-telephone";
+import { telephoneValide } from "@/lib/telephone";
 import { useState } from "react";
 import { toast } from "sonner";
 import { nouvelId, useEcriture } from "@/lib/api/requetes";
@@ -46,7 +48,7 @@ export function FeuilleClient({ ouverte, onFermer, client, onCree }: {
     <Feuille ouverte={ouverte} onFermer={onFermer} titre={client ? "Modifier le client" : "Nouveau client"} pleinEcran
       pied={<>
         <Bouton variante="secondaire" onClick={onFermer}>Annuler</Bouton>
-        <Bouton variante="primaire" disabled={nom.trim().length < 2} chargement={enregistrer.isPending} onClick={() => enregistrer.executer({
+        <Bouton variante="primaire" disabled={nom.trim().length < 2 || !telephoneValide(telephone) || !telephoneValide(whatsapp)} chargement={enregistrer.isPending} onClick={() => enregistrer.executer({
           p_org: org.id, p_data: {
             id, nom: nom.trim(), telephone: telephone.trim() || null, whatsapp: whatsapp.trim() || null,
             ville: ville.trim() || null, adresse: adresse.trim() || null, type_piece: typePiece || null,
@@ -56,10 +58,8 @@ export function FeuilleClient({ ouverte, onFermer, client, onCree }: {
       </>}>
       <div className="flex flex-col gap-4">
         <Champ libelle="Nom complet" value={nom} onChange={(e) => setNom(e.target.value)} autoFocus />
-        <div className="grid grid-cols-2 gap-3">
-          <Champ libelle="Téléphone" type="tel" inputMode="tel" placeholder="70 12 34 56" value={telephone} onChange={(e) => setTelephone(e.target.value)} />
-          <Champ libelle="WhatsApp" facultatif type="tel" inputMode="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
-        </div>
+        <ChampTelephone libelle="Téléphone" valeur={telephone} onChange={setTelephone} />
+        <ChampTelephone libelle="WhatsApp" facultatif valeur={whatsapp} onChange={setWhatsapp} aide="Seulement s'il diffère du téléphone." />
         <div className="grid grid-cols-2 gap-3">
           <Champ libelle="Ville" facultatif value={ville} onChange={(e) => setVille(e.target.value)} />
           <Champ libelle="Adresse" facultatif value={adresse} onChange={(e) => setAdresse(e.target.value)} />

@@ -1,73 +1,96 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Boat, CheckCircle } from "@phosphor-icons/react";
-import { ETAPES } from "@/lib/domaine";
+import { Anchor, Boat, Car, CheckCircle, Gavel, Key, Stamp, WhatsappLogo } from "@phosphor-icons/react";
 import { Logo } from "./logo";
+
+/** Couleurs du drapeau malien : vert, or, rouge. */
+const VERT = "#14B53A";
+const OR = "#FCD116";
+const ROUGE = "#CE1126";
+
+/** Le voyage d'un véhicule, tel que l'application le suit (sans aucun montant). */
+const VOYAGE = [
+  { icone: Gavel, titre: "Enchère gagnée", detail: "Copart, IAAI, Manheim", fait: true },
+  { icone: Boat, titre: "En mer", detail: "Conteneur suivi jusqu'au port", fait: true },
+  { icone: Anchor, titre: "Cotonou, Dakar, Lomé", detail: "Déchargement et convoi", fait: false, courant: true },
+  { icone: Stamp, titre: "Douane", detail: "Dédouanement au Mali", fait: false },
+  { icone: Key, titre: "Clé remise à Bamako", detail: "Facture envoyée sur WhatsApp", fait: false },
+];
 
 /**
  * Cadre des pages d'entrée (connexion, inscription, création d'entreprise).
- * Ordinateur : à gauche un aperçu vivant du produit (un véhicule en mer, le capital, une vente qui tombe)
- * sur fond bleu nuit ; à droite le formulaire. Téléphone : bandeau compact au-dessus du formulaire.
+ * Ordinateur : à gauche le voyage d'un véhicule jusqu'à Bamako, aux couleurs du Mali ; à droite le formulaire.
+ * Téléphone : bandeau compact au-dessus du formulaire. Aucun chiffre financier n'y figure.
  */
 export function CadreAccueil({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-dvh bg-papier lg:grid lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]">
-      <aside className="relative overflow-hidden bg-[radial-gradient(120%_120%_at_100%_0%,#2d5bff_0%,#16275a_45%,#0b1633_100%)] text-white">
-        <div aria-hidden className="pointer-events-none absolute -top-32 -left-24 size-96 rounded-full bg-[#ff7a1a]/20 blur-3xl" />
-        <div className="zone-sure-haut relative px-5 pt-6 pb-8 lg:flex lg:h-full lg:flex-col lg:px-12 lg:py-12">
+      <aside className="relative overflow-hidden bg-[linear-gradient(160deg,#0f5132_0%,#0b3b25_55%,#082a1b_100%)] text-white">
+        {/* Bande tricolore verticale du drapeau, en tête de panneau */}
+        <div aria-hidden className="absolute inset-x-0 top-0 flex h-1.5">
+          <span className="flex-1" style={{ background: VERT }} />
+          <span className="flex-1" style={{ background: OR }} />
+          <span className="flex-1" style={{ background: ROUGE }} />
+        </div>
+        {/* Motif discret inspiré du bogolan */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07]"
+          style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0 2px, transparent 2px 22px), repeating-linear-gradient(-45deg, #fff 0 2px, transparent 2px 22px)" }} />
+        <div aria-hidden className="pointer-events-none absolute -right-24 -bottom-24 size-96 rounded-full blur-3xl" style={{ background: `${OR}26` }} />
+
+        <div className="zone-sure-haut relative px-5 pt-7 pb-8 lg:flex lg:h-full lg:flex-col lg:px-12 lg:py-12">
           <div className="flex items-center gap-3">
             <Logo className="size-10" />
             <span className="text-[20px] font-extrabold tracking-tight">Parc Auto</span>
+            <span className="ml-1 rounded-full px-2 py-0.5 text-[11px] font-bold tracking-wide text-[#082a1b]" style={{ background: OR }}>MALI</span>
           </div>
-          <h2 className="mt-6 max-w-lg text-[26px] leading-tight font-extrabold tracking-tight lg:mt-12 lg:text-[40px]">
-            De l&apos;enchère à Houston à la clé remise à Bamako.
+          <h2 className="mt-6 max-w-lg text-[26px] leading-tight font-extrabold tracking-tight text-balance lg:mt-12 lg:text-[40px]">
+            De l&apos;enchère à l&apos;étranger à la clé remise à <span style={{ color: OR }}>Bamako</span>.
           </h2>
-          <p className="mt-3 max-w-md text-white/75 lg:text-[16px]">
-            Chaque véhicule suivi à chaque étape, chaque franc compté, chaque facture envoyée sur WhatsApp.
+          <p className="mt-3 max-w-md text-white/80 lg:text-[16px]">
+            Chaque véhicule suivi à chaque étape, du port de départ au parc, avec ses documents et sa facture.
           </p>
 
-          {/* Aperçu du produit */}
-          <div aria-hidden className="relative mt-10 hidden h-[340px] max-w-xl lg:block">
-            <div className="absolute top-0 left-0 w-[300px] -rotate-3 overflow-hidden rounded-[20px] bg-white text-[#0f172a] shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)] [animation:apparition_700ms_200ms_both]">
+          {/* Le voyage d'un véhicule */}
+          <div aria-hidden className="relative mt-10 hidden max-w-xl gap-5 lg:flex">
+            <div className="w-[260px] shrink-0 -rotate-2 overflow-hidden rounded-[20px] bg-white text-[#0f172a] shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)] [animation:apparition_700ms_200ms_both]">
               <div className="relative aspect-[16/10]">
                 {/* eslint-disable-next-line @next/next/no-img-element -- export statique, image locale */}
                 <img src="/demo/vehicules/v13.jpg" alt="" className="absolute inset-0 size-full object-cover" />
-                <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
                 <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[12px] font-bold">
-                  <span className="size-2 rounded-full bg-[#0ea5e9]" /> En mer
+                  <span className="size-2 rounded-full" style={{ background: OR }} /> Au port de Cotonou
                 </span>
-                <span className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-[#0ea5e9] px-2.5 py-1 text-[12px] font-bold text-white shadow-[0_10px_24px_-8px_#0ea5e9] [animation:apparition_700ms_1200ms_both]">
-                  <Boat size={14} weight="fill" /> Cotonou dans 5 jours
-                </span>
-                <span className="absolute bottom-3 left-3 text-[20px] font-extrabold text-white">9,2 M <span className="text-[12px] font-semibold opacity-80">FCFA</span></span>
               </div>
               <div className="p-4">
                 <p className="font-bold">Honda Accord Sport 2018</p>
                 <p className="text-[12px] text-[#5b6679]">Bleu · 62 400 km · V-0013</p>
-                <span className="mt-3 flex h-1.5 gap-0.5">
-                  {ETAPES.map((e, k) => <span key={e.code} className="flex-1 rounded-full" style={{ background: k <= 2 ? e.couleur : "#e3e8f0" }} />)}
-                </span>
+                <p className="mt-3 flex items-center gap-1.5 text-[12px] font-semibold" style={{ color: "#0f7a33" }}>
+                  <Car size={14} weight="fill" /> Convoi vers Bamako prévu
+                </p>
               </div>
             </div>
 
-            <div className="absolute top-6 right-0 w-[230px] rotate-2 rounded-[20px] bg-white/10 p-4 ring-1 ring-white/20 backdrop-blur-xl [animation:apparition_700ms_500ms_both]">
-              <p className="text-[12px] font-semibold text-white/70">Où est votre argent ?</p>
-              <p className="mt-1 text-[30px] leading-none font-extrabold">124 M <span className="text-[13px] font-semibold text-white/70">FCFA</span></p>
-              <span className="mt-3 flex h-2 gap-[2px] overflow-hidden rounded-full">
-                {ETAPES.map((e, k) => <span key={e.code} className="h-full" style={{ background: e.couleur, flex: [14, 3, 14, 12, 10, 14, 19, 36][k] }} />)}
-              </span>
-              <p className="mt-2 text-[11px] text-white/60">15 véhicules, de l&apos;enchère au parc</p>
-            </div>
-
-            <div className="absolute right-10 bottom-4 flex items-center gap-3 rounded-2xl bg-white p-3 pr-5 text-[#0f172a] shadow-[0_20px_40px_-12px_rgb(0_0_0/0.5)] [animation:apparition_700ms_900ms_both]">
-              <span className="grid size-10 place-items-center rounded-full bg-[#16a34a] text-white"><CheckCircle size={22} weight="fill" /></span>
-              <span>
-                <span className="block text-[14px] font-extrabold">Vente enregistrée</span>
-                <span className="block text-[12px] text-[#5b6679]">FAC-2026-0011 · envoyée sur WhatsApp</span>
-              </span>
-            </div>
-
+            <ol className="flex flex-1 flex-col gap-0 rounded-[20px] bg-white/[0.07] p-4 ring-1 ring-white/15 backdrop-blur-sm [animation:apparition_700ms_500ms_both]">
+              {VOYAGE.map((e, i) => (
+                <li key={e.titre} className="relative flex gap-3 pb-3 last:pb-0">
+                  {i < VOYAGE.length - 1 && (
+                    <span className="absolute top-8 bottom-0 left-[15px] w-0.5" style={{ background: e.fait ? VERT : "rgb(255 255 255 / 0.18)" }} />
+                  )}
+                  <span className="relative grid size-8 shrink-0 place-items-center rounded-full"
+                    style={e.fait ? { background: VERT } : e.courant ? { background: OR, color: "#082a1b" } : { background: "rgb(255 255 255 / 0.1)" }}>
+                    {e.fait ? <CheckCircle size={18} weight="fill" /> : <e.icone size={16} weight="fill" />}
+                  </span>
+                  <span className="min-w-0 pt-0.5">
+                    <span className={e.courant ? "block text-[14px] font-extrabold" : "block text-[14px] font-semibold text-white/90"}>{e.titre}</span>
+                    <span className="block text-[12px] text-white/60">{e.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
           </div>
+
+          <p className="mt-6 hidden items-center gap-2 text-[13px] text-white/75 lg:flex [animation:apparition_700ms_900ms_both]">
+            <WhatsappLogo size={18} weight="fill" style={{ color: "#25d366" }} /> Factures et relances envoyées sur WhatsApp, Orange Money, Moov Money et Wave acceptés.
+          </p>
 
           <p className="mt-auto hidden pt-8 text-[12px] text-white/60 lg:block">
             Fonctionne sur téléphone, même avec un réseau faible. <Link href="/credits/" className="underline underline-offset-4">Crédits photos</Link>

@@ -1,5 +1,7 @@
 "use client";
 
+import { ChampTelephone } from "@/components/ui/champ-telephone";
+import { telephoneValide } from "@/lib/telephone";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { MagnifyingGlass, UserPlus } from "@phosphor-icons/react";
@@ -90,10 +92,10 @@ export function ChoixClient({ valeur, onChoix }: { valeur: ClientLigne | null; o
     return (
       <div className="flex flex-col gap-3 rounded-controle border border-trait p-3">
         <Champ libelle="Nom complet" value={nom} onChange={(e) => setNom(e.target.value)} autoFocus />
-        <Champ libelle="Téléphone" type="tel" inputMode="tel" placeholder="70 12 34 56" value={telephone} onChange={(e) => setTelephone(e.target.value)} />
+        <ChampTelephone libelle="Téléphone" valeur={telephone} onChange={setTelephone} />
         <div className="flex gap-2">
           <Bouton variante="secondaire" taille="sm" onClick={() => setCreation(false)}>Retour</Bouton>
-          <Bouton variante="primaire" taille="sm" disabled={nom.trim().length < 2} chargement={creer.isPending}
+          <Bouton variante="primaire" taille="sm" disabled={nom.trim().length < 2 || !telephoneValide(telephone)} chargement={creer.isPending}
             onClick={() => creer.executer({ p_org: org.id, p_data: { id: nouvelId(), nom: nom.trim(), telephone: telephone.trim() || null } })}>
             Créer le client
           </Bouton>

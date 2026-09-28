@@ -1,5 +1,6 @@
 "use client";
 
+import { ChampTelephone } from "@/components/ui/champ-telephone";
 import { Plus, X } from "@phosphor-icons/react";
 import { EnTeteSection } from "@/components/parametres/en-tete-section";
 import { BarreEnregistrement, Groupe, useBrouillon } from "@/components/parametres/commun";
@@ -44,9 +45,9 @@ export default function PageEntreprise() {
           <div className="flex flex-col gap-2">
             <p className="text-[13px] font-medium text-encre-2">Téléphones</p>
             {p.telephones.map((t, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <Champ aria-label={`Téléphone ${i + 1}`} type="tel" inputMode="tel" value={t} classeConteneur="flex-1"
-                  onChange={(e) => maj("telephones", p.telephones.map((x, j) => (j === i ? e.target.value : x)))} />
+              <div key={i} className="flex items-start gap-2">
+                <ChampTelephone className="flex-1" valeur={t}
+                  onChange={(v) => maj("telephones", p.telephones.map((x, j) => (j === i ? v : x)))} />
                 <button type="button" aria-label={`Retirer le téléphone ${i + 1}`} onClick={() => maj("telephones", p.telephones.filter((_, j) => j !== i))}
                   className="inline-flex size-11 items-center justify-center rounded-controle text-encre-3 hover:bg-surface-2 lg:size-10">
                   <X className="size-4" />
@@ -59,7 +60,7 @@ export default function PageEntreprise() {
               </Bouton>
             )}
           </div>
-          <Champ libelle="WhatsApp" type="tel" inputMode="tel" facultatif placeholder="+223 70 12 34 56" {...texte("whatsapp")} />
+          <ChampTelephone libelle="WhatsApp" facultatif valeur={p.whatsapp ?? ""} onChange={(v) => maj("whatsapp", v || null)} />
           <div className="grid gap-3 sm:grid-cols-2">
             <Champ libelle="E-mail" type="email" facultatif {...texte("email")} />
             <Champ libelle="Site web" facultatif placeholder="sahelauto.ml" {...texte("site_web")} />
