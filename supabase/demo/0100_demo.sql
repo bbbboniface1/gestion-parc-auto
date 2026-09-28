@@ -181,6 +181,7 @@ declare
   d          date := current_date;
   o          uuid;
   u_vendeur  uuid := gen_random_uuid();
+  u_membre   uuid;
   c_caisse   uuid;
   c_om       uuid;
   c_banque   uuid;
@@ -230,6 +231,17 @@ begin
   insert into auth.users (id, email) values (u_vendeur, 'seydou.konate@sahelautoimport.ml');
   insert into public.membres (org_id, user_id, role, nom_affiche, telephone)
   values (o, u_vendeur, 'vendeur', 'Seydou Konaté', '+223 66 18 40 27');
+
+  -- Un membre par rôle restant : la démonstration peut s'ouvrir sous chacun d'eux (écran de connexion).
+  for r in select * from (values
+      ('gerant', 'Mamadou Keïta', 'mamadou.keita@sahelautoimport.ml', '+223 76 22 81 05'),
+      ('comptable', 'Awa Diarra', 'awa.diarra@sahelautoimport.ml', '+223 66 90 13 44'),
+      ('lecture', 'Boubacar Cissé', 'boubacar.cisse@sahelautoimport.ml', '+223 79 51 36 20')
+    ) as t(role, nom, email, telephone)
+  loop
+    insert into auth.users (id, email) values (gen_random_uuid(), r.email) returning id into u_membre;
+    insert into public.membres (org_id, user_id, role, nom_affiche, telephone) values (o, u_membre, r.role, r.nom, r.telephone);
+  end loop;
 
   select id into c_caisse from public.comptes where org_id = o and nom = 'Caisse';
   perform public.compte_enregistrer(o, jsonb_build_object('id', c_caisse, 'solde_initial', 3000000));

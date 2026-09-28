@@ -49,7 +49,7 @@ s'en écarte doit être notée ici.
 |---|---|
 | `proprietaire` | Tout, y compris l'équipe, les paramètres et la suppression |
 | `gerant` | Tout sauf gérer l'équipe et supprimer l'organisation |
-| `vendeur` | Voir le parc **sans coûts ni marges** (si `masquer_couts_vendeurs`), clients, proformas, ventes, encaissements |
+| `vendeur` | Voir le parc **sans coûts ni marges** (si `masquer_couts_vendeurs`), clients, proformas, ventes, encaissements. **Jamais** la trésorerie, la rentabilité ni la liste des dépenses, même coûts visibles (décision du 28/09/2026) |
 | `comptable` | Lecture complète, frais, encaissements, trésorerie, rapports ; pas de modification des véhicules |
 | `lecture` | Lecture seule (coûts visibles), pas d'équipe |
 

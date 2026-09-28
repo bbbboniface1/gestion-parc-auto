@@ -171,7 +171,10 @@ describe("rôles", () => {
     v = await base.rpc("vehicule_obtenir", { p_org: A.org, p_id: ids.vehicule2 });
     expect(v.prix_revient_xof).toBeGreaterThan(0);
     expect(Array.isArray(v.frais)).toBe(true);
-    expect((await base.rpc("tresorerie", { p_org: A.org })).totaux.solde_total).not.toBeNull();
+    // Coûts visibles, mais les finances restent fermées au vendeur (décision du 28/09/2026).
+    for (const nom of ["frais_lister", "rapport_marges", "tresorerie"]) {
+      await echoue(base.rpc(nom, { p_org: A.org }), "Accès refusé");
+    }
 
     await base.commeUtilisateur(A.membres.proprietaire!);
     await base.rpc("parametres_enregistrer", { p_org: A.org, p_patch: { masquer_couts_vendeurs: true } });

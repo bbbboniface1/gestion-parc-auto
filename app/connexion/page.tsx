@@ -10,6 +10,8 @@ import { versErreurApi } from "@/lib/api/erreurs";
 import { CadreAccueil } from "@/components/coque/cadre-accueil";
 import { Bouton } from "@/components/ui/bouton";
 import { Champ } from "@/components/ui/champ";
+import { Choix } from "@/components/ui/choix";
+import { ROLES, type Role } from "@/lib/domaine";
 
 function destinationSure(retour: string | null): string {
   // Seulement un chemin interne : pas de redirection ouverte vers un autre site.
@@ -26,6 +28,7 @@ function Connexion() {
   const [erreur, setErreur] = useState<string | null>(null);
   const [envoi, setEnvoi] = useState(false);
   const [demo, setDemo] = useState(false);
+  const [roleDemo, setRoleDemo] = useState<Role>("proprietaire");
   const production = supabaseConfigure();
   const avecDemo = demoDisponible();
 
@@ -74,6 +77,11 @@ function Connexion() {
         <p className="mt-1 text-[14px] text-encre-2">
           Une entreprise fictive de Bamako, 24 véhicules, des ventes et des encaissements : tout fonctionne, directement dans votre navigateur.
         </p>
+        <div className="mt-4">
+          <Choix libelle="Se connecter en tant que" colonnes={2} valeur={roleDemo} onChange={(r) => r && setRoleDemo(r)}
+            options={(Object.keys(ROLES) as Role[]).map((r) => ({ valeur: r, libelle: ROLES[r].libelle }))} />
+          <p className="mt-2 text-[13px] text-encre-3">{ROLES[roleDemo].description}</p>
+        </div>
         <Bouton
           className="mt-3"
           variante={production ? "secondaire" : "primaire"}
@@ -83,7 +91,7 @@ function Connexion() {
           icone={<PlayCircle className="size-5" aria-hidden />}
           onClick={async () => {
             setDemo(true);
-            await entrerDemo();
+            await entrerDemo(roleDemo);
           }}
         >
           Essayer la démonstration

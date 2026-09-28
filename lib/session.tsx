@@ -30,7 +30,7 @@ export type EtatSession =
 interface ContexteSession {
   etat: EtatSession;
   choisirOrganisation: (id: string) => void;
-  entrerDemo: () => Promise<void>;
+  entrerDemo: (role?: Role) => Promise<void>;
   deconnecter: () => Promise<void>;
   recharger: () => Promise<void>;
 }
@@ -73,9 +73,8 @@ export function FournisseurSession({ children }: { children: ReactNode }) {
           setEtat({ statut: "deconnecte", mode });
           return;
         }
-        const { UTILISATEUR_DEMO, EMAIL_DEMO, baseDemo } = await import("@/lib/demo/moteur");
-        await baseDemo();
-        utilisateur = { id: UTILISATEUR_DEMO, email: EMAIL_DEMO };
+        const { identiteDemo } = await import("@/lib/demo/moteur");
+        utilisateur = await identiteDemo();
       } else {
         utilisateur = await utilisateurSupabase();
       }
@@ -116,8 +115,11 @@ export function FournisseurSession({ children }: { children: ReactNode }) {
       setEtat((e) => (e.statut === "connecte" ? { ...e, org: e.organisations.find((o) => o.id === id) ?? e.org } : e));
       void client.invalidateQueries({ queryKey: ["api"] });
     },
-    entrerDemo: async () => {
+    entrerDemo: async (role) => {
       choisirMode("demo");
+      if (role) (await import("@/lib/demo/moteur")).choisirRoleDemo(role);
+      // Données d'un autre rôle encore en cache : on repart de zéro.
+      client.clear();
       setEtat({ statut: "chargement" });
       await charger();
     },

@@ -7,6 +7,7 @@
 // Il n'est volontairement pas passé par le bundler : regroupé par Turbopack, son démarrage restait bloqué en production.
 
 import type { PGlite } from "@electric-sql/pglite";
+import type { Role } from "@/lib/domaine";
 
 type ModulePGlite = typeof import("@electric-sql/pglite");
 const URL_MOTEUR = "/pglite/index.js";
@@ -19,6 +20,18 @@ async function chargerMoteur(): Promise<ModulePGlite> {
 export const UTILISATEUR_DEMO = "00000000-0000-4000-8000-00000000d3e0";
 export const EMAIL_DEMO = "demo@parc-auto.app";
 const CLE_ORG = "parc-auto:demo:org";
+const CLE_ROLE = "parc-auto:demo:role";
+const ROLES_DEMO: readonly Role[] = ["proprietaire", "gerant", "vendeur", "comptable", "lecture"];
+
+/** Rôle sous lequel la démonstration s'ouvre (choisi sur l'écran de connexion). */
+export function roleDemo(): Role {
+  const r = typeof localStorage === "undefined" ? null : localStorage.getItem(CLE_ROLE);
+  return ROLES_DEMO.includes(r as Role) ? (r as Role) : "proprietaire";
+}
+
+export function choisirRoleDemo(role: Role) {
+  localStorage.setItem(CLE_ROLE, role);
+}
 const PREFIXE_BASE = "parc-auto-demo-";
 
 let instance: Promise<PGlite> | null = null;
@@ -128,7 +141,7 @@ async function ouvrir(): Promise<PGlite> {
     await db.exec(sql.DEMO);
   }
 
-  await db.query("select set_config('request.jwt.claims', $1, false)", [JSON.stringify({ sub: UTILISATEUR_DEMO, role: "authenticated" })]);
+  await agirEnTantQue(db, UTILISATEUR_DEMO);
 
   const org = await db.query<{ id: string }>(
     "select m.org_id as id from public.membres m where m.user_id = $1 limit 1",
@@ -146,6 +159,32 @@ async function ouvrir(): Promise<PGlite> {
   localStorage.setItem(CLE_ORG, orgId);
   void supprimerAnciennesBases(version);
   return db;
+}
+
+async function agirEnTantQue(db: PGlite, utilisateur: string) {
+  await db.query("select set_config('request.jwt.claims', $1, false)", [JSON.stringify({ sub: utilisateur, role: "authenticated" })]);
+}
+
+/**
+ * Ouvre la base et agit au nom du membre de l'entreprise fictive qui a le rôle choisi : le serveur applique alors
+ * exactement les droits de ce rôle. Renvoie l'utilisateur correspondant.
+ */
+export async function identiteDemo(): Promise<{ id: string; email: string }> {
+  const db = await baseDemo();
+  const role = roleDemo();
+  if (role === "proprietaire") {
+    await agirEnTantQue(db, UTILISATEUR_DEMO);
+    return { id: UTILISATEUR_DEMO, email: EMAIL_DEMO };
+  }
+  const r = await db.query<{ id: string; email: string }>(
+    `select m.user_id as id, u.email from public.membres m join auth.users u on u.id = m.user_id
+      where m.org_id = $1 and m.role = $2 and m.actif order by m.created_at limit 1`,
+    [localStorage.getItem(CLE_ORG), role],
+  );
+  const membre = r.rows[0];
+  if (!membre) throw new Error(`Aucun membre « ${role} » dans la démonstration : réinitialisez-la depuis Paramètres › Données.`);
+  await agirEnTantQue(db, membre.id);
+  return membre;
 }
 
 export function baseDemo(): Promise<PGlite> {
