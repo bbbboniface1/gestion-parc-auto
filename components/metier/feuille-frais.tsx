@@ -127,7 +127,7 @@ export function FeuilleFrais({ ouverte, onFermer, vehiculeId, expeditionId, port
             options={[{ valeur: "paye", libelle: "Payé" }, { valeur: "a_payer", libelle: "À payer" }]} />
         </div>
         {statut === "paye" && comptes && comptes.length > 0 && (
-          <Selection libelle="Payé depuis" vide="Non précisé" value={compte} onChange={(e) => setCompte(e.target.value)}
+          <Selection libelle="Payé depuis" vide="Caisse (par défaut)" value={compte} onChange={(e) => setCompte(e.target.value)}
             options={comptes.filter((c) => c.actif).map((c) => ({ valeur: c.id, libelle: c.nom }))} />
         )}
         <Champ libelle="Fournisseur" facultatif placeholder="Transitaire, garage, transporteur…" value={fournisseur} onChange={(e) => setFournisseur(e.target.value)} />

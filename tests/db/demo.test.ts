@@ -238,7 +238,7 @@ describe("recalage des dates de la démonstration", () => {
     for (const col of colonnes) parTable.set(col.t, [...(parTable.get(col.t) ?? []), col]);
     const sig: Record<string, number[][]> = {};
     for (const [t, cols] of parTable) {
-      const cle = t === "membres" ? "user_id" : t === "parametres" ? "org_id" : "id";
+      const cle = t === "membres" ? "user_id" : t === "parametres" ? "org_id" : t === "frais_parts_figees" ? "frais_id, vehicule_id" : "id";
       const filtre = t === "organisations" ? "id" : "org_id";
       const exprs = cols.map((c) => c.ty === "date"
         ? `(${c.c} - date '2000-01-01')::float8`

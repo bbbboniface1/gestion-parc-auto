@@ -265,7 +265,7 @@ export interface Tresorerie {
   mouvements: MouvementTresorerie[];
   depenses_par_categorie: { categorie: string; montant_xof: number }[];
   creances: Creance[];
-  totaux: { solde_total: number; entrees_periode: number; sorties_periode: number };
+  totaux: { solde_total: number; entrees_periode: number; sorties_periode: number; achats_vehicules_periode: number };
 }
 
 export interface LigneMarge {

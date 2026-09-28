@@ -89,7 +89,7 @@ describe("verrouillage des accès", () => {
         where n.nspname = 'public' and c.relkind = 'r' and not c.relrowsecurity`,
     );
     expect(sansRls).toEqual([]);
-    expect(tables.length).toBe(21);
+    expect(tables.length).toBe(22);
   });
 
   it("en authenticated, tout select ou insert direct sur chaque table échoue", async () => {

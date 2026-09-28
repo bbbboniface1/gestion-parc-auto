@@ -134,6 +134,7 @@ begin
      set date = date + j, valide_jusqu_au = valide_jusqu_au + j, created_at = created_at + i, updated_at = updated_at + i
    where org_id = p_org;
   update public.frais set date = date + j, created_at = created_at + i, updated_at = updated_at + i where org_id = p_org;
+  update public.frais_parts_figees set created_at = created_at + i where org_id = p_org;
   update public.transferts set date = date + j, created_at = created_at + i where org_id = p_org;
   update public.journal set created_at = created_at + i where org_id = p_org;
 

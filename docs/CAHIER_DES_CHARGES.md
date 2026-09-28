@@ -132,6 +132,12 @@ montants FCFA arrondis à l'unité. Horodatages en `timestamptz`.
 - `achat_xof = arrondi(prix_achat × taux_achat)`
 - Part d'un frais d'expédition pour un véhicule : `egale` → montant_xof / nb véhicules de l'expédition ;
   `valeur` → au prorata de `achat_xof`. **Somme des parts = montant exact** (le reste d'arrondi va au dernier véhicule).
+  **Part figée à la vente** (décision du 28/09/2026) : à la création d'une vente, la part de chaque frais d'expédition
+  portée par le véhicule est figée. Le reste du frais est réparti entre les véhicules **non vendus** du conteneur, y compris
+  ceux ajoutés plus tard ; un frais saisi après la vente ne touche que les non vendus. Annuler la vente libère ses parts.
+  Corriger le montant ou la répartition d'un frais recalcule tout, parts figées comprises ; le supprimer supprime ses parts.
+- Frais payé sans compte précisé : imputé au compte par défaut (caisse, sinon premier compte actif), comme un encaissement.
+- Trésorerie : l'achat du véhicule (`prix_achat`) **n'est pas** un mouvement de compte (décision du 28/09/2026). Il est affiché à part (« Achats de véhicules ») et n'entre pas dans les sorties.
 - `prix_revient_xof = achat_xof + Σ frais directs + Σ parts d'expédition`
 - `marge_xof = prix_vente_ttc − montant_tva − prix_revient_xof` (ou prix affiché si pas vendu : marge prévisionnelle)
 - Statut de paiement d'une vente : `encaisse = Σ paiements non annulés` ; `non_paye` si 0, `paye` si ≥ montant_ttc, sinon `partiel`

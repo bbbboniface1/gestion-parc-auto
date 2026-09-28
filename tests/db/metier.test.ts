@@ -128,6 +128,66 @@ describe("coût de revient", () => {
     const total = [a, b, c].length;
     expect(total).toBe(3);
   });
+
+  it("frais de conteneur : la part d'un véhicule vendu est figée, le reste va aux non vendus", async () => {
+    const e = await preparer("Parts figées", 0);
+    const creer = async (modele: string) =>
+      (await base.rpc("vehicule_enregistrer", { p_org: e.org, p_data: { marque: "Toyota", modele, prix_achat: 5000000, devise_achat: "XOF" } })).id as string;
+    const [a, b, c] = [await creer("A"), await creer("B"), await creer("C")];
+    const exp = await base.rpc("expedition_enregistrer", { p_org: e.org, p_data: { mode: "conteneur" } });
+    await base.rpc("expedition_affecter", { p_org: e.org, p_id: exp.id, p_vehicule_ids: [a, b, c] });
+    const fret = await base.rpc("frais_enregistrer", { p_org: e.org, p_data: { expedition_id: exp.id, categorie: "fret", montant: 3000, repartition: "egale" } });
+    const part = async (id: string) => (await base.rpc("vehicule_obtenir", { p_org: e.org, p_id: id })).frais_expedition_xof as number;
+    const parts = async (ids: string[]) => Promise.all(ids.map(part));
+    const totalFrais = async () => {
+      const d = await base.rpc("expedition_obtenir", { p_org: e.org, p_id: exp.id });
+      for (const f of d.frais) expect(f.parts.reduce((s: number, p: { part_xof: number }) => s + p.part_xof, 0), f.categorie).toBe(f.montant_xof);
+    };
+    expect(await parts([a, b, c])).toEqual([1000, 1000, 1000]);
+
+    const vente = await base.rpc("vente_creer", { p_org: e.org, p_data: { vehicule_id: a, client_id: e.client, prix_xof: 9000000 } });
+
+    // Un véhicule ajouté après la vente reprend le reste du fret ; la part de A ne bouge pas.
+    const d = await creer("D");
+    await base.rpc("vehicule_expedition_affecter", { p_org: e.org, p_vehicule_id: d, p_expedition_id: exp.id });
+    expect(await parts([a, b, c, d])).toEqual([1000, 666, 666, 668]);
+
+    // Un frais saisi après la vente ne touche que les non vendus.
+    const port = await base.rpc("frais_enregistrer", { p_org: e.org, p_data: { expedition_id: exp.id, categorie: "port", montant: 900, repartition: "egale" } });
+    expect(await parts([a, b, c, d])).toEqual([1000, 966, 966, 968]);
+    await totalFrais();
+
+    // Corriger le montant recalcule tout, part figée comprise.
+    await base.rpc("frais_enregistrer", { p_org: e.org, p_data: { id: fret.id, montant: 6000 } });
+    expect(await parts([a, b, c, d])).toEqual([1500, 1800, 1800, 1800]);
+    await totalFrais();
+
+    // Supprimer le frais supprime aussi la part figée.
+    await base.rpc("frais_supprimer", { p_org: e.org, p_id: fret.id });
+    expect(await parts([a, b, c, d])).toEqual([0, 300, 300, 300]);
+
+    // Annuler la vente libère le véhicule : il reprend sa part des frais du conteneur.
+    await base.rpc("vente_annuler", { p_org: e.org, p_id: vente.id, p_motif: "Test" });
+    expect(await parts([a, b, c, d])).toEqual([225, 225, 225, 225]);
+    await base.commeAdmin();
+    expect(await base.sql("select 1 from public.frais_parts_figees where vente_id = $1", [vente.id])).toEqual([]);
+    await base.commeUtilisateur(e.membres.proprietaire!);
+    expect(port.montant_xof).toBe(900);
+  });
+
+  it("un frais payé sans compte va sur la caisse ; « marquer payé » aussi", async () => {
+    const e = await preparer("Compte par défaut", 0);
+    const [caisse] = await base.rpc("comptes_lister", { p_org: e.org });
+    const paye = await base.rpc("frais_enregistrer", { p_org: e.org, p_data: { portee: "generale", categorie: "loyer", montant: 350000 } });
+    expect(paye.compte_id).toBe(caisse.id);
+    const aPayer = await base.rpc("frais_enregistrer", { p_org: e.org, p_data: { portee: "generale", categorie: "loyer", montant: 1000, statut: "a_payer" } });
+    expect(aPayer.compte_id).toBeNull();
+    const regle = await base.rpc("frais_enregistrer", { p_org: e.org, p_data: { id: aPayer.id, statut: "paye" } });
+    expect(regle.compte_id).toBe(caisse.id);
+    const t = await base.rpc("tresorerie", { p_org: e.org });
+    expect(t.comptes[0].solde_xof).toBe(-351000);
+    expect(t.totaux.solde_total).toBe(-351000);
+  });
 });
 
 describe("ventes", () => {

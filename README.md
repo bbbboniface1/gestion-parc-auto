@@ -21,7 +21,7 @@ ventes, échéances, encaissements). Rien n'est envoyé à un serveur.
 ## Mettre en production
 
 Pas à pas complet : **[docs/MISE_EN_PRODUCTION.md](docs/MISE_EN_PRODUCTION.md)** (projet Supabase, variables d'environnement,
-hébergement, premier démarrage, sauvegardes). En bref : exécuter les quatre fichiers de `supabase/migrations/` dans l'éditeur SQL,
+hébergement, premier démarrage, sauvegardes). En bref : exécuter dans l'ordre les fichiers de `supabase/migrations/` dans l'éditeur SQL,
 renseigner `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY`, puis `npm run build` et déposer `out/` sur
 un hébergement statique (les en-têtes de sécurité sont fournis). Dès que Supabase est configuré, la démonstration est masquée.
 

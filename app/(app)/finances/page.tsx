@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  ArrowDownLeft, ArrowUpRight, ArrowsLeftRight, Bank, CaretRight, ChartLineUp, CheckCircle, Clock, CurrencyCircleDollar, DeviceMobile, DownloadSimple, Gear,
+  ArrowDownLeft, ArrowUpRight, ArrowsLeftRight, Bank, Car, CaretRight, ChartLineUp, CheckCircle, Clock, CurrencyCircleDollar, DeviceMobile, DownloadSimple, Gear,
   Money, Percent, Plus, Timer, WhatsappLogo, type Icon,
 } from "@phosphor-icons/react";
 import { toast } from "sonner";
@@ -141,10 +141,11 @@ function Finances() {
             <div className="-mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {tresorerie.data.comptes.filter((c) => c.actif || (c.solde_xof ?? 0) !== 0).map((c, i) => <CarteCompte key={c.id} c={c} index={i} />)}
             </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <Indicateur index={0} libelle="Total disponible" valeur={tresorerie.data.totaux.solde_total} format={formatCourt} precision="FCFA, tous comptes" icone={CurrencyCircleDollar} couleur="var(--primaire)" />
               <Indicateur index={1} libelle="Entrées de la période" valeur={tresorerie.data.totaux.entrees_periode} format={(x) => `+${formatCourt(x)}`} precision="encaissements" icone={ArrowDownLeft} couleur="var(--gain)" />
-              <Indicateur index={2} libelle="Sorties de la période" valeur={tresorerie.data.totaux.sorties_periode} format={(x) => `−${formatCourt(x)}`} precision="dépenses et achats" icone={ArrowUpRight} couleur="var(--perte)" />
+              <Indicateur index={2} libelle="Sorties de la période" valeur={tresorerie.data.totaux.sorties_periode} format={(x) => `−${formatCourt(x)}`} precision="dépenses payées, hors achats de véhicules" icone={ArrowUpRight} couleur="var(--perte)" />
+              <Indicateur index={3} libelle="Achats de véhicules" valeur={tresorerie.data.totaux.achats_vehicules_periode} format={formatCourt} precision="prix d'achat de la période, hors comptes" icone={Car} couleur="var(--accent)" />
             </div>
             <section className="carte apparition p-4 lg:p-5" aria-labelledby="titre-mouvements">
               <h2 id="titre-mouvements" className="mb-3 text-[17px] font-bold">Mouvements</h2>
